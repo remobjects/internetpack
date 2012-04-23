@@ -1,0 +1,44 @@
+
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="styles.css"/>
+</head>
+<body>
+<img src="ip.png" alt="" align="right"/>
+
+<!-------------------------------------------------------------------------->
+
+<p class="h1">
+  <span>Sample Server</span> 
+</p>
+
+
+<h2>Purpose</h2>
+<p>
+This example shows how easy it is to create a simple custom Http server. The
+
+SimpleHttpServer class is a file-based HTTP Server that will make all files in (and below) the specified <b>RootPath</b> folder available via HTTP.
+
+
+<h2>Examine the Code</h2>
+<ul>
+<li> look at the <b>ActivateServers</b> procedure to see how to create and configure the HTTP server. The
+RootPath property should reference the folder in our file system which we want to expose.
+</li>
+<li>
+See the <b>OnHttpRequest</b> handler. There we can catch and process any incoming requests that come to the server.
+</li>
+</ul>
+
+<h2>Getting started</h2>
+
+<ul>
+<li>Compile the project.</li>
+<li>Run application.</li> 
+<li>Configure server properties and activate the servers.</li> 
+<li>Click link on the main window to open home page of our server in web browser.</li>
+</ul>
+
+
+</body>
+</html>

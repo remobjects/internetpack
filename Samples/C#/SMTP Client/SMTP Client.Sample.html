@@ -1,0 +1,38 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../styles.css"/>
+</head>
+<body>
+<img src="../../../ip.png" alt="" align="right"/>
+
+<!-------------------------------------------------------------------------->
+
+<p class="h1"><span>SMTP Client Sample</span></p>
+
+<h2>Purpose</h2>
+
+<p>
+  	The sample shows how we can use the SMTP client component for sending emails. 	
+</p>
+
+
+<h2>Examine the code</h2>
+<ul>
+<li>Sending emails is pretty simple (see MainForm's <b>btnSendEMail_Click</b> handler).
+    We create and configure an instance of MailMessage.</li> 
+<li>Next we put the SmtpClient component onto the form and configure it.</li> 
+<li>After configuring these components we can send the message (<b>smtpClient.SendMessage(msg);</b>).  
+</ul>
+
+<h2>Getting started</h2>
+<ul>
+<li>Compile the solution.</li> 
+<li>Run the Smtp client application.</li> 
+<li>Specify the outgoing mail server (if your mail server requires authentication you
+    will need to specify login and password).</li>
+<li>Create an email and send it</li>
+</ul>
+
+<!-------------------------------------------------------------------------->
+</body>
+</html>

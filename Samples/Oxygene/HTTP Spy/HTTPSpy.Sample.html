@@ -1,0 +1,41 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../styles.css"/>
+</head>
+<body>
+<img src="../../../ip.png" alt="" align="right"/>
+
+<!-------------------------------------------------------------------------->
+<br>
+<p class="h1">
+  <span>HTTPSpy Sample</span> 
+</p>
+
+<br>
+<h2>Purpose</h2>
+<p>
+This example demonstrates how HTTP works. 
+With help of the <b>HttpClient</b> components, we can send a &nbsp;<b>HttpClientRequest</b> and retrieve back a <b>HttpClientResponse</b>. The application shows us the request and response header parameters and the context of the response in text and hex view.
+    Also, you have the ability to add your custom request header parameter.
+</p>
+
+<h2>Examine the Code</h2>
+<ul>
+<li>
+See the <b>btnSubmit_Click</b> handler. This is the main function where we create and configure the HttpClientRequest and send it to the server with the help of the
+    HttpClient component.
+In order to get response from the server we call the <b>Dispatch</b> function with our HttpClientRequest instance as a parameter.
+</li>
+</ul>
+
+
+<h2>Getting started</h2>
+
+<ul>
+<li>Compile the project.</li>
+<li>Run the&nbsp; application.</li> 
+<li>Using an existing URL, click on the  "Submit" button. See the response of the request on the Result page. </li>
+</ul>
+
+</body>
+</html>

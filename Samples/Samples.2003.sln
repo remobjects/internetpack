@@ -1,0 +1,22 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTPSpy.2003", "C#\HTTP Spy\HTTPSpy.2003.csproj", "{E2A1390A-0AFA-4ACF-9DA3-917E832901F5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+		RO = RO
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E2A1390A-0AFA-4ACF-9DA3-917E832901F5}.Debug.ActiveCfg = Debug|.NET
+		{E2A1390A-0AFA-4ACF-9DA3-917E832901F5}.Debug.Build.0 = Debug|.NET
+		{E2A1390A-0AFA-4ACF-9DA3-917E832901F5}.Release.ActiveCfg = Release|.NET
+		{E2A1390A-0AFA-4ACF-9DA3-917E832901F5}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

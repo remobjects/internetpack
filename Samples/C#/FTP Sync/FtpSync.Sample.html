@@ -1,0 +1,57 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../styles.css"/>
+</head>
+<body>
+<img src="../../../ip.png" alt="" align="right"/>
+
+<!-------------------------------------------------------------------------->
+<br>
+<p class="h1">
+  <span>FtpSync Sample</span> 
+</p>
+
+<br>
+<h2>Purpose</h2>
+<p>
+    This sample shows how to use the <b>FtpClient</b> class to gain access to an ftp
+    site and download files from there.<br/>
+The 
+FtpSync application compares files on the local computer against those on the ftp folder and downloads files that are new or have changed.<br/>
+
+FtpSync is a console application with following uasge:</p>
+    <p>
+        <br/>
+
+<b>FtpSync localdir user:pass@server/remotedir [-local] [-remote] [-nodelete] [-passive] [-l] [-r]</b></p>
+    <p>
+        <b></b>
+        <br/>
+<i>
+where:<br/> 
+
+
+<table border=0>
+<tr><td>localdir</td><td>:</td><td>local directory - long file names with spaces should be quoted</td></tr>
+<tr><td>user/pass</td><td>:</td><td>ftp username & password</td></tr>
+<tr><td>server</td><td>:</td><td>ftp server (i.e., ftp.whatever.com)</td></tr>
+<tr><td>remotedir</td><td>:</td><td>directory on the remote server</td></tr>
+<tr><td>-nodelete</td><td>:</td><td>forbid to delete missing files</td></tr>
+<tr><td>-passive</td><td>:</td><td>turn on 'Passive' mode</td></tr>
+<tr><td>-r</td><td>:</td><td>recursive synchronization (through subdirectories)</td></tr>
+<tr><td>-l</td><td>:</td><td>log - show FTP commands</td></tr>
+<tr><td>-local</td><td>:</td><td>Local mode of sync (Master = ftp; slave = localhost). By default</td></tr>
+<tr><td>-remote</td><td>:</td><td>Remote mode of sync (Master = localhost; slave = ftp)</td></tr>
+</table>
+</i> 
+    </p>
+
+
+<h2>Getting started</h2>
+<ul>
+<li>Build the application.</li>
+<li>Run the application with your parameters. Try to synchronize your local folder with an ftp folder</li>
+</ul>
+
+</body>
+</html>

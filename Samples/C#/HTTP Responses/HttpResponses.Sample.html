@@ -1,0 +1,47 @@
+
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../styles.css"/>
+</head>
+<body>
+<img src="../../../ip.png" alt="" align="right"/>
+
+<!-------------------------------------------------------------------------->
+<br>
+<p class="h1">
+  <span>HTTP Responses Sample</span> 
+</p>
+
+<br>
+<h2>Purpose</h2>
+<p>
+This sample shows how to create and configure a simple HTTP server.
+</p>
+
+<h2>Examine the Code</h2>
+<ul>
+<li>
+See the <b>httpServer_OnHttpRequest</b> handler, where all possible RequestPaths
+    are processed.
+The options possible are as follows:
+<ul>
+<li>/ or /home - load home page with all available links.</li>
+<li>/file - download the HttpResponses application.</li>
+<li>/bytes - download random.bin file that contains random generated data.</li>
+<li>/error - shows a custom error with code 555.</li>
+</ul>
+</li>
+</ul>
+
+<h2>Getting started</h2>
+
+<ul>
+<li>Compile the project.</li>
+<li>Run the application.</li> 
+<li>Click the link on the top of the application window to open the home page of our server in your web browser.</li> 
+<li>Try all the links on the home page.</li>
+</ul>
+
+
+</body>
+</html>
