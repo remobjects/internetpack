@@ -1,39 +1,74 @@
+/*---------------------------------------------------------------------------
+  RemObjects Internet Pack for .NET - Virtual FTP Library
+  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+
+  Using this code requires a valid license of the RemObjects Internet Pack
+  which can be obtained at http://www.remobjects.com?ip.
+---------------------------------------------------------------------------*/
+
 using System;
 using System.IO;
 
 namespace RemObjects.InternetPack.Ftp.VirtualFtp
 {
-  
-  public abstract class FtpFile : FtpItem, IFtpFile
-	{
-    protected FtpFile(IFtpFolder aParent, string aName) : base(aParent, aName)
-		{
-		}
-        /* ToDo: add file rights */
-    public abstract void GetFile(Stream aToStream);    public abstract void CreateFile(Stream aStream);  
-    private bool fComplete;    public bool Complete    {      get { return fComplete; }      set	{ fComplete = value; }    }
-
-    public override void FillFtpListingItem(FtpListingItem aItem)
+    public abstract class FtpFile : FtpItem, IFtpFile
     {
-      base.FillFtpListingItem(aItem);
-      aItem.Directory = false;
-      aItem.Size = Size;
-      aItem.UserRead = Complete && UserRead;
-      aItem.UserWrite = Complete && UserWrite;
-      aItem.UserExec = false;
-      aItem.GroupRead = Complete && GroupRead;
-      aItem.GroupWrite = Complete && GroupWrite;
-      aItem.GroupExec = false;
-      aItem.OtherRead = Complete && WorldRead;
-      aItem.OtherWrite = Complete && WorldWrite;
-      aItem.OtherExec = false;
+        protected FtpFile(IFtpFolder parent, String name)
+            : base(parent, name)
+        {
+        }
+
+        public abstract void GetFile(Stream destination);
+
+        public abstract void CreateFile(Stream source);
+
+        public Boolean Complete
+        {
+            get
+            {
+                return fComplete;
+            }
+            set
+            {
+                fComplete = value;
+            }
+        }
+        private Boolean fComplete;
+
+        public override void FillFtpListingItem(FtpListingItem item)
+        {
+            base.FillFtpListingItem(item);
+            item.Directory = false;
+            item.Size = Size;
+            item.UserRead = Complete && UserRead;
+            item.UserWrite = Complete && UserWrite;
+            item.UserExec = false;
+            item.GroupRead = Complete && GroupRead;
+            item.GroupWrite = Complete && GroupWrite;
+            item.GroupExec = false;
+            item.OtherRead = Complete && WorldRead;
+            item.OtherWrite = Complete && WorldWrite;
+            item.OtherExec = false;
+        }
+
+        public virtual Boolean AllowGet(VirtualFtpSession session)
+        {
+            return Complete && AllowRead(session);
+        }
+
+        public virtual Boolean AllowAppend(VirtualFtpSession session)
+        {
+            return Complete && AllowWrite(session);
+        }
+
+        public virtual Boolean AllowDelete(VirtualFtpSession session)
+        {
+            return Complete && AllowWrite(session);
+        }
+
+        public virtual Boolean AllowRename(VirtualFtpSession session)
+        {
+            return Complete && AllowWrite(session);
+        }
     }
-
-
-    public virtual bool AllowGet(VirtualFtpSession aSession)    {      return Complete && AllowRead(aSession);
-    }    public virtual bool AllowAppend(VirtualFtpSession aSession)    {      return Complete && AllowWrite(aSession);
-    }    public virtual bool AllowDelete(VirtualFtpSession aSession)    {      return Complete && AllowWrite(aSession);
-    }    public virtual bool AllowRename(VirtualFtpSession aSession)    {      return Complete && AllowWrite(aSession);
-    }  }
-
 }

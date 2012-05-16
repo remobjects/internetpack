@@ -1,116 +1,200 @@
+/*---------------------------------------------------------------------------
+  RemObjects Internet Pack for .NET - Virtual FTP Library
+  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+
+  Using this code requires a valid license of the RemObjects Internet Pack
+  which can be obtained at http://www.remobjects.com?ip.
+---------------------------------------------------------------------------*/
+
 using System;
-using System.Text;
 using System.Collections;
-using System.IO;
 
 namespace RemObjects.InternetPack.Ftp.VirtualFtp
 {
-  public abstract class FtpFolder : FtpItem, IFtpFolder
-  {
-    protected FtpFolder(IFtpFolder aParent, string aName) : base(aParent, aName)
+    public abstract class FtpFolder : FtpItem, IFtpFolder
     {
-      fSubFolderList = new Hashtable();
+        protected FtpFolder(IFtpFolder parent, String name)
+            : base(parent, name)
+        {
+            this.fSubFolderList = new Hashtable();
+        }
+
+        public override Int32 Size
+        {
+            get
+            {
+                return 0;
+            }
+            set
+            {
+                /* no-op */
+            }
+        }
+
+        protected Hashtable SubFolderList
+        {
+            get
+            {
+                return fSubFolderList;
+            }
+        }
+        private Hashtable fSubFolderList;
+
+        #region IFtpFolder implementation
+        public abstract IEnumerable SubFolders { get; }
+        public abstract IEnumerable Files { get; }
+
+        public abstract Boolean HasSubfolder(String folder);
+        public abstract IFtpFolder GetSubFolder(String folder, VirtualFtpSession session);
+        public abstract IFtpFolder CreateFolder(String folder, VirtualFtpSession session);
+        public abstract void DeleteFolder(String folder, Boolean aRecursive, VirtualFtpSession session);
+
+        public abstract Boolean HasFile(String filename);
+        public abstract IFtpFile GetFile(String filename, VirtualFtpSession session);
+        public abstract IFtpFile CreateFile(String filename, VirtualFtpSession session);
+        public abstract void DeleteFile(String filename, VirtualFtpSession session);
+        public abstract void RenameFileOrFolder(String oldFilename, String newFilename, VirtualFtpSession session);
+
+        public abstract void RemoveItem(IFtpItem item);
+
+        public IFtpFolder DigForSubFolder(String fullPath, VirtualFtpSession session)
+        {
+            if (fullPath.Length == 0)
+                return this;
+
+            Int32 lSeparatorIndex = fullPath.IndexOf('/');
+
+            if (lSeparatorIndex < 0)
+                return this.GetSubFolder(fullPath, session);
+
+            String lSubFolder = fullPath.Substring(0, lSeparatorIndex);
+
+            IFtpFolder lFolder = GetSubFolder(lSubFolder, session);
+
+            if (lFolder == null)
+                return null;
+
+            fullPath = fullPath.Substring(lSeparatorIndex + 1);
+            return lFolder.DigForSubFolder(fullPath, session);
+        }
+
+        public void FindBaseFolderForFilename(String path, out IFtpFolder folder, out String filename, VirtualFtpSession session)
+        {
+            if (path.IndexOf('/') != -1)
+            {
+                if (path.StartsWith("/"))
+                {
+                    folder = Root;
+                    path = path.Substring(1); /* remove / */
+                }
+                else
+                {
+                    folder = this;
+                }
+
+                Int32 lSeparatorIndex = path.IndexOf('/');
+                while (lSeparatorIndex >= 0)
+                {
+                    String lFolderName = path.Substring(0, lSeparatorIndex);
+                    folder = folder.GetSubFolder(lFolderName, session);
+
+                    if (folder == null || !folder.AllowBrowse(session))
+                        throw new FtpException(550, String.Format("Folder \"{0}\" does not exists, or access denied.", path));
+
+                    path = path.Substring(lSeparatorIndex + 1);
+                    lSeparatorIndex = path.IndexOf('/');
+                }
+            }
+            else
+            {
+                folder = this;
+            }
+
+            filename = path;
+        }
+
+        public String FullPath
+        {
+            get
+            {
+                if (this.Parent == null)
+                    return "/";
+
+                return this.Parent.FullPath + this.Name + "/";
+            }
+        }
+
+        public virtual Boolean AllowBrowse(VirtualFtpSession session)
+        {
+            return AllowRead(session);
+        }
+
+        public virtual Boolean AllowGet(VirtualFtpSession session)
+        {
+            return AllowRead(session);
+        }
+
+        public virtual Boolean AllowPut(VirtualFtpSession session)
+        {
+            return AllowWrite(session);
+        }
+
+        public virtual Boolean AllowMkDir(VirtualFtpSession aSession)
+        {
+            return AllowWrite(aSession);
+        }
+
+        public virtual Boolean AllowDeleteItems(VirtualFtpSession session)
+        {
+            return AllowWrite(session);
+        }
+
+        public virtual Boolean AllowRenameItems(VirtualFtpSession session)
+        {
+            return AllowWrite(session);
+        }
+
+        public virtual Boolean AllowDeleteThis(VirtualFtpSession session)
+        {
+            return AllowWrite(session);
+        }
+        #endregion
+
+        #region FolderListing
+        public void ListFolderItems(FtpListing listing)
+        {
+            /* Add this folder (.) */
+            FtpListingItem lListingItem;
+            lListingItem = listing.Add();
+            FillFtpListingItem(lListingItem, ".");
+
+            /* Add parent folder (..) */
+            if (Parent != null)
+            {
+                lListingItem = listing.Add();
+                Parent.FillFtpListingItem(lListingItem, "..");
+            }
+
+            DoListFolderItems(listing);
+        }
+
+        public virtual void DoListFolderItems(FtpListing listing)
+        {
+            AddListingItems(listing, SubFolders);
+            AddListingItems(listing, Files);
+        }
+
+        protected void AddListingItems(FtpListing listing, IEnumerable ftpItems)
+        {
+            if (ftpItems == null)
+                return;
+
+            foreach (IFtpItem item in ftpItems)
+            {
+                FtpListingItem lListingItem = listing.Add();
+                item.FillFtpListingItem(lListingItem);
+            }
+        }
+        #endregion
     }
-
-    public override int Size { get { return 0; } set { /* no-op */ } }
-    private Hashtable fSubFolderList;    protected Hashtable SubFolderList    {      get { return fSubFolderList; }    }
-
-    #region IFtpFolder implementation
-
-    public abstract IEnumerable SubFolders { get ; }    public abstract IEnumerable Files { get ; }    public abstract bool HasSubfolder(string aFolderName);    public abstract IFtpFolder GetSubFolder(string aFolderName, VirtualFtpSession aSession);    public abstract IFtpFolder CreateFolder(string aFolderName, VirtualFtpSession aSession);    public abstract void DeleteFolder(string aFolderName, bool aRecursive, VirtualFtpSession aSession);        public abstract bool HasFile(string aFileame);    public abstract IFtpFile GetFile(string aFilename, VirtualFtpSession aSession);    public abstract IFtpFile CreateFile(string aFilename, VirtualFtpSession aSession);    public abstract void DeleteFile(string aFilename, VirtualFtpSession aSession);    public abstract void RenameFileOrFolder(string aOldFilename, string aNewFilename, VirtualFtpSession aSession);    public abstract void RemoveItem(IFtpItem aItem);                   public IFtpFolder DigForSubFolder(string aFullPath, VirtualFtpSession aSession)    {      if (aFullPath.Length == 0) 
-        return this;
-            int p = aFullPath.IndexOf('/');
-      if (p >= 0)
-      {
-        string lSubFolder = aFullPath.Substring(0,p);
-
-        IFtpFolder lFolder = GetSubFolder(lSubFolder, aSession);
-
-        if (lFolder != null)
-        {
-          aFullPath = aFullPath.Substring(p+1);
-          return lFolder.DigForSubFolder(aFullPath, aSession);
-        }  
-
-        else
-        {
-          return null;
-        }
-      }
-      else       {        return GetSubFolder(aFullPath, aSession);      }    }    public void FindBaseFolderForFilename(string aPath, out IFtpFolder aFolder, out string aFilename, VirtualFtpSession aSession)    {      if (aPath.IndexOf('/') != -1)
-      {
-        if (aPath.StartsWith("/"))
-        {
-          aFolder = Root;
-          aPath = aPath.Substring(1); /* remove / */
-        }
-        else
-        {
-          aFolder = this;
-        }
-        int p = aPath.IndexOf('/');        while (p >= 0)
-        {
-          string lFolderName = aPath.Substring(0,p);
-          aFolder = aFolder.GetSubFolder(lFolderName, aSession);
-
-          if (aFolder == null || !aFolder.AllowBrowse(aSession))
-            throw new FtpException(550, String.Format("Folder \"{0}\" does not exists, or access denied.", aPath));
-        
-          aPath = aPath.Substring(p+1);
-          p = aPath.IndexOf('/');        }
-      }
-      else
-      {
-        aFolder = this;
-      }
-
-      aFilename = aPath;
-    }    public string FullPath     {       get       {
-        if (Parent != null)
-        {
-          return Parent.FullPath+Name+"/";
-        }
-        else        {          return "/";        }      }    }    public virtual bool AllowBrowse(VirtualFtpSession aSession)    {      return AllowRead(aSession);
-    }    public virtual bool AllowGet(VirtualFtpSession aSession)    {      return AllowRead(aSession);
-    }    public virtual bool AllowPut(VirtualFtpSession aSession)    {      return AllowWrite(aSession);
-    }    public virtual bool AllowMkDir(VirtualFtpSession aSession)    {      return AllowWrite(aSession);
-    }
-    public virtual bool AllowDeleteItems(VirtualFtpSession aSession)    {      return AllowWrite(aSession);
-    }
-    public virtual bool AllowRenameItems(VirtualFtpSession aSession)    {      return AllowWrite(aSession);
-    }
-    public virtual bool AllowDeleteThis(VirtualFtpSession aSession)    {      return AllowWrite(aSession);
-    }    #endregion
-
-    #region FolderListing
-    public void ListFolderItems(FtpListing aListing)    {      /* Add this folder (.) */
-      FtpListingItem lListingItem;
-      lListingItem = aListing.Add();
-      FillFtpListingItem(lListingItem, ".");
-      
-      /* Add parent folder (..) */
-      if (Parent != null)
-      {
-        lListingItem = aListing.Add();
-        Parent.FillFtpListingItem(lListingItem, "..");
-      }
-
-      DoListFolderItems(aListing);
-    }    public virtual void DoListFolderItems(FtpListing aListing)    {      AddListingItems(aListing, SubFolders);
-      AddListingItems(aListing, Files);
-    }    protected void AddListingItems(FtpListing aListing, IEnumerable aFtpItems)
-    {
-      if (aFtpItems != null)
-      {
-        foreach (IFtpItem lFtpItem in aFtpItems)
-        {
-          FtpListingItem lListingItem = aListing.Add();
-          lFtpItem.FillFtpListingItem(lListingItem);
-        }
-      }
-    }
-    #endregion
-
-  }
-
 }

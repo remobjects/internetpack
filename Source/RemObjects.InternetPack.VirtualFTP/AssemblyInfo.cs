@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC 2003-2012. All rights reserved.
+  RemObjects Internet Pack for .NET - Virtual FTP Library
+  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
 
   Using this code requires a valid license of the RemObjects Internet Pack
   which can be obtained at http://www.remobjects.com?ip.

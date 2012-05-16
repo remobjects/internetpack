@@ -1,204 +1,212 @@
+/*---------------------------------------------------------------------------
+  RemObjects Internet Pack for .NET - Virtual FTP Library
+  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+
+  Using this code requires a valid license of the RemObjects Internet Pack
+  which can be obtained at http://www.remobjects.com?ip.
+---------------------------------------------------------------------------*/
+
 using System;
-using System.IO;
-using System.Net;
-using System.Collections;
-using RemObjects.InternetPack;
 using RemObjects.InternetPack.CommandBased;
-using RemObjects.InternetPack.Ftp;
 
 namespace RemObjects.InternetPack.Ftp.VirtualFtp
 {
 #if FULLFRAMEWORK
   [ System.Drawing.ToolboxBitmap(typeof(RemObjects.InternetPack.Server), "Glyphs.VirtualFtpServer.bmp") ]
 #endif
-	public class VirtualFtpServer : FtpServer
-	{
-		public VirtualFtpServer()
-		{
-		}
+    public class VirtualFtpServer : FtpServer
+    {
+        public VirtualFtpServer()
+        {
+        }
 
-		#region Properties
-		private IFtpFolder fRootFolder;
-		public IFtpFolder RootFolder
-		{
-			get { return fRootFolder; }
-			set { fRootFolder = value; }
-		}
+        #region Properties
+        public IFtpFolder RootFolder
+        {
+            get
+            {
+                return fRootFolder;
+            }
+            set
+            {
+                fRootFolder = value;
+            }
+        }
+        private IFtpFolder fRootFolder;
 
-		private IFtpUserManager fUserManager;
-		public IFtpUserManager UserManager
-		{
-			get { return fUserManager; }
-			set { fUserManager = value; }
-		}
-		#endregion
+        public IFtpUserManager UserManager
+        {
+            get
+            {
+                return fUserManager;
+            }
+            set
+            {
+                fUserManager = value;
+            }
+        }
+        private IFtpUserManager fUserManager;
+        #endregion
 
-		protected override Type GetDefaultSessionClass()
-		{
-			return typeof(VirtualFtpSession);
-		}
+        protected override Type GetDefaultSessionClass()
+        {
+            return typeof(VirtualFtpSession);
+        }
 
-		#region Login & IP Check
-		protected override void InvokeOnUserLogin(FtpUserLoginEventArgs ea)
-		{
-#if DEBUGSERVER
-			Debug.EnterMethod("Login({0})", ea.UserName);
-			try
-			{
-#endif
-				if (fUserManager == null) return;
-				VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
-				ea.LoginOk = fUserManager.CheckLogin(ea.UserName, ea.Password, lSession);
-#if DEBUGSERVER
-				Debug.Write("Login result " + ea.LoginOk);
-#endif
-				base.InvokeOnUserLogin(ea);
-#if DEBUGSERVER
-			}
-			finally
-			{
-				Debug.ExitMethod("Login({0}):{1}", ea.UserName, ea.LoginOk);
-			}
-#endif
-		}
+        #region Login & IP Check
+        protected override void InvokeOnUserLogin(FtpUserLoginEventArgs e)
+        {
+            if (fUserManager == null)
+                return;
 
-		protected override void InvokeOnClientConnected(SessionEventArgs ea)
-		{
-			((VirtualFtpSession)ea.Session).CurrentFolder = fRootFolder;
-			if (fUserManager == null) return;
-			if (!fUserManager.CheckIP(ea.Connection.RemoteEndPoint, ea.Connection.LocalEndPoint))
-			{
-				ea.Connection.Disconnect();
-				throw new Exception("Access not allowed from this IP.");
-			}
-			base.InvokeOnClientConnected(ea);
-		}
-		#endregion
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
+            e.LoginOk = fUserManager.CheckLogin(e.UserName, e.Password, lSession);
+            base.InvokeOnUserLogin(e);
+        }
 
-		#region Folder handling
-		protected override void InvokeOnGetListing(FtpGetListingArgs ea)
-		{
-			VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
-#if DEBUGSERVER
-			Debug.Write("Getting Listing for {0}", lSession.CurrentFolder.FullPath);
-#endif
-			lSession.CurrentFolder.ListFolderItems(ea.Listing);
+        protected override void InvokeOnClientConnected(SessionEventArgs e)
+        {
+            ((VirtualFtpSession)e.Session).CurrentFolder = fRootFolder;
 
-			base.InvokeOnGetListing(ea);
-		}
+            if (fUserManager == null)
+                return;
 
-		protected override void InvokeOnChangeDirectory(FtpChangeDirectoryArgs ea)
-		{
-			string lPath = ea.NewDirectory;
+            if (!fUserManager.CheckIP(e.Connection.RemoteEndPoint, e.Connection.LocalEndPoint))
+            {
+                e.Connection.Disconnect();
+                throw new Exception("Access not allowed from this IP.");
+            }
 
-			if (lPath.IndexOf('/') != 0)
-				throw new Exception(String.Format("Not an absolute path: \"{0}\"", lPath));
+            base.InvokeOnClientConnected(e);
+        }
+        #endregion
 
-			VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
-			IFtpFolder lFolder = fRootFolder.DigForSubFolder(lPath.Substring(1), lSession);
+        #region Folder handling
+        protected override void InvokeOnGetListing(FtpGetListingArgs e)
+        {
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
 
-			if (lFolder != null)
-			{
-				((VirtualFtpSession)ea.Session).CurrentFolder = lFolder;
-			}
-			ea.ChangeDirOk = (lFolder != null);
-			base.InvokeOnChangeDirectory(ea);
-		}
+            lSession.CurrentFolder.ListFolderItems(e.Listing);
 
-		protected override void InvokeOnMakeDirectory(FtpFileEventArgs ea)
-		{
-			VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
+            base.InvokeOnGetListing(e);
+        }
 
-			IFtpFolder lFolder;
-			string lFilename;
+        protected override void InvokeOnChangeDirectory(FtpChangeDirectoryArgs e)
+        {
+            String lPath = e.NewDirectory;
 
-			lSession.CurrentFolder.FindBaseFolderForFilename(ea.FileName, out lFolder, out lFilename, lSession);
-			lFolder.CreateFolder(lFilename, lSession);
-			ea.Ok = true;
+            if (lPath.IndexOf('/') != 0)
+                throw new Exception(String.Format("Not an absolute path: \"{0}\"", lPath));
 
-		}
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
+            IFtpFolder lFolder = fRootFolder.DigForSubFolder(lPath.Substring(1), lSession);
 
-		protected override void InvokeOnDeleteDirectory(FtpFileEventArgs ea)
-		{
-			VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
-			IFtpFolder lFolder;
-			string lFilename;
+            if (lFolder != null)
+                ((VirtualFtpSession)e.Session).CurrentFolder = lFolder;
 
-			lSession.CurrentFolder.FindBaseFolderForFilename(ea.FileName, out lFolder, out lFilename, lSession);
-			lFolder.DeleteFolder(lFilename, false, lSession);
-			ea.Ok = true;
-		}
-		#endregion
+            e.ChangeDirOk = (lFolder != null);
+            base.InvokeOnChangeDirectory(e);
+        }
 
-		#region File Handling
-		protected override void InvokeOnCanStoreFile(FtpTransferEventArgs ea)
-		{
-			VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
-			IFtpFolder lFolder;
-			string lFilename;
+        protected override void InvokeOnMakeDirectory(FtpFileEventArgs e)
+        {
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
 
-			lSession.CurrentFolder.FindBaseFolderForFilename(ea.FileName, out lFolder, out lFilename, lSession);
-			ea.Ok = lFolder.AllowPut(lSession);
-		}
+            IFtpFolder lFolder;
+            String lFilename;
+            lSession.CurrentFolder.FindBaseFolderForFilename(e.FileName, out lFolder, out lFilename, lSession);
 
-		protected override void InvokeOnCanRetrieveFile(FtpTransferEventArgs ea)
-		{
-			VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
-			IFtpFolder lFolder;
-			string lFilename;
+            lFolder.CreateFolder(lFilename, lSession);
+            e.Ok = true;
 
-			lSession.CurrentFolder.FindBaseFolderForFilename(ea.FileName, out lFolder, out lFilename, lSession);
-			IFtpFile lFile = lFolder.GetFile(lFilename, lSession);
-			ea.Ok = (lFile != null && lFile.AllowRead(lSession));
-		}
+        }
 
-		protected override void InvokeOnStoreFile(FtpTransferEventArgs ea)
-		{
-			VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
-			IFtpFolder lFolder;
-			string lFilename;
+        protected override void InvokeOnDeleteDirectory(FtpFileEventArgs e)
+        {
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
 
-			lSession.CurrentFolder.FindBaseFolderForFilename(ea.FileName, out lFolder, out lFilename, lSession);
-			IFtpFile lFile = lFolder.CreateFile(lFilename, lSession);
-			lFile.CreateFile(ea.DataChannel);
-			ea.Ok = true;
-		}
+            IFtpFolder lFolder;
+            String lFilename;
+            lSession.CurrentFolder.FindBaseFolderForFilename(e.FileName, out lFolder, out lFilename, lSession);
 
-		protected override void InvokeOnRetrieveFile(FtpTransferEventArgs ea)
-		{
-			VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
-			IFtpFolder lFolder;
-			string lFilename;
+            lFolder.DeleteFolder(lFilename, false, lSession);
+            e.Ok = true;
+        }
+        #endregion
 
-			lSession.CurrentFolder.FindBaseFolderForFilename(ea.FileName, out lFolder, out lFilename, lSession);
-			IFtpFile lFile = lFolder.GetFile(lFilename, lSession);
-			lFile.GetFile(ea.DataChannel);
-			ea.Ok = true;
-		}
+        #region File Handling
+        protected override void InvokeOnCanStoreFile(FtpTransferEventArgs e)
+        {
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
 
-		protected override void InvokeOnRename(FtpRenameEventArgs ea)
-		{
-			VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
-			IFtpFolder lFolder;
-			string lFilename;
+            IFtpFolder lFolder;
+            String lFilename;
+            lSession.CurrentFolder.FindBaseFolderForFilename(e.FileName, out lFolder, out lFilename, lSession);
 
-			lSession.CurrentFolder.FindBaseFolderForFilename(ea.FileName, out lFolder, out lFilename, lSession);
-			lFolder.RenameFileOrFolder(lFilename, ea.NewFileName, lSession);
-			ea.Ok = true;
-		}
+            e.Ok = lFolder.AllowPut(lSession);
+        }
 
-		protected override void InvokeOnDelete(FtpFileEventArgs ea)
-		{
-			VirtualFtpSession lSession = (VirtualFtpSession)ea.Session;
-			IFtpFolder lFolder;
-			string lFilename;
+        protected override void InvokeOnCanRetrieveFile(FtpTransferEventArgs e)
+        {
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
 
-			lSession.CurrentFolder.FindBaseFolderForFilename(ea.FileName, out lFolder, out lFilename, lSession);
-			lFolder.DeleteFile(lFilename, lSession);
-			ea.Ok = true;
-		}
-		#endregion
+            IFtpFolder lFolder;
+            String lFilename;
+            lSession.CurrentFolder.FindBaseFolderForFilename(e.FileName, out lFolder, out lFilename, lSession);
 
-	}
+            IFtpFile lFile = lFolder.GetFile(lFilename, lSession);
+            e.Ok = (lFile != null && lFile.AllowRead(lSession));
+        }
 
+        protected override void InvokeOnStoreFile(FtpTransferEventArgs e)
+        {
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
+
+            IFtpFolder lFolder;
+            String lFilename;
+            lSession.CurrentFolder.FindBaseFolderForFilename(e.FileName, out lFolder, out lFilename, lSession);
+
+            IFtpFile lFile = lFolder.CreateFile(lFilename, lSession);
+            lFile.CreateFile(e.DataChannel);
+            e.Ok = true;
+        }
+
+        protected override void InvokeOnRetrieveFile(FtpTransferEventArgs e)
+        {
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
+
+            IFtpFolder lFolder;
+            String lFilename;
+            lSession.CurrentFolder.FindBaseFolderForFilename(e.FileName, out lFolder, out lFilename, lSession);
+
+            IFtpFile lFile = lFolder.GetFile(lFilename, lSession);
+            lFile.GetFile(e.DataChannel);
+            e.Ok = true;
+        }
+
+        protected override void InvokeOnRename(FtpRenameEventArgs e)
+        {
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
+
+            IFtpFolder lFolder;
+            String lFilename;
+            lSession.CurrentFolder.FindBaseFolderForFilename(e.FileName, out lFolder, out lFilename, lSession);
+
+            lFolder.RenameFileOrFolder(lFilename, e.NewFileName, lSession);
+            e.Ok = true;
+        }
+
+        protected override void InvokeOnDelete(FtpFileEventArgs e)
+        {
+            VirtualFtpSession lSession = (VirtualFtpSession)e.Session;
+
+            IFtpFolder lFolder;
+            String lFilename;
+            lSession.CurrentFolder.FindBaseFolderForFilename(e.FileName, out lFolder, out lFilename, lSession);
+
+            lFolder.DeleteFile(lFilename, lSession);
+            e.Ok = true;
+        }
+        #endregion
+    }
 }

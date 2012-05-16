@@ -1,29 +1,88 @@
+/*---------------------------------------------------------------------------
+  RemObjects Internet Pack for .NET - Virtual FTP Library
+  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+
+  Using this code requires a valid license of the RemObjects Internet Pack
+  which can be obtained at http://www.remobjects.com?ip.
+---------------------------------------------------------------------------*/
+
 using System;
 using System.Collections;
 using System.IO;
 using System.Net;
-using RemObjects.InternetPack;
 
 namespace RemObjects.InternetPack.Ftp.VirtualFtp
 {
+    public interface IFtpItem
+    {
+        IFtpFolder Parent { get; set; }
+        String Name { get; set; }
+        DateTime Date { get; }
 
-  public interface IFtpItem
-  {
-    IFtpFolder Parent { get; set; }    string Name { get; set; }    DateTime Date { get; }    string OwningUser { get; set;  }    string OwningGroup { get; set; }    bool AllowRead(VirtualFtpSession aSession);    bool AllowWrite(VirtualFtpSession aSession);    void FillFtpListingItem(FtpListingItem aItem);    void FillFtpListingItem(FtpListingItem aItem, string aAsName);    void Invalidate();  }
+        String OwningUser { get; set; }
+        String OwningGroup { get; set; }
 
-  public interface IFtpFolder: IFtpItem
-  {
-    IFtpFolder Root { get ; }    IEnumerable SubFolders { get ; }    IEnumerable Files { get ; }    bool HasSubfolder(string aFolderName);    IFtpFolder GetSubFolder(string aFolderName, VirtualFtpSession aSession);    IFtpFolder CreateFolder(string aFolderName, VirtualFtpSession aSession);    void DeleteFolder(string aFolderName, bool aRecursive, VirtualFtpSession aSession);    void ListFolderItems(FtpListing aListing);    IFtpFolder DigForSubFolder(string aFullPath, VirtualFtpSession aSession);    void FindBaseFolderForFilename(string aPath, out IFtpFolder aFolder, out string aFilename, VirtualFtpSession aSession);    string FullPath { get ; }    bool HasFile(string aFilename);    IFtpFile GetFile(string aFilename, VirtualFtpSession aSession);    IFtpFile CreateFile(string aFilename, VirtualFtpSession aSession);    void DeleteFile(string aFilename, VirtualFtpSession aSession);    void RenameFileOrFolder(string aOldFilename, string aNewFilename, VirtualFtpSession aSession);    void RemoveItem(IFtpItem aItem);    bool AllowBrowse(VirtualFtpSession aSession);    bool AllowGet(VirtualFtpSession aSession);    bool AllowPut(VirtualFtpSession aSession);    bool AllowMkDir(VirtualFtpSession aSession);    bool AllowDeleteItems(VirtualFtpSession aSession);    bool AllowRenameItems(VirtualFtpSession aSession);    bool AllowDeleteThis(VirtualFtpSession aSession);  }
+        Boolean AllowRead(VirtualFtpSession session);
+        Boolean AllowWrite(VirtualFtpSession session);
 
-  public interface IFtpFile: IFtpItem
-  {
-    int Size { get ; }    /* ToDo: add file rights */    void GetFile(Stream aToStream);    void CreateFile(Stream aFromStream);
-    bool AllowGet(VirtualFtpSession aSession);    bool AllowAppend(VirtualFtpSession aSession);    bool AllowDelete(VirtualFtpSession aSession);    bool AllowRename(VirtualFtpSession aSession);  }
+        void FillFtpListingItem(FtpListingItem item);
+        void FillFtpListingItem(FtpListingItem item, String aAsName);
 
-  public interface IFtpUserManager
-  {
-    bool CheckIP(EndPoint aRemote, EndPoint aLocal);
-    bool CheckLogin(string aUsername, string aPassword, VirtualFtpSession aSession);  }
+        void Invalidate();
+    }
 
+    public interface IFtpFolder : IFtpItem
+    {
+        IFtpFolder Root { get; }
 
+        IEnumerable SubFolders { get; }
+        IEnumerable Files { get; }
+
+        Boolean HasSubfolder(String folder);
+        IFtpFolder GetSubFolder(String folder, VirtualFtpSession session);
+        IFtpFolder CreateFolder(String folder, VirtualFtpSession session);
+        void DeleteFolder(String folder, Boolean recursive, VirtualFtpSession session);
+        void ListFolderItems(FtpListing listing);
+
+        IFtpFolder DigForSubFolder(String fullPath, VirtualFtpSession session);
+        void FindBaseFolderForFilename(String path, out IFtpFolder folder, out String filename, VirtualFtpSession session);
+
+        String FullPath { get; }
+
+        Boolean HasFile(String filename);
+        IFtpFile GetFile(String filename, VirtualFtpSession session);
+        IFtpFile CreateFile(String filename, VirtualFtpSession session);
+
+        void DeleteFile(String filename, VirtualFtpSession session);
+        void RenameFileOrFolder(String oldFilename, String newFilename, VirtualFtpSession session);
+
+        void RemoveItem(IFtpItem item);
+
+        Boolean AllowBrowse(VirtualFtpSession session);
+        Boolean AllowGet(VirtualFtpSession session);
+        Boolean AllowPut(VirtualFtpSession session);
+        Boolean AllowMkDir(VirtualFtpSession session);
+        Boolean AllowDeleteItems(VirtualFtpSession session);
+        Boolean AllowRenameItems(VirtualFtpSession session);
+        Boolean AllowDeleteThis(VirtualFtpSession session);
+    }
+
+    public interface IFtpFile : IFtpItem
+    {
+        Int32 Size { get; }
+
+        void GetFile(Stream destination);
+        void CreateFile(Stream source);
+
+        Boolean AllowGet(VirtualFtpSession session);
+        Boolean AllowAppend(VirtualFtpSession session);
+        Boolean AllowDelete(VirtualFtpSession session);
+        Boolean AllowRename(VirtualFtpSession session);
+    }
+
+    public interface IFtpUserManager
+    {
+        Boolean CheckIP(EndPoint remote, EndPoint local);
+        Boolean CheckLogin(String username, String password, VirtualFtpSession session);
+    }
 }
