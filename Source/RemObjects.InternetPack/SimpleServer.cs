@@ -32,6 +32,7 @@ namespace RemObjects.InternetPack
         public void Open()
         {
             this.Binding.BindUnthreaded();
+            this.Binding.ListeningSocket.Listen(this.Binding.MaxWaitConnections);
         }
 
         public void Close()

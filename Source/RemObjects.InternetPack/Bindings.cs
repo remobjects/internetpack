@@ -250,7 +250,6 @@ namespace RemObjects.InternetPack
             if (!this.EnableNagle)
                 this.fListeningSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1);
             this.fListeningSocket.Bind(this.fEndPoint);
-            this.fListeningSocket.Listen(0);
         }
 
         public virtual Connection Accept()
