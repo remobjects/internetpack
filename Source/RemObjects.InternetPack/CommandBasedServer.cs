@@ -286,9 +286,11 @@ namespace RemObjects.InternetPack.CommandBased
                         lArgs.AllParameters = lCmdLine.Substring(tempidx + 1).Trim();
                         lArgs.Parameters = lArgs.AllParameters.Split(SPACE);
                     }
-                    OnCommandHandler handler = (OnCommandHandler)lServer.Commands[lArgs.Command];
 
-                    if (handler == null)
+                    OnCommandHandler lCommandHandler;
+                    lServer.Commands.TryGetValue(lArgs.Command, out lCommandHandler);
+
+                    if (lCommandHandler == null)
                     {
                         DataConnection.WriteLine(String.Format(lServer.UnknownCommand, lArgs.Command));
                     }
@@ -296,7 +298,7 @@ namespace RemObjects.InternetPack.CommandBased
                     {
                         try
                         {
-                            handler(lServer, lArgs);
+                            lCommandHandler(lServer, lArgs);
                         }
                         catch (Exception ex)
                         {
