@@ -9,10 +9,6 @@ uses
   RemObjects.InternetPack.Http,
   System.IO;
 type
-  LogRequestDelegate = delegate(request: String);
-  /// <summary>
-  /// Summary description for MainForm.
-  /// </summary>
   MainForm = class(System.Windows.Forms.Form)
   {$REGION Windows Form Designer generated fields}
   private
@@ -54,6 +50,10 @@ type
     constructor;
     class method Main;
   end;
+
+
+  LogRequestDelegate = delegate(request: String);
+
 
 implementation
 

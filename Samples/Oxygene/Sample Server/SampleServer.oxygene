@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <RootNamespace>SampleServer</RootNamespace>
     <OutputType>WinExe</OutputType>
@@ -34,11 +34,11 @@
   <ItemGroup>
     <Content Include="App.ico" />
     <Compile Include="AssemblyInfo.pas" />
-    <Compile Include="Main.pas">
-      <Subtype>Form</Subtype>
+    <Compile Include="MainForm.pas">
+      <SubType>Form</SubType>
       <DesignableClassName>SampleServer.MainForm</DesignableClassName>
     </Compile>
-    <EmbeddedResource Include="Main.resx" />
+    <EmbeddedResource Include="MainForm.resx" />
     <Content Include="HttpRoot\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -54,4 +54,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Chrome\RemObjects.Chrome.targets" />
+  <PropertyGroup>
+    <PreBuildEvent />
+  </PropertyGroup>
 </Project>
