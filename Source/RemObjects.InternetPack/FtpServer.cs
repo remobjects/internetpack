@@ -1161,16 +1161,20 @@ namespace RemObjects.InternetPack.Ftp
                     lSession.PassiveServer = new SimpleServer();
 
                     lSession.PassiveServer.Binding.Address = ((IPEndPoint)e.Connection.LocalEndPoint).Address;
-                    lSession.PassiveServer.Open();
+                    if (!lSession.PassiveServer.Open())
+                    {
+                        e.Connection.WriteLine("421 Can't create socket");
+                        return;
+                    }
                 }
                 lSession.Passive = true;
 
                 Byte[] lAddress;
 #if FULLFRAMEWORK
-                lAddress = ((IPEndPoint)lSession.PassiveServer.Binding.ListeningSocket.LocalEndPoint).Address.GetAddressBytes();
+                lAddress = lSession.PassiveServer.GetLocalEndpointAddress().GetAddressBytes();
 #endif
 #if COMPACTFRAMEWORK
-                IPAddress lIPAddress = ((IPEndPoint)lSession.PassiveServer.Binding.ListeningSocket.LocalEndPoint).Address;
+                IPAddress lIPAddress = lSession.PassiveServer.GetLocalEndpointAddress();
                 String[] lIPAddressstr = lIPAddress.ToString().Split(new Char[] {'.'});
                 lAddress = new Byte[lIPAddressstr.Length];
                 for (Int32 i = 0; i < lIPAddressstr.Length; i++)
