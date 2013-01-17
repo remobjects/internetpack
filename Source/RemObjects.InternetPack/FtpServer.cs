@@ -1161,7 +1161,11 @@ namespace RemObjects.InternetPack.Ftp
                     lSession.PassiveServer = new SimpleServer();
 
                     lSession.PassiveServer.Binding.Address = ((IPEndPoint)e.Connection.LocalEndPoint).Address;
-                    lSession.PassiveServer.Open();
+                    if (!lSession.PassiveServer.Open())
+                    {
+                        e.Connection.WriteLine("421 Can't create socket");
+                        return;
+                    }
                 }
                 lSession.Passive = true;
 
