@@ -237,12 +237,16 @@ namespace RemObjects.InternetPack
             if (this.fListeningSocket == null)
                 return;
 
-            this.fListeningSocket.Close();
+            using (this.fListeningSocket)
+            {
+                this.fListeningSocket.Close();
 #if FULLFRAMEWORK
-            if (block && this.fListenThreads != null)
-                for (Int32 i = 0; i < this.fListenThreads.Length; i++)
-                    this.fListenThreads[i].Join();
+                if (block && this.fListenThreads != null)
+                    for (Int32 i = 0; i < this.fListenThreads.Length; i++)
+                        this.fListenThreads[i].Join();
 #endif
+                this.fListeningSocket = null;
+            }
         }
 
         public virtual void BindUnthreaded()
@@ -251,7 +255,20 @@ namespace RemObjects.InternetPack
             this.fListeningSocket = new Socket(this.AddressFamily, this.SocketType, this.Protocol);
             if (!this.EnableNagle)
                 this.fListeningSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1);
-            this.fListeningSocket.Bind(this.fEndPoint);
+
+            try
+            {
+                this.fListeningSocket.Bind(this.fEndPoint);
+            }
+            catch (SocketException)
+            {
+                using (this.fListeningSocket)
+                {
+                    this.fListeningSocket = null;
+                }
+                this.fEndPoint = null;
+                throw;
+            }
         }
 
         public virtual Connection Accept()
