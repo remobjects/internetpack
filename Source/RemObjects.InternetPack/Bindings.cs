@@ -131,6 +131,8 @@ namespace RemObjects.InternetPack
 
     public class ServerBinding : Binding
     {
+        ManualResetEvent _accepted;
+
         public ServerBinding()
         {
             this.fListenerThreadCount = 1;
@@ -254,7 +256,27 @@ namespace RemObjects.InternetPack
 
         public virtual Connection Accept()
         {
-            return new Connection(this.fListeningSocket.Accept());
+            using (_accepted = new ManualResetEvent(false))
+            {
+                var cancelThread = new Thread(CancelAccept);
+                cancelThread.Start();
+
+                var socket = this.fListeningSocket.Accept();
+
+                _accepted.Set();
+                cancelThread.Join();
+                _accepted = null;
+
+                return new Connection(socket);
+            }
+        }
+
+        void CancelAccept()
+        {
+            if (_accepted.WaitOne(TimeSpan.FromSeconds(20)))
+                return;
+
+            fListeningSocket.Close();
         }
     }
 
