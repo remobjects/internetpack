@@ -1171,10 +1171,10 @@ namespace RemObjects.InternetPack.Ftp
 
                 Byte[] lAddress;
 #if FULLFRAMEWORK
-                lAddress = ((IPEndPoint)lSession.PassiveServer.Binding.ListeningSocket.LocalEndPoint).Address.GetAddressBytes();
+                lAddress = lSession.PassiveServer.GetLocalEndpointAddress().GetAddressBytes();
 #endif
 #if COMPACTFRAMEWORK
-                IPAddress lIPAddress = ((IPEndPoint)lSession.PassiveServer.Binding.ListeningSocket.LocalEndPoint).Address;
+                IPAddress lIPAddress = lSession.PassiveServer.GetLocalEndpointAddress();
                 String[] lIPAddressstr = lIPAddress.ToString().Split(new Char[] {'.'});
                 lAddress = new Byte[lIPAddressstr.Length];
                 for (Int32 i = 0; i < lIPAddressstr.Length; i++)

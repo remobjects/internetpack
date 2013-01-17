@@ -16,6 +16,7 @@ namespace RemObjects.InternetPack
     public class SimpleServer
     {
         public static readonly SimplePortPool Pool = new SimplePortPool();
+        public static IPAddress LocalEndpointIpAddress;
         public SimpleServer()
         {
             this.fBinding = new ServerBinding();
@@ -64,6 +65,16 @@ namespace RemObjects.InternetPack
         public Connection WaitForConnection()
         {
             return this.Binding.Accept();
+        }
+
+        public IPAddress GetLocalEndpointAddress()
+        {
+            return LocalEndpointIpAddress ?? ((IPEndPoint)Binding.ListeningSocket.LocalEndPoint).Address;
+        }
+
+        public Int32 GetLocalEndpointPort()
+        {
+            return ((IPEndPoint) Binding.ListeningSocket.LocalEndPoint).Port;
         }
     }
 
