@@ -6,10 +6,13 @@
     <AssemblyName>SampleServer</AssemblyName>
     <AllowGlobals>False</AllowGlobals>
     <AllowLegacyCreate>False</AllowLegacyCreate>
-    <ApplicationIcon>App.ico</ApplicationIcon>
+    <ApplicationIcon>Properties\App.ico</ApplicationIcon>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <ProjectGuid>{90E5FBCE-0445-40DB-BEC8-933B393487FE}</ProjectGuid>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <DefaultUses />
+    <StartupClass />
+    <InternalAssemblyName />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DefineConstants>DEBUG;TRACE;</DefineConstants>
@@ -32,12 +35,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App.ico" />
-    <Compile Include="AssemblyInfo.pas" />
+    <Compile Include="Properties\AssemblyInfo.pas">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="MainForm.pas">
       <SubType>Form</SubType>
       <DesignableClassName>SampleServer.MainForm</DesignableClassName>
     </Compile>
+    <Content Include="Properties\App.ico">
+      <SubType>Content</SubType>
+    </Content>
     <EmbeddedResource Include="MainForm.resx" />
     <Content Include="HttpRoot\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -53,7 +60,7 @@
     <Folder Include="HttpRoot\" />
     <Folder Include="Properties\" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Chrome\RemObjects.Chrome.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Oxygene\RemObjects.Oxygene.Echoes.targets" />
   <PropertyGroup>
     <PreBuildEvent />
   </PropertyGroup>

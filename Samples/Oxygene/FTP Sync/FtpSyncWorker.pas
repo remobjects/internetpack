@@ -54,12 +54,12 @@ implementation
 
 method FtpSyncWorker.ServerLog(Sender: object; ea: RemObjects.InternetPack.CommandBased.ClientLogArgs);
 begin
-	if (fDoShowFtpClientLog) then begin
-    var lIcon: String := ' ';
+	if self.fDoShowFtpClientLog then begin
+    var lIcon: String;
 		case ea.Direction of
-		  RemObjects.InternetPack.CommandBased.LogDirection.Receive: lIcon := '<';
-			RemObjects.InternetPack.CommandBased.LogDirection.Send:	lIcon := '>';
-			RemObjects.InternetPack.CommandBased.LogDirection.Status:	lIcon := '!';
+		  RemObjects.InternetPack.Events.TransferDirection.Receive: lIcon := '<';
+			RemObjects.InternetPack.Events.TransferDirection.Send:	  lIcon := '>';
+			RemObjects.InternetPack.Events.TransferDirection.None:	  lIcon := '!';
 		end;		
 				
 		Console.WriteLine('[{0}] {1}', lIcon, ea.Text);

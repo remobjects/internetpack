@@ -1,5 +1,4 @@
 Module FtpSyncMain
-
     Sub Main(ByVal args As String())
         Dim lWorker As FtpSyncWorker
         lWorker = New FtpSyncWorker

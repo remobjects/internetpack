@@ -1,7 +1,7 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2008
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "HttpSpy", "HttpSpy.2010.vbproj", "{DBBF660A-6931-4C8B-9048-0FFCA1CB8308}"
+# Visual Studio 2010
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "HttpSpy.2010", "HttpSpy.2010.vbproj", "{DBBF660A-6931-4C8B-9048-0FFCA1CB8308}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

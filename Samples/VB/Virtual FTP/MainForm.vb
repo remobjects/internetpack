@@ -194,7 +194,7 @@ Public Class MainForm
         If btnStartStop.Text = "Start" Then
             addToLog("Starting Virtual FTP on " & port.ToString() & " port...")
             StartServer(port)
-            llShortcut.Text = String.Format("ftp://localhost:{0}/", port)
+            llShortcut.Text = String.Format("ftp://127.0.0.1:{0}/", port)
             addToLog("Virtual FTP is running under " & Environment.OSVersion.ToString())
             btnStartStop.Text = "Stop"
         Else

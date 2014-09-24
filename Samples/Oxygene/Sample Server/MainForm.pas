@@ -32,20 +32,21 @@ type
     GroupBox1: System.Windows.Forms.GroupBox;
   {$ENDREGION}
   private
-    fEchoServer: EchoServer;
-    fHttpServer: SimpleHttpServer;
-    method nudPort_ValueChanged(sender: System.Object; e: System.EventArgs);
-    method MainForm_Closed(sender: System.Object; e: System.EventArgs);
-    method MainForm_Load(sender: System.Object; e: System.EventArgs);
-    method lblLink_LinkClicked(sender: System.Object; e: System.Windows.Forms.LinkLabelLinkClickedEventArgs);
+    var fEchoServer: EchoServer;
+    var fHttpServer: SimpleHttpServer;
+
+    method nudPort_ValueChanged(sender: Object;  e: EventArgs);
+    method MainForm_Closed(sender: Object;  e: EventArgs);
+    method MainForm_Load(sender: Object;  e: EventArgs);
+    method lblLink_LinkClicked(sender: Object;  e: System.Windows.Forms.LinkLabelLinkClickedEventArgs);
     method ActivateServers();
     method DeactivateServers();
     method SetEnable(mode: Boolean);
     method AddLog(line: String);
-    method LogRequest(aSender: object; ea: OnHttpRequestArgs);
-  method btnAction_Click(sender: System.Object; e: System.EventArgs);
+    method LogRequest(sender: Object;  e: HttpRequestEventArgs);
+    method btnAction_Click(sender: Object;  e: EventArgs);
   protected
-    method Dispose(aDisposing: boolean); override;
+    method Dispose(aDisposing: Boolean); override;
   public
     constructor;
     class method Main;
@@ -324,6 +325,7 @@ begin
       DeactivateServers();
 end;
 
+
  method MainForm.ActivateServers();
  begin
     AddLog('Trying to activate servers...');
@@ -341,22 +343,22 @@ end;
     fHttpServer.RootPath := txtRoot.Text;
     fHttpServer.ServerName := txtServerName.Text;
     fHttpServer.Binding.ListenerThreadCount := Convert.ToInt32(nudCount.Value);
-    //fHttpServer.OnHttpRequest += new LogRequestDelegate(@Self.LogRequest);
-    fHttpServer.OnHttpRequest += new OnHttpRequestHandler(LogRequest);
+    fHttpServer.HttpRequest += new HttpRequestEventHandler(LogRequest);
     fHttpServer.Open();
     AddLog(String.Format('SimpleHttpServer is active on {0} port.', fHttpServer.Port));
     SetEnable(False);
     AddLog('Servers activated.');
     btnAction.Text := 'Deactivate Servers';
   end;
-   
-  method MainForm.LogRequest(aSender: object; ea: OnHttpRequestArgs);
-  begin
-    AddLog(String.Format('Request to {0}', ea.Request.Header.RequestPath))
-  end;
 
+
+ method MainForm.LogRequest(sender: Object;  e: HttpRequestEventArgs);
+ begin
+   AddLog(String.Format('Request to {0}', e.Request.Header.RequestPath))
+ end;
    
-  method MainForm.SetEnable(mode: Boolean);
+
+method MainForm.SetEnable(mode: Boolean);
   begin
     lblPort.Enabled := mode;
     nudPort.Enabled := mode;

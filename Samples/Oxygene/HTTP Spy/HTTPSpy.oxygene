@@ -1,14 +1,18 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <RootNamespace>HTTPSpy</RootNamespace>
     <OutputType>WinExe</OutputType>
     <AssemblyName>HTTPSpy</AssemblyName>
     <AllowGlobals>False</AllowGlobals>
     <AllowLegacyCreate>False</AllowLegacyCreate>
-    <ApplicationIcon>App.ico</ApplicationIcon>
+    <ApplicationIcon>Properties\App.ico</ApplicationIcon>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <ProjectGuid>{68032377-D8D8-4FEB-88F9-92658A6A56A2}</ProjectGuid>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <DefaultUses />
+    <StartupClass />
+    <InternalAssemblyName />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DefineConstants>DEBUG;TRACE;</DefineConstants>
@@ -23,6 +27,7 @@
     <Reference Include="mscorlib">
     </Reference>
     <Reference Include="RemObjects.InternetPack">
+      <HintPath>..\..\..\Bin\RemObjects.InternetPack.dll</HintPath>
     </Reference>
     <Reference Include="System">
     </Reference>
@@ -36,17 +41,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App.ico" />
-    <Compile Include="AssemblyInfo.pas" />
-    <Compile Include="Main.pas">
-      <Subtype>Form</Subtype>
+    <Compile Include="Properties\AssemblyInfo.pas">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="App.config">
+      <SubType>Content</SubType>
+    </Content>
+    <Compile Include="MainForm.pas">
+      <SubType>Form</SubType>
       <DesignableClassName>HTTPSpy.MainForm</DesignableClassName>
     </Compile>
-    <EmbeddedResource Include="Main.resx" />
+    <Content Include="Properties\App.ico">
+      <SubType>Content</SubType>
+    </Content>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.pas</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Program.pas" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Chrome\RemObjects.Chrome.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Oxygene\RemObjects.Oxygene.Echoes.targets" />
+  <PropertyGroup>
+    <PreBuildEvent />
+  </PropertyGroup>
 </Project>

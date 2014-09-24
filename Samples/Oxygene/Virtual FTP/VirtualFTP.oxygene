@@ -1,14 +1,18 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <RootNamespace>VirtualFTP</RootNamespace>
     <OutputType>WinExe</OutputType>
     <AssemblyName>VirtualFTP</AssemblyName>
     <AllowGlobals>False</AllowGlobals>
     <AllowLegacyCreate>False</AllowLegacyCreate>
-    <ApplicationIcon>App.ico</ApplicationIcon>
+    <ApplicationIcon>Properties\App.ico</ApplicationIcon>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <ProjectGuid>{71130CD9-002B-49BC-811A-1F172BFBAA28}</ProjectGuid>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <DefaultUses />
+    <StartupClass />
+    <InternalAssemblyName />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DefineConstants>DEBUG;TRACE;</DefineConstants>
@@ -39,16 +43,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App.ico" />
-    <Compile Include="AssemblyInfo.pas" />
+    <Compile Include="Properties\AssemblyInfo.pas">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Main.pas">
       <Subtype>Form</Subtype>
       <DesignableClassName>VirtualFTP.MainForm</DesignableClassName>
     </Compile>
+    <Content Include="Properties\App.ico">
+      <SubType>Content</SubType>
+    </Content>
     <EmbeddedResource Include="Main.resx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Chrome\RemObjects.Chrome.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Oxygene\RemObjects.Oxygene.Echoes.targets" />
+  <PropertyGroup>
+    <PreBuildEvent />
+  </PropertyGroup>
 </Project>

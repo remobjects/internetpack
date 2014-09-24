@@ -272,7 +272,7 @@ Public Class MainForm
         AddLog(String.Format("Request to {0}", aStatus))
     End Sub
 
-    Public Sub OnHttpRequest(ByVal aSender As Object, ByVal ea As OnHttpRequestArgs) Handles fHttpServer.OnHttpRequest
+    Public Sub OnHttpRequest(ByVal aSender As Object, ByVal ea As HttpRequestEventArgs) Handles fHttpServer.HttpRequest
         Dim myDelegate As StatusEventHandler
         myDelegate = AddressOf ThreadSaveSetStatus
         Invoke(myDelegate, ea.Request.Header.RequestPath)

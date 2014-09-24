@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualFTP", "VirtualFTP.2012.csproj", "{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		IDE|Any CPU = IDE|Any CPU
+		Release|Any CPU = Release|Any CPU
+		RO|Any CPU = RO|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}.IDE|Any CPU.ActiveCfg = Release|Any CPU
+		{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}.IDE|Any CPU.Build.0 = Release|Any CPU
+		{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}.RO|Any CPU.ActiveCfg = Release|Any CPU
+		{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}.RO|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

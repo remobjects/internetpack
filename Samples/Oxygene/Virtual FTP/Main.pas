@@ -198,10 +198,11 @@ begin
   If (btnStartStop.Text = 'Start') Then Begin
       addToLog('Starting Virtual FTP on ' + port.ToString() + ' port...');
       StartServer(port);
-      llShortcut.Text := String.Format('ftp://localhost:{0}/', port);
+      llShortcut.Text := String.Format('ftp://127.0.0.1:{0}/', port);
       addToLog('Virtual FTP is running under ' + Environment.OSVersion.ToString());
       btnStartStop.Text := 'Stop';
-  End Else Begin
+  End
+  Else  Begin
       addToLog('Shutting down Virtual FTP ...');
       StopServer();
       llShortcut.Text := '';

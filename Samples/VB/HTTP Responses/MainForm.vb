@@ -106,7 +106,7 @@ Public Class MainForm
 
     Private Delegate Sub InvokeDelegate(ByVal aString As String)
 
-    Private Sub HttpServer_OnHttpRequest(ByVal aSender As Object, ByVal ea As RemObjects.InternetPack.Http.OnHttpRequestArgs) Handles HttpServer.OnHttpRequest
+    Private Sub HttpServer_OnHttpRequest(ByVal sender As Object, ByVal ea As RemObjects.InternetPack.Http.HttpRequestEventArgs) Handles HttpServer.HttpRequest
         Invoke(New InvokeDelegate(AddressOf Invoke_LogMessage), ea.Request.Header.RequestPath)
         Select Case ea.Request.Header.RequestPath
             Case "/", "/home"
@@ -125,7 +125,7 @@ Public Class MainForm
                 ea.Response.Header.SetHeaderValue("Content-Type", "application/binary")
 
             Case "/error"
-                ea.Response.SendError(555, "Custom Error", "A custom error message")
+                ea.Response.SendError(555, "Custom Error")
 
             Case "/file"
                 Dim lExeName As String = Me.GetType().Assembly.Location
@@ -135,11 +135,11 @@ Public Class MainForm
                     ea.Response.Header.SetHeaderValue("Content-Type", "application/binary")
                     ea.Response.CloseStream = True ' default, anyway
                 Catch e As Exception
-                    ea.Response.SendError(404, String.Format("File {0} not found", lExeName), e)
+                    ea.Response.SendError(System.Net.HttpStatusCode.NotFound, String.Format("File {0} not found", lExeName))
                 End Try
 
             Case Else
-                ea.Response.SendError(404, "requested path not found")
+                ea.Response.SendError(System.Net.HttpStatusCode.NotFound, "Requested path not found")
         End Select
 
     End Sub

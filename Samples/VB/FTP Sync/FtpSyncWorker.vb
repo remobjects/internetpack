@@ -3,13 +3,14 @@ Imports System.IO
 Imports System.Collections.Specialized
 Imports System.Text.RegularExpressions
 Imports RemObjects.InternetPack.Ftp
+
 Public Class FtpSyncWorker
 
     Public Sub New()
 
     End Sub
 
-#Region " private fields... "
+#Region "Private fields"
     Private _LocalDirectory As String
     Private _Server As String
     Private _ServerDirectory As String
@@ -22,7 +23,6 @@ Public Class FtpSyncWorker
     Private _ShowLog As Boolean
     Private WithEvents _Ftp As FtpClient
 #End Region
-
 
     Public Sub Log(ByVal Sender As Object, ByVal ea As RemObjects.InternetPack.CommandBased.ClientLogArgs) Handles _Ftp.OnLog
         If _ShowLog Then
@@ -222,8 +222,7 @@ Public Class FtpSyncWorker
         Return Not lBadParam
     End Function
 
-#Region "public properties..."
-
+#Region "Properties"
     Property LocalDirectory() As String
         Get
             Return _LocalDirectory
@@ -281,4 +280,5 @@ Public Class FtpSyncWorker
         End Set
     End Property
 #End Region
+
 End Class
