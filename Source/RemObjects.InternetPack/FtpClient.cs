@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2013. All rights reserved.
 
   Using this code requires a valid license of the RemObjects Internet Pack
   which can be obtained at http://www.remobjects.com?ip.
@@ -315,17 +315,17 @@ namespace RemObjects.InternetPack.Ftp
             this.fDataAddress = IPAddress.Parse(String.Format("{0}.{1}.{2}.{3}", lGroups["A1"].Value, lGroups["A2"].Value, lGroups["A3"].Value, lGroups["A4"].Value));
             this.fDataPort = (Byte.Parse(lGroups["P1"].Value) * 256) + Byte.Parse(lGroups["P2"].Value);
 
-            this.SendLog(LogDirection.Status, "Connecting to {0}:{1}", this.fDataAddress, this.fDataPort);
+            this.SendLog(TransferDirection.None, "Connecting to {0}:{1}", this.fDataAddress, this.fDataPort);
             this.fDataConnection = this.NewConnection(CurrentConnection.Binding);
             this.fDataConnection.Connect(this.fDataAddress, this.fDataPort);
             this.fDataConnection.Encoding = Encoding;
-            this.SendLog(LogDirection.Status, "Connected to {0} port {1}", this.fDataAddress, this.fDataPort);
+            this.SendLog(TransferDirection.None, "Connected to {0} port {1}", this.fDataAddress, this.fDataPort);
 
             this.fDataConnection.OnBytesReceived += this.TriggerOnBytesReceived;
             this.fDataConnection.OnBytesSent += this.InternalOnBytesSent;
         }
 
-         public void StartActiveConnection()
+        public void StartActiveConnection()
         {
             if (this.fDataConnection != null)
             {

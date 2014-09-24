@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2013. All rights reserved.
 
   Using this code requires a valid license of the RemObjects Internet Pack
   which can be obtained at http://www.remobjects.com?ip.
@@ -27,20 +27,33 @@ namespace RemObjects.InternetPack
 
                 Int32 lActualPort = this.Port;
 
-                if (this.BindingV4 != null && this.BindV4)
-                {
-                    this.BindingV4.BindUnthreaded();
-                    this.BindingV4.ListeningSocket.Listen(this.BindingV4.MaxWaitConnections);
-                    this.BindingV4.ListeningSocket.BeginAccept(new AsyncCallback(AcceptCallback), this.BindingV4.ListeningSocket);
-                    lActualPort = ((System.Net.IPEndPoint)this.BindingV4.ListeningSocket.LocalEndPoint).Port;
-                }
+                Boolean lBindV6 = (this.BindingV6 != null) && this.BindV6;
 
-                if (this.BindingV6 != null && this.BindV6)
+                if (lBindV6)
                 {
                     this.BindingV6.BindUnthreaded();
                     this.BindingV6.ListeningSocket.Listen(this.BindingV6.MaxWaitConnections);
                     this.BindingV6.ListeningSocket.BeginAccept(new AsyncCallback(AcceptCallback), this.BindingV6.ListeningSocket);
                     lActualPort = ((System.Net.IPEndPoint)this.BindingV6.ListeningSocket.LocalEndPoint).Port;
+                }
+
+                // There is a chance that this will fail on Mono
+                // Unfortunately this code shouldn't fail on Mac while it WILL fail on Linux
+                // And no one can warrant that suddenly the Mono/Linu bug won't be fixed
+                if (this.BindingV4 != null && this.BindV4)
+                {
+                    try
+                    {
+                        this.BindingV4.BindUnthreaded();
+                        this.BindingV4.ListeningSocket.Listen(this.BindingV4.MaxWaitConnections);
+                        this.BindingV4.ListeningSocket.BeginAccept(new AsyncCallback(AcceptCallback), this.BindingV4.ListeningSocket);
+                        lActualPort = ((System.Net.IPEndPoint)this.BindingV4.ListeningSocket.LocalEndPoint).Port;
+                    }
+                    catch (SocketException)
+                    {
+                        if (!(lBindV6 && Server.IsRunningOnMono()))
+                            throw;
+                    }
                 }
 
                 if (lActualPort != this.Port)
@@ -121,14 +134,18 @@ namespace RemObjects.InternetPack
 
                 if (lWorker.DataConnection.BeginInitializeServerConnection(new AsyncCallback(SetupCallback), lWorker) == null)
                     lWorker.Setup();
-
-                ((Socket)ar.AsyncState).BeginAccept(new AsyncCallback(AcceptCallback), ar.AsyncState);
-
             }
-            catch 
+            catch
             {
                 // Is not a perfect solution but we must not allow exceptions to escape
-                return;
+            }
+            try
+            {
+                ((Socket)ar.AsyncState).BeginAccept(new AsyncCallback(AcceptCallback), ar.AsyncState);
+            }
+            catch
+            {
+                // Is not a perfect solution but we must not allow exceptions to escape
             }
         }
 

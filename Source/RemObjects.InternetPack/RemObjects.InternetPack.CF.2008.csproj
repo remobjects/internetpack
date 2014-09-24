@@ -99,6 +99,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\FtpException.cs" />
+    <Compile Include="Exceptions\HttpHeaderException.cs" />
+    <Compile Include="Exceptions\HttpRequestInvalidException.cs" />
     <Compile Include="Asn1.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -216,6 +219,8 @@
     <Compile Include="WorkerCollection.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EventArgs\AsyncHttpRequestEventArgs.cs" />
+    <Compile Include="EventArgs\HttpRequestEventArgs.cs" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>

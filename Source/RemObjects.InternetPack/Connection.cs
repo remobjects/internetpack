@@ -115,13 +115,9 @@ namespace RemObjects.InternetPack
         {
             get
             {
-#if MONOANDROID
-                if (this.fEncoding == null) 
-                    this.fEncoding = Encoding.UTF8;
-#else
                 if (this.fEncoding == null)
                     this.fEncoding = Encoding.Default;
-#endif
+
                 return this.fEncoding;
             }
             set
@@ -390,19 +386,22 @@ namespace RemObjects.InternetPack
 
         protected virtual void DataSocketClose()
         {
-            if (DataSocket.Connected)
+            try
             {
-                try
+                if (DataSocket.Connected)
                 {
-                    DataSocket.Shutdown(SocketShutdown.Both);
+                    try
+                    {
+                        DataSocket.Shutdown(SocketShutdown.Both);
+                        DataSocket.Close();
+                    }
+                    catch (SocketException)
+                    {
+                    }
                 }
-                catch (ObjectDisposedException)
-                {
-                }
-                catch (SocketException)
-                {
-                }
-                DataSocket.Close();
+            }
+            catch (ObjectDisposedException)
+            {
             }
         }
 
@@ -780,7 +779,7 @@ namespace RemObjects.InternetPack
 
         public override void Close()
         {
-            this.DataSocketClose();
+            this.DataSocketClose(true);
             base.Close();
 
             if (fTimeoutTimer != null)
@@ -792,10 +791,7 @@ namespace RemObjects.InternetPack
 
         public void Close(Boolean dispose)
         {
-            DataSocketClose(dispose);
-
-            if (dispose)
-                base.Close();
+			Close();
         }
 
         public override Int32 Read(Byte[] buffer, Int32 offset, Int32 size)
@@ -1088,44 +1084,12 @@ namespace RemObjects.InternetPack
 
         protected virtual IAsyncResult IntBeginRead(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)
         {
-            if (fBuffer != null && fBufferEnd - fBufferStart > 0)
-            {
-                IAsyncResult lAr = new BufferAsyncResult(buffer, offset, count, state);
-                callback(lAr);
-
-                return lAr;
-            }
 
             return fDataSocket.BeginReceive(buffer, offset, count, SocketFlags.None, callback, state);
         }
 
         protected virtual Int32 IntEndRead(IAsyncResult ar)
         {
-            if (ar is BufferAsyncResult)
-            {
-                BufferAsyncResult lBufferResult = (BufferAsyncResult)ar;
-                if (fBufferEnd - fBufferStart > lBufferResult.fCount)
-                {
-                    for (Int32 i = 0; i < lBufferResult.fCount; i++)
-                        lBufferResult.fBuffer[lBufferResult.fOffset + i] = fBuffer[i + fBufferStart];
-
-                    fBufferStart += lBufferResult.fCount;
-
-                    return lBufferResult.fCount;
-                }
-                else
-                {
-                    Int32 lSize = fBufferEnd - fBufferStart;
-                    for (Int32 i = 0; i < lSize; i++)
-                        lBufferResult.fBuffer[lBufferResult.fOffset + i] = fBuffer[i + fBufferStart];
-
-                    fBufferStart = 0;
-                    fBufferEnd = 0;
-
-                    return lSize;
-                }
-            }
-
             return fDataSocket.EndReceive(ar);
         }
 
@@ -1412,6 +1376,15 @@ namespace RemObjects.InternetPack
 
             try
             {
+
+                if (fBuffer != null && fBufferEnd - fBufferStart > 0)
+                {
+                    IAsyncResult lAr = new BufferAsyncResult(buffer, offset, count, lRequest);
+                    IntReadCallback(lAr);
+
+                    return lAr;
+                }
+
                 IntBeginRead(buffer, offset, count, new AsyncCallback(IntReadCallback), lRequest);
             }
             catch (ObjectDisposedException) // disconnect from this side
@@ -1435,7 +1408,31 @@ namespace RemObjects.InternetPack
 
             try
             {
-                lCount = IntEndRead(ar);
+                if (ar is BufferAsyncResult)
+                {
+                    BufferAsyncResult lBufferResult = (BufferAsyncResult)ar;
+                    if (fBufferEnd - fBufferStart > lBufferResult.fCount)
+                    {
+                        for (Int32 i = 0; i < lBufferResult.fCount; i++)
+                            lBufferResult.fBuffer[lBufferResult.fOffset + i] = fBuffer[i + fBufferStart];
+
+                        fBufferStart += lBufferResult.fCount;
+
+                        lCount = lBufferResult.fCount;
+                    }
+                    else
+                    {
+                        Int32 lSize = fBufferEnd - fBufferStart;
+                        for (Int32 i = 0; i < lSize; i++)
+                            lBufferResult.fBuffer[lBufferResult.fOffset + i] = fBuffer[i + fBufferStart];
+
+                        fBufferStart = 0;
+                        fBufferEnd = 0;
+
+                        lCount = lSize;
+                    }
+                } else
+                    lCount = IntEndRead(ar);
             }
             catch (ObjectDisposedException) // disconnect from this side
             {

@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2013. All rights reserved.
 
   Using this code requires a valid license of the RemObjects Internet Pack
   which can be obtained at http://www.remobjects.com?ip.
@@ -136,6 +136,8 @@ namespace RemObjects.InternetPack
             this.fListenerThreadCount = 1;
             this.fMaxWaitConnections = 10;
             this.fEnableNagle = false;
+            this.fReuseAddress = true;
+            this.fEnableNagle = false;
         }
 
         #region Properties
@@ -148,6 +150,20 @@ namespace RemObjects.InternetPack
             }
         }
         private Socket fListeningSocket;
+
+        [Browsable(false)]
+        private Boolean ReuseAddress
+        {
+            get
+            {
+                return fReuseAddress;
+            }
+            set
+            {
+                fReuseAddress = value;
+            }
+        }
+        private Boolean fReuseAddress;
 
         [Browsable(false)]
         public IPEndPoint EndPoint
@@ -199,7 +215,7 @@ namespace RemObjects.InternetPack
                 this.fEnableNagle = value;
             }
         }
-        private Boolean fEnableNagle = false;
+        private Boolean fEnableNagle;
         #endregion
 
         private Thread[] fListenThreads;
@@ -210,6 +226,10 @@ namespace RemObjects.InternetPack
             this.fListeningSocket = new Socket(this.AddressFamily, this.SocketType, this.Protocol);
             if (!this.EnableNagle)
                 this.fListeningSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1);
+#if FULLFRAMEWORK
+            if (this.ReuseAddress)
+                this.fListeningSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+#endif
             this.fListeningSocket.Bind(this.fEndPoint);
             this.fListeningSocket.Listen(this.MaxWaitConnections);
             this.fListenThreads = new Thread[ListenerThreadCount];
@@ -249,6 +269,10 @@ namespace RemObjects.InternetPack
             this.fListeningSocket = new Socket(this.AddressFamily, this.SocketType, this.Protocol);
             if (!this.EnableNagle)
                 this.fListeningSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1);
+#if FULLFRAMEWORK
+            if (this.ReuseAddress)
+                this.fListeningSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+#endif
             this.fListeningSocket.Bind(this.fEndPoint);
         }
 

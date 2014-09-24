@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2013. All rights reserved.
 
   Using this code requires a valid license of the RemObjects Internet Pack
   which can be obtained at http://www.remobjects.com?ip.
@@ -8,6 +8,7 @@
 
 using System;
 using System.Text;
+using RemObjects.InternetPack.Events;
 
 namespace RemObjects.InternetPack.CommandBased
 {
@@ -58,7 +59,7 @@ namespace RemObjects.InternetPack.CommandBased
         {
             String lDataString = fCurrentConnection.ReadLine();
 
-            this.SendLog(LogDirection.Receive, lDataString);
+            this.SendLog(TransferDirection.Receive, lDataString);
 
             String[] lResp;
             Boolean lMultline;
@@ -97,7 +98,7 @@ namespace RemObjects.InternetPack.CommandBased
                 while (true)
                 {
                     lDataString = fCurrentConnection.ReadLine();
-                    SendLog(LogDirection.Receive, lDataString);
+                    SendLog(TransferDirection.Receive, lDataString);
 
                     if (lDataString.StartsWith(lStopSign))
                     {
@@ -130,7 +131,7 @@ namespace RemObjects.InternetPack.CommandBased
             if (!this.Connected)
                 throw new Exception("Connection not open");
 
-            this.SendLog(LogDirection.Send, command);
+            this.SendLog(TransferDirection.Send, command);
             this.fCurrentConnection.WriteLine(command);
 
             return this.WaitForResponse(validResponses);
@@ -160,13 +161,13 @@ namespace RemObjects.InternetPack.CommandBased
         #region Log handling
         public event ClientLogEvent OnLog;
 
-        protected virtual void SendLog(LogDirection direction, String message)
+        protected virtual void SendLog(TransferDirection direction, String message)
         {
             if (this.OnLog != null)
                 this.OnLog(this, new ClientLogArgs(direction, message));
         }
 
-        protected virtual void SendLog(LogDirection direction, String format, params Object[] parameters)
+        protected virtual void SendLog(TransferDirection direction, String format, params Object[] parameters)
         {
             if (this.OnLog != null)
                 this.OnLog(this, new ClientLogArgs(direction, format, parameters));
@@ -174,32 +175,26 @@ namespace RemObjects.InternetPack.CommandBased
         #endregion
     }
 
-    public enum LogDirection
-    {
-        Status,
-        Send,
-        Receive
-    };
-
     #region Delegates and arguments
     public class ClientLogArgs
     {
-        public ClientLogArgs(LogDirection direction, String message)
+        public ClientLogArgs(TransferDirection direction, String message)
         {
             this.Direction = direction;
 
             if (message.StartsWith("PASS"))
                 message = "PASS (hidden)";
+
             this.Text = message;
         }
 
-        public ClientLogArgs(LogDirection direction, String format, params Object[] parameters)
+        public ClientLogArgs(TransferDirection direction, String format, params Object[] parameters)
             : this(direction, String.Format(format, parameters))
         {
         }
 
         #region Properties
-        public LogDirection Direction
+        public TransferDirection Direction
         {
             get
             {
@@ -210,7 +205,7 @@ namespace RemObjects.InternetPack.CommandBased
                 this.fDirection = value;
             }
         }
-        private LogDirection fDirection;
+        private TransferDirection fDirection;
 
         public String Text
         {

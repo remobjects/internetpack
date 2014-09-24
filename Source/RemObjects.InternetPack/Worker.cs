@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2013. All rights reserved.
 
   Using this code requires a valid license of the RemObjects Internet Pack
   which can be obtained at http://www.remobjects.com?ip.
@@ -26,7 +26,7 @@ namespace RemObjects.InternetPack
         }
         private AsyncServer fOwner;
 
-        public Server Owner
+        public virtual Server Owner
         {
             get
             {
@@ -51,10 +51,7 @@ namespace RemObjects.InternetPack
         }
         private Connection fDataConnection;
 
-        public void Setup()
-        {
-            this.DoSetup();
-        }
+        public abstract void Setup();
 
         public virtual void Done()
         {
@@ -64,8 +61,6 @@ namespace RemObjects.InternetPack
             if (this.DataConnection != null)
                 this.DataConnection.Dispose();
         }
-
-        protected abstract void DoSetup();
     }
 
     public abstract class Worker : IWorker
@@ -122,13 +117,13 @@ namespace RemObjects.InternetPack
             try
             {
                 this.DoWork();
-                this.DataConnection.Close(false);
             }
             catch
             {
             }
             finally
             {
+				this.DataConnection.Close();
                 if (this.Done != null)
                     this.Done(this, EventArgs.Empty);
             }

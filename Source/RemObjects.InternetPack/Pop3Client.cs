@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2013. All rights reserved.
 
   Using this code requires a valid license of the RemObjects Internet Pack
   which can be obtained at http://www.remobjects.com?ip.
@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using RemObjects.InternetPack.CommandBased;
+using RemObjects.InternetPack.Events;
 using RemObjects.InternetPack.Messages;
 
 namespace RemObjects.InternetPack.Email
@@ -66,7 +67,7 @@ namespace RemObjects.InternetPack.Email
             base.Open();
 
             String lResponse = this.CurrentConnection.ReadLine();
-            this.SendLog(LogDirection.Receive, lResponse);
+            this.SendLog(TransferDirection.Receive, lResponse);
 
             if (lResponse.StartsWith("+ERR"))
             {
@@ -86,11 +87,11 @@ namespace RemObjects.InternetPack.Email
 
         public String SendAndReceive(String command)
         {
-            this.SendLog(LogDirection.Send, command);
+            this.SendLog(TransferDirection.Send, command);
             this.CurrentConnection.WriteLine(command);
 
             String lResponse = this.CurrentConnection.ReadLine();
-            this.SendLog(LogDirection.Receive, lResponse);
+            this.SendLog(TransferDirection.Receive, lResponse);
 
             return lResponse;
         }

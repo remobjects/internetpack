@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2013. All rights reserved.
 
   Using this code requires a valid license of the RemObjects Internet Pack
   which can be obtained at http://www.remobjects.com?ip.
@@ -343,7 +343,7 @@ namespace RemObjects.InternetPack
         #endregion
 
         #region Methods
-        private static Boolean IsRunningOnMono()
+        protected static Boolean IsRunningOnMono()
         {
             return Type.GetType("Mono.Runtime") != null;
         }
@@ -362,14 +362,25 @@ namespace RemObjects.InternetPack
                     lActualPort = ((System.Net.IPEndPoint)this.fBindingV6.ListeningSocket.LocalEndPoint).Port;
                 }
 
-                if ((this.fBindV4 && (this.fBindingV4 != null)) &&
-                    !(lBindV6 && Server.IsRunningOnMono()))
+                // There is a chance that this will fail on Mono
+                // Unfortunately this code shouldn't fail on Mac while it WILL fail on Linux
+                // And no one can warrant that suddenly the Mono/Linu bug won't be fixed
+                if (this.fBindV4 && (this.fBindingV4 != null))
                 {
-                    if (this.Port == 0)
-                        this.fBindingV4.Port = lActualPort;
-                    this.fBindingV4.EnableNagle = EnableNagle;
-                    this.fBindingV4.Bind(new Listener(this, this.GetWorkerClass()));
-                    lActualPort = ((System.Net.IPEndPoint)this.fBindingV4.ListeningSocket.LocalEndPoint).Port;
+                    try
+                    {
+                        if (this.Port == 0)
+                            this.fBindingV4.Port = lActualPort;
+                        this.fBindingV4.EnableNagle = EnableNagle;
+                        this.fBindingV4.Bind(new Listener(this, this.GetWorkerClass()));
+                        lActualPort = ((System.Net.IPEndPoint)this.fBindingV4.ListeningSocket.LocalEndPoint).Port;
+                    }
+                    catch (SocketException)
+                    {
+                        if (!(lBindV6 && Server.IsRunningOnMono()))
+                            throw;
+                    }
+                        
                 }
 
                 if (this.Port != lActualPort)

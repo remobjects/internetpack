@@ -643,11 +643,13 @@ namespace RemObjects.InternetPack
 
         protected override void DataSocketClose()
         {
+            fSsl.Dispose();
             this.fInnerConnection.Close();
         }
 
         protected override void DataSocketClose(Boolean dispose)
         {
+            fSsl.Dispose();
             this.fInnerConnection.Close(dispose);
         }
 
@@ -688,7 +690,14 @@ namespace RemObjects.InternetPack
 
         protected override IAsyncResult IntBeginRead(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)
         {
-            return this.fSsl.BeginRead(buffer, offset, count, callback, state);
+            try
+            {
+                return this.fSsl.BeginRead(buffer, offset, count, callback, state);
+            }
+            catch (IOException)
+            {
+                throw new SocketException();
+            }
         }
 
         protected override Int32 IntEndRead(IAsyncResult ar)
@@ -705,7 +714,14 @@ namespace RemObjects.InternetPack
 
         protected override IAsyncResult IntBeginWrite(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)
         {
-            return this.fSsl.BeginWrite(buffer, offset, count, callback, state);
+            try
+            {
+                return this.fSsl.BeginWrite(buffer, offset, count, callback, state);
+            }
+            catch (IOException)
+            {
+                throw new SocketException();
+            }
         }
 
         protected override void IntEndWrite(IAsyncResult ar)

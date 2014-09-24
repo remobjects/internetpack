@@ -38,9 +38,6 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
                 // Convert the date String into a DateTime
                 DateTime dateTime = Convert.ToDateTime(date, CultureInfo.InvariantCulture);
 
-                // If a day-name is specified in the inputDate String, check if it fits with the date
-                ValidateDayNameIfAny(dateTime, inputDate);
-
                 // Convert the date into UTC
                 dateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
 
@@ -184,26 +181,6 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
             }
 
             throw new ArgumentException("No date part found");
-        }
-
-        /// <summary>
-        /// Validates that the given <paramref name="dateTime"/> agrees with a day-name specified
-        /// in <paramref name="dateInput"/>.
-        /// </summary>
-        /// <param name="dateTime">The time to check</param>
-        /// <param name="dateInput">The date input to extract the day-name from</param>
-        /// <exception cref="ArgumentException">If <paramref name="dateTime"/> and <paramref name="dateInput"/> does not agree on the day</exception>
-        private static void ValidateDayNameIfAny(DateTime dateTime, String dateInput)
-        {
-            // Check if there is a day name in front of the date
-            // Example: Fri, 21 Nov 1997 09:55:06 -0600
-            if (dateInput.Length >= 4 && dateInput[3] == ',')
-            {
-                String dayName = dateInput.Substring(0, 3);
-
-            }
-
-            // If no day name was found no checks can be made
         }
 
         /// <summary>

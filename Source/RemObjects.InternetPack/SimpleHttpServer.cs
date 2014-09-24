@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2013. All rights reserved.
 
   Using this code requires a valid license of the RemObjects Internet Pack
   which can be obtained at http://www.remobjects.com?ip.
@@ -9,6 +9,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Net;
 
 namespace RemObjects.InternetPack.Http
 {
@@ -34,7 +35,7 @@ namespace RemObjects.InternetPack.Http
         #endregion
 
         #region Overriden Methods
-        protected internal override void HandleHttpRequest(Connection connection, HttpServerRequest request, HttpServerResponse response)
+        protected override void HandleHttpRequest(Connection connection, HttpServerRequest request, HttpServerResponse response)
         {
             base.HandleHttpRequest(connection, request, response);
 
@@ -53,17 +54,17 @@ namespace RemObjects.InternetPack.Http
                         }
                         else
                         {
-                            response.SendError(404, String.Format("File '{0}' not found.", lPath));
+                            response.SendError(HttpStatusCode.NotFound, String.Format("File '{0}' not found.", lPath));
                         }
                     }
                     else
                     {
-                        response.SendError(403, String.Format("Bad Request: Path '{0}' contains '..' which is invalid.", lPath));
+                        response.SendError(HttpStatusCode.Forbidden, String.Format("Bad Request: Path '{0}' contains '..' which is invalid.", lPath));
                     }
                 }
                 else
                 {
-                    response.SendError(500, String.Format("Request Type '{0}' not supported.", request.Header.RequestType));
+                    response.SendError(HttpStatusCode.BadRequest, String.Format("Request Type '{0}' not supported.", request.Header.RequestType));
                 }
             }
         }

@@ -19,7 +19,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright("Copyright RemObjects Software 2003-2012. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyVersion("7.0.0.0")]
 [assembly: CLSCompliant(false)]
 #if REMOBJECTS_SIGN_ASSEMBLY
 [assembly: AssemblyKeyName("RemObjects")]

@@ -1,8 +1,8 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemObjects.InternetPack.2008", "RemObjects.InternetPack\RemObjects.InternetPack.2008.csproj", "{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemObjects.InternetPack.2012", "RemObjects.InternetPack\RemObjects.InternetPack.2012.csproj", "{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemObjects.InternetPack.VirtualFTP.2008", "RemObjects.InternetPack.VirtualFTP\RemObjects.InternetPack.VirtualFTP.2008.csproj", "{E8E89EC1-4445-4853-9E0B-A18B044069B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemObjects.InternetPack.VirtualFTP.2012", "RemObjects.InternetPack.VirtualFTP\RemObjects.InternetPack.VirtualFTP.2012.csproj", "{E8E89EC1-4445-4853-9E0B-A18B044069B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

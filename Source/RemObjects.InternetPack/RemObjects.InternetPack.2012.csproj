@@ -5,14 +5,13 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}</ProjectGuid>
-    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>
     </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>RemObjects.InternetPack.MonoAndroid</AssemblyName>
+    <AssemblyName>RemObjects.InternetPack</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -29,26 +28,21 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <SignAssembly>false</SignAssembly>
-    <TargetFrameworkVersion>v2.2</TargetFrameworkVersion>
-    <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
-    <AndroidSupportedAbis>armeabi%3barmeabi-v7a</AndroidSupportedAbis>
-    <AndroidApplication>true</AndroidApplication>
-    <AndroidLinkMode>None</AndroidLinkMode>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\bin\MonoAndroid\</OutputPath>
+    <OutputPath>..\..\bin\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG;MONOANDROID;REMOBJECTS_SIGN_ASSEMBLY;FULLFRAMEWORK</DefineConstants>
-    <NoStdLib>true</NoStdLib>
+    <DefineConstants>TRACE;DEBUG;FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
@@ -58,18 +52,18 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\Bin\MonoAndroid\</OutputPath>
+    <OutputPath>..\..\Bin\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;MONOANDROID;REMOBJECTS_SIGN_ASSEMBLY;FULLFRAMEWORK</DefineConstants>
-    <NoStdLib>true</NoStdLib>
+    <DefineConstants>DEBUG;FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
@@ -79,18 +73,18 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TRIAL|AnyCPU' ">
-    <OutputPath>..\..\Bin\Trial\MonoAndroid\</OutputPath>
+    <OutputPath>..\..\Bin\Trial\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>MONOANDROID;REMOBJECTS_SIGN_ASSEMBLY;TRIAL;FULLFRAMEWORK</DefineConstants>
-    <NoStdLib>true</NoStdLib>
+    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;TRIAL</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
     <NoWarn>
     </NoWarn>
     <Optimize>true</Optimize>
@@ -100,18 +94,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Mono|AnyCPU' ">
-    <OutputPath>..\..\Bin\Mono\MonoAndroid\</OutputPath>
+    <OutputPath>..\..\Bin\Mono\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>MONOANDROID;REMOBJECTS_SIGN_ASSEMBLY;MONO;FULLFRAMEWORK</DefineConstants>
-    <NoStdLib>true</NoStdLib>
+    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;MONO</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
     <NoWarn>
     </NoWarn>
     <Optimize>true</Optimize>
@@ -121,18 +115,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Mono TRIAL|AnyCPU' ">
-    <OutputPath>..\..\Bin\Trial\Mono\MonoAndroid\</OutputPath>
+    <OutputPath>..\..\Bin\Trial\Mono\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>MONOANDROID;REMOBJECTS_SIGN_ASSEMBLY;TRIAL;MONO;FULLFRAMEWORK</DefineConstants>
-    <NoStdLib>true</NoStdLib>
+    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;TRIAL;MONO</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
     <NoWarn>
     </NoWarn>
     <Optimize>true</Optimize>
@@ -143,9 +137,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Licensed|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Licensed\MonoAndroid\</OutputPath>
-    <DefineConstants>DEBUG;MONOANDROID;REMOBJECTS_SIGN_ASSEMBLY;FULLFRAMEWORK</DefineConstants>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Licensed\</OutputPath>
+    <DefineConstants>DEBUG;FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
     <NoWarn>1699</NoWarn>
@@ -155,17 +148,17 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib" >
-        <HintPath>..\..\..\Data Abstract for .NET\Bin\MonoAndroid\mscorlib.dll</HintPath>
+    <Reference Include="System">
+      <Name>System</Name>
     </Reference>
-    <Reference Include="System" >
-        <HintPath>..\..\..\Data Abstract for .NET\Bin\MonoAndroid\System.dll</HintPath>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
     </Reference>
-    <Reference Include="System.Core" >
-        <HintPath>..\..\..\Data Abstract for .NET\Bin\MonoAndroid\System.Core.dll</HintPath>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Xml" >
-        <HintPath>..\..\..\Data Abstract for .NET\Bin\MonoAndroid\System.Xml.dll</HintPath>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -206,9 +199,14 @@
     <Compile Include="EchoServer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="EventArgs\AsyncHttpRequestEventArgs.cs" />
+    <Compile Include="EventArgs\HttpRequestEventArgs.cs" />
     <Compile Include="Events.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Exceptions\FtpException.cs" />
+    <Compile Include="Exceptions\HttpHeaderException.cs" />
+    <Compile Include="Exceptions\HttpRequestInvalidException.cs" />
     <Compile Include="FtpClient.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -224,9 +222,11 @@
     <Compile Include="HttpHeader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="HttpProxySettings.cs" />
     <Compile Include="HttpRequestResponse.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="HttpsConnection.cs" />
     <Compile Include="HttpServer.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -239,11 +239,21 @@
     <Compile Include="Message.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HttpProxySettings.cs" />
     <Compile Include="MessageAddress.cs" />
     <Compile Include="MessageAttachment.cs" />
     <Compile Include="MessageEncoder.cs" />
     <Compile Include="MessageHeaderField.cs" />
+    <Compile Include="Mime\Decode\Base64.cs" />
+    <Compile Include="Mime\Decode\EncodedWord.cs" />
+    <Compile Include="Mime\Decode\QuotedPrintable.cs" />
+    <Compile Include="Mime\Decode\Rfc2231Decoder.cs" />
+    <Compile Include="Mime\Decode\Rfc2822DateTime.cs" />
+    <Compile Include="Mime\Decode\Utility.cs" />
+    <Compile Include="Mime\Header\HeaderExtractor.cs" />
+    <Compile Include="Mime\Header\HeaderFieldParser.cs" />
+    <Compile Include="Mime\Header\MessageHeader.cs" />
+    <Compile Include="Mime\MimeMessage.cs" />
+    <Compile Include="Mime\MessagePart.cs" />
     <Compile Include="Pop3Client.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -260,7 +270,6 @@
     <Compile Include="SmtpClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="HttpsConnection.cs" />
     <Compile Include="SslConnection.cs" />
     <Compile Include="TcpClient.cs">
       <SubType>Component</SubType>
@@ -292,9 +301,6 @@
     <EmbeddedResource Include="Glyphs\Pop3Client.bmp" />
     <EmbeddedResource Include="Glyphs\Pop3Server.bmp" />
     <EmbeddedResource Include="Glyphs\SmtpServer.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

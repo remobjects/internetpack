@@ -10,6 +10,7 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Net;
 
 namespace RemObjects.InternetPack.Http
 {
@@ -378,6 +379,13 @@ namespace RemObjects.InternetPack.Http
 
             try
             {
+                lConnection.Timeout = Timeout;
+                lConnection.TimeoutEnabled = TimeoutEnabled;
+                request.WriteHeaderToConnection(lConnection);
+            }
+            catch (ObjectDisposedException)
+            {
+                lConnection = this.GetNewHttpConnection(lHostname, lPort);
                 request.WriteHeaderToConnection(lConnection);
             }
             catch (ConnectionClosedException)
@@ -393,8 +401,6 @@ namespace RemObjects.InternetPack.Http
 
             request.WriteBodyToConnection(lConnection);
 
-            lConnection.Timeout = Timeout;
-            lConnection.TimeoutEnabled = TimeoutEnabled;
 
             HttpClientResponse lResponse;
             do
@@ -404,7 +410,7 @@ namespace RemObjects.InternetPack.Http
                     throw new ConnectionClosedException();
                 lResponse = new HttpClientResponse(lConnection, lHeaders);
             }
-            while (lResponse.Header.ResponseCode == "100"); // 100 CONTINUE means useless response.
+            while (lResponse.Header.HttpCode == HttpStatusCode.Continue); // 100 CONTINUE means useless response.
 
             if (!lResponse.KeepAlive)
             {
@@ -412,7 +418,7 @@ namespace RemObjects.InternetPack.Http
                 this.fConnection = null;
             }
 
-            if (lResponse.Code == 407)
+            if (lResponse.HttpCode == HttpStatusCode.ProxyAuthenticationRequired)
                 throw new HttpException("Proxy authorization failed", lResponse);
 
             return lResponse;
@@ -422,7 +428,7 @@ namespace RemObjects.InternetPack.Http
         {
             HttpClientResponse lResponse = this.TryDispatch(request);
 
-            if (lResponse.Code >= 400)
+            if ((Int32)lResponse.HttpCode >= 400)
             {
                 if (lResponse.HasContentLength)
                     throw new HttpException(lResponse.ContentString, lResponse);

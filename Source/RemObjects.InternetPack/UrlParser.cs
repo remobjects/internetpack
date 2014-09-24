@@ -32,7 +32,7 @@ namespace RemObjects.InternetPack.Http
         public static void RegisterProtocol(String name, Int32 port)
         {
             if (fProtocols.ContainsKey(name))
-                throw new Exception(String.Format("Protocol '{0}' alraedy registered.", name));
+                throw new Exception(String.Format("Protocol '{0}' already registered.", name));
             fProtocols.Add(name, port);
         }
 
