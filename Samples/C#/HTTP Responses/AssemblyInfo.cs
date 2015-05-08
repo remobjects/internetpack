@@ -1,12 +1,3 @@
-/*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Samples
-
-  (c)opyright RemObjects Software, Inc. 2003-2004. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
----------------------------------------------------------------------------*/
-
 using System;
 using System.Reflection;
 
@@ -15,11 +6,11 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("RemObjects Software")]
 [assembly: AssemblyProduct("RemObjects Internet Pack for .NET")]
-[assembly: AssemblyCopyright("Copyright RemObjects Software 2003-2014. All Rights Reserved.")]
+[assembly: AssemblyCopyright("Copyright RemObjects Software, LLC 2003-2015. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("8.0.0.0")]
-[assembly: CLSCompliant(true)] 
+[assembly: CLSCompliant(true)]
 #if REMOBJECTS_SIGN_ASSEMBLY
 [assembly: AssemblyKeyName("RemObjectsSoftware")]
 #endif

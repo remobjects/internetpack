@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("RemObjects Software")]
 [assembly: AssemblyProduct("RemObjects Internet Pack for .NET")]
-[assembly: AssemblyCopyright("Copyright RemObjects Software 2003-2014. All Rights Reserved.")]
+[assembly: AssemblyCopyright("Copyright RemObjects Software, LLC 2003-2015. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("8.0.0.0")]
