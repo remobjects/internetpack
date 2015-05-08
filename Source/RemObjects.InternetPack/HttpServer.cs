@@ -1,9 +1,6 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2014. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2015. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -19,7 +16,6 @@ namespace RemObjects.InternetPack.Http
 	public class HttpServer : Server
 	{
 		public HttpServer()
-			: base()
 		{
 			this.DefaultPort = 80;
 			this.KeepAlive = true;
@@ -104,13 +100,9 @@ namespace RemObjects.InternetPack.Http
 		#endregion
 
 		// Internal worker class
-		class HttpWorker : Worker
+		sealed class HttpWorker : Worker
 		{
-			public HttpWorker()
-			{
-			}
-
-			public new HttpServer Owner
+			private new HttpServer Owner
 			{
 				get
 				{
@@ -128,13 +120,12 @@ namespace RemObjects.InternetPack.Http
 				{
 					/* 10054 means the connection was closed by the client while reading from the socket.
 					 * we'll just terminate the thread gracefully, as if this was expected. */
-					/* ToDo: provide some sort of notification to the server object via event. */
 					if (ex.ErrorCode != 10054)
-						throw ex;
+						throw;
 				}
 			}
 
-			public virtual void ProcessRequests()
+			private void ProcessRequests()
 			{
 				do
 				{
@@ -148,7 +139,6 @@ namespace RemObjects.InternetPack.Http
 						}
 						HttpServerRequest lRequest = new HttpServerRequest(DataConnection, lHeaders);
 
-						/* ToDo: make (some) validation optinal, for speed purposes */
 						if (Owner.ValidateRequests)
 							lRequest.Validate();
 
@@ -161,8 +151,8 @@ namespace RemObjects.InternetPack.Http
 						lRequest.FlushContent();
 
 						lResponse.WriteToConnection(DataConnection);
-						if (!lRequest.KeepAlive || !Owner.KeepAlive)
-							DataConnection.Close(false);
+						if (!lRequest.KeepAlive || !this.Owner.KeepAlive)
+							this.DataConnection.Close();
 					}
 					catch (HttpRequestInvalidException e)
 					{
@@ -170,11 +160,11 @@ namespace RemObjects.InternetPack.Http
 					}
 					catch (ConnectionClosedException)
 					{
-						DataConnection.Close(false);
+						this.DataConnection.Close();
 					}
 					catch (SocketException)
 					{
-						DataConnection.Close(false);
+						this.DataConnection.Close();
 					}
 					catch (Exception e)
 					{
@@ -183,7 +173,7 @@ namespace RemObjects.InternetPack.Http
 				}
 				while (this.DataConnection.Connected);
 
-				DataConnection.Close();
+				this.DataConnection.Close();
 			}
 
 			private void SendError(HttpStatusCode code, Exception ex)

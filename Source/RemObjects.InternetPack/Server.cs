@@ -1,9 +1,6 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2013. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2015. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -14,551 +11,540 @@ using System.Threading;
 
 namespace RemObjects.InternetPack
 {
-    public abstract class Server : System.ComponentModel.Component
-    {
-        protected Server()
-        {
-            fBindings = new ServerBindings();
+	public abstract class Server : System.ComponentModel.Component
+	{
+		protected Server()
+		{
+#if FULLFRAMEWORK
+			this.fSslOptions = new SslConnectionFactory();
+#endif
 
 #if FULLFRAMEWORK
-            if (Socket.SupportsIPv4)
-            {
-                fBindingV4 = new ServerBinding();
-                fBindingV4.Address = IPAddress.Any;
-                fBindingV4.AddressFamily = AddressFamily.InterNetwork;
-            }
+			if (Socket.SupportsIPv4)
+			{
+				fBindingV4 = new ServerBinding();
+				fBindingV4.Address = IPAddress.Any;
+				fBindingV4.AddressFamily = AddressFamily.InterNetwork;
+			}
 
-            // This is a workaround for Mono 2.10 / Mac
-            // Socket.OSSupportsIPv6 there fails with ArgumentException
-            Boolean lIsIPv6Supported = false;
-            try
-            {
-                lIsIPv6Supported = Socket.OSSupportsIPv6;
-            }
-            catch (ArgumentException)
-            {
-                lIsIPv6Supported = (Environment.OSVersion.Platform == PlatformID.Unix); // Mono reports Unix platform for MacOSX
-            }
+			// This is a workaround for Mono 2.10 / Mac
+			// Socket.OSSupportsIPv6 there fails with ArgumentException
+			Boolean lIsIPv6Supported;
+			try
+			{
+				lIsIPv6Supported = Socket.OSSupportsIPv6;
+			}
+			catch (ArgumentException)
+			{
+				lIsIPv6Supported = (Environment.OSVersion.Platform == PlatformID.Unix); // Mono reports Unix platform for MacOSX
+			}
 
-            if (lIsIPv6Supported)
-            {
-                fBindingV6 = new ServerBinding();
-                fBindingV6.Address = IPAddress.IPv6Any;
-                fBindingV6.AddressFamily = AddressFamily.InterNetworkV6;
-            }
+			if (lIsIPv6Supported)
+			{
+				fBindingV6 = new ServerBinding();
+				fBindingV6.Address = IPAddress.IPv6Any;
+				fBindingV6.AddressFamily = AddressFamily.InterNetworkV6;
+			}
 #else
             fBindingV4 = new ServerBinding();
             fBindingV4.Address = IPAddress.Any;
             fBindingV4.AddressFamily = AddressFamily.InterNetwork;
 #endif
 
-            if (fBindingV4 == null && fBindingV6 == null)
-                throw new Exception("This host's network stack supports neither IPv4 nor IPv6 Internet Protocol");
+			if (fBindingV4 == null && fBindingV6 == null)
+				throw new Exception("This host's network stack supports neither IPv4 nor IPv6 Internet Protocol");
 
-            Timeout = Connection.DEFAULT_TIMEOUT;
-            TimeoutEnabled = true;
-            MaxLineLength = Connection.DEFAULT_MAX_LINE_LENGTH;
-            MaxLineLengthEnabled = true;
-        }
+			Timeout = Connection.DEFAULT_TIMEOUT;
+			TimeoutEnabled = true;
+			MaxLineLength = Connection.DEFAULT_MAX_LINE_LENGTH;
+			MaxLineLengthEnabled = true;
+		}
 
-        protected override void Dispose(Boolean disposing)
-        {
-            if (disposing)
-                Close();
+		protected override void Dispose(Boolean disposing)
+		{
+			if (disposing)
+				Close();
 
-            base.Dispose(disposing);
-        }
+			base.Dispose(disposing);
+		}
 
-        #region Properties
-        [Category("Server"), Browsable(false)]
-        public ServerBindings Bindings
-        {
-            get
-            {
-                return fBindings;
-            }
-        }
-        private ServerBindings fBindings;
+		#region Properties
+		[Category("Server"), Browsable(false), Obsolete("Please use BindingV4 and BindingV6 instead", false)]
+		public ServerBinding Binding
+		{
+			get
+			{
+				if (fBindingV4 != null)
+					return fBindingV4;
 
-        [Category("Server"), Browsable(false), Obsolete("Please use BindingV4 and BindingV6 instead", false)]
-        public ServerBinding Binding
-        {
-            get
-            {
-                if (fBindingV4 != null)
-                    return fBindingV4;
+				return fBindingV6;
+			}
+		}
 
-                return fBindingV6;
-            }
-        }
+		[Category("Server"), Browsable(false)]
+		public ServerBinding BindingV4
+		{
+			get
+			{
+				return fBindingV4;
+			}
+		}
+		private readonly ServerBinding fBindingV4;
 
-        [Category("Server"), Browsable(false)]
-        public ServerBinding BindingV4
-        {
-            get
-            {
-                return fBindingV4;
-            }
-        }
-        private ServerBinding fBindingV4;
+		[Category("Server"), Browsable(false)]
+		public ServerBinding BindingV6
+		{
+			get
+			{
+				return fBindingV6;
+			}
+		}
+		private readonly ServerBinding fBindingV6;
 
-        [Category("Server"), Browsable(false)]
-        public ServerBinding BindingV6
-        {
-            get
-            {
-                return fBindingV6;
-            }
-        }
-        private ServerBinding fBindingV6 = null;
+		[Category("Server"), Browsable(true), DefaultValue(true)]
+		public Boolean BindV6
+		{
+			get
+			{
+				return fBindV6;
+			}
+			set
+			{
+				fBindV6 = value;
+			}
+		}
+		private Boolean fBindV6 = true;
 
-        [Category("Server"), Browsable(true), DefaultValue(true)]
-        public Boolean BindV6
-        {
-            get
-            {
-                return fBindV6;
-            }
-            set
-            {
-                fBindV6 = value;
-            }
-        }
-        private Boolean fBindV6 = true;
+		[Category("Server"), Browsable(true), DefaultValue(true)]
+		public Boolean BindV4
+		{
+			get
+			{
+				return fBindV4;
+			}
+			set
+			{
+				fBindV4 = value;
+			}
+		}
+		private Boolean fBindV4 = true;
 
-        [Category("Server"), Browsable(true), DefaultValue(true)]
-        public Boolean BindV4
-        {
-            get
-            {
-                return fBindV4;
-            }
-            set
-            {
-                fBindV4 = value;
-            }
-        }
-        private Boolean fBindV4 = true;
+		[Category("Server")]
+		public Int32 Port
+		{
+			get
+			{
+				if (fBindingV4 != null)
+					return fBindingV4.Port;
 
-        [Category("Server")]
-        public Int32 Port
-        {
-            get
-            {
-                if (fBindingV4 != null)
-                    return fBindingV4.Port;
+				return fBindingV6.Port;
+			}
+			set
+			{
+				if (fBindingV4 != null)
+					fBindingV4.Port = value;
 
-                return fBindingV6.Port;
-            }
-            set
-            {
-                if (fBindingV4 != null)
-                    fBindingV4.Port = value;
+				if (fBindingV6 != null)
+					fBindingV6.Port = value;
+			}
+		}
 
-                if (fBindingV6 != null)
-                    fBindingV6.Port = value;
-            }
-        }
+		[Category("Server"), DefaultValue(true)]
+		public Boolean CloseConnectionsOnShutdown
+		{
+			get
+			{
+				return fCloseConnectionsOnShutdown;
+			}
+			set
+			{
+				fCloseConnectionsOnShutdown = value;
+			}
+		}
+		private Boolean fCloseConnectionsOnShutdown = true;
 
-        [Category("Server"), DefaultValue(true)]
-        public Boolean CloseConnectionsOnShutdown
-        {
-            get
-            {
-                return fCloseConnectionsOnShutdown;
-            }
-            set
-            {
-                fCloseConnectionsOnShutdown = value;
-            }
-        }
-        private Boolean fCloseConnectionsOnShutdown = true;
+		[Category("Server"), DefaultValue(false)]
+		public Boolean EnableNagle
+		{
+			get
+			{
+				return fEnableNagle;
+			}
+			set
+			{
+				fEnableNagle = value;
+			}
+		}
+		private Boolean fEnableNagle;
 
-        [Category("Server"), DefaultValue(false)]
-        public Boolean EnableNagle
-        {
-            get
-            {
-                return fEnableNagle;
-            }
-            set
-            {
-                fEnableNagle = value;
-            }
-        }
-        private Boolean fEnableNagle = false;
+		protected Int32 DefaultPort
+		{
+			get
+			{
+				if (fBindingV4 != null)
+					return fBindingV4.DefaultPort;
 
-        protected Int32 DefaultPort
-        {
-            get
-            {
-                if (fBindingV4 != null)
-                    return fBindingV4.DefaultPort;
+				return fBindingV6.DefaultPort;
+			}
+			set
+			{
+				if (fBindingV4 != null)
+				{
+					fBindingV4.DefaultPort = value;
+					fBindingV4.Port = value;
+				}
 
-                return fBindingV6.DefaultPort;
-            }
-            set
-            {
-                if (fBindingV4 != null)
-                {
-                    fBindingV4.DefaultPort = value;
-                    fBindingV4.Port = value;
-                }
+				if (fBindingV6 != null)
+				{
+					fBindingV6.DefaultPort = value;
+					fBindingV6.Port = value;
+				}
+			}
+		}
 
-                if (fBindingV6 != null)
-                {
-                    fBindingV6.DefaultPort = value;
-                    fBindingV6.Port = value;
-                }
-            }
-        }
+		public Boolean ShouldSerializePort()
+		{
+			return (Port != DefaultPort);
+		}
 
-        public Boolean ShouldSerializePort()
-        {
-            return (Port != DefaultPort);
-        }
+		[Browsable(false), DefaultValue(null)]
+		public Type ConnectionClass
+		{
+			get
+			{
+				return fConnectionClass;
+			}
+			set
+			{
 
-        [Browsable(false), DefaultValue(null)]
-        public Type ConnectionClass
-        {
-            get
-            {
-                return fConnectionClass;
-            }
-            set
-            {
+				if (value != null && !value.IsSubclassOf(typeof(Connection)))
+					throw new Exception(String.Format("The assigned Type '{0}' is not a descendant of Connection", value.FullName));
+				fConnectionClass = value;
+			}
+		}
+		private Type fConnectionClass;
 
-                if (value != null && !value.IsSubclassOf(typeof(Connection)))
-                    throw new Exception(String.Format("The assigned Type '{0}' is not a descendant of Connection", value.FullName));
-                fConnectionClass = value;
-            }
-        }
-        private Type fConnectionClass;
-
-        [Browsable(false), DefaultValue(null)]
-        public IConnectionFactory ConnectionFactory
-        {
-            get
-            {
-                return fConnectionFactory;
-            }
-            set
-            {
-                fConnectionFactory = value;
-            }
-        }
-        private IConnectionFactory fConnectionFactory;
+		[Browsable(false), DefaultValue(null)]
+		public IConnectionFactory ConnectionFactory
+		{
+			get
+			{
+				return fConnectionFactory;
+			}
+			set
+			{
+				fConnectionFactory = value;
+			}
+		}
+		private IConnectionFactory fConnectionFactory;
 
 #if FULLFRAMEWORK
-        [Category("Server")]
-        public SslConnectionFactory SslOptions
-        {
-            get
-            {
-                return fSslOptions;
-            }
-        }
-        private SslConnectionFactory fSslOptions = new SslConnectionFactory();
+		[Category("Server")]
+		public SslConnectionFactory SslOptions
+		{
+			get
+			{
+				return fSslOptions;
+			}
+		}
+		private readonly SslConnectionFactory fSslOptions;
 #endif
 
 #if FULLFRAMEWORK
-        [Category("Server"), Browsable(false), DefaultValue(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Category("Server"), Browsable(false), DefaultValue(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 #endif
-        public Boolean Active
-        {
-            get
-            {
-                return fActive;
-            }
-            set
-            {
-                if (value != Active)
-                {
-                    if (value)
-                        Open();
-                    else
-                        Close();
-                }
-            }
-        }
-        protected Boolean fActive;
-        #endregion
+		public Boolean Active
+		{
+			get
+			{
+				return fActive;
+			}
+			set
+			{
+				if (value != Active)
+				{
+					if (value)
+						Open();
+					else
+						Close();
+				}
+			}
+		}
+		protected Boolean fActive;
+		#endregion
 
-        #region Properties: Security
-        [Category("Security"), DefaultValue(true)]
-        public Boolean TimeoutEnabled
-        {
-            get
-            {
-                return fTimeoutEnabled;
-            }
-            set
-            {
-                fTimeoutEnabled = value;
-            }
-        }
-        private Boolean fTimeoutEnabled;
+		#region Properties: Security
+		[Category("Security"), DefaultValue(true)]
+		public Boolean TimeoutEnabled
+		{
+			get
+			{
+				return fTimeoutEnabled;
+			}
+			set
+			{
+				fTimeoutEnabled = value;
+			}
+		}
+		private Boolean fTimeoutEnabled;
 
-        [Category("Security"), DefaultValue(Connection.DEFAULT_TIMEOUT)]
-        public Int32 Timeout
-        {
-            get
-            {
-                return fTimeout;
-            }
-            set
-            {
-                fTimeout = value;
-            }
-        }
-        private Int32 fTimeout;
+		[Category("Security"), DefaultValue(Connection.DEFAULT_TIMEOUT)]
+		public Int32 Timeout
+		{
+			get
+			{
+				return fTimeout;
+			}
+			set
+			{
+				fTimeout = value;
+			}
+		}
+		private Int32 fTimeout;
 
-        [Category("Security"), DefaultValue(true)]
-        public Boolean MaxLineLengthEnabled
-        {
-            get
-            {
-                return fMaxLineLengthEnabled;
-            }
-            set
-            {
-                fMaxLineLengthEnabled = value;
-            }
-        }
-        private Boolean fMaxLineLengthEnabled;
+		[Category("Security"), DefaultValue(true)]
+		public Boolean MaxLineLengthEnabled
+		{
+			get
+			{
+				return fMaxLineLengthEnabled;
+			}
+			set
+			{
+				fMaxLineLengthEnabled = value;
+			}
+		}
+		private Boolean fMaxLineLengthEnabled;
 
-        [Category("Security"), DefaultValue(Connection.DEFAULT_MAX_LINE_LENGTH)]
-        public Int32 MaxLineLength
-        {
-            get
-            {
-                return fMaxLineLength;
-            }
-            set
-            {
-                fMaxLineLength = value;
-            }
-        }
-        private Int32 fMaxLineLength;
-        #endregion
+		[Category("Security"), DefaultValue(Connection.DEFAULT_MAX_LINE_LENGTH)]
+		public Int32 MaxLineLength
+		{
+			get
+			{
+				return fMaxLineLength;
+			}
+			set
+			{
+				fMaxLineLength = value;
+			}
+		}
+		private Int32 fMaxLineLength;
+		#endregion
 
-        #region Methods
-        protected static Boolean IsRunningOnMono()
-        {
-            return Type.GetType("Mono.Runtime") != null;
-        }
+		#region Methods
+		protected static Boolean IsRunningOnMono()
+		{
+			return Type.GetType("Mono.Runtime") != null;
+		}
 
-        public virtual void Open()
-        {
-            try
-            {
-                Int32 lActualPort = this.Port;
+		public virtual void Open()
+		{
+			try
+			{
+				Int32 lActualPort = this.Port;
 
-                Boolean lBindV6 = (this.fBindingV6 != null) && this.fBindV6;
-                if (lBindV6)
-                {
-                    this.fBindingV6.EnableNagle = EnableNagle;
-                    this.fBindingV6.Bind(new Listener(this, this.GetWorkerClass()));
-                    lActualPort = ((System.Net.IPEndPoint)this.fBindingV6.ListeningSocket.LocalEndPoint).Port;
-                }
+				Boolean lBindV6 = (this.fBindingV6 != null) && this.fBindV6;
+				if (lBindV6)
+				{
+					this.fBindingV6.EnableNagle = EnableNagle;
+					this.fBindingV6.Bind(new Listener(this, this.GetWorkerClass()));
+					lActualPort = ((System.Net.IPEndPoint)this.fBindingV6.ListeningSocket.LocalEndPoint).Port;
+				}
 
-                // There is a chance that this will fail on Mono
-                // Unfortunately this code shouldn't fail on Mac while it WILL fail on Linux
-                // And no one can warrant that suddenly the Mono/Linu bug won't be fixed
-                if (this.fBindV4 && (this.fBindingV4 != null))
-                {
-                    try
-                    {
-                        if (this.Port == 0)
-                            this.fBindingV4.Port = lActualPort;
-                        this.fBindingV4.EnableNagle = EnableNagle;
-                        this.fBindingV4.Bind(new Listener(this, this.GetWorkerClass()));
-                        lActualPort = ((System.Net.IPEndPoint)this.fBindingV4.ListeningSocket.LocalEndPoint).Port;
-                    }
-                    catch (SocketException)
-                    {
-                        if (!(lBindV6 && Server.IsRunningOnMono()))
-                            throw;
-                    }
-                        
-                }
+				// There is a chance that this will fail on Mono
+				// Unfortunately this code shouldn't fail on Mac while it WILL fail on Linux
+				// And no one can warrant that suddenly this Mono/Linux issue won't be fixed
+				if (this.fBindV4 && (this.fBindingV4 != null))
+				{
+					try
+					{
+						if (this.Port == 0)
+							this.fBindingV4.Port = lActualPort;
+						this.fBindingV4.EnableNagle = EnableNagle;
+						this.fBindingV4.Bind(new Listener(this, this.GetWorkerClass()));
+						lActualPort = ((System.Net.IPEndPoint)this.fBindingV4.ListeningSocket.LocalEndPoint).Port;
+					}
+					catch (SocketException)
+					{
+						if (!(lBindV6 && Server.IsRunningOnMono()))
+							throw;
+					}
 
-                if (this.Port != lActualPort)
-                    this.Port = lActualPort;
+				}
 
-                this.fActive = true;
-            }
-            catch
-            {
-                this.Close();
-                throw;
-            }
-        }
+				this.Port = lActualPort;
 
-        public virtual void Close()
-        {
-            fActive = false;
-            if (fBindingV4 != null && fBindV4)
-                fBindingV4.Unbind(true);
+				this.fActive = true;
+			}
+			catch
+			{
+				this.Close();
+				throw;
+			}
+		}
 
-            if (fBindingV6 != null && fBindV6)
-                fBindingV6.Unbind(true);
-        }
+		public virtual void Close()
+		{
+			fActive = false;
+			if (fBindingV4 != null && fBindV4)
+				fBindingV4.Unbind(true);
 
-        public virtual Type GetWorkerClass()
-        {
-            return typeof(Worker);
-        }
-        #endregion
-    }
+			if (fBindingV6 != null && fBindV6)
+				fBindingV6.Unbind(true);
+		}
 
-    public class Listener : IListener
-    {
-        public Listener(Server owner, Type workerClass)
-        {
-            fOwner = owner;
-            fWorkerClass = workerClass;
-        }
+		public virtual Type GetWorkerClass()
+		{
+			return typeof(Worker);
+		}
+		#endregion
+	}
 
-        #region Properties
-        public Socket ListeningSocket
-        {
-            get
-            {
-                return fListeningSocket;
-            }
-            set
-            {
-                fListeningSocket = value;
-            }
-        }
-        private Socket fListeningSocket;
+	public class Listener : IListener
+	{
+		public Listener(Server owner, Type workerClass)
+		{
+			fOwner = owner;
+			fWorkerClass = workerClass;
+		}
 
-        public Type WorkerClass
-        {
-            get
-            {
-                return fWorkerClass;
-            }
-        }
-        private Type fWorkerClass;
+		#region Properties
+		public Socket ListeningSocket
+		{
+			get
+			{
+				return fListeningSocket;
+			}
+			set
+			{
+				fListeningSocket = value;
+			}
+		}
+		private Socket fListeningSocket;
 
-        public Server Owner
-        {
-            get
-            {
-                return fOwner;
-            }
-            set
-            {
-                fOwner = value;
-            }
-        }
-        private Server fOwner;
-        #endregion
+		public Type WorkerClass
+		{
+			get
+			{
+				return fWorkerClass;
+			}
+		}
+		private readonly Type fWorkerClass;
 
-        public virtual void Listen()
-        {
-            Socket lSocket;
+		public Server Owner
+		{
+			get
+			{
+				return fOwner;
+			}
+			set
+			{
+				fOwner = value;
+			}
+		}
+		private Server fOwner;
+		#endregion
 
-            WorkerCollection lWorkers = null;
-            if (Owner.CloseConnectionsOnShutdown) lWorkers = new WorkerCollection();
+		public virtual void Listen()
+		{
+			WorkerCollection lWorkers = null;
+			if (Owner.CloseConnectionsOnShutdown) lWorkers = new WorkerCollection();
 
-            try
-            {
-                do
-                {
-                    try
-                    {
-                        lSocket = fListeningSocket.Accept();
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        return;
-                    }
-                    catch (SocketException)
-                    {
-                        /* If Accept fails with a SocketException, the socket was ListeningSocket was probably
-                        * closed, so we'll just exit and terminate the thread. */
-                        return;
-                    }
+			try
+			{
+				Socket lSocket;
+				do
+				{
+					try
+					{
+						lSocket = fListeningSocket.Accept();
+					}
+					catch (ObjectDisposedException)
+					{
+						return;
+					}
+					catch (SocketException)
+					{
+						/* If Accept fails with a SocketException, the socket was ListeningSocket was probably
+						* closed, so we'll just exit and terminate the thread. */
+						return;
+					}
 
-                    if (lSocket != null)
-                    {
-                        Object lObject = Activator.CreateInstance(WorkerClass);
-                        IWorker lWorker = lObject as IWorker;
-                        lWorker.Owner = Owner;
+					if (lSocket != null)
+					{
+						Object lObject = Activator.CreateInstance(WorkerClass);
+						IWorker lWorker = lObject as IWorker;
+						lWorker.Owner = Owner;
 
-                        if (Owner.ConnectionFactory != null)
-                        {
-                            lWorker.DataConnection = Owner.ConnectionFactory.CreateServerConnection(lSocket);
-                        }
-                        else if (Owner.ConnectionClass != null)
-                        {
-                            lWorker.DataConnection = (Connection)Activator.CreateInstance(Owner.ConnectionClass);
-                            lWorker.DataConnection.Init(lSocket);
-                        }
+						if (Owner.ConnectionFactory != null)
+						{
+							lWorker.DataConnection = Owner.ConnectionFactory.CreateServerConnection(lSocket);
+						}
+						else if (Owner.ConnectionClass != null)
+						{
+							lWorker.DataConnection = (Connection)Activator.CreateInstance(Owner.ConnectionClass);
+							lWorker.DataConnection.Init(lSocket);
+						}
 #if FULLFRAMEWORK
-                        else if (Owner.SslOptions.Enabled)
-                        {
-                            lWorker.DataConnection = Owner.SslOptions.CreateServerConnection(lSocket);
-                        }
+						else if (Owner.SslOptions.Enabled)
+						{
+							lWorker.DataConnection = Owner.SslOptions.CreateServerConnection(lSocket);
+						}
 #endif
-                        else
-                        {
-                            lWorker.DataConnection = new Connection(lSocket);
-                        }
+						else
+						{
+							lWorker.DataConnection = new Connection(lSocket);
+						}
 #if FULLFRAMEWORK
-                        if (Owner.TimeoutEnabled)
-                        {
-                            lWorker.DataConnection.TimeoutEnabled = true;
-                            lWorker.DataConnection.Timeout = Owner.Timeout;
-                        }
+						if (Owner.TimeoutEnabled)
+						{
+							lWorker.DataConnection.TimeoutEnabled = true;
+							lWorker.DataConnection.Timeout = Owner.Timeout;
+						}
 #endif
-                        if (Owner.MaxLineLengthEnabled)
-                        {
-                            lWorker.DataConnection.MaxLineLengthEnabled = true;
-                            lWorker.DataConnection.MaxLineLength = Owner.MaxLineLength;
-                        }
+						if (Owner.MaxLineLengthEnabled)
+						{
+							lWorker.DataConnection.MaxLineLengthEnabled = true;
+							lWorker.DataConnection.MaxLineLength = Owner.MaxLineLength;
+						}
 
-                        try
-                        {
-                            lWorker.DataConnection.InitializeServerConnection();
-                        }
-                        catch (Exception) // nothing should escape this loop.
-                        {
-                            lWorker.DataConnection.Dispose();
-                            continue;
-                        }
+						try
+						{
+							lWorker.DataConnection.InitializeServerConnection();
+						}
+						catch (Exception) // nothing should escape this loop.
+						{
+							lWorker.DataConnection.Dispose();
+							continue;
+						}
 
-                        lWorker.Thread = new Thread(new ThreadStart(lWorker.Work));
-                        try
-                        {
+						lWorker.Thread = new Thread(lWorker.Work);
+						try
+						{
 #if FULLFRAMEWORK
-                            lWorker.Thread.Name = String.Format("Internet Pack {0} for {1}", WorkerClass.Name, lSocket.RemoteEndPoint.ToString());
+							lWorker.Thread.Name = String.Format("Internet Pack {0} for {1}", WorkerClass.Name, lSocket.RemoteEndPoint);
 #endif
 
-                        }
-                        catch (SocketException)
-                        {
-                            // mono can fail in that code if the remote side has been disconnected. Since we already create a thread we have to run it (leak otherwise)
-                        }
+						}
+						catch (SocketException)
+						{
+							// mono can fail in that code if the remote side has been disconnected. Since we already create a thread we have to run it (leak otherwise)
+						}
 
-                        if (lWorkers != null)
-                            lWorkers.Add(lWorker);
+						if (lWorkers != null)
+							lWorkers.Add(lWorker);
 
-                        lWorker.Thread.Start();
-                    }
-                }
-                while (lSocket != null);
+						lWorker.Thread.Start();
+					}
+				}
+				while (lSocket != null);
+			}
+			finally
+			{
+				if (lWorkers != null)
+					lWorkers.Close();
+			}
 
-            }
-            finally
-            {
-                if (lWorkers != null)
-                    lWorkers.Close();
-            }
-
-        }
-    }
+		}
+	}
 }
