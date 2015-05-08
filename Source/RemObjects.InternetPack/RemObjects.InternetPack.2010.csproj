@@ -175,9 +175,9 @@
     <Compile Include="AsyncServer.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Bindings.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Bindings\Binding.cs" />
+    <Compile Include="Bindings\BindingConverter.cs" />
+    <Compile Include="Bindings\ServerBinding.cs" />
     <Compile Include="BoundIncomingStream.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -190,9 +190,11 @@
     <Compile Include="CommandBasedServer.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Connection.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Connection\Connection.cs" />
+	<Compile Include="Connection\IConnectionTimeouts.cs" />
+    <Compile Include="EventArgs\ConnectionEventArgs.cs" />
+    <Compile Include="Exceptions\DnsResolveException.cs" />
+	<Compile Include="Exceptions\ConnectionClosedException.cs" />
     <Compile Include="ConnectionPool.cs">
       <SubType>Code</SubType>
     </Compile>
