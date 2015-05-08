@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
+  RemObjects Internet Pack for .NET
 
-  (c)opyright RemObjects Software, Inc. 2003-2012. All rights reserved.
+  (c)opyright RemObjects Software, Inc. 2003-2015. All rights reserved.
 
   Using this code requires a valid license of the RemObjects Internet Pack
   which can be obtained at http://www.remobjects.com?ip.
@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("RemObjects Software")]
 [assembly: AssemblyProduct("RemObjects Internet Pack for .NET")]
-[assembly: AssemblyCopyright("Copyright RemObjects Software 2003-2012. All Rights Reserved.")]
+[assembly: AssemblyCopyright("Copyright RemObjects Software, LLC 2003-2015. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("7.0.0.0")]
