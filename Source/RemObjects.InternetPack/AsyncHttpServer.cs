@@ -258,7 +258,7 @@ namespace RemObjects.InternetPack.Http
 		{
 			this.DataConnection.MaxLineLength = 8096;
 			this.DataConnection.MaxLineLengthEnabled = true;
-			this.DataConnection.AsyncDisconnect += new EventHandler(cbDisconnect);
+			this.DataConnection.AsyncDisconnect += DisconnectCallback;
 			this.fContext = this.fOwner.NewContext(this);
 			try
 			{
@@ -287,7 +287,7 @@ namespace RemObjects.InternetPack.Http
 			}
 		}
 
-		private void cbDisconnect(Object sender, EventArgs e)
+		private void DisconnectCallback(Object sender, EventArgs e)
 		{
 			this.Done();
 		}
@@ -562,17 +562,14 @@ namespace RemObjects.InternetPack.Http
 			catch (ConnectionClosedException)
 			{
 				Done();
-				return;
 			}
 			catch (SocketException)
 			{
 				Done();
-				return;
 			}
 			catch (ObjectDisposedException)
 			{
 				Done();
-				return;
 			}
 		}
 
