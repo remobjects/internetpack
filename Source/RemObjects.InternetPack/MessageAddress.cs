@@ -11,9 +11,15 @@ namespace RemObjects.InternetPack.Messages
 {
 	public class MessageAddress
 	{
-		public String Name { get; set; } = String.Empty;
+		public MessageAddress()
+		{
+			this.Name = "";
+			this.Address = "";
+		}
 
-		public String Address { get; set; } = String.Empty;
+		public String Name { get; set; }
+
+		public String Address { get; set; }
 
 		public void Clear()
 		{
