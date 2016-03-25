@@ -9,6 +9,6 @@ namespace RemObjects.InternetPack
 {
 	public interface ICertificateBuilder
 	{
-		Byte[] Export(String subject, String password, Boolean isServer);
+		Byte[] Export(String subject, String issuer, String password, Boolean isServer);
 	}
 }

@@ -72,7 +72,7 @@ namespace RemObjects.InternetPack
 			return lKeyUsage;
 		}
 
-		private Object PrepareCertificateBuilder(Object name, Object subjectKey, Object keyUseSection)
+		private Object CreateNativeCertificateBuilder(Object subject, Object issuer, Object subjectKey, Object keyUseSection)
 		{
 			//Mono.Security.X509.X509CertificateBuilder certificateBuilder = new Mono.Security.X509.X509CertificateBuilder(3);
 			Type lCertificateBuilderType = this.fTypeProvider.GetType("Mono.Security.X509.X509CertificateBuilder");
@@ -82,10 +82,11 @@ namespace RemObjects.InternetPack
 			lCertificateBuilderType.InvokeMember("SerialNumber", BindingFlags.SetProperty, null, lCertificateBuilder,
 				new Object[] { this.GenerateCertificateSerialNumber() });
 
-			//certificateBuilder.IssuerName = lDistinguishedName;
-			//certificateBuilder.SubjectName = lDistinguishedName;
-			lCertificateBuilderType.InvokeMember("IssuerName", BindingFlags.SetProperty, null, lCertificateBuilder, new Object[] { name });
-			lCertificateBuilderType.InvokeMember("SubjectName", BindingFlags.SetProperty, null, lCertificateBuilder, new Object[] { name });
+			//certificateBuilder.SubjectName = lSubjectDN;
+			lCertificateBuilderType.InvokeMember("SubjectName", BindingFlags.SetProperty, null, lCertificateBuilder, new Object[] { subject });
+
+			//certificateBuilder.IssuerName = lIssuerDN;
+			lCertificateBuilderType.InvokeMember("IssuerName", BindingFlags.SetProperty, null, lCertificateBuilder, new Object[] { issuer });
 
 			//certificateBuilder.NotBefore = this.GetCertificateStartDate();
 			lCertificateBuilderType.InvokeMember("NotBefore", BindingFlags.SetProperty, null, lCertificateBuilder, new Object[] { this.GetCertificateStartDate().ToLocalTime() });
@@ -137,14 +138,15 @@ namespace RemObjects.InternetPack
 			return (Byte[])lPkcs12Type.InvokeMember("GetBytes", BindingFlags.InvokeMethod, null, p12, new Object[] { });
 		}
 
-		public override Byte[] Export(String subject, String password, Boolean isServer)
+		public override Byte[] Export(String subject, String issuer, String password, Boolean isServer)
 		{
 			// Subject name
-			Object lDistinguishedName = this.CreateDistinguishedName(subject);
+			Object lSubjectName = this.CreateDistinguishedName(subject);
+			Object lIssuerName = this.CreateDistinguishedName(issuer);
 			Object lSubjectKey = this.CreateSubjectKey();
 			Object lKeyUseSection = this.CreateKeyUseSection(isServer);
 
-			Object lCertificateBuilder = this.PrepareCertificateBuilder(lDistinguishedName, lSubjectKey, lKeyUseSection);
+			Object lCertificateBuilder = this.CreateNativeCertificateBuilder(lSubjectName, lIssuerName, lSubjectKey, lKeyUseSection);
 
 			return this.BuildCertificate(lCertificateBuilder, lSubjectKey, password);
 		}

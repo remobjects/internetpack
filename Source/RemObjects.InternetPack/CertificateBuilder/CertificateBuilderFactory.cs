@@ -11,7 +11,7 @@ namespace RemObjects.InternetPack
 	{
 		public static ICertificateBuilder Create()
 		{
-			return CertificateBuilderFactory.Create("SHA1");
+			return CertificateBuilderFactory.Create("SHA256");
 		}
 
 		public static ICertificateBuilder Create(String hashAlgorithm)

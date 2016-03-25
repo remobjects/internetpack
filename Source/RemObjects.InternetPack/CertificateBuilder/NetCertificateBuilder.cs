@@ -122,7 +122,7 @@ namespace RemObjects.InternetPack
 			return lKeyUsage;
 		}
 
-		private Object CreateCertificateRequest(Object name, Object privateKey, Object keyUseSection, Object hashAlgorithm)
+		private Object CreateCertificateRequest(Object subject, Object issuer, Object privateKey, Object keyUseSection, Object hashAlgorithm)
 		{
 			// Create the self signing request
 			//CX509CertificateRequestCertificate lCertificateRequest = new CX509CertificateRequestCertificate();
@@ -133,11 +133,11 @@ namespace RemObjects.InternetPack
 			lCertificateRequestCertificateType.InvokeMember("InitializeFromPrivateKey", BindingFlags.InvokeMethod, null, lCertificateRequest,
 				new Object[] { XCN_CONTEXT_USER, privateKey, "" });
 
-			//lCertificateRequest.Subject = lDistinguishedName;
-			lCertificateRequestCertificateType.InvokeMember("Subject", BindingFlags.SetProperty, null, lCertificateRequest, new Object[] { name });
+			//lCertificateRequest.Subject = lSubjectDN;
+			lCertificateRequestCertificateType.InvokeMember("Subject", BindingFlags.SetProperty, null, lCertificateRequest, new Object[] { subject });
 
-			//lCertificateRequest.Issuer = lDistinguishedName; // the issuer and the subject are the same
-			lCertificateRequestCertificateType.InvokeMember("Subject", BindingFlags.SetProperty, null, lCertificateRequest, new Object[] { name });
+			//lCertificateRequest.Issuer = lIssuerDN;
+			lCertificateRequestCertificateType.InvokeMember("Issuer", BindingFlags.SetProperty, null, lCertificateRequest, new Object[] { issuer });
 
 			//lCertificateRequest.NotBefore = DateTime.Now;
 			lCertificateRequestCertificateType.InvokeMember("NotBefore", BindingFlags.SetProperty, null, lCertificateRequest, new Object[] { this.GetCertificateStartDate() });
@@ -193,14 +193,16 @@ namespace RemObjects.InternetPack
 			return new X509Certificate2(Convert.FromBase64String(lCertificateBase64encoded), password, X509KeyStorageFlags.Exportable);
 		}
 
-		public override Byte[] Export(String subject, String password, Boolean isServer)
+		public override Byte[] Export(String subject, String issuer, String password, Boolean isServer)
 		{
-			Object lDistinguishedName = this.CreateDistinguishedName(subject);
+			Object lSubjectName = this.CreateDistinguishedName(subject);
+			Object lIssuerName = this.CreateDistinguishedName(issuer);
+
 			Object lPrivateKey = this.CreatePrivateKey();
 			Object lHashAlgorithm = this.CreateHashAlgorithm();
 			Object lKeyUseSection = this.CreateKeyUseSection(isServer);
 
-			Object lCertificateRequest = this.CreateCertificateRequest(lDistinguishedName, lPrivateKey, lKeyUseSection, lHashAlgorithm);
+			Object lCertificateRequest = this.CreateCertificateRequest(lSubjectName, lIssuerName, lPrivateKey, lKeyUseSection, lHashAlgorithm);
 
 			X509Certificate2 lCertificate = this.EnrollCertificate(subject, password, lCertificateRequest);
 

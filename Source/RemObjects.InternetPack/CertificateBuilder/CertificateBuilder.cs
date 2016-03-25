@@ -28,6 +28,6 @@ namespace RemObjects.InternetPack
 			return isServer ? "1.3.6.1.5.5.7.3.1" : "1.3.6.1.5.5.7.3.2";
 		}
 
-		public abstract Byte[] Export(String subject, String password, Boolean isServer);
+		public abstract Byte[] Export(String subject, String issuer, String password, Boolean isServer);
 	}
 }
