@@ -488,13 +488,19 @@ namespace RemObjects.InternetPack
 
 		protected override void DataSocketClose()
 		{
-			this.fSsl.Dispose();
+			if (this.fSsl != null)
+			{
+				this.fSsl.Dispose();
+			}
 			this.fInnerConnection.Close();
 		}
 
 		protected override void DataSocketClose(Boolean dispose)
 		{
-			this.fSsl.Dispose();
+			if (this.fSsl != null)
+			{
+				this.fSsl.Dispose();
+			}
 			this.fInnerConnection.Close();
 		}
 
