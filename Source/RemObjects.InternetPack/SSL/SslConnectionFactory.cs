@@ -18,9 +18,13 @@ namespace RemObjects.InternetPack
 		public SslConnectionFactory()
 		{
 			this.fLockRoot = new Object();
-
+			this.UseMono = Environment.OSVersion.Platform != PlatformID.Win32NT;
 			this.UseTls = true;
 		}
+
+		[Category("Ssl Options")]
+		[DefaultValue(false)]
+		public Boolean UseMono { get; set; }
 
 		[Category("Ssl Options")]
 		[DefaultValue("")]

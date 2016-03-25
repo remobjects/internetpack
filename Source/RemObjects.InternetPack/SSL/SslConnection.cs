@@ -13,6 +13,10 @@ namespace RemObjects.InternetPack
 {
 	public class SslConnection : Connection
 	{
+		#region Private constants
+		private Int32 MONO_TIMEOUT_POLL_PERIOD = 500; // 0.5 second
+		#endregion
+
 		#region Nested classes
 		private sealed class InnerConnection : Connection
 		{
@@ -26,6 +30,7 @@ namespace RemObjects.InternetPack
 			{
 			}
 
+			// Just read and write data, no additional timeout management
 			public override Int32 Read(Byte[] buffer, Int32 offset, Int32 size)
 			{
 				return this.ReceiveWhatsAvailable(buffer, offset, size);
@@ -110,10 +115,10 @@ namespace RemObjects.InternetPack
 				}
 
 				lOwner.CreateSslClientStream();
-				lOwner.fSslStream.BeginAuthenticateAsClient(lOwner.fFactory.TargetHostName, SslAuthenticateAsClient, lOwner);
+				lOwner.fSslStream.BeginAuthenticateAsClient(lOwner.fFactory.TargetHostName, EndAuthenticateAsClient, lOwner);
 			}
 
-			private void SslAuthenticateAsClient(IAsyncResult ar)
+			private void EndAuthenticateAsClient(IAsyncResult ar)
 			{
 				SslConnection lOwner = (SslConnection)ar.AsyncState;
 				try
@@ -260,7 +265,7 @@ namespace RemObjects.InternetPack
 		}
 		#endregion
 
-		#region .NET SSL stream management
+		#region SSL stream management
 		private void CreateSslServerStream()
 		{
 			this.fSslStream = new SslStream(this.fInnerConnection, true, NetSsl_RemoteCertificateValidation);
@@ -364,6 +369,7 @@ namespace RemObjects.InternetPack
 		{
 			if (this.fSslStream != null)
 			{
+				this.fSslStream.Close();
 				this.fSslStream.Dispose();
 			}
 			this.fInnerConnection.Close();
@@ -371,11 +377,7 @@ namespace RemObjects.InternetPack
 
 		protected override void DataSocketClose(Boolean dispose)
 		{
-			if (this.fSslStream != null)
-			{
-				this.fSslStream.Dispose();
-			}
-			this.fInnerConnection.Close();
+			this.DataSocketClose();
 		}
 
 		private void InnerConnection_AsyncHaveIncompleteData(Object sender, EventArgs e)
@@ -388,30 +390,188 @@ namespace RemObjects.InternetPack
 			this.TriggerAsyncDisconnect();
 		}
 
+		#region Read data
 		protected override Int32 DataSocketReceiveWhatsAvaiable(Byte[] buffer, Int32 offset, Int32 size)
 		{
+			return (this.fFactory.UseMono && this.TimeoutEnabled)
+				? this.MonoDataSocketReceiveWhatsAvaiable(buffer, offset, size)
+				: this.NativeDataSocketReceiveWhatsAvaiable(buffer, offset, size);
+		}
+
+		private Int32 NativeDataSocketReceiveWhatsAvaiable(Byte[] buffer, Int32 offset, Int32 size)
+		{
+			this.StartTimeoutTimer();
 			try
 			{
-				return this.fSslStream.Read(buffer, offset, size);
+				Int32 lBytesRead = this.fSslStream.Read(buffer, offset, size);
+
+				// Say 'Hi!' to Mono bugs
+				if (lBytesRead < 0)
+				{
+					throw new SocketException();
+				}
+
+				return lBytesRead;
 			}
 			catch (IOException)
 			{
 				throw new SocketException();
+			}
+			finally
+			{
+				this.StopTimeoutTimer();
 			}
 		}
 
-		protected override Int32 DataSocketSendAsMuchAsPossible(Byte[] buffer, Int32 offset, Int32 size)
+		private Int32 MonoDataSocketReceiveWhatsAvaiable(Byte[] buffer, Int32 offset, Int32 size)
 		{
+			this.StartTimeoutTimer();
 			try
 			{
-				this.fSslStream.Write(buffer, offset, size);
-				return size;
+				IAsyncResult lAsyncResult = this.BeginMonoSslRead(buffer, offset, size);
+				Int32 lBytesRead;
+
+				// Manual timeout management
+				Int32 lTimeout = this.Timeout * 1000;
+
+				while (true)
+				{
+					Int32 lCurrentTimeout = Math.Min(MONO_TIMEOUT_POLL_PERIOD, lTimeout);
+					lTimeout -= lCurrentTimeout;
+
+					if (lAsyncResult.AsyncWaitHandle.WaitOne(lCurrentTimeout))
+					{
+						lBytesRead = this.EndMonoSslRead(lAsyncResult);
+						break;
+					}
+
+					if (!this.Connected)
+					{
+						throw new SocketException();
+					}
+
+					if (lTimeout == 0)
+					{
+						// We got a timeout here
+						this.DataSocketClose();
+						throw new SocketException();
+					}
+				}
+
+				// Say 'Hi!' to Mono bugs
+				if (lBytesRead < 0)
+				{
+					throw new SocketException();
+				}
+
+				return lBytesRead;
 			}
 			catch (IOException)
 			{
 				throw new SocketException();
 			}
+			finally
+			{
+				this.StopTimeoutTimer();
+			}
 		}
+
+		private IAsyncResult BeginMonoSslRead(Byte[] buffer, Int32 offset, Int32 size)
+		{
+			return this.fSslStream.BeginRead(buffer, offset, size, null, null);
+		}
+
+		private Int32 EndMonoSslRead(IAsyncResult ar)
+		{
+			return this.fSslStream.EndRead(ar);
+		}
+		#endregion
+
+		#region Write data
+		protected override Int32 DataSocketSendAsMuchAsPossible(Byte[] buffer, Int32 offset, Int32 size)
+		{
+			if (this.fFactory.UseMono && this.TimeoutEnabled)
+			{
+				this.MonoDataSocketSendAsMuchAsPossible(buffer, offset, size);
+			}
+			else
+			{
+				this.NativeDataSocketSendAsMuchAsPossible(buffer, offset, size);
+			}
+
+			return size;
+		}
+
+		private void NativeDataSocketSendAsMuchAsPossible(Byte[] buffer, Int32 offset, Int32 size)
+		{
+			this.StartTimeoutTimer();
+			try
+			{
+				this.fSslStream.Write(buffer, offset, size);
+			}
+			catch (IOException)
+			{
+				throw new SocketException();
+			}
+			finally
+			{
+				this.StopTimeoutTimer();
+			}
+		}
+
+		private void MonoDataSocketSendAsMuchAsPossible(Byte[] buffer, Int32 offset, Int32 size)
+		{
+			try
+			{
+				IAsyncResult lAsyncResult = this.BeginMonoSslWrite(buffer, offset, size);
+
+				// Manual timeout management
+				Int32 lTimeout = this.Timeout * 1000;
+
+				while (true)
+				{
+					Int32 lCurrentTimeout = Math.Min(MONO_TIMEOUT_POLL_PERIOD, lTimeout);
+					lTimeout -= lCurrentTimeout;
+
+					if (lAsyncResult.AsyncWaitHandle.WaitOne(lCurrentTimeout))
+					{
+						this.EndMonoSslWrite(lAsyncResult);
+						break;
+					}
+
+					if (!this.Connected)
+					{
+						throw new SocketException();
+					}
+
+					if (lTimeout == 0)
+					{
+						// We got a timeout here
+						this.DataSocketClose();
+						throw new SocketException();
+					}
+				}
+			}
+			catch (IOException)
+			{
+				throw new SocketException();
+			}
+			finally
+			{
+				this.StopTimeoutTimer();
+			}
+		}
+
+		private IAsyncResult BeginMonoSslWrite(Byte[] buffer, Int32 offset, Int32 size)
+		{
+			return this.fSslStream.BeginWrite(buffer, offset, size, null, null);
+		}
+
+		private void EndMonoSslWrite(IAsyncResult ar)
+		{
+			this.fSslStream.EndWrite(ar);
+		}
+		#endregion
 
 		protected override IAsyncResult IntBeginRead(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)
 		{
