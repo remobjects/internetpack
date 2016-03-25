@@ -61,15 +61,15 @@ namespace RemObjects.InternetPack
 		public X509Certificate2 Certificate { get; set; }
 
 		[Browsable(false)]
-		public Boolean HasCertificate
+		public Boolean IsCertificateLoadPending
 		{
 			get
 			{
-				return !((this.Certificate == null) && String.IsNullOrEmpty(this.CertificateFileName));
+				return (this.Certificate == null) && !(String.IsNullOrEmpty(this.CertificateFileName) && String.IsNullOrEmpty(this.CertificateThumbprint));
 			}
 		}
 
-		protected void LoadCertificate()
+		public void LoadCertificate()
 		{
 			// Usual "Double Check To Avoid Lock" pattern
 			if (this.Certificate != null)
@@ -79,7 +79,7 @@ namespace RemObjects.InternetPack
 
 			if (String.IsNullOrEmpty(this.CertificateFileName) && String.IsNullOrEmpty(this.CertificateThumbprint))
 			{
-				throw new InvalidOperationException("Certificate not set. Either set the certificate directly or provide its filename or thumbprint");
+				throw new CryptographicException("Certificate not set. Either set the certificate directly or provide its filename or thumbprint");
 			}
 
 			lock (this.fLockRoot)
@@ -117,7 +117,7 @@ namespace RemObjects.InternetPack
 
 			if (lCertificate == null)
 			{
-				throw new InvalidOperationException("Cannot find certificate with provided thumbprint: " + this.CertificateThumbprint);
+				throw new CryptographicException("Cannot find certificate with provided thumbprint: " + this.CertificateThumbprint);
 			}
 
 			this.Certificate = lCertificate;
@@ -179,9 +179,11 @@ namespace RemObjects.InternetPack
 		public virtual Connection CreateClientConnection(Binding binding)
 		{
 			if (!this.Enabled)
+			{
 				return new Connection(binding);
+			}
 
-			if (this.HasCertificate)
+			if (this.IsCertificateLoadPending)
 			{
 				this.LoadCertificate();
 			}
@@ -191,7 +193,7 @@ namespace RemObjects.InternetPack
 
 		public virtual Connection CreateClientConnection(Connection connection)
 		{
-			if (this.HasCertificate)
+			if (this.IsCertificateLoadPending)
 			{
 				this.LoadCertificate();
 			}

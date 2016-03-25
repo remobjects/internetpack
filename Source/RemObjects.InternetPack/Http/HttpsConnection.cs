@@ -26,9 +26,11 @@ namespace RemObjects.InternetPack.Http
 		public override Connection CreateClientConnection(Binding binding)
 		{
 			if (!this.Enabled)
+			{
 				return new Connection(binding);
+			}
 
-			if (this.HasCertificate)
+			if (this.IsCertificateLoadPending)
 			{
 				this.LoadCertificate();
 			}
@@ -38,7 +40,7 @@ namespace RemObjects.InternetPack.Http
 
 		public override Connection CreateClientConnection(Connection connection)
 		{
-			if (this.HasCertificate)
+			if (this.IsCertificateLoadPending)
 			{
 				this.LoadCertificate();
 			}

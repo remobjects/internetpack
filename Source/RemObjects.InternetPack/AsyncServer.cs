@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
-  (c)opyright RemObjects Software, LLC. 2003-2015. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -17,6 +17,13 @@ namespace RemObjects.InternetPack
 		{
 			try
 			{
+#if FULLFRAMEWORK
+				if (this.SslOptions.Enabled)
+				{
+					this.SslOptions.LoadCertificate();
+				}
+#endif
+
 				this.fWorkers = CloseConnectionsOnShutdown ? new ArrayList() : null;
 
 				Int32 lActualPort = this.Port;
