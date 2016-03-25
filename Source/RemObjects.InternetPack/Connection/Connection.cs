@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
-  (c)opyright RemObjects Software, LLC. 2003-2015. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -14,35 +14,50 @@ namespace RemObjects.InternetPack
 {
 	public class Connection : Stream, IDisposable, IConnectionTimeouts
 	{
+		#region Private constants
+		private const Int32 READLINE_BUFFER_SIZE = 1024;
+		private const Int32 BUFFER_SIZE = 1024;//64 * 1024;
+		internal const Int32 DEFAULT_TIMEOUT = 5 * 60; /* 5 minutes */
+		internal const Int32 DEFAULT_MAX_LINE_LENGTH = 4096;
+		#endregion
+
+		#region Private fields
+		private readonly Object fSyncRoot;
+		private Boolean fTimeoutTimerEnabled;
+		private System.Threading.Timer fTimeoutTimer;
+		#endregion
+
 		public Connection(Socket socket)
 		{
+			this.fSyncRoot = new Object();
+
 			this.fDataSocket = socket;
 
 			if (this.fDataSocket != null)
+			{
 				this.fDataSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1);
+			}
 
 			this.SetDefaultValues();
 		}
 
 		public Connection(Binding binding)
 		{
+			this.fSyncRoot = new Object();
+
 			this.Init(binding);
 
 			this.SetDefaultValues();
 		}
-
-		private const Int32 READLINE_BUFFER_SIZE = 1024;
-		private const Int32 BUFFER_SIZE = 1024;//64 * 1024;
-
-		private Boolean fTimeoutTimerEnabled;
-		private System.Threading.Timer fTimeoutTimer;
 
 		public void Init(Socket socket)
 		{
 			this.fDataSocket = socket;
 
 			if (!this.EnableNagle)
+			{
 				this.fDataSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1);
+			}
 
 			this.SetDefaultValues();
 		}
@@ -53,7 +68,9 @@ namespace RemObjects.InternetPack
 			this.fDataSocket = new Socket(binding.AddressFamily, binding.SocketType, binding.Protocol);
 
 			if (!this.EnableNagle)
+			{
 				this.fDataSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1);
+			}
 		}
 
 		private void SetDefaultValues()
@@ -70,17 +87,11 @@ namespace RemObjects.InternetPack
 		}
 
 		#region Properties
-		public const Int32 DEFAULT_TIMEOUT = 5 * 60; /* 5 minutes */
-		public const Int32 DEFAULT_MAX_LINE_LENGTH = 4096;
-
 		public Binding Binding
 		{
 			get
 			{
-				if (this.fBinding != null)
-					return this.fBinding;
-
-				return new Binding(DataSocket.AddressFamily);
+				return this.fBinding ?? new Binding(DataSocket.AddressFamily);
 			}
 		}
 		private Binding fBinding;
@@ -105,10 +116,7 @@ namespace RemObjects.InternetPack
 		{
 			get
 			{
-				if (this.fEncoding == null)
-					this.fEncoding = Encoding.Default;
-
-				return this.fEncoding;
+				return this.fEncoding ?? (this.fEncoding = Encoding.Default);
 			}
 			set
 			{
@@ -263,29 +271,18 @@ namespace RemObjects.InternetPack
 			}
 		}
 
-		public EndPoint OriginalEndpoint
-		{
-			get
-			{
-				return this.fOriginalEndpoint;
-			}
-			protected set
-			{
-				this.fOriginalEndpoint = value;
-			}
-		}
-		private EndPoint fOriginalEndpoint;
+		public EndPoint OriginalEndpoint { get; protected set; }
 
-		internal protected virtual void InitializeServerConnection()
+		protected internal virtual void InitializeServerConnection()
 		{
 		}
 
-		internal protected virtual IAsyncResult BeginInitializeServerConnection(AsyncCallback callback, Object state)
+		protected internal virtual IAsyncResult BeginInitializeServerConnection(AsyncCallback callback, Object state)
 		{
 			return null;
 		}
 
-		internal protected virtual void EndInitializeServerConnection(IAsyncResult ar)
+		protected internal virtual void EndInitializeServerConnection(IAsyncResult ar)
 		{
 		}
 
@@ -337,62 +334,87 @@ namespace RemObjects.InternetPack
 
 		protected virtual void DataSocketConnect(EndPoint endPoint)
 		{
-			fOriginalEndpoint = endPoint;
-			DataSocket.Connect(endPoint);
+			this.OriginalEndpoint = endPoint;
+			this.DataSocket.Connect(endPoint);
 		}
 
 		private void Abort()
 		{
-			if (!this.DataSocket.Connected)
-				return;
+			// On older Mono versions a racing condition can arise here
+			lock (this.fSyncRoot)
+			{
+				if (!this.DataSocket.Connected)
+				{
+					return;
+				}
 
-			this.DataSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
+				try
+				{
+					this.DataSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
+				}
+				catch (Exception)
+				{
+					// Ignore anything. This connection is dead anyway
+				}
 
-			this.DataSocketClose();
+				this.DataSocketClose();
+			}
 		}
 
 		protected virtual void DataSocketClose()
 		{
-			try
+			// On older Mono versions a racing condition can arise here
+			lock (this.fSyncRoot)
 			{
-				if (!this.DataSocket.Connected)
-					return;
-
 				try
 				{
-					this.DataSocket.Shutdown(SocketShutdown.Both);
-				}
-				catch (SocketException)
-				{
-				}
+					if (!this.DataSocket.Connected)
+						return;
 
-				try
-				{
-					this.DataSocket.Close();
+					try
+					{
+						this.DataSocket.Shutdown(SocketShutdown.Both);
+					}
+					catch (SocketException)
+					{
+					}
+
+					try
+					{
+						this.DataSocket.Close();
+					}
+					catch (SocketException)
+					{
+					}
 				}
-				catch (SocketException)
+				catch (ObjectDisposedException)
 				{
 				}
-			}
-			catch (ObjectDisposedException)
-			{
 			}
 		}
 
 		protected virtual void DataSocketClose(Boolean dispose)
 		{
-			try
+			// On older Mono versions a racing condition can arise here
+			lock (this.fSyncRoot)
 			{
-				if (this.DataSocket.Connected)
-					this.DataSocket.Shutdown(SocketShutdown.Both);
-			}
-			catch (Exception)
-			{
-				// Suppress any exceptions
-			}
+				try
+				{
+					if (this.DataSocket.Connected)
+					{
+						this.DataSocket.Shutdown(SocketShutdown.Both);
+					}
+				}
+				catch (Exception)
+				{
+					// Suppress any exceptions
+				}
 
-			if (dispose)
-				this.DataSocket.Close();
+				if (dispose)
+				{
+					this.DataSocket.Close();
+				}
+			}
 		}
 
 		private Int32 DataSocketReceive(Byte[] buffer, Int32 offset, Int32 size)
@@ -824,89 +846,23 @@ namespace RemObjects.InternetPack
 		#region Async
 		private class AsyncRequest : IAsyncResult
 		{
-			public Byte[] AsyncBuffer
-			{
-				get
-				{
-					return fAsyncBuffer;
-				}
-				set
-				{
-					fAsyncBuffer = value;
-				}
-			}
-			private Byte[] fAsyncBuffer;
+			public Byte[] AsyncBuffer { get; set; }
 
-			public Int32 AsyncOffset
-			{
-				get
-				{
-					return fAsyncOffset;
-				}
-				set
-				{
-					fAsyncOffset = value;
-				}
-			}
-			private Int32 fAsyncOffset;
+			public Int32 AsyncOffset { get; set; }
 
-			public Int32 AsyncCount
-			{
-				get
-				{
-					return fAsyncCount;
-				}
-				set
-				{
-					fAsyncCount = value;
-				}
-			}
-			private Int32 fAsyncCount;
+			public Int32 AsyncCount { get; set; }
 
-			public AsyncCallback AsyncCallback
-			{
-				get
-				{
-					return fAsyncCallback;
-				}
-				set
-				{
-					fAsyncCallback = value;
-				}
-			}
-			private AsyncCallback fAsyncCallback;
+			public AsyncCallback AsyncCallback { get; set; }
 
-			public Object AsyncState
-			{
-				get
-				{
-					return fState;
-				}
-				set
-				{
-					fState = value;
-				}
-			}
-			private Object fState;
+			public Object AsyncState { get; set; }
 
-			public Int32 AsyncRest
-			{
-				get
-				{
-					return fAsyncRest;
-				}
-				set
-				{
-					fAsyncRest = value;
-				}
-			}
-			private Int32 fAsyncRest;
+			public Int32 AsyncRest { get; set; }
 
 			Object IAsyncResult.AsyncState
 			{
 				get
 				{
-					return fState;
+					return AsyncState;
 				}
 			}
 
@@ -930,7 +886,7 @@ namespace RemObjects.InternetPack
 			{
 				get
 				{
-					return fAsyncRest == 0;
+					return this.AsyncRest == 0;
 				}
 			}
 		}
@@ -945,7 +901,7 @@ namespace RemObjects.InternetPack
 		/// </summary>
 		public event EventHandler AsyncHaveIncompleteData;
 
-		internal protected virtual void TriggerAsyncDisconnect()
+		protected internal virtual void TriggerAsyncDisconnect()
 		{
 			if (AsyncDisconnect != null)
 				AsyncDisconnect(this, EventArgs.Empty);
@@ -961,9 +917,9 @@ namespace RemObjects.InternetPack
 		{
 			public BufferAsyncResult(Byte[] buffer, Int32 offset, Int32 count, Object aState)
 			{
-				fBuffer = buffer;
-				fOffset = offset;
-				fCount = count;
+				Buffer = buffer;
+				Offset = offset;
+				Count = count;
 				fAsyncState = aState;
 			}
 
@@ -1001,44 +957,11 @@ namespace RemObjects.InternetPack
 				}
 			}
 
-			public Byte[] Buffer
-			{
-				get
-				{
-					return this.fBuffer;
-				}
-				set
-				{
-					this.fBuffer = value;
-				}
-			}
-			public Byte[] fBuffer;
+			public Byte[] Buffer { get; set; }
 
-			public Int32 Offset
-			{
-				get
-				{
-					return this.fOffset;
-				}
-				set
-				{
-					this.fOffset = value;
-				}
-			}
-			public Int32 fOffset;
+			public Int32 Offset { get; set; }
 
-			public Int32 Count
-			{
-				get
-				{
-					return this.fCount;
-				}
-				set
-				{
-					this.fCount = value;
-				}
-			}
-			public Int32 fCount;
+			public Int32 Count { get; set; }
 			#endregion
 		}
 
@@ -1131,7 +1054,7 @@ namespace RemObjects.InternetPack
 
 			try
 			{
-				IntBeginRead(fBuffer, 0, fBuffer.Length, new AsyncCallback(IntReadLineCallback), lRequest);
+				IntBeginRead(fBuffer, 0, fBuffer.Length, IntReadLineCallback, lRequest);
 			}
 			catch (ObjectDisposedException) // disconnect from this side
 			{
@@ -1272,7 +1195,7 @@ namespace RemObjects.InternetPack
 
 				lRequest.Data.Write(fBuffer, 0, lCount);
 				TriggerAsyncHaveIncompleteData();
-				IntBeginRead(fBuffer, 0, fBuffer.Length, new AsyncCallback(IntReadLineCallback), lRequest);
+				IntBeginRead(fBuffer, 0, fBuffer.Length, IntReadLineCallback, lRequest);
 			}
 			catch (ObjectDisposedException) // disconnect from this side
 			{
@@ -1338,7 +1261,7 @@ namespace RemObjects.InternetPack
 					return lAr;
 				}
 
-				IntBeginRead(buffer, offset, count, new AsyncCallback(IntReadCallback), lRequest);
+				IntBeginRead(buffer, offset, count, IntReadCallback, lRequest);
 			}
 			catch (ObjectDisposedException) // disconnect from this side
 			{
@@ -1364,20 +1287,20 @@ namespace RemObjects.InternetPack
 				BufferAsyncResult lBufferResult = ar as BufferAsyncResult;
 				if (lBufferResult != null)
 				{
-					if (fBufferEnd - fBufferStart > lBufferResult.fCount)
+					if (fBufferEnd - fBufferStart > lBufferResult.Count)
 					{
-						for (Int32 i = 0; i < lBufferResult.fCount; i++)
-							lBufferResult.fBuffer[lBufferResult.fOffset + i] = fBuffer[i + fBufferStart];
+						for (Int32 i = 0; i < lBufferResult.Count; i++)
+							lBufferResult.Buffer[lBufferResult.Offset + i] = fBuffer[i + fBufferStart];
 
-						fBufferStart += lBufferResult.fCount;
+						fBufferStart += lBufferResult.Count;
 
-						lCount = lBufferResult.fCount;
+						lCount = lBufferResult.Count;
 					}
 					else
 					{
 						Int32 lSize = fBufferEnd - fBufferStart;
 						for (Int32 i = 0; i < lSize; i++)
-							lBufferResult.fBuffer[lBufferResult.fOffset + i] = fBuffer[i + fBufferStart];
+							lBufferResult.Buffer[lBufferResult.Offset + i] = fBuffer[i + fBufferStart];
 
 						fBufferStart = 0;
 						fBufferEnd = 0;
@@ -1418,7 +1341,7 @@ namespace RemObjects.InternetPack
 				try
 				{
 					TriggerAsyncHaveIncompleteData();
-					IntBeginRead(lRequest.AsyncBuffer, lRequest.AsyncOffset, lRequest.AsyncRest, new AsyncCallback(IntReadCallback), lRequest);
+					IntBeginRead(lRequest.AsyncBuffer, lRequest.AsyncOffset, lRequest.AsyncRest, IntReadCallback, lRequest);
 				}
 				catch (ObjectDisposedException) // disconnect from this side
 				{
@@ -1437,10 +1360,7 @@ namespace RemObjects.InternetPack
 
 		public override Int32 EndRead(IAsyncResult ar)
 		{
-			if (this.BufferedAsync)
-				return ((AsyncRequest)ar).AsyncCount - ((AsyncRequest)ar).AsyncRest;
-
-			return IntEndRead(ar);
+			return this.BufferedAsync ? ((AsyncRequest)ar).AsyncCount - ((AsyncRequest)ar).AsyncRest : IntEndRead(ar);
 		}
 
 		public override IAsyncResult BeginWrite(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)

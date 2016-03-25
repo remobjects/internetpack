@@ -15,6 +15,7 @@ namespace RemObjects.InternetPack
 	{
 		#region Private constants
 		private Int32 MONO_TIMEOUT_POLL_PERIOD = 500; // 0.5 second
+		private Int32 MONO_TIMEOUT_SHIFT_PERIOD = 200; // 0.2 second
 		#endregion
 
 		#region Nested classes
@@ -371,7 +372,9 @@ namespace RemObjects.InternetPack
 			{
 				this.fSslStream.Close();
 				this.fSslStream.Dispose();
+				this.fSslStream = null;
 			}
+
 			this.fInnerConnection.Close();
 		}
 
@@ -432,7 +435,8 @@ namespace RemObjects.InternetPack
 				Int32 lBytesRead;
 
 				// Manual timeout management
-				Int32 lTimeout = this.Timeout * 1000;
+				// Timeout is increased to avoid racing conditions loops
+				Int32 lTimeout = this.Timeout * 1000 + MONO_TIMEOUT_SHIFT_PERIOD;
 
 				while (true)
 				{
@@ -526,7 +530,8 @@ namespace RemObjects.InternetPack
 				IAsyncResult lAsyncResult = this.BeginMonoSslWrite(buffer, offset, size);
 
 				// Manual timeout management
-				Int32 lTimeout = this.Timeout * 1000;
+				// Timeout is increased to avoid racing conditions loops
+				Int32 lTimeout = this.Timeout * 1000 + MONO_TIMEOUT_SHIFT_PERIOD;
 
 				while (true)
 				{
