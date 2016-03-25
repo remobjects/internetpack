@@ -6,16 +6,21 @@
 using System;
 using System.ComponentModel;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace RemObjects.InternetPack
 {
 	public class SslConnectionFactory : IConnectionFactory
 	{
+		private readonly Object fLockRoot;
+
 		public SslConnectionFactory()
 		{
+			this.fLockRoot = new Object();
+
 			this.UseMono = Environment.OSVersion.Platform != PlatformID.Win32NT;
-			this.UseTls = false;
+			this.UseTls = true;
 		}
 
 		[Category("Ssl Options")]
@@ -26,7 +31,7 @@ namespace RemObjects.InternetPack
 		public Boolean UseMono { get; set; }
 
 		[Category("Ssl Options")]
-		[DefaultValue(false)]
+		[DefaultValue(true)]
 		public Boolean UseTls { get; set; }
 
 		[Category("Ssl Options")]
@@ -36,6 +41,10 @@ namespace RemObjects.InternetPack
 		[Category("Ssl Options")]
 		[DefaultValue(null)]
 		public String CertificateFileName { get; set; }
+
+		[Category("Ssl Options")]
+		[DefaultValue(null)]
+		public String CertificateThumbprint { get; set; }
 
 		[Category("Ssl Options")]
 		public event EventHandler<SslNeedPasswordEventArgs> NeedPassword;
@@ -62,22 +71,73 @@ namespace RemObjects.InternetPack
 
 		protected void LoadCertificate()
 		{
-			lock (this)
+			// Usual "Double Check To Avoid Lock" pattern
+			if (this.Certificate != null)
+			{
+				return;
+			}
+
+			if (String.IsNullOrEmpty(this.CertificateFileName) && String.IsNullOrEmpty(this.CertificateThumbprint))
+			{
+				throw new InvalidOperationException("Certificate not set. Either set the certificate directly or provide its filename or thumbprint");
+			}
+
+			lock (this.fLockRoot)
 			{
 				if (this.Certificate != null)
 				{
 					return;
 				}
 
-				if (String.IsNullOrEmpty(this.CertificateFileName))
+				if (!String.IsNullOrEmpty(this.CertificateFileName))
 				{
-					throw new InvalidOperationException("Certificate not set and CertificateFileName is empty");
+					this.LoadCertificateFromFile();
+					return;
 				}
 
-				SslNeedPasswordEventArgs lEventArgs = new SslNeedPasswordEventArgs();
-				this.OnNeedPassword(lEventArgs);
+				this.LoadCertificateFromStore();
+			}
+		}
 
-				this.Certificate = new X509Certificate2(this.CertificateFileName, lEventArgs.Password, X509KeyStorageFlags.Exportable);
+		private void LoadCertificateFromFile()
+		{
+			SslNeedPasswordEventArgs lEventArgs = new SslNeedPasswordEventArgs();
+			this.OnNeedPassword(lEventArgs);
+
+			this.Certificate = new X509Certificate2(this.CertificateFileName, lEventArgs.Password, X509KeyStorageFlags.Exportable);
+		}
+
+		private void LoadCertificateFromStore()
+		{
+			// Initial data cleanup, just in case
+			String lThumbprint = this.CertificateThumbprint.Replace("\u200e", "").Replace("\u200f", "").Replace(" ", "");
+
+			X509Certificate2 lCertificate = SslConnectionFactory.LoadCertificateFromStore(lThumbprint, StoreLocation.CurrentUser) ??
+											SslConnectionFactory.LoadCertificateFromStore(lThumbprint, StoreLocation.LocalMachine);
+
+			if (lCertificate == null)
+			{
+				throw new InvalidOperationException("Cannot find certificate with provided thumbprint: " + this.CertificateThumbprint);
+			}
+
+			this.Certificate = lCertificate;
+		}
+
+		private static X509Certificate2 LoadCertificateFromStore(String thumbprint, StoreLocation location)
+		{
+			X509Store lCertificateStore = new X509Store(StoreName.My, location);
+			try
+			{
+				lCertificateStore.Open(OpenFlags.ReadOnly);
+
+				X509Certificate2Collection lCertificates = lCertificateStore.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
+
+				return (lCertificates.Count != 0) ? lCertificates[0] : null;
+			}
+			finally
+			{
+				lCertificateStore.Close();
+				// X509Store doesn't implement IDisposable on .NET 3.5
 			}
 		}
 

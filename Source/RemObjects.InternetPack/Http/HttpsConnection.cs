@@ -29,7 +29,9 @@ namespace RemObjects.InternetPack.Http
 				return new Connection(binding);
 
 			if (this.HasCertificate)
+			{
 				this.LoadCertificate();
+			}
 
 			return new HttpSslConnection(this, binding);
 		}
@@ -37,7 +39,9 @@ namespace RemObjects.InternetPack.Http
 		public override Connection CreateClientConnection(Connection connection)
 		{
 			if (this.HasCertificate)
+			{
 				this.LoadCertificate();
+			}
 
 			return new HttpSslConnection(this, connection);
 		}
