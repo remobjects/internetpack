@@ -207,9 +207,9 @@ Public Class MainForm
     End Sub
 
     Private Sub addToLog(ByVal line As String)
-        txtLog.Text = txtLog.Text & _
-          System.DateTime.Now.ToLongTimeString() & _
-          ": " & _
+        txtLog.Text = txtLog.Text &
+          System.DateTime.Now.ToLongTimeString() &
+          ": " &
           line & Environment.NewLine
     End Sub
 

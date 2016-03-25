@@ -1,18 +1,18 @@
 
 Public Class MainForm
-    Inherits System.Windows.Forms.Form
+    Inherits Form
 
-    Const sWelcome As String = _
-        "Internet Pack HTTP Responses Test App" & _
-        "<br /><br />" & _
-        "Valid links:" & _
-        "<br />" & _
-        "<a href=/home>/home</a> show this page</a>" & _
-        "<br />" & _
-        "<a href=/file>/file</a> send back a file (this .exe)" & _
-        "<br />" & _
-        "<a href=/bytes>/bytes</a> send back a buffer of random bytes" & _
-        "<br />" & _
+    Const sWelcome As String =
+        "Internet Pack HTTP Responses Test App" &
+        "<br /><br />" &
+        "Valid links:" &
+        "<br />" &
+        "<a href=/home>/home</a> show this page</a>" &
+        "<br />" &
+        "<a href=/file>/file</a> send back a file (this .exe)" &
+        "<br />" &
+        "<a href=/bytes>/bytes</a> send back a buffer of random bytes" &
+        "<br />" &
         "<a href=/error>/error</a> Display a custom error"
 
 #Region " Windows Form Designer generated code "
@@ -96,7 +96,7 @@ Public Class MainForm
 
 #End Region
 
-    Private Sub llblinkLabel1_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles llblinkLabel1.LinkClicked
+    Private Sub llblinkLabel1_LinkClicked(ByVal sender As System.Object, ByVal e As Windows.Forms.LinkLabelLinkClickedEventArgs) Handles llblinkLabel1.LinkClicked
         Process.Start(llblinkLabel1.Text)
     End Sub
 

@@ -24,7 +24,7 @@ Public Class FtpSyncWorker
     Private WithEvents _Ftp As FtpClient
 #End Region
 
-    Public Sub Log(ByVal Sender As Object, ByVal ea As RemObjects.InternetPack.CommandBased.ClientLogArgs) Handles _Ftp.OnLog
+    Private Sub Log(ByVal Sender As Object, ByVal ea As RemObjects.InternetPack.CommandBased.ClientLogArgs) Handles _Ftp.OnLog
         If _ShowLog Then
             Console.WriteLine(ea.Text)
         End If
@@ -67,7 +67,7 @@ Public Class FtpSyncWorker
         End Try
     End Sub
 
-    Public Sub SyncDirectory(ByVal aLocalDirectory As String, ByVal aRemoteDirectory As String)
+    Private Sub SyncDirectory(ByVal aLocalDirectory As String, ByVal aRemoteDirectory As String)
         Dim lOriginalLocalDirectory As String
         lOriginalLocalDirectory = Directory.GetCurrentDirectory()
         Dim lOriginalRemoteDirectory As String

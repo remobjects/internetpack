@@ -321,7 +321,6 @@ Public Class MainForm
         Me.httpClient1.HostName = Nothing
         Me.httpClient1.Password = ""
         Me.httpClient1.Port = 0
-        Me.httpClient1.Url = Nothing
         Me.httpClient1.UserName = ""
         '
         'dvParams
