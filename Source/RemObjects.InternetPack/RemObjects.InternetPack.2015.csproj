@@ -274,9 +274,8 @@
     <Compile Include="SSL\SslConnectionFactory.cs" />
     <Compile Include="EventArgs\SslNeedPasswordEventArgs.cs" />
     <Compile Include="EventArgs\SslValidateCertificateEventArgs.cs" />
-    <Compile Include="SSL\IMonoSecurityTypeProvider.cs" />
-    <Compile Include="SSL\MonoSecurityTypeProvider.cs" />
-    <Compile Include="SSL\MonoSecurityTypeProviderFactory.cs" />
+    <Compile Include="CertificateBuilder\IMonoSecurityTypeProvider.cs" />
+    <Compile Include="CertificateBuilder\MonoSecurityTypeProvider.cs" />
     <Compile Include="TcpClient.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -7,8 +7,6 @@ using System;
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Reflection;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace RemObjects.InternetPack
@@ -34,7 +32,7 @@ namespace RemObjects.InternetPack
 			}
 		}
 
-		private class ConnectAsyncReult : IAsyncResult
+		private class ConnectAsyncResult : IAsyncResult
 		{
 			#region Private fields
 			private readonly AsyncCallback fCallback;
@@ -42,7 +40,7 @@ namespace RemObjects.InternetPack
 			private Exception fFailure;
 			#endregion
 
-			public ConnectAsyncReult(AsyncCallback callback, Object state)
+			public ConnectAsyncResult(AsyncCallback callback, Object state)
 			{
 				this.AsyncState = state;
 				this.fCallback = callback;
@@ -111,24 +109,8 @@ namespace RemObjects.InternetPack
 					return;
 				}
 
-				if (lOwner.GetTypeProvider() != null)
-				{
-					lOwner.CreateMonoClientStream();
-					this.fComplete = true;
-					lock (this)
-					{
-						if (this.fWaitHandle != null)
-						{
-							this.fWaitHandle.Set();
-						}
-					}
-					this.fCallback(ar);
-
-					return;
-				}
-
-				lOwner.fSsl = new SslStream(lOwner.fInnerConnection, true, lOwner.NetSsl_RemoteCertificateValidation);
-				((SslStream)lOwner.fSsl).BeginAuthenticateAsClient(lOwner.fFactory.TargetHostName, SslAuthenticateAsClient, lOwner);
+				lOwner.CreateSslClientStream();
+				lOwner.fSslStream.BeginAuthenticateAsClient(lOwner.fFactory.TargetHostName, SslAuthenticateAsClient, lOwner);
 			}
 
 			private void SslAuthenticateAsClient(IAsyncResult ar)
@@ -136,7 +118,7 @@ namespace RemObjects.InternetPack
 				SslConnection lOwner = (SslConnection)ar.AsyncState;
 				try
 				{
-					((SslStream)lOwner.fSsl).EndAuthenticateAsClient(ar);
+					lOwner.fSslStream.EndAuthenticateAsClient(ar);
 				}
 				catch (Exception ex)
 				{
@@ -153,7 +135,6 @@ namespace RemObjects.InternetPack
 					return;
 				}
 
-				lOwner.CreateMonoClientStream();
 				this.fComplete = true;
 				lock (this)
 				{
@@ -192,16 +173,13 @@ namespace RemObjects.InternetPack
 		#endregion
 
 		#region Private static cache
-		private static Object fMonoSecurityProtocolDefault;
-		private static Object fMonoSecurityProtocolTls;
 		private static System.Security.Authentication.SslProtocols fNetSecurityProtocolTls = System.Security.Authentication.SslProtocols.None;
 		#endregion
 
 		#region Private fields
 		private readonly SslConnectionFactory fFactory;
 		private readonly Connection fInnerConnection;
-		private volatile IMonoSecurityTypeProvider fTypeProvider;
-		private Stream fSsl;
+		private SslStream fSslStream;
 		#endregion
 
 		#region Constructors
@@ -209,7 +187,8 @@ namespace RemObjects.InternetPack
 			: base((Socket)null)
 		{
 			this.fFactory = factory;
-			this.fInnerConnection = new InnerConnection(binding) { BufferedAsync = false };
+			this.fInnerConnection = new InnerConnection(binding);
+			this.fInnerConnection.BufferedAsync = false;
 			this.fInnerConnection.AsyncDisconnect += InnerConnection_AsyncDisconnect;
 			this.fInnerConnection.AsyncHaveIncompleteData += InnerConnection_AsyncHaveIncompleteData;
 		}
@@ -218,7 +197,8 @@ namespace RemObjects.InternetPack
 			: base((Socket)null)
 		{
 			this.fFactory = factory;
-			this.fInnerConnection = new InnerConnection(socket) { BufferedAsync = false };
+			this.fInnerConnection = new InnerConnection(socket);
+			this.fInnerConnection.BufferedAsync = false;
 			this.fInnerConnection.AsyncDisconnect += InnerConnection_AsyncDisconnect;
 			this.fInnerConnection.AsyncHaveIncompleteData += InnerConnection_AsyncHaveIncompleteData;
 		}
@@ -280,98 +260,15 @@ namespace RemObjects.InternetPack
 		}
 		#endregion
 
-		#region Mono SSL stream management
-		private void CreateMonoServerStream()
-		{
-			Type lType = this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.SslServerStream");
-			this.fSsl = (Stream)Activator.CreateInstance(lType, this.fInnerConnection, this.fFactory.Certificate, false, false, this.GetMonoSecurityProtocol());
-
-			Object lPrivateKeySelectionCallback = Delegate.CreateDelegate(this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.PrivateKeySelectionCallback"), this, "MonoSsl_GetPrivateKey", false, true);
-			lType.InvokeMember("set_PrivateKeyCertSelectionDelegate", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, this.fSsl, new Object[] { lPrivateKeySelectionCallback });
-
-			Object lCertificateValidationCallback = Delegate.CreateDelegate(this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.CertificateValidationCallback"), this, "MonoSsl_RemoteCertificateValidation", false, true);
-			lType.InvokeMember("set_ClientCertValidationDelegate", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, this.fSsl, new Object[] { lCertificateValidationCallback });
-		}
-
-		private void CreateMonoClientStream()
-		{
-			Type lType = this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.SslClientStream");
-			this.fSsl = (Stream)Activator.CreateInstance(lType, this.fInnerConnection, this.fFactory.TargetHostName, false, this.GetMonoSecurityProtocol());
-
-			Object lPrivateKeySelectionCallback = Delegate.CreateDelegate(this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.PrivateKeySelectionCallback"), this, "MonoSsl_GetPrivateKey", false, true);
-			lType.InvokeMember("set_PrivateKeyCertSelectionDelegate", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, this.fSsl, new Object[] { lPrivateKeySelectionCallback });
-
-			Object lCertificateValidationCallback = Delegate.CreateDelegate(this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.CertificateValidationCallback"), this, "MonoSsl_RemoteCertificateValidation", false, true);
-			lType.InvokeMember("set_ServerCertValidationDelegate", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, this.fSsl, new Object[] { lCertificateValidationCallback });
-		}
-
-		private IMonoSecurityTypeProvider GetTypeProvider()
-		{
-			if (!this.fFactory.UseMono)
-			{
-				return null;
-			}
-
-			if (this.fTypeProvider != null)
-			{
-				return this.fTypeProvider;
-			}
-
-			// This operation should be thread-safe
-			this.fTypeProvider = MonoSecurityTypeProviderFactory.CreateTypeProvider();
-
-			this.fFactory.UseMono = this.fTypeProvider != null;
-
-			return this.fTypeProvider;
-		}
-
-		private Object GetMonoSecurityProtocol()
-		{
-			// Lock-less approach
-			// In the worst case there will be an excessive Reflection call (or a couple of them)
-			if ((SslConnection.fMonoSecurityProtocolDefault != null) && (SslConnection.fMonoSecurityProtocolTls != null))
-			{
-				return this.fFactory.UseTls ? SslConnection.fMonoSecurityProtocolTls : SslConnection.fMonoSecurityProtocolDefault;
-			}
-
-			Type lSecurityProtocolType = this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.SecurityProtocolType");
-			Int32 lTlsValue = (Int32)Enum.Parse(lSecurityProtocolType, "Tls");
-			Int32 lDefaultValue = (Int32)Enum.Parse(lSecurityProtocolType, "Default");
-
-			SslConnection.fMonoSecurityProtocolTls = Enum.ToObject(lSecurityProtocolType, lTlsValue);
-			SslConnection.fMonoSecurityProtocolDefault = Enum.ToObject(lSecurityProtocolType, lDefaultValue);
-
-			return this.fFactory.UseTls ? SslConnection.fMonoSecurityProtocolTls : SslConnection.fMonoSecurityProtocolDefault;
-		}
-
-		// Warning about a non-used method is not correct here. This method is used via reflection
-		private AsymmetricAlgorithm MonoSsl_GetPrivateKey(X509Certificate certificate, String targetHost)
-		{
-			return this.fFactory.Certificate.PrivateKey;
-		}
-
-		// Warning about a non-used method is not correct here. This method is used via reflection
-		private Boolean MonoSsl_RemoteCertificateValidation(X509Certificate certificate, Int32[] errors)
-		{
-			return fFactory.OnValidateRemoteCertificate(certificate);
-		}
-		#endregion
-
 		#region .NET SSL stream management
-		private void CreateNetServerStream()
+		private void CreateSslServerStream()
 		{
-			SslStream lStream = new SslStream(this.fInnerConnection, true, NetSsl_RemoteCertificateValidation);
-			lStream.AuthenticateAsServer(this.fFactory.Certificate, false, this.GetNetSecurityProtocol(), false);
-
-			this.fSsl = lStream;
+			this.fSslStream = new SslStream(this.fInnerConnection, true, NetSsl_RemoteCertificateValidation);
 		}
 
-		private void CreateNetClientStream()
+		private void CreateSslClientStream()
 		{
-			SslStream lStream = new SslStream(this.fInnerConnection, true, this.NetSsl_RemoteCertificateValidation);
-			lStream.AuthenticateAsClient(this.fFactory.TargetHostName, new X509CertificateCollection(), this.GetNetSecurityProtocol(), false);
-
-			this.fSsl = lStream;
+			this.fSslStream = new SslStream(this.fInnerConnection, true, this.NetSsl_RemoteCertificateValidation);
 		}
 
 		private System.Security.Authentication.SslProtocols GetNetSecurityProtocol()
@@ -401,34 +298,19 @@ namespace RemObjects.InternetPack
 
 		protected internal override void InitializeServerConnection()
 		{
-			if (this.GetTypeProvider() != null)
-			{
-				this.CreateMonoServerStream();
-			}
-			else
-			{
-				this.CreateNetServerStream();
-			}
+			this.CreateSslServerStream();
+			this.fSslStream.AuthenticateAsServer(this.fFactory.Certificate, false, this.GetNetSecurityProtocol(), false);
 		}
 
 		protected internal override IAsyncResult BeginInitializeServerConnection(AsyncCallback callback, Object state)
 		{
-			if (this.fFactory.UseMono)
-			{
-				this.CreateMonoServerStream();
-				return null;
-			}
-
-			this.fSsl = new SslStream(this.fInnerConnection, true, NetSsl_RemoteCertificateValidation);
-			return ((SslStream)this.fSsl).BeginAuthenticateAsServer(this.fFactory.Certificate, false, this.GetNetSecurityProtocol(), false, callback, state);
+			this.CreateSslServerStream();
+			return this.fSslStream.BeginAuthenticateAsServer(this.fFactory.Certificate, false, this.GetNetSecurityProtocol(), false, callback, state);
 		}
 
 		protected internal override void EndInitializeServerConnection(IAsyncResult ar)
 		{
-			if (!this.fFactory.UseMono)
-			{
-				((SslStream)this.fSsl).EndAuthenticateAsServer(ar);
-			}
+			this.fSslStream.EndAuthenticateAsServer(ar);
 		}
 
 		public override void Connect(System.Net.EndPoint endPoint)
@@ -440,34 +322,19 @@ namespace RemObjects.InternetPack
 
 		public virtual void InitializeClientConnection()
 		{
-			if (this.GetTypeProvider() != null)
-			{
-				this.CreateMonoClientStream();
-			}
-			else
-			{
-				this.CreateNetClientStream();
-			}
+			this.CreateSslClientStream();
+			this.fSslStream.AuthenticateAsClient(this.fFactory.TargetHostName, new X509CertificateCollection(), this.GetNetSecurityProtocol(), false);
 		}
 
 		protected virtual IAsyncResult BeginInitializeClientConnection(AsyncCallback callback, Object state)
 		{
-			if (this.GetTypeProvider() != null)
-			{
-				this.CreateMonoClientStream();
-				return null;
-			}
-
-			this.fSsl = new SslStream(this.fInnerConnection, true, NetSsl_RemoteCertificateValidation);
-			return ((SslStream)this.fSsl).BeginAuthenticateAsClient(this.fFactory.TargetHostName, new X509CertificateCollection(), this.GetNetSecurityProtocol(), false, callback, state);
+			this.CreateSslClientStream();
+			return this.fSslStream.BeginAuthenticateAsClient(this.fFactory.TargetHostName, new X509CertificateCollection(), this.GetNetSecurityProtocol(), false, callback, state);
 		}
 
 		protected void EndInitializeClientConnection(IAsyncResult ar)
 		{
-			if (this.GetTypeProvider() == null)
-			{
-				((SslStream)this.fSsl).EndAuthenticateAsClient(ar);
-			}
+			this.fSslStream.EndAuthenticateAsClient(ar);
 		}
 
 		public override void Connect(System.Net.IPAddress address, Int32 port)
@@ -477,7 +344,7 @@ namespace RemObjects.InternetPack
 
 		public override IAsyncResult BeginConnect(System.Net.EndPoint endPoint, AsyncCallback callback, Object state)
 		{
-			ConnectAsyncReult lWrapper = new ConnectAsyncReult(callback, state);
+			ConnectAsyncResult lWrapper = new ConnectAsyncResult(callback, state);
 			this.fInnerConnection.BeginConnect(endPoint, lWrapper.ConnectionConnect, this);
 
 			return lWrapper;
@@ -490,23 +357,23 @@ namespace RemObjects.InternetPack
 
 		public override void EndConnect(IAsyncResult ar)
 		{
-			((ConnectAsyncReult)ar).EndConnect();
+			((ConnectAsyncResult)ar).EndConnect();
 		}
 
 		protected override void DataSocketClose()
 		{
-			if (this.fSsl != null)
+			if (this.fSslStream != null)
 			{
-				this.fSsl.Dispose();
+				this.fSslStream.Dispose();
 			}
 			this.fInnerConnection.Close();
 		}
 
 		protected override void DataSocketClose(Boolean dispose)
 		{
-			if (this.fSsl != null)
+			if (this.fSslStream != null)
 			{
-				this.fSsl.Dispose();
+				this.fSslStream.Dispose();
 			}
 			this.fInnerConnection.Close();
 		}
@@ -525,7 +392,7 @@ namespace RemObjects.InternetPack
 		{
 			try
 			{
-				return this.fSsl.Read(buffer, offset, size);
+				return this.fSslStream.Read(buffer, offset, size);
 			}
 			catch (IOException)
 			{
@@ -537,7 +404,7 @@ namespace RemObjects.InternetPack
 		{
 			try
 			{
-				this.fSsl.Write(buffer, offset, size);
+				this.fSslStream.Write(buffer, offset, size);
 				return size;
 			}
 			catch (IOException)
@@ -550,7 +417,7 @@ namespace RemObjects.InternetPack
 		{
 			try
 			{
-				return this.fSsl.BeginRead(buffer, offset, count, callback, state);
+				return this.fSslStream.BeginRead(buffer, offset, count, callback, state);
 			}
 			catch (IOException)
 			{
@@ -562,7 +429,7 @@ namespace RemObjects.InternetPack
 		{
 			try
 			{
-				return this.fSsl.EndRead(ar);
+				return this.fSslStream.EndRead(ar);
 			}
 			catch (IOException)
 			{
@@ -574,7 +441,7 @@ namespace RemObjects.InternetPack
 		{
 			try
 			{
-				return this.fSsl.BeginWrite(buffer, offset, count, callback, state);
+				return this.fSslStream.BeginWrite(buffer, offset, count, callback, state);
 			}
 			catch (IOException)
 			{
@@ -586,7 +453,7 @@ namespace RemObjects.InternetPack
 		{
 			try
 			{
-				this.fSsl.EndWrite(ar);
+				this.fSslStream.EndWrite(ar);
 			}
 			catch (IOException)
 			{

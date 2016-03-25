@@ -18,7 +18,7 @@ namespace RemObjects.InternetPack
 		{
 			return Environment.OSVersion.Platform == PlatformID.Win32NT
 				? (ICertificateBuilder)new NetCertificateBuilder(hashAlgorithm)
-				: new MonoCertificateBuilder(MonoSecurityTypeProviderFactory.CreateTypeProvider(), hashAlgorithm);
+				: new MonoCertificateBuilder(new MonoSecurityTypeProvider(), hashAlgorithm);
 		}
 	}
 }

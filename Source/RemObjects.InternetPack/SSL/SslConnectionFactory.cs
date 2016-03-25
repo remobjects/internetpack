@@ -19,16 +19,12 @@ namespace RemObjects.InternetPack
 		{
 			this.fLockRoot = new Object();
 
-			this.UseMono = Environment.OSVersion.Platform != PlatformID.Win32NT;
 			this.UseTls = true;
 		}
 
 		[Category("Ssl Options")]
 		[DefaultValue("")]
 		public String TargetHostName { get; set; }
-
-		[Category("Ssl Options")]
-		public Boolean UseMono { get; set; }
 
 		[Category("Ssl Options")]
 		[DefaultValue(true)]
@@ -79,7 +75,7 @@ namespace RemObjects.InternetPack
 
 			if (String.IsNullOrEmpty(this.CertificateFileName) && String.IsNullOrEmpty(this.CertificateThumbprint))
 			{
-				throw new CryptographicException("Certificate not set. Either set the certificate directly or provide its filename or thumbprint");
+				throw new CryptographicException("Certificate not set. Either set the certificate directly or provide its file name or thumbprint");
 			}
 
 			lock (this.fLockRoot)
