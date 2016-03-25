@@ -111,7 +111,7 @@ namespace RemObjects.InternetPack
 					return;
 				}
 
-				if (lOwner.GetMonoAssembly() != null)
+				if (lOwner.GetTypeProvider() != null)
 				{
 					lOwner.CreateMonoClientStream();
 					this.fComplete = true;
@@ -200,6 +200,7 @@ namespace RemObjects.InternetPack
 		#region Private fields
 		private readonly SslConnectionFactory fFactory;
 		private readonly Connection fInnerConnection;
+		private volatile IMonoSecurityTypeProvider fTypeProvider;
 		private Stream fSsl;
 		#endregion
 
@@ -282,42 +283,46 @@ namespace RemObjects.InternetPack
 		#region Mono SSL stream management
 		private void CreateMonoServerStream()
 		{
-			Type lType = this.GetMonoAssembly().GetType("Mono.Security.Protocol.Tls.SslServerStream", true);
+			Type lType = this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.SslServerStream");
 			this.fSsl = (Stream)Activator.CreateInstance(lType, this.fInnerConnection, this.fFactory.Certificate, false, false, this.GetMonoSecurityProtocol());
 
-			// TODO Add type caching
-			Object lPrivateKeySelectionCallback = Delegate.CreateDelegate(this.GetMonoAssembly().GetType("Mono.Security.Protocol.Tls.PrivateKeySelectionCallback", true), this, "MonoSsl_GetPrivateKey", false, true);
+			Object lPrivateKeySelectionCallback = Delegate.CreateDelegate(this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.PrivateKeySelectionCallback"), this, "MonoSsl_GetPrivateKey", false, true);
 			lType.InvokeMember("set_PrivateKeyCertSelectionDelegate", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, this.fSsl, new Object[] { lPrivateKeySelectionCallback });
 
-			Object lCertificateValidationCallback = Delegate.CreateDelegate(this.GetMonoAssembly().GetType("Mono.Security.Protocol.Tls.CertificateValidationCallback", true), this, "MonoSsl_RemoteCertificateValidation", false, true);
+			Object lCertificateValidationCallback = Delegate.CreateDelegate(this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.CertificateValidationCallback"), this, "MonoSsl_RemoteCertificateValidation", false, true);
 			lType.InvokeMember("set_ClientCertValidationDelegate", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, this.fSsl, new Object[] { lCertificateValidationCallback });
 		}
 
 		private void CreateMonoClientStream()
 		{
-			Type lType = this.GetMonoAssembly().GetType("Mono.Security.Protocol.Tls.SslClientStream", true);
+			Type lType = this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.SslClientStream");
 			this.fSsl = (Stream)Activator.CreateInstance(lType, this.fInnerConnection, this.fFactory.TargetHostName, false, this.GetMonoSecurityProtocol());
 
-			// TODO Add type caching
-			Object lPrivateKeySelectionCallback = Delegate.CreateDelegate(this.GetMonoAssembly().GetType("Mono.Security.Protocol.Tls.PrivateKeySelectionCallback", true), this, "MonoSsl_GetPrivateKey", false, true);
+			Object lPrivateKeySelectionCallback = Delegate.CreateDelegate(this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.PrivateKeySelectionCallback"), this, "MonoSsl_GetPrivateKey", false, true);
 			lType.InvokeMember("set_PrivateKeyCertSelectionDelegate", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, this.fSsl, new Object[] { lPrivateKeySelectionCallback });
 
-			Object lCertificateValidationCallback = Delegate.CreateDelegate(this.GetMonoAssembly().GetType("Mono.Security.Protocol.Tls.CertificateValidationCallback", true), this, "MonoSsl_RemoteCertificateValidation", false, true);
+			Object lCertificateValidationCallback = Delegate.CreateDelegate(this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.CertificateValidationCallback"), this, "MonoSsl_RemoteCertificateValidation", false, true);
 			lType.InvokeMember("set_ServerCertValidationDelegate", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, this.fSsl, new Object[] { lCertificateValidationCallback });
 		}
 
-		private Assembly GetMonoAssembly()
+		private IMonoSecurityTypeProvider GetTypeProvider()
 		{
 			if (!this.fFactory.UseMono)
 			{
 				return null;
 			}
 
-			Assembly lAssembly = SslMonoSecurityWrapper.GetAssembly();
+			if (this.fTypeProvider != null)
+			{
+				return this.fTypeProvider;
+			}
 
-			this.fFactory.UseMono = lAssembly != null;
+			// This operation should be thread-safe
+			this.fTypeProvider = MonoSecurityTypeProviderFactory.CreateTypeProvider();
 
-			return lAssembly;
+			this.fFactory.UseMono = this.fTypeProvider != null;
+
+			return this.fTypeProvider;
 		}
 
 		private Object GetMonoSecurityProtocol()
@@ -329,7 +334,7 @@ namespace RemObjects.InternetPack
 				return this.fFactory.UseTls ? SslConnection.fMonoSecurityProtocolTls : SslConnection.fMonoSecurityProtocolDefault;
 			}
 
-			Type lSecurityProtocolType = this.GetMonoAssembly().GetType("Mono.Security.Protocol.Tls.SecurityProtocolType");
+			Type lSecurityProtocolType = this.GetTypeProvider().GetType("Mono.Security.Protocol.Tls.SecurityProtocolType");
 			Int32 lTlsValue = (Int32)Enum.Parse(lSecurityProtocolType, "Tls");
 			Int32 lDefaultValue = (Int32)Enum.Parse(lSecurityProtocolType, "Default");
 
@@ -339,11 +344,13 @@ namespace RemObjects.InternetPack
 			return this.fFactory.UseTls ? SslConnection.fMonoSecurityProtocolTls : SslConnection.fMonoSecurityProtocolDefault;
 		}
 
+		// Warning about a non-used method is not correct here. This method is used via reflection
 		private AsymmetricAlgorithm MonoSsl_GetPrivateKey(X509Certificate certificate, String targetHost)
 		{
 			return this.fFactory.Certificate.PrivateKey;
 		}
 
+		// Warning about a non-used method is not correct here. This method is used via reflection
 		private Boolean MonoSsl_RemoteCertificateValidation(X509Certificate certificate, Int32[] errors)
 		{
 			return fFactory.OnValidateRemoteCertificate(certificate);
@@ -394,7 +401,7 @@ namespace RemObjects.InternetPack
 
 		protected internal override void InitializeServerConnection()
 		{
-			if (this.GetMonoAssembly() != null)
+			if (this.GetTypeProvider() != null)
 			{
 				this.CreateMonoServerStream();
 			}
@@ -433,7 +440,7 @@ namespace RemObjects.InternetPack
 
 		public virtual void InitializeClientConnection()
 		{
-			if (this.GetMonoAssembly() != null)
+			if (this.GetTypeProvider() != null)
 			{
 				this.CreateMonoClientStream();
 			}
@@ -445,7 +452,7 @@ namespace RemObjects.InternetPack
 
 		protected virtual IAsyncResult BeginInitializeClientConnection(AsyncCallback callback, Object state)
 		{
-			if (this.GetMonoAssembly() != null)
+			if (this.GetTypeProvider() != null)
 			{
 				this.CreateMonoClientStream();
 				return null;
@@ -457,7 +464,7 @@ namespace RemObjects.InternetPack
 
 		protected void EndInitializeClientConnection(IAsyncResult ar)
 		{
-			if (this.GetMonoAssembly() == null)
+			if (this.GetTypeProvider() == null)
 			{
 				((SslStream)this.fSsl).EndAuthenticateAsClient(ar);
 			}

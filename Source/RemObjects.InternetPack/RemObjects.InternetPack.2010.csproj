@@ -271,9 +271,16 @@
     <Compile Include="SmtpClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CertificateBuilder\CertificateBuilder.cs" />
+    <Compile Include="CertificateBuilder\CertificateBuilderFactory.cs" />
+    <Compile Include="CertificateBuilder\ICertificateBuilder.cs" />
+    <Compile Include="CertificateBuilder\MonoCertificateBuilder.cs" />
+    <Compile Include="CertificateBuilder\NetCertificateBuilder.cs" />
     <Compile Include="SSL\SslConnection.cs" />
     <Compile Include="SSL\SslConnectionFactory.cs" />
-    <Compile Include="SSL\SslMonoSecurityWrapper.cs" />
+    <Compile Include="SSL\IMonoSecurityTypeProvider.cs" />
+    <Compile Include="SSL\MonoSecurityTypeProvider.cs" />
+    <Compile Include="SSL\MonoSecurityTypeProviderFactory.cs" />
     <Compile Include="EventArgs\SslNeedPasswordEventArgs.cs" />
     <Compile Include="EventArgs\SslValidateCertificateEventArgs.cs" />
     <Compile Include="TcpClient.cs">
