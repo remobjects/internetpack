@@ -1,9 +1,6 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -15,520 +12,448 @@ using System.Net;
 namespace RemObjects.InternetPack.Http
 {
 #if DESIGN
-    [System.Drawing.ToolboxBitmap(typeof(RemObjects.InternetPack.Client), "Glyphs.HttpClient.bmp")]
+	[System.Drawing.ToolboxBitmap(typeof(RemObjects.InternetPack.Client), "Glyphs.HttpClient.bmp")]
 #endif
-    public class HttpClient : Client
-    {
-        public HttpClient()
-        {
-            this.Version = DEFAULT_HTTP_VERSION;
-            this.UserAgent = DEFAULT_HTTP_USERAGENT;
-            this.Accept = DEFAULT_HTTP_ACCEPT;
-            this.Timeout = DEFAULT_TIMEOUT;
-            this.TimeoutEnabled = true;
-            this.KeepAlive = true;
-            this.fUrl = new UrlParser();
-            this.fProxySettings = new HttpProxySettings();
+	public class HttpClient : Client
+	{
+		public HttpClient()
+		{
+			this.Version = DEFAULT_HTTP_VERSION;
+			this.UserAgent = DEFAULT_HTTP_USERAGENT;
+			this.Accept = DEFAULT_HTTP_ACCEPT;
+			this.Timeout = DEFAULT_TIMEOUT;
+			this.TimeoutEnabled = true;
+			this.KeepAlive = true;
+			this.fProxySettings = new HttpProxySettings();
 #if FULLFRAMEWORK
-            this.SslOptions = new HttpsConnectionFactory(this.fProxySettings);
+			this.SslOptions = new HttpsConnectionFactory(this.fProxySettings);
 #endif
-        }
+			this.UserName = "";
+			this.Password = "";
+		}
 
-        private const String DEFAULT_HTTP_VERSION = "1.1";
-        private const String DEFAULT_HTTP_USERAGENT = "RemObjects Internet Pack HTTP Client";
-        private const String DEFAULT_HTTP_ACCEPT = "text/html, image/gif, image/jpeg, image/png, */*";
-        private const Int32 DEFAULT_TIMEOUT = 1 * 60;  /* 1 minute */
-        private const String CHARSET_KEY = "charset=";
+		private const String DEFAULT_HTTP_VERSION = "1.1";
+		private const String DEFAULT_HTTP_USERAGENT = "RemObjects Internet Pack HTTP Client";
+		private const String DEFAULT_HTTP_ACCEPT = "text/html, image/gif, image/jpeg, image/png, */*";
+		private const Int32 DEFAULT_TIMEOUT = 1 * 60;  /* 1 minute */
+		private const String CHARSET_KEY = "charset=";
 
-        private Connection fConnection;
-        private String fConnectionUrl;
+		private Connection fConnection;
+		private String fConnectionUrl;
 
-        #region Properties
-        [Category("Http"), DefaultValue(DEFAULT_HTTP_VERSION)]
-        public String Version
-        {
-            get
-            {
-                return fVersion;
-            }
-            set
-            {
-                fVersion = value;
-            }
-        }
-        private String fVersion;
+		#region Properties
+		[Category("Http")]
+		[DefaultValue(DEFAULT_HTTP_VERSION)]
+		public String Version { get; set; }
 
-        // This property is not used anywhere
-        // But we cannot just drop it for compatibility reasons
-        [Category("Http")]
-        public UrlParser Url
-        {
-            get
-            {
-                return this.fUrl;
-            }
-            set
-            {
-                this.fUrl = value;
-            }
-        }
-        private UrlParser fUrl;
+		[Category("Http")]
+		[DefaultValue(true)]
+		public Boolean KeepAlive
+		{
+			get
+			{
+				return this.fKeepAlive;
+			}
+			set
+			{
+				if (this.UseConnectionPooling && !value)
+				{
+					this.UseConnectionPooling = false;
+				}
 
-        [Category("Http"), DefaultValue(true)]
-        public Boolean KeepAlive
-        {
-            get
-            {
-                return fKeepAlive;
-            }
-            set
-            {
-                if (UseConnectionPooling && !value)
-                    UseConnectionPooling = false;
+				this.fKeepAlive = value;
 
-                fKeepAlive = value;
+				if (!this.fKeepAlive)
+				{
+					this.DisposeHttpConnection();
+				}
+			}
+		}
+		private Boolean fKeepAlive;
 
-                if (!fKeepAlive)
-                    DisposeHttpConnection();
-            }
-        }
-        private Boolean fKeepAlive;
+		[Browsable(false)]
+		public ConnectionPool CustomConnectionPool
+		{
+			get
+			{
+				return this.ConnectionPool;
+			}
+			set
+			{
+				this.ConnectionPool = value;
 
-        [Browsable(false)]
-        public ConnectionPool CustomConnectionPool
-        {
-            get
-            {
-                return base.ConnectionPool;
-            }
-            set
-            {
-                base.ConnectionPool = value;
-                if (!KeepAlive && value != null)
-                    KeepAlive = true;
-            }
-        }
+				if (!KeepAlive && value != null)
+				{
+					KeepAlive = true;
+				}
+			}
+		}
 
-        [Category("Http"), DefaultValue(false)]
-        public Boolean UseConnectionPooling
-        {
-            get
-            {
-                return base.ConnectionPool != null;
-            }
-            set
-            {
-                if (!value)
-                {
-                    base.ConnectionPool = null;
-                    return;
-                }
+		[Category("Http")]
+		[DefaultValue(false)]
+		public Boolean UseConnectionPooling
+		{
+			get
+			{
+				return this.ConnectionPool != null;
+			}
+			set
+			{
+				if (!value)
+				{
+					this.ConnectionPool = null;
+					return;
+				}
 
-                if (base.ConnectionPool == null)
-                    base.ConnectionPool = DefaultPool.ConnectionPool;
+				if (this.ConnectionPool == null)
+				{
+					this.ConnectionPool = DefaultPool.ConnectionPool;
+				}
 
-                if (!KeepAlive)
-                    KeepAlive = true;
-            }
-        }
+				if (!this.KeepAlive)
+				{
+					this.KeepAlive = true;
+				}
+			}
+		}
 
-        [Category("Http"), DefaultValue(DEFAULT_HTTP_USERAGENT)]
-        public String UserAgent
-        {
-            get
-            {
-                return fUserAgent;
-            }
-            set
-            {
-                fUserAgent = value;
-            }
-        }
-        private String fUserAgent;
+		[Category("Http")]
+		[DefaultValue(DEFAULT_HTTP_USERAGENT)]
+		public String UserAgent { get; set; }
 
-        [Category("Http"), DefaultValue(DEFAULT_HTTP_ACCEPT)]
-        public String Accept
-        {
-            get
-            {
-                return fAccept;
-            }
-            set
-            {
-                fAccept = value;
-            }
-        }
-        private String fAccept;
+		[Category("Http")]
+		[DefaultValue(DEFAULT_HTTP_ACCEPT)]
+		public String Accept { get; set; }
 
-        [Category("Http"), DefaultValue(DEFAULT_TIMEOUT)]
-        public Int32 Timeout
-        {
-            get
-            {
-                return fTimeout;
-            }
-            set
-            {
-                fTimeout = value;
-            }
-        }
-        private Int32 fTimeout;
+		[Category("Http")]
+		[DefaultValue(DEFAULT_TIMEOUT)]
+		public Int32 Timeout { get; set; }
 
-        [Category("Http"), DefaultValue(true)]
-        public Boolean TimeoutEnabled
-        {
-            get
-            {
-                return fTimeoutEnabled;
-            }
-            set
-            {
-                fTimeoutEnabled = value;
-            }
-        }
-        private Boolean fTimeoutEnabled;
+		[Category("Http")]
+		[DefaultValue(true)]
+		public Boolean TimeoutEnabled { get; set; }
 
-        [Category("Basic authentication")]
-        public String UserName
-        {
-            get
-            {
-                return fUserName;
-            }
-            set
-            {
-                fUserName = value;
-            }
-        }
-        private String fUserName = "";
+		[Category("Basic authentication")]
+		public String UserName { get; set; }
 
-        [Category("Basic authentication")]
-        public String Password
-        {
-            get
-            {
-                return fPassword;
-            }
-            set
-            {
-                fPassword = value;
-            }
-        }
-        private String fPassword = "";
+		[Category("Basic authentication")]
+		public String Password { get; set; }
 
 #if FULLFRAMEWORK
-        [Category("Http Proxy settings")]
-        [Browsable(true)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[Category("Http Proxy settings")]
+		[Browsable(true)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 #else
         [Browsable(false)]
 #endif
-        public HttpProxySettings ProxySettings
-        {
-            get
-            {
-                return this.fProxySettings;
-            }
-        }
-        private HttpProxySettings fProxySettings;
-        #endregion
+		public HttpProxySettings ProxySettings
+		{
+			get
+			{
+				return this.fProxySettings;
+			}
+		}
+		private readonly HttpProxySettings fProxySettings;
+		#endregion
 
-        #region Methods
-        public String Get(String url)
-        {
-            return Get(url, null);
-        }
+		#region Methods
+		public String Get(String url)
+		{
+			return Get(url, null);
+		}
 
-        private static System.Text.Encoding GetEncodingFromContentType(String contentType)
-        {
-            Int32 lStartPos = contentType.IndexOf(HttpClient.CHARSET_KEY);
-            if (lStartPos == -1)
-                return System.Text.Encoding.ASCII;
+		private static System.Text.Encoding GetEncodingFromContentType(String contentType)
+		{
+			Int32 lStartPos = contentType.IndexOf(HttpClient.CHARSET_KEY, StringComparison.Ordinal);
+			if (lStartPos == -1)
+				return System.Text.Encoding.ASCII;
 
-            lStartPos += HttpClient.CHARSET_KEY.Length;
-            Int32 lEndPos = contentType.IndexOf(";", lStartPos);
-            if (lEndPos == -1)
-                lEndPos = contentType.Length;
+			lStartPos += HttpClient.CHARSET_KEY.Length;
+			Int32 lEndPos = contentType.IndexOf(";", lStartPos, StringComparison.Ordinal);
+			if (lEndPos == -1)
+				lEndPos = contentType.Length;
 
-            String lCharsetName = contentType.Substring(lStartPos, lEndPos - lStartPos).Trim();
+			String lCharsetName = contentType.Substring(lStartPos, lEndPos - lStartPos).Trim();
 
-            if (String.IsNullOrEmpty(lCharsetName))
-                return System.Text.Encoding.ASCII;
+			if (String.IsNullOrEmpty(lCharsetName))
+				return System.Text.Encoding.ASCII;
 
-            lCharsetName = lCharsetName.ToLower(CultureInfo.InvariantCulture);
+			lCharsetName = lCharsetName.ToLower(CultureInfo.InvariantCulture);
 
-            if (String.Equals(lCharsetName, "utf-7", StringComparison.Ordinal))
-                return System.Text.Encoding.UTF7;
+			if (String.Equals(lCharsetName, "utf-7", StringComparison.Ordinal))
+				return System.Text.Encoding.UTF7;
 
-            if (String.Equals(lCharsetName, "utf-8", StringComparison.Ordinal))
-                return System.Text.Encoding.UTF8;
+			if (String.Equals(lCharsetName, "utf-8", StringComparison.Ordinal))
+				return System.Text.Encoding.UTF8;
 
-            if (String.Equals(lCharsetName, "unicode", StringComparison.Ordinal))
-                return System.Text.Encoding.Unicode;
+			if (String.Equals(lCharsetName, "unicode", StringComparison.Ordinal))
+				return System.Text.Encoding.Unicode;
 
-            if (String.Equals(lCharsetName, "unicodeFFFE", StringComparison.Ordinal))
-                return System.Text.Encoding.BigEndianUnicode;
+			if (String.Equals(lCharsetName, "unicodeFFFE", StringComparison.Ordinal))
+				return System.Text.Encoding.BigEndianUnicode;
 
-            return System.Text.Encoding.ASCII;
-        }
+			return System.Text.Encoding.ASCII;
+		}
 
-        private static void SetAuthorizationHeader(HttpHeaders headers, String header, String username, String password)
-        {
-            if (String.IsNullOrEmpty(username))
-                return;
+		private static void SetAuthorizationHeader(HttpHeaders headers, String header, String username, String password)
+		{
+			if (String.IsNullOrEmpty(username))
+				return;
 
-            Byte[] lByteData = System.Text.Encoding.UTF8.GetBytes(username + ":" + password);
-            String lAuthData = "Basic " + Convert.ToBase64String(lByteData, 0, lByteData.Length);
+			Byte[] lByteData = System.Text.Encoding.UTF8.GetBytes(username + ":" + password);
+			String lAuthData = "Basic " + Convert.ToBase64String(lByteData, 0, lByteData.Length);
 
-            headers.SetHeaderValue(header, lAuthData);
-        }
+			headers.SetHeaderValue(header, lAuthData);
+		}
 
-        public String Get(String url, System.Text.Encoding encoding)
-        {
-            using (HttpClientResponse response = GetResponse(url))
-            {
-                response.Encoding = (encoding != null) ? encoding : GetEncodingFromContentType(response.Header.ContentType);
-                return response.ContentString;
-            }
-        }
+		public String Get(String url, System.Text.Encoding encoding)
+		{
+			using (HttpClientResponse response = GetResponse(url))
+			{
+				response.Encoding = (encoding != null) ? encoding : GetEncodingFromContentType(response.Header.ContentType);
+				return response.ContentString;
+			}
+		}
 
-        public Byte[] GetBytes(String url)
-        {
-            using (HttpClientResponse response = GetResponse(url))
-                return response.ContentBytes;
-        }
+		public Byte[] GetBytes(String url)
+		{
+			using (HttpClientResponse response = GetResponse(url))
+			{
+				return response.ContentBytes;
+			}
+		}
 
-        public HttpClientResponse GetResponse(String url)
-        {
-            HttpClientRequest lRequest = new HttpClientRequest();
-            lRequest.Url.Parse(url);
-            lRequest.Header.RequestType = "GET";
-            lRequest.Header.SetHeaderValue("Accept", Accept);
-            lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
-            lRequest.KeepAlive = KeepAlive;
+		public HttpClientResponse GetResponse(String url)
+		{
+			HttpClientRequest lRequest = new HttpClientRequest();
+			lRequest.Url.Parse(url);
+			lRequest.Header.RequestType = "GET";
+			lRequest.Header.SetHeaderValue("Accept", Accept);
+			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
+			lRequest.KeepAlive = KeepAlive;
 
-            return this.Dispatch(lRequest);
-        }
+			return this.Dispatch(lRequest);
+		}
 
-        public String Post(String url, Byte[] content)
-        {
-            HttpClientRequest lRequest = new HttpClientRequest();
-            lRequest.Url.Parse(url);
-            lRequest.RequestType = RequestType.Post;
-            lRequest.Header.SetHeaderValue("Accept", Accept);
-            lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
-            lRequest.KeepAlive = KeepAlive;
-            lRequest.ContentBytes = content;
+		public String Post(String url, Byte[] content)
+		{
+			HttpClientRequest lRequest = new HttpClientRequest();
+			lRequest.Url.Parse(url);
+			lRequest.RequestType = RequestType.Post;
+			lRequest.Header.SetHeaderValue("Accept", Accept);
+			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
+			lRequest.KeepAlive = KeepAlive;
+			lRequest.ContentBytes = content;
 
-            using (HttpClientResponse response = this.Dispatch(lRequest))
-                return response.ContentString;
-        }
+			using (HttpClientResponse response = this.Dispatch(lRequest))
+				return response.ContentString;
+		}
 
-        public String Post(String url, Stream content)
-        {
-            HttpClientRequest lRequest = new HttpClientRequest();
-            lRequest.Url.Parse(url);
-            lRequest.RequestType = RequestType.Post;
-            lRequest.Header.SetHeaderValue("Accept", Accept);
-            lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
-            lRequest.KeepAlive = KeepAlive;
-            lRequest.ContentStream = content;
+		public String Post(String url, Stream content)
+		{
+			HttpClientRequest lRequest = new HttpClientRequest();
+			lRequest.Url.Parse(url);
+			lRequest.RequestType = RequestType.Post;
+			lRequest.Header.SetHeaderValue("Accept", Accept);
+			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
+			lRequest.KeepAlive = KeepAlive;
+			lRequest.ContentStream = content;
 
-            using (HttpClientResponse response = this.Dispatch(lRequest))
-                return response.ContentString;
-        }
+			using (HttpClientResponse response = this.Dispatch(lRequest))
+				return response.ContentString;
+		}
 
-        public void Abort()
-        {
-            if (this.fConnection == null)
-                return;
+		public void Abort()
+		{
+			if (this.fConnection == null)
+				return;
 
-            if (this.fConnection.Connected)
-                try
-                {
-                    this.fConnection.Disconnect();
-                }
-                catch (Exception)
-                {
-                }
+			if (this.fConnection.Connected)
+				try
+				{
+					this.fConnection.Disconnect();
+				}
+				catch (Exception)
+				{
+					// As designed
+				}
 
-            this.DisposeHttpConnection();
-        }
+			this.DisposeHttpConnection();
+		}
 
-        public HttpClientResponse TryDispatch(HttpClientRequest request)
-        {
-            HttpClient.SetAuthorizationHeader(request.Header, "Authorization", this.UserName, this.Password);
+		public HttpClientResponse TryDispatch(HttpClientRequest request)
+		{
+			HttpClient.SetAuthorizationHeader(request.Header, "Authorization", this.UserName, this.Password);
 
-            String lHostname = request.Url.Hostname;
-            Int32 lPort = request.Url.Port;
-            Boolean lSslConnection = String.Equals(request.Url.Protocol, "https", StringComparison.OrdinalIgnoreCase);
+			String lHostname = request.Url.Hostname;
+			Int32 lPort = request.Url.Port;
+			Boolean lSslConnection = String.Equals(request.Url.Protocol, "https", StringComparison.OrdinalIgnoreCase);
 
-            // Settings for connection thru Http Proxy
-            // Note that Request should think that it uses direct connection when SSL is enabled because
-            // proxy server tunnels SSL data AS IS, without adjusting its HTTP headers
-            request.UseProxy = this.ProxySettings.UseProxy && !lSslConnection;
-            if (this.ProxySettings.UseProxy)
-            {
-                lHostname = this.ProxySettings.ProxyHost;
-                lPort = this.ProxySettings.ProxyPort;
+			// Settings for connection thru Http Proxy
+			// Note that Request should think that it uses direct connection when SSL is enabled because
+			// proxy server tunnels SSL data AS IS, without adjusting its HTTP headers
+			request.UseProxy = this.ProxySettings.UseProxy && !lSslConnection;
+			if (this.ProxySettings.UseProxy)
+			{
+				lHostname = this.ProxySettings.ProxyHost;
+				lPort = this.ProxySettings.ProxyPort;
 
-                HttpClient.SetAuthorizationHeader(request.Header, "Proxy-Authorization", this.ProxySettings.UserName, this.ProxySettings.Password);
-            }
+				HttpClient.SetAuthorizationHeader(request.Header, "Proxy-Authorization", this.ProxySettings.UserName, this.ProxySettings.Password);
+			}
 
-            Connection lConnection = this.GetHttpConnection(lSslConnection, request.Url.Hostname, request.Url.Port, lHostname, lPort);
+			Connection lConnection = this.GetHttpConnection(lSslConnection, request.Url.Hostname, request.Url.Port, lHostname, lPort);
 
-            try
-            {
-                lConnection.Timeout = Timeout;
-                lConnection.TimeoutEnabled = TimeoutEnabled;
-                request.WriteHeaderToConnection(lConnection);
-            }
-            catch (ObjectDisposedException)
-            {
-                lConnection = this.GetNewHttpConnection(lHostname, lPort);
-                request.WriteHeaderToConnection(lConnection);
-            }
-            catch (ConnectionClosedException)
-            {
-                lConnection = this.GetNewHttpConnection(lHostname, lPort);
-                request.WriteHeaderToConnection(lConnection);
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                lConnection = this.GetNewHttpConnection(lHostname, lPort);
-                request.WriteHeaderToConnection(lConnection);
-            }
+			try
+			{
+				lConnection.Timeout = Timeout;
+				lConnection.TimeoutEnabled = TimeoutEnabled;
+				request.WriteHeaderToConnection(lConnection);
+			}
+			catch (ObjectDisposedException)
+			{
+				lConnection = this.GetNewHttpConnection(lHostname, lPort);
+				request.WriteHeaderToConnection(lConnection);
+			}
+			catch (ConnectionClosedException)
+			{
+				lConnection = this.GetNewHttpConnection(lHostname, lPort);
+				request.WriteHeaderToConnection(lConnection);
+			}
+			catch (System.Net.Sockets.SocketException)
+			{
+				lConnection = this.GetNewHttpConnection(lHostname, lPort);
+				request.WriteHeaderToConnection(lConnection);
+			}
 
-            request.WriteBodyToConnection(lConnection);
+			request.WriteBodyToConnection(lConnection);
 
 
-            HttpClientResponse lResponse;
-            do
-            {
-                HttpHeaders lHeaders = HttpHeaders.Create(lConnection);
-                if (lHeaders == null)
-                    throw new ConnectionClosedException();
-                lResponse = new HttpClientResponse(lConnection, lHeaders);
-            }
-            while (lResponse.Header.HttpCode == HttpStatusCode.Continue); // 100 CONTINUE means useless response.
+			HttpClientResponse lResponse;
+			do
+			{
+				HttpHeaders lHeaders = HttpHeaders.Create(lConnection);
+				if (lHeaders == null)
+					throw new ConnectionClosedException();
+				lResponse = new HttpClientResponse(lConnection, lHeaders);
+			}
+			while (lResponse.Header.HttpCode == HttpStatusCode.Continue); // 100 CONTINUE means useless response.
 
-            if (!lResponse.KeepAlive)
-            {
-                this.fConnectionUrl = null;
-                this.fConnection = null;
-            }
+			if (!lResponse.KeepAlive)
+			{
+				this.fConnectionUrl = null;
+				this.fConnection = null;
+			}
 
-            if (lResponse.HttpCode == HttpStatusCode.ProxyAuthenticationRequired)
-                throw new HttpException("Proxy authorization failed", lResponse);
+			if (lResponse.HttpCode == HttpStatusCode.ProxyAuthenticationRequired)
+				throw new HttpException("Proxy authorization failed", lResponse);
 
-            return lResponse;
-        }
+			return lResponse;
+		}
 
-        public HttpClientResponse Dispatch(HttpClientRequest request)
-        {
-            HttpClientResponse lResponse = this.TryDispatch(request);
+		public HttpClientResponse Dispatch(HttpClientRequest request)
+		{
+			HttpClientResponse lResponse = this.TryDispatch(request);
 
-            if ((Int32)lResponse.HttpCode >= 400)
-            {
-                if (lResponse.HasContentLength)
-                    throw new HttpException(lResponse.ContentString, lResponse);
+			if ((Int32)lResponse.HttpCode >= 400)
+			{
+				if (lResponse.HasContentLength)
+					throw new HttpException(lResponse.ContentString, lResponse);
 
-                throw new HttpException(lResponse.Header.ToString(), lResponse);
-            }
+				throw new HttpException(lResponse.Header.ToString(), lResponse);
+			}
 
-            return lResponse;
-        }
+			return lResponse;
+		}
 
-        private void DisposeHttpConnection()
-        {
-            if (this.fConnection != null)
-            {
-                this.fConnection.Dispose();
-                this.fConnection = null;
-            }
+		private void DisposeHttpConnection()
+		{
+			if (this.fConnection != null)
+			{
+				this.fConnection.Dispose();
+				this.fConnection = null;
+			}
 
-            this.fConnectionUrl = null;
-        }
+			this.fConnectionUrl = null;
+		}
 
-        protected Connection GetHttpConnection(Boolean enableSSL, String targetHost, Int32 targetPort, String connectionHost, Int32 connectionPort)
-        {
+		protected Connection GetHttpConnection(Boolean enableSSL, String targetHost, Int32 targetPort, String connectionHost, Int32 connectionPort)
+		{
 #if FULLFRAMEWORK
-            if (enableSSL)
-            {
-                this.SslOptions.Enabled = true;
-                this.SslOptions.TargetHostName = targetHost;
-                ((HttpsConnectionFactory)this.SslOptions).TargetPort = targetPort;
-            }
-            else
-            {
-                this.SslOptions.Enabled = false;
-            }
+			if (enableSSL)
+			{
+				this.SslOptions.Enabled = true;
+				this.SslOptions.TargetHostName = targetHost;
+				((HttpsConnectionFactory)this.SslOptions).TargetPort = targetPort;
+			}
+			else
+			{
+				this.SslOptions.Enabled = false;
+			}
 #endif
 
-            if (!this.KeepAlive || (this.ConnectionPool != null))
-                return this.Connect(connectionHost, connectionPort); // pooling class will make sure we use the right connection
+			if (!this.KeepAlive || (this.ConnectionPool != null))
+				return this.Connect(connectionHost, connectionPort); // pooling class will make sure we use the right connection
 
-            String lUrl = connectionHost + ':' + connectionPort;
+			String lUrl = connectionHost + ':' + connectionPort;
 
-            if (this.fConnection != null)
-            {
-                if ((this.fConnectionUrl == lUrl) && this.fConnection.Connected)
-                    return this.fConnection;
+			if (this.fConnection != null)
+			{
+				if ((this.fConnectionUrl == lUrl) && this.fConnection.Connected)
+					return this.fConnection;
 
-                this.fConnection.Dispose();
-            }
+				this.fConnection.Dispose();
+			}
 
-            this.fConnectionUrl = lUrl;
-            this.fConnection = this.Connect(connectionHost, connectionPort);
+			this.fConnectionUrl = lUrl;
+			this.fConnection = this.Connect(connectionHost, connectionPort);
 
-            return this.fConnection;
-        }
+			return this.fConnection;
+		}
 
-        private Connection GetNewHttpConnection(String hostname, Int32 port)
-        {
-            if (base.ConnectionPool != null)
-                return this.ConnectNew(hostname, port);
+		private Connection GetNewHttpConnection(String hostname, Int32 port)
+		{
+			if (this.ConnectionPool != null)
+				return this.ConnectNew(hostname, port);
 
-            this.DisposeHttpConnection();
+			this.DisposeHttpConnection();
 
-            this.fConnectionUrl = hostname + ':' + port;
-            this.fConnection = this.ConnectNew(hostname, port);
+			this.fConnectionUrl = hostname + ':' + port;
+			this.fConnection = this.ConnectNew(hostname, port);
 
-            return this.fConnection;
-        }
-        #endregion
-    }
+			return this.fConnection;
+		}
+		#endregion
+	}
 
-    [Serializable]
-    public class HttpException : Exception
-    {
-        public HttpException(HttpClientResponse response)
-            : base()
-        {
-            this.fResponse = response;
-        }
+	[Serializable]
+	public class HttpException : Exception
+	{
+		public HttpException(HttpClientResponse response)
+		{
+			this.fResponse = response;
+		}
 
-        public HttpException(String message, HttpClientResponse response)
-            : base(message)
-        {
-            this.fResponse = response;
-        }
+		public HttpException(String message, HttpClientResponse response)
+			: base(message)
+		{
+			this.fResponse = response;
+		}
 
-        public HttpException(String message, HttpClientResponse response, Exception innerException)
-            : base(message, innerException)
-        {
-            this.fResponse = response;
-        }
+		public HttpException(String message, HttpClientResponse response, Exception innerException)
+			: base(message, innerException)
+		{
+			this.fResponse = response;
+		}
 
-        #region Properties
-        public HttpClientResponse Response
-        {
-            get
-            {
-                return this.fResponse;
-            }
-        }
-        private readonly HttpClientResponse fResponse;
-        #endregion
-    }
+		#region Properties
+		public HttpClientResponse Response
+		{
+			get
+			{
+				return this.fResponse;
+			}
+		}
+		private readonly HttpClientResponse fResponse;
+		#endregion
+	}
 }

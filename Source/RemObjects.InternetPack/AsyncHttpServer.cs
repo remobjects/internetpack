@@ -1,9 +1,6 @@
 ﻿/*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2014. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2015. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -20,11 +17,13 @@ namespace RemObjects.InternetPack.Http
 #endif
 	public class AsyncHttpServer : AsyncServer
 	{
+		private const String DEFAULT_SERVER_NAME = "Internet Pack HTTP Server";
+
 		public AsyncHttpServer()
 		{
 			this.DefaultPort = 80;
 			this.KeepAlive = true;
-			this.ServerName = sServerName;
+			this.ServerName = DEFAULT_SERVER_NAME;
 			this.MaxPostSize = 4194304;
 		}
 
@@ -43,63 +42,22 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#region Properties
-		[DefaultValue(true), Category("Server")]
-		public Boolean KeepAlive
-		{
-			get
-			{
-				return fKeepAlive;
-			}
-			set
-			{
-				fKeepAlive = value;
-			}
-		}
-		private Boolean fKeepAlive;
 
-		[DefaultValue(true), Category("Server")]
-		public Boolean ValidateRequests
-		{
-			get
-			{
-				return fValidateRequests;
-			}
-			set
-			{
-				fValidateRequests = value;
-			}
-		}
-		private Boolean fValidateRequests;
+		[Category("Server")]
+		[DefaultValue(true)]
+		public Boolean KeepAlive { get; set; }
 
-		[DefaultValue(sServerName), Category("Server")]
-		public String ServerName
-		{
-			get
-			{
-				return fServerName;
-			}
-			set
-			{
-				fServerName = value;
-			}
-		}
-		private String fServerName;
+		[Category("Server")]
+		[DefaultValue(true)]
+		public Boolean ValidateRequests { get; set; }
 
-		public const String sServerName = "Internet Pack HTTP Server";
+		[Category("Server")]
+		[DefaultValue(DEFAULT_SERVER_NAME)]
+		public String ServerName { get; set; }
 
-		[DefaultValue(4194304), Category("Server")]
-		public Int32 MaxPostSize
-		{
-			get
-			{
-				return fMaxPostSize;
-			}
-			set
-			{
-				fMaxPostSize = value;
-			}
-		}
-		private Int32 fMaxPostSize;
+		[Category("Server")]
+		[DefaultValue(4194304)]
+		public Int32 MaxPostSize { get; set; }
 		#endregion
 
 		public event AsyncHttpRequestEventHandler BeforeHaveData;
@@ -107,31 +65,31 @@ namespace RemObjects.InternetPack.Http
 		public event AsyncHttpRequestEventHandler HttpResponseSent;
 		public event AsyncHttpRequestEventHandler HttpResponseFailed;
 
-		internal protected virtual void TriggerBeforeHaveData(AsyncHttpRequestEventArgs e)
+		protected internal virtual void TriggerBeforeHaveData(AsyncHttpRequestEventArgs e)
 		{
 			if (this.BeforeHaveData != null)
 				this.BeforeHaveData(this, e);
 		}
 
-		internal protected virtual void TriggerHttpRequest(AsyncHttpRequestEventArgs e)
+		protected internal virtual void TriggerHttpRequest(AsyncHttpRequestEventArgs e)
 		{
 			if (this.HttpRequest != null)
 				this.HttpRequest(this, e);
 		}
 
-		internal protected virtual void TriggerHttpResponseSent(AsyncHttpRequestEventArgs e)
+		protected internal virtual void TriggerHttpResponseSent(AsyncHttpRequestEventArgs e)
 		{
 			if (this.HttpResponseSent != null)
 				this.HttpResponseSent(this, e);
 		}
 
-		internal protected virtual void TriggerHttpResponseFailed(AsyncHttpRequestEventArgs e)
+		protected internal virtual void TriggerHttpResponseFailed(AsyncHttpRequestEventArgs e)
 		{
 			if (this.HttpResponseFailed != null)
 				this.HttpResponseFailed(this, e);
 		}
 
-		internal protected virtual AsyncHttpContext NewContext(AsyncHttpWorker worker)
+		protected internal virtual AsyncHttpContext NewContext(AsyncHttpWorker worker)
 		{
 			return new AsyncHttpContext(worker);
 		}
@@ -155,18 +113,7 @@ namespace RemObjects.InternetPack.Http
 			}
 		}
 
-		public Byte[] ContentBytes
-		{
-			get
-			{
-				return this.fContentBytes;
-			}
-			set
-			{
-				this.fContentBytes = value;
-			}
-		}
-		private Byte[] fContentBytes;
+		public Byte[] ContentBytes { get; set; }
 	}
 
 	public class AsyncHttpContext
@@ -207,31 +154,9 @@ namespace RemObjects.InternetPack.Http
 		}
 		private readonly HttpServerResponse fCurrentResponse;
 
-		public Boolean ResponseSent
-		{
-			get
-			{
-				return this.fResponseSent;
-			}
-			set
-			{
-				this.fResponseSent = value;
-			}
-		}
-		private Boolean fResponseSent;
+		public Boolean ResponseSent { get; set; }
 
-		public Object UserData
-		{
-			get
-			{
-				return this.fUserData;
-			}
-			set
-			{
-				this.fUserData = value;
-			}
-		}
-		private Object fUserData;
+		public Object UserData { get; set; }
 		#endregion
 
 		public void SendResponse()
@@ -239,7 +164,7 @@ namespace RemObjects.InternetPack.Http
 			if (this.ResponseSent)
 				return;
 
-			this.fResponseSent = true;
+			this.ResponseSent = true;
 			this.CurrentResponse.FinalizeHeader();
 			this.fWorker.SendResponse();
 		}
@@ -262,7 +187,7 @@ namespace RemObjects.InternetPack.Http
 			this.fContext = this.fOwner.NewContext(this);
 			try
 			{
-				this.DataConnection.BeginReadLine(new AsyncCallback(HeaderFirstLineCallback), null);
+				this.DataConnection.BeginReadLine(HeaderFirstLineCallback, null);
 			}
 			catch (SocketException)
 			{
@@ -336,7 +261,7 @@ namespace RemObjects.InternetPack.Http
 
 			try
 			{
-				this.DataConnection.BeginReadLine(new AsyncCallback(HeaderLinesCallback), null);
+				this.DataConnection.BeginReadLine(HeaderLinesCallback, null);
 			}
 			catch (SocketException)
 			{
@@ -350,7 +275,7 @@ namespace RemObjects.InternetPack.Http
 
 		private void HeaderLinesCallback(IAsyncResult ar)
 		{
-			String lHeaderLine = null;
+			String lHeaderLine;
 			try
 			{
 				lHeaderLine = this.DataConnection.EndReadLine(ar);
@@ -414,7 +339,7 @@ namespace RemObjects.InternetPack.Http
 						try
 						{
 							Byte[] lData = new Byte[(Int32)lContentLength];
-							DataConnection.BeginRead(lData, 0, (Int32)lContentLength, new AsyncCallback(WantBodyCallback), lData);
+							DataConnection.BeginRead(lData, 0, (Int32)lContentLength, WantBodyCallback, lData);
 						}
 						catch (SocketException)
 						{
@@ -448,7 +373,7 @@ namespace RemObjects.InternetPack.Http
 					return;
 				}
 
-				Int32 lPosition = lHeaderLine.IndexOf(":");
+				Int32 lPosition = lHeaderLine.IndexOf(":", StringComparison.Ordinal);
 				if (lPosition == -1)
 				{
 					SendInvalidRequest();
@@ -470,7 +395,7 @@ namespace RemObjects.InternetPack.Http
 
 				try
 				{
-					DataConnection.BeginReadLine(new AsyncCallback(HeaderLinesCallback), null);
+					DataConnection.BeginReadLine(HeaderLinesCallback, null);
 				}
 				catch (SocketException)
 				{
@@ -514,7 +439,6 @@ namespace RemObjects.InternetPack.Http
 			catch (Exception ex)
 			{
 				this.SendInvalidRequest(ex);
-				return;
 			}
 		}
 		#endregion
@@ -530,10 +454,9 @@ namespace RemObjects.InternetPack.Http
 
 			if (this.fContext.CurrentResponse.ContentBytes == null)
 			{
-				if (this.fContext.CurrentResponse.ContentString != null)
-					this.fContext.CurrentResponse.ContentBytes = this.fContext.CurrentResponse.Encoding.GetBytes(fContext.CurrentResponse.ContentString);
-				else
-					this.fContext.CurrentResponse.ContentBytes = new Byte[0];
+				this.fContext.CurrentResponse.ContentBytes = this.fContext.CurrentResponse.ContentString != null
+																? this.fContext.CurrentResponse.Encoding.GetBytes(fContext.CurrentResponse.ContentString)
+																: new Byte[0];
 			}
 
 			this.fContext.CurrentResponse.FinalizeHeader();
@@ -543,7 +466,7 @@ namespace RemObjects.InternetPack.Http
 			Array.Copy(lHeader, 0, lData, 0, lHeader.Length);
 			Array.Copy(fContext.CurrentResponse.ContentBytes, 0, lData, lHeader.Length, fContext.CurrentResponse.ContentBytes.Length);
 
-			this.DataConnection.BeginWrite(lData, 0, lData.Length, new AsyncCallback(InvalidRequestCallback), null);
+			this.DataConnection.BeginWrite(lData, 0, lData.Length, InvalidRequestCallback, null);
 		}
 
 		private void SendInvalidRequest()
@@ -587,21 +510,21 @@ namespace RemObjects.InternetPack.Http
 					switch (fContext.CurrentResponse.ContentSource)
 					{
 						case ContentSource.ContentBytes:
-							DataConnection.BeginWrite(lHeader, 0, fBodyOffset, new AsyncCallback(ResponseBodyCallback), fContext.CurrentResponse.ContentBytes);
+							DataConnection.BeginWrite(lHeader, 0, fBodyOffset, ResponseBodyCallback, fContext.CurrentResponse.ContentBytes);
 							break;
 
 						case ContentSource.ContentString:
 							Byte[] lBuffer = fContext.CurrentResponse.Encoding.GetBytes(fContext.CurrentResponse.ContentString);
-							DataConnection.BeginWrite(lHeader, 0, fBodyOffset, new AsyncCallback(ResponseBodyCallback), lBuffer);
+							DataConnection.BeginWrite(lHeader, 0, fBodyOffset, ResponseBodyCallback, lBuffer);
 							break;
 
 						case ContentSource.ContentStream:
 							fContext.CurrentResponse.ContentStream.Position = 0;
-							DataConnection.BeginWrite(lHeader, 0, fBodyOffset, new AsyncCallback(ResponseBodyCallback), fContext.CurrentResponse.ContentStream);
+							DataConnection.BeginWrite(lHeader, 0, fBodyOffset, ResponseBodyCallback, fContext.CurrentResponse.ContentStream);
 							break;
 
 						default:
-							DataConnection.BeginWrite(lHeader, 0, fBodyOffset, new AsyncCallback(ResponseBodyCallback), null);
+							DataConnection.BeginWrite(lHeader, 0, fBodyOffset, ResponseBodyCallback, null);
 							break;
 					}
 				}
@@ -619,7 +542,7 @@ namespace RemObjects.InternetPack.Http
 							if (fBodyOffset > fContext.CurrentResponse.ContentBytes.Length)
 								fBodyOffset = fContext.CurrentResponse.ContentBytes.Length;
 							Array.Copy(fContext.CurrentResponse.ContentBytes, 0, fBodyBuffer, lHeader.Length, fBodyOffset);
-							DataConnection.BeginWrite(fBodyBuffer, 0, fBodyOffset + lHeader.Length, new AsyncCallback(ResponseBodyCallback), fContext.CurrentResponse.ContentBytes);
+							DataConnection.BeginWrite(fBodyBuffer, 0, fBodyOffset + lHeader.Length, ResponseBodyCallback, fContext.CurrentResponse.ContentBytes);
 							break;
 
 						case ContentSource.ContentString:
@@ -627,17 +550,17 @@ namespace RemObjects.InternetPack.Http
 							if (fBodyOffset > lBuffer.Length)
 								fBodyOffset = lBuffer.Length;
 							Array.Copy(lBuffer, 0, fBodyBuffer, lHeader.Length, fBodyOffset);
-							DataConnection.BeginWrite(fBodyBuffer, 0, fBodyOffset + lHeader.Length, new AsyncCallback(ResponseBodyCallback), lBuffer);
+							DataConnection.BeginWrite(fBodyBuffer, 0, fBodyOffset + lHeader.Length, ResponseBodyCallback, lBuffer);
 							break;
 
 						case ContentSource.ContentStream:
 							fContext.CurrentResponse.ContentStream.Position = 0;
 							fBodyOffset = fContext.CurrentResponse.ContentStream.Read(fBodyBuffer, lHeader.Length, fBodyOffset);
-							DataConnection.BeginWrite(fBodyBuffer, 0, fBodyOffset + lHeader.Length, new AsyncCallback(ResponseBodyCallback), fContext.CurrentResponse.ContentStream);
+							DataConnection.BeginWrite(fBodyBuffer, 0, fBodyOffset + lHeader.Length, ResponseBodyCallback, fContext.CurrentResponse.ContentStream);
 							break;
 
 						default:
-							DataConnection.BeginWrite(lHeader, 0, fBodyOffset, new AsyncCallback(ResponseBodyCallback), null);
+							DataConnection.BeginWrite(lHeader, 0, fBodyOffset, ResponseBodyCallback, null);
 							break;
 					}
 				}
@@ -646,19 +569,16 @@ namespace RemObjects.InternetPack.Http
 			{
 				this.fOwner.TriggerHttpResponseFailed(new AsyncHttpRequestEventArgs(this.DataConnection, this.fContext));
 				Done();
-				return;
 			}
 			catch (SocketException)
 			{
 				this.fOwner.TriggerHttpResponseFailed(new AsyncHttpRequestEventArgs(this.DataConnection, this.fContext));
 				Done();
-				return;
 			}
 			catch (ObjectDisposedException)
 			{
 				this.fOwner.TriggerHttpResponseFailed(new AsyncHttpRequestEventArgs(this.DataConnection, this.fContext));
 				Done();
-				return;
 			}
 		}
 
@@ -674,7 +594,7 @@ namespace RemObjects.InternetPack.Http
 					Int32 lLen = lData.Read(fBodyBuffer, 0, fBodyBuffer.Length);
 					if (lLen != 0)
 					{
-						DataConnection.BeginWrite(fBodyBuffer, 0, lLen, new AsyncCallback(ResponseBodyCallback), lData);
+						DataConnection.BeginWrite(fBodyBuffer, 0, lLen, ResponseBodyCallback, lData);
 						return;
 					}
 				}
@@ -688,7 +608,7 @@ namespace RemObjects.InternetPack.Http
 					{
 						Array.Copy(lData, fBodyOffset, fBodyBuffer, 0, lLen);
 						fBodyOffset += lLen;
-						DataConnection.BeginWrite(fBodyBuffer, 0, lLen, new AsyncCallback(ResponseBodyCallback), lData);
+						DataConnection.BeginWrite(fBodyBuffer, 0, lLen, ResponseBodyCallback, lData);
 						return;
 					}
 				}
@@ -717,7 +637,7 @@ namespace RemObjects.InternetPack.Http
 			fContext = this.fOwner.NewContext(this);
 			try
 			{
-				DataConnection.BeginReadLine(new AsyncCallback(HeaderFirstLineCallback), null);
+				DataConnection.BeginReadLine(HeaderFirstLineCallback, null);
 			}
 			catch (SocketException)
 			{
@@ -733,8 +653,6 @@ namespace RemObjects.InternetPack.Http
 				return;
 			}
 			this.fOwner.TriggerHttpResponseSent(new AsyncHttpRequestEventArgs(this.DataConnection, this.fContext));
-
-			return;
 		}
 	}
 }

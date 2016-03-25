@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
-  (c)opyright RemObjects Software, LLC. 2003-2015. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -11,15 +11,17 @@ using System.Net.Sockets;
 namespace RemObjects.InternetPack.Http
 {
 #if DESIGN
-	[System.Drawing.ToolboxBitmap(typeof(RemObjects.InternetPack.Server), "Glyphs.HttpServer.bmp")]
+	[System.Drawing.ToolboxBitmap(typeof(Server), "Glyphs.HttpServer.bmp")]
 #endif
 	public class HttpServer : Server
 	{
+		private const String DEFAULT_SERVER_NAME = "Internet Pack HTTP Server";
+
 		public HttpServer()
 		{
 			this.DefaultPort = 80;
 			this.KeepAlive = true;
-			this.ServerName = sServerName;
+			this.ServerName = DEFAULT_SERVER_NAME;
 			this.ValidateRequests = true;
 		}
 
@@ -37,49 +39,17 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#region Properties
-		[DefaultValue(true), Category("Server")]
-		public Boolean KeepAlive
-		{
-			get
-			{
-				return fKeepAlive;
-			}
-			set
-			{
-				fKeepAlive = value;
-			}
-		}
-		private Boolean fKeepAlive;
+		[Category("Server")]
+		[DefaultValue(true)]
+		public Boolean KeepAlive { get; set; }
 
-		[DefaultValue(true), Category("Server")]
-		public Boolean ValidateRequests
-		{
-			get
-			{
-				return fValidateRequests;
-			}
-			set
-			{
-				fValidateRequests = value;
-			}
-		}
-		private Boolean fValidateRequests;
+		[Category("Server")]
+		[DefaultValue(true)]
+		public Boolean ValidateRequests { get; set; }
 
-		[DefaultValue(sServerName), Category("Server")]
-		public String ServerName
-		{
-			get
-			{
-				return fServerName;
-			}
-			set
-			{
-				fServerName = value;
-			}
-		}
-		private String fServerName;
-
-		public const String sServerName = "Internet Pack HTTP Server";
+		[Category("Server")]
+		[DefaultValue(DEFAULT_SERVER_NAME)]
+		public String ServerName { get; set; }
 		#endregion
 
 		#region Events
@@ -88,7 +58,9 @@ namespace RemObjects.InternetPack.Http
 		protected virtual void TriggerHttpRequest(HttpRequestEventArgs e)
 		{
 			if (this.HttpRequest != null)
+			{
 				this.HttpRequest(this, e);
+			}
 		}
 		#endregion
 

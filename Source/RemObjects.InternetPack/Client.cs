@@ -1,9 +1,6 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -14,406 +11,344 @@ using RemObjects.InternetPack.Dns;
 
 namespace RemObjects.InternetPack
 {
-    public abstract class Client : System.ComponentModel.Component
-    {
-        protected Client()
-        {
-            this.EnableNagle = false;
-            this.fBindingV4 = new Binding();
-            this.fBindingV6 = new Binding(AddressFamily.InterNetworkV6);
-            this.fDnsResolveType = DnsResolveType.Once;
+	public abstract class Client : System.ComponentModel.Component
+	{
+		protected Client()
+		{
+			this.EnableNagle = false;
+			this.fBindingV4 = new Binding();
+			this.fBindingV6 = new Binding(AddressFamily.InterNetworkV6);
+			this.DnsResolveType = DnsResolveType.Once;
 #if FULLFRAMEWORK
-            this.fSslOptions = new SslConnectionFactory();
+			this.SslOptions = new SslConnectionFactory();
 #endif
-        }
+		}
 
-        protected virtual void ResolveHostNameIfNeeded()
-        {
-            if (String.IsNullOrEmpty(this.HostName))
-                return;
+		protected virtual void ResolveHostNameIfNeeded()
+		{
+			if (String.IsNullOrEmpty(this.HostName))
+				return;
 
-            if ((this.HostAddress == null) || (this.DnsResolveType == DnsResolveType.Always))
-                this.ResolveHostName();
-        }
+			if ((this.HostAddress == null) || (this.DnsResolveType == DnsResolveType.Always))
+				this.ResolveHostName();
+		}
 
-        protected virtual void ResolveHostName()
-        {
-            String lHostName = this.HostName;
-            this.TriggerOnResolveHostName(ref lHostName);
+		protected virtual void ResolveHostName()
+		{
+			OnResolveHostNameEventArgs lEventArgs = new OnResolveHostNameEventArgs(this.HostName);
 
-            if (lHostName == null)
-                throw new Exception("No Hostname set");
+			this.TriggerOnResolveHostName(lEventArgs);
 
-            this.HostAddress = DnsLookup.ResolveFirst(this.HostName);
-            this.TriggerOnResolvedHostName(lHostName, this.HostAddress);
-        }
+			if (String.IsNullOrEmpty(lEventArgs.HostName))
+			{
+				throw new Exception("No Hostname set");
+			}
 
-        #region Properties
-        [DefaultValue(DnsResolveType.Once)]
-        public DnsResolveType DnsResolveType
-        {
-            get
-            {
-                return fDnsResolveType;
-            }
-            set
-            {
-                fDnsResolveType = value;
-            }
-        }
-        private DnsResolveType fDnsResolveType;
+			this.HostName = lEventArgs.HostName;
+			this.HostAddress = DnsLookup.ResolveFirst(this.HostName);
 
-        [Obsolete("Please use BindingV4 and BindingV6 instead", false)]
-        public Binding Binding
-        {
-            get
-            {
-                return this.BindingV4;
-            }
-        }
+			this.TriggerOnResolvedHostName(new OnResolvedHostNameEventArgs(this.HostName, this.HostAddress));
+		}
 
-        public Binding BindingV4
-        {
-            get
-            {
-                return this.fBindingV4;
-            }
-        }
-        private Binding fBindingV4;
+		#region Properties
+		[DefaultValue(DnsResolveType.Once)]
+		public DnsResolveType DnsResolveType { get; set; }
 
-        public Binding BindingV6
-        {
-            get
-            {
-                return fBindingV6;
-            }
-        }
-        private Binding fBindingV6;
+		[Obsolete("Please use BindingV4 and BindingV6 instead", false)]
+		public Binding Binding
+		{
+			get
+			{
+				return this.BindingV4;
+			}
+		}
 
-        public Int32 Port
-        {
-            get
-            {
-                return this.fPort;
-            }
-            set
-            {
-                this.fPort = value;
-            }
-        }
-        private Int32 fPort;
+		public Binding BindingV4
+		{
+			get
+			{
+				return this.fBindingV4;
+			}
+		}
+		private readonly Binding fBindingV4;
 
-        public String HostName
-        {
-            get
-            {
-                return this.fHostName;
-            }
-            set
-            {
-                if (this.fHostName != value)
-                {
-                    this.fHostName = value;
-                    this.fHostAddress = null;
-                }
-            }
-        }
-        private String fHostName;
+		public Binding BindingV6
+		{
+			get
+			{
+				return fBindingV6;
+			}
+		}
+		private readonly Binding fBindingV6;
 
-        public IPAddress HostAddress
-        {
-            get
-            {
-                return this.fHostAddress;
-            }
-            set
-            {
-                this.fHostAddress = value;
-                if (this.fHostAddress != null)
-                    this.fHostName = this.fHostAddress.ToString();
-                else
-                    this.fHostName = null;
-            }
-        }
-        private IPAddress fHostAddress;
+		public Int32 Port { get; set; }
 
-        [Browsable(false)]
-        public Type ConnectionClass
-        {
-            get
-            {
-                return this.fConnectionClass;
-            }
-            set
-            {
+		public String HostName
+		{
+			get
+			{
+				return this.fHostName;
+			}
+			set
+			{
+				if (this.fHostName != value)
+				{
+					this.fHostName = value;
+					this.fHostAddress = null;
+				}
+			}
+		}
+		private String fHostName;
 
-                if (value != null && !value.IsSubclassOf(typeof(Connection)))
-                    throw new Exception(String.Format("The assigned Type '{0}' is not a descendant of Connection", value.FullName));
+		public IPAddress HostAddress
+		{
+			get
+			{
+				return this.fHostAddress;
+			}
+			set
+			{
+				this.fHostAddress = value;
+				if (this.fHostAddress != null)
+					this.fHostName = this.fHostAddress.ToString();
+				else
+					this.fHostName = null;
+			}
+		}
+		private IPAddress fHostAddress;
 
-                this.fConnectionClass = value;
-            }
-        }
-        private Type fConnectionClass;
+		[Browsable(false)]
+		public Type ConnectionClass
+		{
+			get
+			{
+				return this.fConnectionClass;
+			}
+			set
+			{
 
-        [Browsable(false)]
-        public IConnectionFactory ConnectionFactory
-        {
-            get
-            {
-                return this.fConnectionFactory;
-            }
-            set
-            {
-                this.fConnectionFactory = value;
-            }
-        }
-        private IConnectionFactory fConnectionFactory;
+				if (value != null && !value.IsSubclassOf(typeof(Connection)))
+					throw new Exception(String.Format("The assigned Type '{0}' is not a descendant of Connection", value.FullName));
 
-        protected ConnectionPool ConnectionPool
-        {
-            get
-            {
-                return this.fConnectionPool;
-            }
-            set
-            {
-                if (value != this.fConnectionPool)
-                {
-                    if (this.fConnectionPool != null)
-                        this.fConnectionPool.Dispose();
-                }
+				this.fConnectionClass = value;
+			}
+		}
+		private Type fConnectionClass;
 
-                this.fConnectionPool = value;
-            }
-        }
-        private ConnectionPool fConnectionPool;
+		[Browsable(false)]
+		public IConnectionFactory ConnectionFactory { get; set; }
+
+		protected ConnectionPool ConnectionPool
+		{
+			get
+			{
+				return this.fConnectionPool;
+			}
+			set
+			{
+				if (value != this.fConnectionPool)
+				{
+					if (this.fConnectionPool != null)
+						this.fConnectionPool.Dispose();
+				}
+
+				this.fConnectionPool = value;
+			}
+		}
+		private ConnectionPool fConnectionPool;
 
 #if FULLFRAMEWORK
-        public SslConnectionFactory SslOptions
-        {
-            get
-            {
-                return this.fSslOptions;
-            }
-            set
-            {
-                this.fSslOptions = value;
-            }
-        }
-        private SslConnectionFactory fSslOptions;
+		public SslConnectionFactory SslOptions { get; set; }
 #endif
 
-        [DefaultValue(false)]
-        public Boolean EnableNagle
-        {
-            get
-            {
-                return this.fEnableNagle;
-            }
-            set
-            {
-                this.fEnableNagle = value;
-            }
-        }
-        private Boolean fEnableNagle;
-        #endregion
+		[DefaultValue(false)]
+		public Boolean EnableNagle { get; set; }
+		#endregion
 
-        #region Events
-        public delegate void OnResolveHostNameHandler(Object sender, OnResolveHostNameArgs e);
+		#region Events
+		public event OnResolveHostNameEventHandler OnResolveHostName;
 
-        public class OnResolveHostNameArgs : EventArgs
-        {
-            public String HostName
-            {
-                get
-                {
-                    return this.fHostName;
-                }
-                set
-                {
-                    this.fHostName = value;
-                }
-            }
-            private String fHostName;
-        }
+		protected virtual void TriggerOnResolveHostName(OnResolveHostNameEventArgs e)
+		{
+			if (this.OnResolveHostName == null)
+				return;
 
-        public event OnResolveHostNameHandler OnResolveHostName;
+			this.OnResolveHostName(this, e);
+		}
 
-        protected virtual void TriggerOnResolveHostName(ref String hostname)
-        {
-            if (this.OnResolveHostName == null)
-                return;
+		public event OnResolvedHostNameEventHandler OnResolvedHostName;
 
-            OnResolveHostNameArgs lEventArgs = new OnResolveHostNameArgs();
-            lEventArgs.HostName = hostname;
+		protected virtual void TriggerOnResolvedHostName(OnResolvedHostNameEventArgs e)
+		{
+			if (this.OnResolvedHostName == null)
+				return;
 
-            this.OnResolveHostName(this, lEventArgs);
+			this.OnResolvedHostName(this, e);
+		}
+		#endregion
 
-            hostname = lEventArgs.HostName;
-        }
+		#region Methods
+		public virtual Connection Connect()
+		{
+			this.ResolveHostNameIfNeeded();
 
-        public delegate void OnResolvedHostNameHandler(Object sender, OnResolvedHostNameArgs e);
+			return this.Connect(this.HostAddress, this.Port);
+		}
 
-        public class OnResolvedHostNameArgs : EventArgs
-        {
-            public String HostName
-            {
-                get
-                {
-                    return this.fHostName;
-                }
-                set
-                {
-                    this.fHostName = value;
-                }
-            }
-            private String fHostName;
+		public virtual Connection Connect(String hostname, Int32 port)
+		{
+			return this.Connect(Dns.DnsLookup.ResolveFirst(hostname), port);
+		}
 
-            public IPAddress IPAddress
-            {
-                get
-                {
-                    return fIPAddress;
-                }
-                set
-                {
-                    fIPAddress = value;
-                }
-            }
-            private IPAddress fIPAddress;
-        }
+		public virtual Connection Connect(IPAddress host, Int32 port)
+		{
+			return this.GetConnection(host, port);
+		}
 
-        public event OnResolvedHostNameHandler OnResolvedHostName;
+		public virtual Connection ConnectNew(String hostname, Int32 port)
+		{
+			IPAddress lHostAddress = Dns.DnsLookup.ResolveFirst(hostname);
 
-        protected void TriggerOnResolvedHostName(String hostname, IPAddress address)
-        {
-            if (this.OnResolvedHostName == null)
-                return;
+			return GetNewConnection(lHostAddress, port);
+		}
 
-            OnResolvedHostNameArgs lEventArgs = new OnResolvedHostNameArgs();
-            lEventArgs.HostName = hostname;
-            lEventArgs.IPAddress = address;
-            hostname = lEventArgs.HostName;
-            this.OnResolvedHostName(this, lEventArgs);
-        }
-        #endregion
+		public virtual Connection ConnectNew(IPAddress host, Int32 port)
+		{
+			return GetNewConnection(host, port);
+		}
 
-        #region Methods
-        public virtual Connection Connect()
-        {
-            this.ResolveHostNameIfNeeded();
+		protected virtual Connection GetConnection(IPAddress host, Int32 port)
+		{
+			if (this.fConnectionPool != null)
+				return this.fConnectionPool.GetConnection(new IPEndPoint(host, port));
 
-            return this.Connect(this.HostAddress, this.Port);
-        }
+			Binding lBinding;
+			switch (host.AddressFamily)
+			{
+				case AddressFamily.InterNetwork:
+					lBinding = this.fBindingV4;
+					break;
 
-        public virtual Connection Connect(String hostname, Int32 port)
-        {
-            return this.Connect(Dns.DnsLookup.ResolveFirst(hostname), port);
-        }
+				case AddressFamily.InterNetworkV6:
+					lBinding = this.fBindingV6;
+					break;
 
-        public virtual Connection Connect(IPAddress host, Int32 port)
-        {
-            return this.GetConnection(host, port);
-        }
+				default:
+					lBinding = new Binding(host.AddressFamily);
+					break;
+			}
 
-        public virtual Connection ConnectNew(String hostname, Int32 port)
-        {
-            IPAddress lHostAddress = Dns.DnsLookup.ResolveFirst(hostname);
+			Connection lConnection = this.NewConnection(lBinding);
+			lConnection.Connect(host, port);
 
-            return GetNewConnection(lHostAddress, port);
-        }
+			return lConnection;
+		}
 
-        public virtual Connection ConnectNew(IPAddress host, Int32 port)
-        {
-            return GetNewConnection(host, port);
-        }
+		private Connection GetNewConnection(IPAddress host, Int32 port)
+		{
+			if (this.fConnectionPool != null)
+				return this.fConnectionPool.GetNewConnection(new IPEndPoint(host, port));
 
-        protected virtual Connection GetConnection(IPAddress host, Int32 port)
-        {
-            if (this.fConnectionPool != null)
-                return this.fConnectionPool.GetConnection(new IPEndPoint(host, port));
+			return this.GetConnection(host, port);
+		}
 
-            Binding lBinding;
-            switch (host.AddressFamily)
-            {
-                case AddressFamily.InterNetwork:
-                    lBinding = this.fBindingV4;
-                    break;
+		protected virtual Connection NewConnection(Binding binding)
+		{
+			if (this.ConnectionFactory != null)
+			{
+				return this.ConnectionFactory.CreateClientConnection(binding);
+			}
 
-                case AddressFamily.InterNetworkV6:
-                    lBinding = this.fBindingV6;
-                    break;
-
-                default:
-                    lBinding = new Binding(host.AddressFamily);
-                    break;
-            }
-
-            Connection lConnection = this.NewConnection(lBinding);
-            lConnection.Connect(host, port);
-
-            return lConnection;
-        }
-
-        private Connection GetNewConnection(IPAddress host, Int32 port)
-        {
-            if (this.fConnectionPool != null)
-                return this.fConnectionPool.GetNewConnection(new IPEndPoint(host, port));
-
-            return this.GetConnection(host, port);
-        }
-
-        protected virtual Connection NewConnection(Binding binding)
-        {
-            if (this.fConnectionFactory != null)
-                return this.fConnectionFactory.CreateClientConnection(binding);
-
-            if (this.fConnectionClass != null)
-                return (Connection)Activator.CreateInstance(this.fConnectionClass);
+			if (this.fConnectionClass != null)
+			{
+				return (Connection)Activator.CreateInstance(this.fConnectionClass);
+			}
 
 #if FULLFRAMEWORK
-            if (this.SslOptions.Enabled)
-            {
-                Connection lSslConnection = this.SslOptions.CreateClientConnection(binding);
-                lSslConnection.EnableNagle = this.EnableNagle;
+			if (this.SslOptions.Enabled)
+			{
+				Connection lSslConnection = this.SslOptions.CreateClientConnection(binding);
+				lSslConnection.EnableNagle = this.EnableNagle;
 
-                return lSslConnection;
-            }
+				return lSslConnection;
+			}
 #endif
-            Connection lConnection = new Connection(binding);
-            lConnection.EnableNagle = this.EnableNagle;
+			Connection lConnection = new Connection(binding);
+			lConnection.EnableNagle = this.EnableNagle;
 
-            return lConnection;
-        }
+			return lConnection;
+		}
 
-        public static Connection Connect(String hostname, Int32 port, Binding binding)
-        {
-            IPAddress lHostAddress = Dns.DnsLookup.ResolveFirst(hostname);
+		public static Connection Connect(String hostname, Int32 port, Binding binding)
+		{
+			IPAddress lHostAddress = Dns.DnsLookup.ResolveFirst(hostname);
 
-            return Client.Connect(lHostAddress, port, binding);
-        }
+			return Client.Connect(lHostAddress, port, binding);
+		}
 
-        public static Connection Connect(IPAddress host, Int32 port, Binding binding)
-        {
-            Connection lConnection = new Connection(binding);
-            lConnection.Connect(host, port);
+		public static Connection Connect(IPAddress host, Int32 port, Binding binding)
+		{
+			Connection lConnection = new Connection(binding);
+			lConnection.Connect(host, port);
 
-            return lConnection;
-        }
+			return lConnection;
+		}
 
-        protected virtual void ReleaseConnection(Connection connection)
-        {
-            if (fConnectionPool != null)
-                fConnectionPool.ReleaseConnection(connection);
-            else
-                connection.Dispose();
-        }
-        #endregion
-    }
+		protected virtual void ReleaseConnection(Connection connection)
+		{
+			if (fConnectionPool != null)
+				fConnectionPool.ReleaseConnection(connection);
+			else
+				connection.Dispose();
+		}
+		#endregion
+	}
 
-    public enum DnsResolveType
-    {
-        Once,
-        Always
-    }
+	public enum DnsResolveType
+	{
+		Once,
+		Always
+	}
+
+	public class OnResolveHostNameEventArgs : EventArgs
+	{
+		public OnResolveHostNameEventArgs(String hostname)
+		{
+			this.HostName = hostname;
+		}
+
+		public String HostName { get; set; }
+	}
+
+	public delegate void OnResolveHostNameEventHandler(Object sender, OnResolveHostNameEventArgs e);
+
+	public class OnResolvedHostNameEventArgs : EventArgs
+	{
+		public OnResolvedHostNameEventArgs(String hostname, IPAddress address)
+		{
+			this.fHostName = hostname;
+			this.fHostAddress = address;
+		}
+
+		public String HostName
+		{
+			get
+			{
+				return this.fHostName;
+			}
+		}
+		private readonly String fHostName;
+
+		public IPAddress HostAddress
+		{
+			get
+			{
+				return this.fHostAddress;
+			}
+		}
+
+		private readonly IPAddress fHostAddress;
+	}
+
+	public delegate void OnResolvedHostNameEventHandler(Object sender, OnResolvedHostNameEventArgs e);
 }

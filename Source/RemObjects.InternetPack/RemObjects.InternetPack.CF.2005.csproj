@@ -102,9 +102,7 @@
     <Compile Include="Exceptions\HttpHeaderException.cs" />
     <Compile Include="Exceptions\HttpRequestInvalidException.cs" />
     <Compile Include="Asn1.cs" />
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AsyncHttpServer.cs">
       <SubType>Component</SubType>
     </Compile>
