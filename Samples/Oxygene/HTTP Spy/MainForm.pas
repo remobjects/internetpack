@@ -50,10 +50,10 @@ type
     method InitializeComponent;
   {$ENDREGION}
   private
-    _LastResultString : String;
-    _LastResultBytes: Array of byte;
-    _LastLength: Integer := 0;
-    hexWidth: Integer := 16;
+    var _LastResultString : String;
+    var _LastResultBytes: array of Byte;
+    var _LastLength: Integer := 0;
+    var hexWidth: Integer := 16;
 
     method MainForm_Load(sender: System.Object; e: System.EventArgs);
     method rbText_CheckedChanged(sender: System.Object; e: System.EventArgs);
@@ -68,6 +68,7 @@ type
     constructor;
   end;
 
+
 implementation
 
 {$REGION Construction and Disposition}
@@ -78,6 +79,7 @@ begin
   //
   InitializeComponent();
 end;
+
 
 method MainForm.Dispose(aDisposing: boolean);
 begin
@@ -361,7 +363,6 @@ begin
   self.httpClient1.HostName := nil;
   self.httpClient1.Password := '';
   self.httpClient1.Port := 0;
-  self.httpClient1.Url := nil;
   self.httpClient1.UserName := '';
   // 
   // dvParams
@@ -470,6 +471,7 @@ begin
   tblHeaders.Rows.Add(aRow);
 end;
 
+
 method MainForm.AddResponseHeader(Name: string; Value: string);
 begin
   var aRow: DataRow := tblResponseHeaders.NewRow();
@@ -477,6 +479,7 @@ begin
   aRow['Value'] := Value;
   tblResponseHeaders.Rows.Add(aRow);
 end;
+
 
 method MainForm.btnSubmit_Click(sender: System.Object; e: System.EventArgs);
 var 
@@ -530,6 +533,7 @@ begin
       end;
 end;
 
+
 method MainForm.ShowResponse(aResponse: HttpClientResponse);
 var aRow: DataRow;
 begin
@@ -553,8 +557,9 @@ begin
         end;
       end;
   end;
-  SetResultText();    
+  SetResultText();
 end;
+
 
 method MainForm.SetResultText();
 var i: Integer;
@@ -601,15 +606,18 @@ begin
   end;
 end;
 
+
 method MainForm.rbText_CheckedChanged(sender: System.Object; e: System.EventArgs);
 begin
   SetResultText();
 end;
+
 
 method MainForm.MainForm_Load(sender: System.Object; e: System.EventArgs);
 begin
   AddHeader('Accept',httpClient1.Accept);
   AddHeader('User-Agent',httpClient1.UserAgent);
 end;
+
 
 end.

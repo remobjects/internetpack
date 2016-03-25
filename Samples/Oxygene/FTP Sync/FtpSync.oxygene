@@ -44,7 +44,9 @@
     <Compile Include="Properties\AssemblyInfo.pas">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FtpSyncWorker.pas" />
+    <Compile Include="FtpSyncWorker.pas">
+      <DesignableClassName>FtpSync.SyncMode</DesignableClassName>
+    </Compile>
     <Compile Include="Main.pas" />
     <Content Include="Properties\App.ico">
       <SubType>Content</SubType>
@@ -53,7 +55,7 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Oxygene\RemObjects.Oxygene.Echoes.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Echoes.targets" />
   <PropertyGroup>
     <PreBuildEvent />
   </PropertyGroup>

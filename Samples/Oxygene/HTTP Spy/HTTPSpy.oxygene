@@ -48,8 +48,8 @@
       <SubType>Content</SubType>
     </Content>
     <Compile Include="MainForm.pas">
-      <SubType>Form</SubType>
       <DesignableClassName>HTTPSpy.MainForm</DesignableClassName>
+      <SubType>Form</SubType>
     </Compile>
     <Content Include="Properties\App.ico">
       <SubType>Content</SubType>
@@ -62,7 +62,7 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Oxygene\RemObjects.Oxygene.Echoes.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Echoes.targets" />
   <PropertyGroup>
     <PreBuildEvent />
   </PropertyGroup>

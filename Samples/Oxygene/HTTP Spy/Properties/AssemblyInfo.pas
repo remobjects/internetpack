@@ -7,15 +7,15 @@ uses
   System.Resources,
   System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle('HTTP Spy Sample')]
+[assembly: AssemblyTitle('Internet Pack for .NET - HttpSpy Sample')]
 [assembly: AssemblyDescription('')]
 [assembly: AssemblyConfiguration('')]
 [assembly: AssemblyCompany('RemObjects Software, LLC')]
-[assembly: AssemblyProduct('RemObjects Internet Pack for .NET')]
-[assembly: AssemblyCopyright('Copyright RemObjects Software, LLC 2002-2014. All Rights Reserved.')]
+[assembly: AssemblyProduct('Internet Pack for .NET')]
+[assembly: AssemblyCopyright('Copyright RemObjects Software, LLC. 2002-2016 All Rights Reserved.')]
 [assembly: AssemblyTrademark('')]
 [assembly: AssemblyCulture('')]
-[assembly: AssemblyVersion('8.0.0.0')]
+[assembly: AssemblyVersion('2.0.0.0')]
 [assembly: NeutralResourcesLanguage('')]
 [assembly: ComVisible(false)]
 [assembly: AssemblyDelaySign(false)]

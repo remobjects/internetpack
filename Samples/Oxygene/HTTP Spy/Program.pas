@@ -13,9 +13,6 @@ implementation
 uses 
   System.Windows.Forms;
 
-/// <summary>
-/// The main entry point for the application.
-/// </summary>
 [STAThread]
 class method Program.Main;
 begin

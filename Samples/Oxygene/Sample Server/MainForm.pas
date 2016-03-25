@@ -342,7 +342,7 @@ end;
     fHttpServer.Port := Convert.ToInt32(nudPort.Value);
     fHttpServer.RootPath := txtRoot.Text;
     fHttpServer.ServerName := txtServerName.Text;
-    fHttpServer.Binding.ListenerThreadCount := Convert.ToInt32(nudCount.Value);
+    fHttpServer.BindingV4.ListenerThreadCount := Convert.ToInt32(nudCount.Value);
     fHttpServer.HttpRequest += new HttpRequestEventHandler(LogRequest);
     fHttpServer.Open();
     AddLog(String.Format('SimpleHttpServer is active on {0} port.', fHttpServer.Port));

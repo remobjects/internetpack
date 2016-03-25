@@ -7,11 +7,8 @@ uses
   System.Drawing,
   System.Diagnostics,
   System.IO;
-  
+
 type
-  /// <summary>
-  /// Summary description for MainForm.
-  /// </summary>
   MainForm = class(System.Windows.Forms.Form)
   {$REGION Windows Form Designer generated fields}
   private
@@ -22,7 +19,7 @@ type
     method InitializeComponent;
   {$ENDREGION}
   private
-    method httpServer_OnHttpRequest(aSender: System.Object; ea: RemObjects.InternetPack.Http.OnHttpRequestArgs);
+    method HttpServer_OnHttpRequest(sender: Object;  ea:  RemObjects.InternetPack.Http.HttpRequestEventArgs);
     method MainForm_Closed(sender: System.Object; e: System.EventArgs);
     method MainForm_Load(sender: System.Object; e: System.EventArgs);
     method llblinkLabel1_LinkClicked(sender: System.Object; e: System.Windows.Forms.LinkLabelLinkClickedEventArgs);
@@ -86,7 +83,7 @@ begin
   // 
   self.httpServer.Port := 82;
   self.httpServer.ValidateRequests := false;
-  self.httpServer.OnHttpRequest += new RemObjects.InternetPack.Http.OnHttpRequestHandler(@self.httpServer_OnHttpRequest);
+  self.httpServer.HttpRequest += @self.httpServer_OnHttpRequest;
   // 
   // lb_Log
   // 
@@ -160,7 +157,7 @@ begin
   httpServer.Active := false;
 end;
 
-method MainForm.httpServer_OnHttpRequest(aSender: System.Object; ea: RemObjects.InternetPack.Http.OnHttpRequestArgs);
+method MainForm.httpServer_OnHttpRequest(sender: Object;  ea: RemObjects.InternetPack.Http.HttpRequestEventArgs);
 var 
     lBuffer: array of byte;
     lExeName: String;
@@ -187,7 +184,7 @@ begin
     end;
     //---------------------------------------------------
     '/error': begin
-      ea.Response.SendError(555, 'Custom Error', 'A custom error message');
+      ea.Response.SendError(555, 'Custom Error');
     end;
     //---------------------------------------------------
     '/file': begin
@@ -209,12 +206,12 @@ begin
         ea.Response.CloseStream := true; 
       except
           on e: Exception do begin               
-            ea.Response.SendError(404, String.Format('File {0} not found', lExeName), e);
+            ea.Response.SendError(System.Net.HttpStatusCode.NotFound, e);
           end;
       end;  
   end
     //---------------------------------------------------
-    else ea.Response.SendError(404, 'Requested path not found');
+    else ea.Response.SendError(System.Net.HttpStatusCode.NotFound, 'Requested path not found');
     //---------------------------------------------------
   end;  
 end;
