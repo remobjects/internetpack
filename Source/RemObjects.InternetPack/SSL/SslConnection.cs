@@ -194,6 +194,7 @@ namespace RemObjects.InternetPack
 		#region Private static cache
 		private static Object fMonoSecurityProtocolDefault;
 		private static Object fMonoSecurityProtocolTls;
+		private static System.Security.Authentication.SslProtocols fNetSecurityProtocolTls = System.Security.Authentication.SslProtocols.None;
 		#endregion
 
 		#region Private fields
@@ -368,7 +369,21 @@ namespace RemObjects.InternetPack
 
 		private System.Security.Authentication.SslProtocols GetNetSecurityProtocol()
 		{
-			return this.fFactory.UseTls ? System.Security.Authentication.SslProtocols.Tls : System.Security.Authentication.SslProtocols.Default;
+			if (SslConnection.fNetSecurityProtocolTls == System.Security.Authentication.SslProtocols.None)
+			{
+				// In the worst case these Reflection calls will be executed several times
+				try
+				{
+					SslConnection.fNetSecurityProtocolTls = System.Security.Authentication.SslProtocols.Tls | (System.Security.Authentication.SslProtocols)Enum.Parse(typeof(System.Security.Authentication.SslProtocols), "Tls12");
+				}
+				catch (ArgumentException)
+				{
+					// Enum.Parse will fail on .NET less than 4.5
+					SslConnection.fNetSecurityProtocolTls = System.Security.Authentication.SslProtocols.Tls;
+				}
+			}
+
+			return this.fFactory.UseTls ? SslConnection.fNetSecurityProtocolTls : System.Security.Authentication.SslProtocols.Default;
 		}
 
 		private Boolean NetSsl_RemoteCertificateValidation(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
