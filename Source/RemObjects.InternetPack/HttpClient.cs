@@ -144,7 +144,7 @@ namespace RemObjects.InternetPack.Http
 		[Browsable(true)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 #else
-        [Browsable(false)]
+		[Browsable(false)]
 #endif
 		public HttpProxySettings ProxySettings
 		{
@@ -266,17 +266,21 @@ namespace RemObjects.InternetPack.Http
 		public void Abort()
 		{
 			if (this.fConnection == null)
+			{
 				return;
+			}
 
 			if (this.fConnection.Connected)
+			{
 				try
 				{
 					this.fConnection.Disconnect();
 				}
 				catch (Exception)
 				{
-					// As designed
+					// We do not care about any exceptions here
 				}
+			}
 
 			this.DisposeHttpConnection();
 		}
@@ -305,8 +309,6 @@ namespace RemObjects.InternetPack.Http
 
 			try
 			{
-				lConnection.Timeout = Timeout;
-				lConnection.TimeoutEnabled = TimeoutEnabled;
 				request.WriteHeaderToConnection(lConnection);
 			}
 			catch (ObjectDisposedException)
@@ -376,7 +378,25 @@ namespace RemObjects.InternetPack.Http
 			this.fConnectionUrl = null;
 		}
 
-		protected Connection GetHttpConnection(Boolean enableSSL, String targetHost, Int32 targetPort, String connectionHost, Int32 connectionPort)
+		protected override Connection GetConnection(IPAddress host, Int32 port)
+		{
+			Connection lConnection = base.GetConnection(host, port);
+			lConnection.Timeout = this.Timeout;
+			lConnection.TimeoutEnabled = this.TimeoutEnabled;
+
+			return lConnection;
+		}
+
+		protected override Connection NewConnection(Binding binding)
+		{
+			Connection lConnection = base.NewConnection(binding);
+			lConnection.Timeout = this.Timeout;
+			lConnection.TimeoutEnabled = this.TimeoutEnabled;
+
+			return lConnection;
+		}
+
+		private Connection GetHttpConnection(Boolean enableSSL, String targetHost, Int32 targetPort, String connectionHost, Int32 connectionPort)
 		{
 #if FULLFRAMEWORK
 			if (enableSSL)
@@ -392,20 +412,30 @@ namespace RemObjects.InternetPack.Http
 #endif
 
 			if (!this.KeepAlive || (this.ConnectionPool != null))
+			{
 				return this.Connect(connectionHost, connectionPort); // pooling class will make sure we use the right connection
+			}
 
 			String lUrl = connectionHost + ':' + connectionPort;
 
 			if (this.fConnection != null)
 			{
 				if ((this.fConnectionUrl == lUrl) && this.fConnection.Connected)
+				{
+					// Update Timeout settings
+					this.fConnection.Timeout = this.Timeout;
+					this.fConnection.TimeoutEnabled = this.TimeoutEnabled;
+
 					return this.fConnection;
+				}
 
 				this.fConnection.Dispose();
 			}
 
 			this.fConnectionUrl = lUrl;
 			this.fConnection = this.Connect(connectionHost, connectionPort);
+			this.fConnection.Timeout = this.Timeout;
+			this.fConnection.TimeoutEnabled = this.TimeoutEnabled;
 
 			return this.fConnection;
 		}
@@ -413,12 +443,16 @@ namespace RemObjects.InternetPack.Http
 		private Connection GetNewHttpConnection(String hostname, Int32 port)
 		{
 			if (this.ConnectionPool != null)
+			{
 				return this.ConnectNew(hostname, port);
+			}
 
 			this.DisposeHttpConnection();
 
 			this.fConnectionUrl = hostname + ':' + port;
 			this.fConnection = this.ConnectNew(hostname, port);
+			this.fConnection.Timeout = this.Timeout;
+			this.fConnection.TimeoutEnabled = this.TimeoutEnabled;
 
 			return this.fConnection;
 		}

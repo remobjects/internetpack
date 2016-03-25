@@ -151,7 +151,7 @@ namespace RemObjects.InternetPack
 				if (this.fTimeoutTimer != null)
 				{
 					this.fTimedOut = false;
-					this.fTimeoutTimer.Change(this.fTimeout * 1000, this.fTimeout * 1000);
+					//this.fTimeoutTimer.Change(this.Timeout * 1000, this.Timeout * 1000);
 				}
 			}
 		}
@@ -189,9 +189,9 @@ namespace RemObjects.InternetPack
 				if (value && this.fTimeoutTimer == null)
 				{
 					this.fTimedOut = false;
-					this.fTimeoutTimer = new System.Threading.Timer(this.TimeoutElapsed, null, this.Timeout * 1000, this.Timeout * 1000);
+					this.fTimeoutTimer = new System.Threading.Timer(this.TimeoutElapsed, null, System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
 				}
-				else if (value && this.fTimeoutTimer != null)
+				else if (!value && this.fTimeoutTimer != null)
 				{
 					this.fTimedOut = false;
 					this.fTimeoutTimer.Dispose();
@@ -230,7 +230,7 @@ namespace RemObjects.InternetPack
 		#region Timeouts & Limits
 		private void TimeoutElapsed(Object sender)
 		{
-			if (this.fTimeoutTimerEnabled)
+			if (this.fTimeoutTimerEnabled && !this.fTimedOut)
 			{
 				this.fTimedOut = true;
 				this.Abort();
@@ -240,20 +240,24 @@ namespace RemObjects.InternetPack
 		private void StartTimeoutTimer()
 		{
 			if (!this.TimeoutEnabled)
+			{
 				return;
+			}
 
 			this.fTimeoutTimerEnabled = true;
 			this.fTimedOut = false;
-			this.fTimeoutTimer.Change(this.Timeout * 1000, this.Timeout * 1000);
+			this.fTimeoutTimer.Change(this.Timeout * 1000, System.Threading.Timeout.Infinite);
 		}
 
 		private void StopTimeoutTimer()
 		{
-			if (this.TimeoutEnabled)
+			if (!this.TimeoutEnabled)
 			{
-				this.fTimeoutTimerEnabled = false;
-				this.fTimeoutTimer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
+				return;
 			}
+
+			this.fTimeoutTimerEnabled = false;
+			this.fTimeoutTimer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
 		}
 		#endregion
 
@@ -319,7 +323,6 @@ namespace RemObjects.InternetPack
 
 		protected virtual Int32 DataSocketReceiveWhatsAvaiable(Byte[] buffer, Int32 offset, Int32 size)
 		{
-			this.StartTimeoutTimer();
 			try
 			{
 				Int32 lReadBytes = DataSocket.Receive(buffer, offset, size, SocketFlags.None);
@@ -340,19 +343,23 @@ namespace RemObjects.InternetPack
 				this.DataSocket.Close();
 				return 0;
 			}
-			finally
-			{
-				StopTimeoutTimer();
-			}
 		}
 
 		protected virtual Int32 DataSocketSendAsMuchAsPossible(Byte[] buffer, Int32 offset, Int32 size)
 		{
-			Int32 lSentBytes = DataSocket.Send(buffer, offset, size, SocketFlags.None);
+			this.StartTimeoutTimer();
+			try
+			{
+				Int32 lSentBytes = DataSocket.Send(buffer, offset, size, SocketFlags.None);
 
-			TriggerOnBytesSent(lSentBytes);
+				TriggerOnBytesSent(lSentBytes);
 
-			return lSentBytes;
+				return lSentBytes;
+			}
+			finally
+			{
+				this.StopTimeoutTimer();
+			}
 		}
 
 		protected virtual void DataSocketConnect(EndPoint endPoint)
@@ -375,7 +382,7 @@ namespace RemObjects.InternetPack
 		{
 			try
 			{
-				if (!this.DataSocket.Connected) 
+				if (!this.DataSocket.Connected)
 					return;
 
 				try
@@ -415,37 +422,56 @@ namespace RemObjects.InternetPack
 				this.DataSocket.Close();
 		}
 
-		protected Int32 DataSocketReceive(Byte[] buffer, Int32 offset, Int32 size)
+		private Int32 DataSocketReceive(Byte[] buffer, Int32 offset, Int32 size)
 		{
-			Int32 lTotalReadBytes = 0;
-
-			do
+			this.StartTimeoutTimer();
+			try
 			{
-				Int32 lReadBytes = DataSocketReceiveWhatsAvaiable(buffer, offset, size);
-				if (lReadBytes == 0)
-					return lTotalReadBytes;
+				Int32 lTotalReadBytes = 0;
 
-				size -= lReadBytes;
-				offset += lReadBytes;
-				lTotalReadBytes += lReadBytes;
+				do
+				{
+					Int32 lReadBytes = this.DataSocketReceiveWhatsAvaiable(buffer, offset, size);
+					if (lReadBytes == 0)
+					{
+						return lTotalReadBytes;
+					}
+
+					size -= lReadBytes;
+					offset += lReadBytes;
+					lTotalReadBytes += lReadBytes;
+				}
+				while (size > 0);
+
+				return lTotalReadBytes;
+
 			}
-			while (size > 0);
-
-			return lTotalReadBytes;
+			finally
+			{
+				this.StopTimeoutTimer();
+			}
 		}
 
-		protected Int32 DataSocketSend(Byte[] buffer, Int32 offset, Int32 size)
+		private Int32 DataSocketSend(Byte[] buffer, Int32 offset, Int32 size)
 		{
-			Int32 lTotalSentBytes = 0;
-
-			while (size > 0)
+			this.StartTimeoutTimer();
+			try
 			{
-				Int32 lSentBytes = DataSocketSendAsMuchAsPossible(buffer, offset, size);
-				size -= lSentBytes;
-				offset += lSentBytes;
-				lTotalSentBytes += lSentBytes;
+				Int32 lTotalSentBytes = 0;
+
+				while (size > 0)
+				{
+					Int32 lSentBytes = this.DataSocketSendAsMuchAsPossible(buffer, offset, size);
+					size -= lSentBytes;
+					offset += lSentBytes;
+					lTotalSentBytes += lSentBytes;
+				}
+				return lTotalSentBytes;
 			}
-			return lTotalSentBytes;
+			finally
+			{
+				this.StopTimeoutTimer();
+			}
 		}
 
 		protected Int32 DataSocketSend(Byte[] buffer)
@@ -1655,7 +1681,9 @@ namespace RemObjects.InternetPack
 #endif
 		{
 			if (this.Connected)
+			{
 				this.Disconnect();
+			}
 
 			if (this.fTimeoutTimer != null)
 			{
