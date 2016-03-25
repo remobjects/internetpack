@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
-  (c)opyright RemObjects Software, LLC. 2003-2015. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -14,6 +14,8 @@ namespace RemObjects.InternetPack
 	public class ServerBinding : Binding
 	{
 		private const Int32 MAX_WAIT_CONNECTIONS = 50;
+
+		private Thread[] fListenThreads;
 
 		public ServerBinding()
 		{
@@ -35,18 +37,7 @@ namespace RemObjects.InternetPack
 		private Socket fListeningSocket;
 
 		[Browsable(false)]
-		public Boolean ReuseAddress
-		{
-			get
-			{
-				return this.fReuseAddress;
-			}
-			set
-			{
-				this.fReuseAddress = value;
-			}
-		}
-		private Boolean fReuseAddress;
+		public Boolean ReuseAddress { get; set; }
 
 		[Browsable(false)]
 		public IPEndPoint EndPoint
@@ -59,49 +50,14 @@ namespace RemObjects.InternetPack
 		private IPEndPoint fEndPoint;
 
 		[DefaultValue(MAX_WAIT_CONNECTIONS)]
-		public Int32 MaxWaitConnections
-		{
-			get
-			{
-				return this.fMaxWaitConnections;
-			}
-			set
-			{
-				this.fMaxWaitConnections = value;
-			}
-		}
-		private Int32 fMaxWaitConnections;
+		public Int32 MaxWaitConnections { get; set; }
 
 		[DefaultValue(1)]
-		public Int32 ListenerThreadCount
-		{
-			get
-			{
-				return this.fListenerThreadCount;
-			}
-			set
-			{
-				this.fListenerThreadCount = value;
-			}
-		}
-		private Int32 fListenerThreadCount;
+		public Int32 ListenerThreadCount { get; set; }
 
 		[DefaultValue(false)]
-		public Boolean EnableNagle
-		{
-			get
-			{
-				return this.fEnableNagle;
-			}
-			set
-			{
-				this.fEnableNagle = value;
-			}
-		}
-		private Boolean fEnableNagle;
+		public Boolean EnableNagle { get; set; }
 		#endregion
-
-		private Thread[] fListenThreads;
 
 		public virtual void Bind(IListener listener)
 		{

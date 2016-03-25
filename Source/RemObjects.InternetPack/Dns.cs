@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
-  (c)opyright RemObjects Software, LLC. 2003-2015. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -15,13 +15,17 @@ namespace RemObjects.InternetPack.Dns
 		{
 			IPAddress[] lAddresses = DnsLookup.ResolveAll(hostname);
 			if (lAddresses.Length == 0)
+			{
 				throw new DnsResolveException("Could not resolve HostName {0}", hostname);
+			}
 
 			// Try to resolve as IPv4 first
 			for (Int32 i = 0; i < lAddresses.Length - 1; i++)
 			{
 				if (lAddresses[i].AddressFamily == AddressFamily.InterNetwork)
+				{
 					return lAddresses[i];
+				}
 			}
 
 			return lAddresses[0];
@@ -31,7 +35,9 @@ namespace RemObjects.InternetPack.Dns
 		{
 			IPAddress[] lAddresses = ResolveAll(hostname);
 			if (lAddresses.Length == 0)
+			{
 				throw new DnsResolveException("Could not resolve hostname {0}", hostname);
+			}
 
 			Random lRandom = new Random();
 			return lAddresses[lRandom.Next(lAddresses.Length)];
@@ -41,7 +47,9 @@ namespace RemObjects.InternetPack.Dns
 		{
 			IPAddress lAddress = TryStringAsIPAddress(hostname);
 			if (lAddress != null)
+			{
 				return new IPAddress[] { lAddress };
+			}
 
 			IPHostEntry lEntry = System.Net.Dns.GetHostEntry(hostname);
 			return lEntry.AddressList;
@@ -63,16 +71,24 @@ namespace RemObjects.InternetPack.Dns
 
 			String[] lFields = hostname.Split('.');
 			if (lFields.Length != 4)
+			{
 				return null;
+			}
 
 			for (Int32 i = 0; i < 4; i++)
 			{
 				if (lFields[i].Length > 3)
+				{
 					return null;
+				}
 
 				for (Int32 j = 0; j < lFields[i].Length; j++)
+				{
 					if (lFields[i][j] < '0' && lFields[i][j] > '9')
+					{
 						return null;
+					}
+				}
 			}
 			try
 			{

@@ -1,9 +1,6 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2014. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -28,7 +25,7 @@ namespace RemObjects.InternetPack.Http
 
 		public HttpHeader(String line)
 		{
-			Int32 lPos = line.IndexOf(":");
+			Int32 lPos = line.IndexOf(":", StringComparison.Ordinal);
 			if (lPos == -1)
 				throw new HttpHeaderException("Invalid HTTP Header Line \"" + line + "\"");
 
@@ -56,18 +53,7 @@ namespace RemObjects.InternetPack.Http
 		#endregion
 
 		#region Properties
-		public String Name
-		{
-			get
-			{
-				return this.fName;
-			}
-			set
-			{
-				this.fName = value;
-			}
-		}
-		private String fName;
+		public String Name { get; set; }
 
 		public Int32 Count
 		{
@@ -105,7 +91,7 @@ namespace RemObjects.InternetPack.Http
 
 		public String Get(Int32 index)
 		{
-			return this.fValues[index].ToString();
+			return this.fValues[index];
 		}
 
 		public void Add(String item)
@@ -146,15 +132,15 @@ namespace RemObjects.InternetPack.Http
 
 	public class HttpHeaders : IEnumerable
 	{
+		// Cannot use Dictionary<> here because non-generic Enumerator is exposed
+		private readonly Hashtable fHeaders;
+
 		public HttpHeaders()
 		{
 			this.fHeaders = new Hashtable(StringComparer.OrdinalIgnoreCase);
 			this.HttpCode = HttpStatusCode.OK;
 			this.Initialize();
 		}
-
-		// Cannot use Dictionary<> here because non-generic Enumerator is exposed
-		private Hashtable fHeaders;
 
 		public static HttpHeaders Create(Connection connection)
 		{
@@ -174,10 +160,10 @@ namespace RemObjects.InternetPack.Http
 		#region Private Helper Methods
 		public void ParseFirstLine()
 		{
-			if (this.fFirstHeader.Length == 0)
-				throw new HttpHeaderException("HTTP Header is empty"); ;
+			if (this.FirstHeader.Length == 0)
+				throw new HttpHeaderException("HTTP Header is empty");
 
-			String lHeaderLine = this.fFirstHeader;
+			String lHeaderLine = this.FirstHeader;
 			String[] lRequestHeaderValues = lHeaderLine.Split(' ');
 
 			if (lRequestHeaderValues.Length < 3)
@@ -198,55 +184,22 @@ namespace RemObjects.InternetPack.Http
 			else
 			{
 				// HTTP Request
-				this.fRequestType = lRequestHeaderValues[0];
-				this.fRequestPath = lRequestHeaderValues[1];
-				this.fRequestVersion = lRequestHeaderValues[2];
+				this.RequestType = lRequestHeaderValues[0];
+				this.RequestPath = lRequestHeaderValues[1];
+				this.RequestVersion = lRequestHeaderValues[2];
 
-				if (this.fRequestVersion.StartsWith("HTTP/"))
-					this.fRequestVersion = fRequestVersion.Substring(5);
+				if (this.RequestVersion.StartsWith("HTTP/"))
+					this.RequestVersion = RequestVersion.Substring(5);
 			}
 		}
 		#endregion
 
 		#region Properties
-		public String RequestType
-		{
-			get
-			{
-				return fRequestType;
-			}
-			set
-			{
-				fRequestType = value;
-			}
-		}
-		private String fRequestType;
+		public String RequestType { get; set; }
 
-		public String RequestPath
-		{
-			get
-			{
-				return fRequestPath;
-			}
-			set
-			{
-				fRequestPath = value;
-			}
-		}
-		private String fRequestPath;
+		public String RequestPath { get; set; }
 
-		public String RequestVersion
-		{
-			get
-			{
-				return fRequestVersion;
-			}
-			set
-			{
-				fRequestVersion = value;
-			}
-		}
-		private String fRequestVersion;
+		public String RequestVersion { get; set; }
 
 		[Obsolete("Access HTTP code using the HttpCode property")]
 		public Int32 ResponseCode
@@ -261,44 +214,11 @@ namespace RemObjects.InternetPack.Http
 			}
 		}
 
-		public HttpStatusCode HttpCode
-		{
-			get
-			{
-				return fHttpCode;
-			}
-			private set
-			{
-				this.fHttpCode = value;
-			}
-		}
-		private HttpStatusCode fHttpCode;
+		public HttpStatusCode HttpCode { get; private set; }
 
-		public Int32 MaxHeaderLines
-		{
-			get
-			{
-				return fMaxHeaderLines;
-			}
-			set
-			{
-				fMaxHeaderLines = value;
-			}
-		}
-		private Int32 fMaxHeaderLines;
+		public Int32 MaxHeaderLines { get; set; }
 
-		public Boolean MaxHeaderLinesEnabled
-		{
-			get
-			{
-				return fMaxHeaderLinesEnabled;
-			}
-			set
-			{
-				fMaxHeaderLinesEnabled = value;
-			}
-		}
-		private Boolean fMaxHeaderLinesEnabled;
+		public Boolean MaxHeaderLinesEnabled { get; set; }
 
 		public String ContentType
 		{
@@ -316,18 +236,7 @@ namespace RemObjects.InternetPack.Http
 		}
 		private const String CONTENT_TYPE = "Content-Type";
 
-		public String FirstHeader
-		{
-			get
-			{
-				return fFirstHeader;
-			}
-			set
-			{
-				fFirstHeader = value;
-			}
-		}
-		private String fFirstHeader;
+		public String FirstHeader { get; set; }
 
 		public Int32 Count
 		{
@@ -341,10 +250,7 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				if (this.fHeaders.ContainsKey(key))
-					return (HttpHeader)this.fHeaders[key];
-
-				return null;
+				return this.fHeaders.ContainsKey(key) ? (HttpHeader)this.fHeaders[key] : null;
 			}
 		}
 		#endregion
@@ -399,7 +305,7 @@ namespace RemObjects.InternetPack.Http
 
 		public Boolean ReadHeader(Connection connection)
 		{
-			this.fFirstHeader = String.Empty;
+			this.FirstHeader = String.Empty;
 
 			String lStart = HttpHeaders.ReadHttpMethodName(connection);
 
@@ -416,15 +322,17 @@ namespace RemObjects.InternetPack.Http
 
 				if (!String.IsNullOrEmpty(lHeaderLine))
 				{
-					if (this.fFirstHeader.Length == 0)
+					if (this.FirstHeader.Length == 0)
 					{
-						this.fFirstHeader = lStart + lHeaderLine;
+						this.FirstHeader = lStart + lHeaderLine;
 					}
 					else
 					{
-						Int32 lPos = lHeaderLine.IndexOf(":");
+						Int32 lPos = lHeaderLine.IndexOf(":", StringComparison.Ordinal);
 						if (lPos == -1)
+						{
 							throw new HttpHeaderException("Invalid HTTP Header Line \"" + lHeaderLine + "\"");
+						}
 
 						String lName = lHeaderLine.Substring(0, lPos);
 						String lValue = null;
@@ -468,7 +376,7 @@ namespace RemObjects.InternetPack.Http
 
 		public void WriteHeader(Connection connection)
 		{
-			connection.WriteLine(fFirstHeader);
+			connection.WriteLine(FirstHeader);
 
 			foreach (HttpHeader header in this)
 			{
@@ -485,13 +393,13 @@ namespace RemObjects.InternetPack.Http
 
 		public void SetResponseHeader(String version, HttpStatusCode code)
 		{
-			this.fFirstHeader = String.Format("HTTP/{0} {1} {2}", version, ((Int32)code).ToString(), code.ToString());
+			this.FirstHeader = String.Format("HTTP/{0} {1} {2}", version, ((Int32)code).ToString(), code.ToString());
 			this.HttpCode = code;
 		}
 
 		public void SetRequestHeader(String version, String requestType, String requestPath)
 		{
-			fFirstHeader = String.Format("{0} {1} HTTP/{2}", requestType, requestPath, version);
+			FirstHeader = String.Format("{0} {1} HTTP/{2}", requestType, requestPath, version);
 		}
 
 		public Boolean ContainsHeaderValue(String key)
@@ -527,12 +435,12 @@ namespace RemObjects.InternetPack.Http
 		public override String ToString()
 		{
 			StringBuilder lResult = new StringBuilder();
-			lResult.Append(fFirstHeader);
+			lResult.Append(FirstHeader);
 			lResult.Append("\r\n");
 
 			foreach (HttpHeader header in this)
 			{
-				lResult.Append(header.ToString());
+				lResult.Append(header);
 				lResult.Append("\r\n");
 			}
 

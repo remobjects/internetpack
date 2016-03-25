@@ -1,0 +1,45 @@
+Microsoft Visual Studio Solution File, Format Version 14.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemObjects.InternetPack.2015", "RemObjects.InternetPack\RemObjects.InternetPack.2015.csproj", "{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemObjects.InternetPack.VirtualFTP.2015", "RemObjects.InternetPack.VirtualFTP\RemObjects.InternetPack.VirtualFTP.2015.csproj", "{E8E89EC1-4445-4853-9E0B-A18B044069B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Licensed|Any CPU = Licensed|Any CPU
+		Mono TRIAL|Any CPU = Mono TRIAL|Any CPU
+		Mono|Any CPU = Mono|Any CPU
+		Release|Any CPU = Release|Any CPU
+		TRIAL|Any CPU = TRIAL|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.Licensed|Any CPU.ActiveCfg = Licensed|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.Licensed|Any CPU.Build.0 = Licensed|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.Mono TRIAL|Any CPU.ActiveCfg = Mono TRIAL|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.Mono TRIAL|Any CPU.Build.0 = Mono TRIAL|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.Mono|Any CPU.ActiveCfg = Mono|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.Mono|Any CPU.Build.0 = Mono|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.TRIAL|Any CPU.ActiveCfg = TRIAL|Any CPU
+		{0EB0BB6D-4E63-456B-88DD-B3F782D4A10E}.TRIAL|Any CPU.Build.0 = TRIAL|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.Licensed|Any CPU.ActiveCfg = Release|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.Licensed|Any CPU.Build.0 = Release|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.Mono TRIAL|Any CPU.ActiveCfg = Release|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.Mono TRIAL|Any CPU.Build.0 = Release|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.Mono|Any CPU.ActiveCfg = Release|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.Mono|Any CPU.Build.0 = Release|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.TRIAL|Any CPU.ActiveCfg = Release|Any CPU
+		{E8E89EC1-4445-4853-9E0B-A18B044069B5}.TRIAL|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,9 +1,6 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2014. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -41,57 +38,13 @@ namespace RemObjects.InternetPack.Ftp
 			this.NeedAccount = false;
 		}
 
-		public String UserName
-		{
-			get
-			{
-				return this.fUserName;
-			}
-			set
-			{
-				this.fUserName = value;
-			}
-		}
-		private String fUserName;
+		public String UserName { get; set; }
 
-		public String Password
-		{
-			get
-			{
-				return this.fPassword;
-			}
-			set
-			{
-				this.fPassword = value;
-			}
-		}
-		private String fPassword;
+		public String Password { get; set; }
 
-		public Boolean LoginOk
-		{
-			get
-			{
-				return this.fLoginOk;
-			}
-			set
-			{
-				this.fLoginOk = value;
-			}
-		}
-		private Boolean fLoginOk;
+		public Boolean LoginOk { get; set; }
 
-		public Boolean NeedAccount
-		{
-			get
-			{
-				return this.fNeedAccount;
-			}
-			set
-			{
-				this.fNeedAccount = value;
-			}
-		}
-		private Boolean fNeedAccount;
+		public Boolean NeedAccount { get; set; }
 	}
 
 	public class FtpUserAccountArgs : SessionEventArgs
@@ -101,31 +54,9 @@ namespace RemObjects.InternetPack.Ftp
 		{
 		}
 
-		public String AccountName
-		{
-			get
-			{
-				return this.fAccountName;
-			}
-			set
-			{
-				this.fAccountName = value;
-			}
-		}
-		private String fAccountName;
+		public String AccountName { get; set; }
 
-		public Boolean LoginOk
-		{
-			get
-			{
-				return this.fLoginOk;
-			}
-			set
-			{
-				this.fLoginOk = value;
-			}
-		}
-		private Boolean fLoginOk;
+		public Boolean LoginOk { get; set; }
 	}
 
 	public class FtpChangeDirectoryArgs : SessionEventArgs
@@ -135,31 +66,9 @@ namespace RemObjects.InternetPack.Ftp
 		{
 		}
 
-		public String NewDirectory
-		{
-			get
-			{
-				return this.fNewDirectory;
-			}
-			set
-			{
-				this.fNewDirectory = value;
-			}
-		}
-		private String fNewDirectory;
+		public String NewDirectory { get; set; }
 
-		public Boolean ChangeDirOk
-		{
-			get
-			{
-				return this.fChangeDirOk;
-			}
-			set
-			{
-				this.fChangeDirOk = value;
-			}
-		}
-		private Boolean fChangeDirOk;
+		public Boolean ChangeDirOk { get; set; }
 	}
 
 	public class FtpGetListingArgs : SessionEventArgs
@@ -177,7 +86,7 @@ namespace RemObjects.InternetPack.Ftp
 				return this.fListing;
 			}
 		}
-		private FtpListing fListing;
+		private readonly FtpListing fListing;
 	}
 
 	public class FtpFileEventArgs : SessionEventArgs
@@ -187,31 +96,9 @@ namespace RemObjects.InternetPack.Ftp
 		{
 		}
 
-		public String FileName
-		{
-			get
-			{
-				return this.fFileName;
-			}
-			set
-			{
-				this.fFileName = value;
-			}
-		}
-		private String fFileName;
+		public String FileName { get; set; }
 
-		public Boolean Ok
-		{
-			get
-			{
-				return this.fOk;
-			}
-			set
-			{
-				this.fOk = value;
-			}
-		}
-		private Boolean fOk;
+		public Boolean Ok { get; set; }
 	}
 
 	public class FtpRenameEventArgs : FtpFileEventArgs
@@ -221,18 +108,7 @@ namespace RemObjects.InternetPack.Ftp
 		{
 		}
 
-		public String NewFileName
-		{
-			get
-			{
-				return this.fNewFileName;
-			}
-			set
-			{
-				this.fNewFileName = value;
-			}
-		}
-		private String fNewFileName;
+		public String NewFileName { get; set; }
 	}
 
 	public class FtpTransferEventArgs : FtpFileEventArgs
@@ -242,44 +118,11 @@ namespace RemObjects.InternetPack.Ftp
 		{
 		}
 
-		public Boolean Append
-		{
-			get
-			{
-				return this.fAppend;
-			}
-			set
-			{
-				this.fAppend = value;
-			}
-		}
-		private Boolean fAppend;
+		public Boolean Append { get; set; }
 
-		public Int64 RestartPoint
-		{
-			get
-			{
-				return this.fRestartPoint;
-			}
-			set
-			{
-				this.fRestartPoint = value;
-			}
-		}
-		private Int64 fRestartPoint;
+		public Int64 RestartPoint { get; set; }
 
-		public Stream DataChannel
-		{
-			get
-			{
-				return this.fDataChannel;
-			}
-			set
-			{
-				this.fDataChannel = value;
-			}
-		}
-		private Stream fDataChannel;
+		public Stream DataChannel { get; set; }
 	}
 	#endregion
 
@@ -299,47 +142,15 @@ namespace RemObjects.InternetPack.Ftp
 		}
 
 		#region Properties
-		[DefaultValue("211 Bye"), Category("Server")]
-		public String QuitReply
-		{
-			get
-			{
+		[Category("Server")]
+		[DefaultValue("211 Bye")]
+		public String QuitReply { get; set; }
 
-				return this.fQuitReply;
-			}
-			set
-			{
-				this.fQuitReply = value;
-			}
-		}
-		private String fQuitReply;
+		[Category("Server")]
+		[DefaultValue("UNIX")]
+		public String SystemType { get; set; }
 
-		[DefaultValue("UNIX"), Category("Server")]
-		public String SystemType
-		{
-			get
-			{
-				return this.fSystemType;
-			}
-			set
-			{
-				this.fSystemType = value;
-			}
-		}
-		private String fSystemType;
-
-		public String AsciiEnter
-		{
-			get
-			{
-				return this.fAsciiEnter;
-			}
-			set
-			{
-				this.fAsciiEnter = value;
-			}
-		}
-		private String fAsciiEnter;
+		public String AsciiEnter { get; set; }
 
 		[Category("Server")]
 		public String ServerName
@@ -356,19 +167,9 @@ namespace RemObjects.InternetPack.Ftp
 		}
 		private String fServerName;
 
-		[DefaultValue(true), Category("Server")]
-		public Boolean Detailed500Errors
-		{
-			get
-			{
-				return this.fDetailed500Errors;
-			}
-			set
-			{
-				this.fDetailed500Errors = value;
-			}
-		}
-		private Boolean fDetailed500Errors;
+		[Category("Server")]
+		[DefaultValue(true)]
+		public Boolean Detailed500Errors { get; set; }
 		#endregion
 
 		#region Events
@@ -468,8 +269,9 @@ namespace RemObjects.InternetPack.Ftp
 				{
 					lSession.ActiveConnection.Close();
 				}
-				catch
+				catch (Exception)
 				{
+					// As designed
 				}
 				lSession.ActiveConnection = null;
 			}
@@ -480,8 +282,9 @@ namespace RemObjects.InternetPack.Ftp
 				{
 					lSession.PassiveServer.Close();
 				}
-				catch
+				catch (Exception)
 				{
+					// As designed
 				}
 				lSession.PassiveServer = null;
 			}
@@ -492,8 +295,9 @@ namespace RemObjects.InternetPack.Ftp
 				{
 					lSession.TransferThread.Abort();
 				}
-				catch
+				catch (Exception)
 				{
+					// As designed
 				}
 				lSession.TransferThread = null;
 			}
@@ -502,10 +306,7 @@ namespace RemObjects.InternetPack.Ftp
 
 		public static Boolean ValidFilename(String value)
 		{
-			if (value.IndexOfAny(new Char[] { '\\', '|', '>', '<', '*', '?', ':', '"' }) != -1)
-				return false;
-
-			return true;
+			return value.IndexOfAny(new Char[] { '\\', '|', '>', '<', '*', '?', ':', '"' }) == -1;
 		}
 
 		public static String ValidateDirectory(String value)
@@ -563,33 +364,33 @@ namespace RemObjects.InternetPack.Ftp
 
 		protected override void InitCommands()
 		{
-			this.Commands.Add("QUIT", new OnCommandHandler(Cmd_QUIT));
-			this.Commands.Add("NOOP", new OnCommandHandler(Cmd_NOOP));
-			this.Commands.Add("USER", new OnCommandHandler(Cmd_USER));
-			this.Commands.Add("ALLO", new OnCommandHandler(Cmd_NOOP));
-			this.Commands.Add("PASS", new OnCommandHandler(Cmd_PASS));
-			this.Commands.Add("ACCT", new OnCommandHandler(Cmd_ACCT));
-			this.Commands.Add("CWD", new OnCommandHandler(Cmd_CWD));
-			this.Commands.Add("CDUP", new OnCommandHandler(Cmd_CDUP));
-			this.Commands.Add("PWD", new OnCommandHandler(Cmd_PWD));
-			this.Commands.Add("SYST", new OnCommandHandler(Cmd_SYST));
-			this.Commands.Add("TYPE", new OnCommandHandler(Cmd_TYPE));
-			this.Commands.Add("PORT", new OnCommandHandler(Cmd_PORT));
-			this.Commands.Add("REST", new OnCommandHandler(Cmd_REST));
-			this.Commands.Add("LIST", new OnCommandHandler(Cmd_LIST));
-			this.Commands.Add("PASV", new OnCommandHandler(Cmd_PASV));
-			this.Commands.Add("RNFR", new OnCommandHandler(Cmd_RNFR));
-			this.Commands.Add("RNTO", new OnCommandHandler(Cmd_RNTO));
-			this.Commands.Add("DELE", new OnCommandHandler(Cmd_DELE));
-			this.Commands.Add("RMD", new OnCommandHandler(Cmd_RMD));
-			this.Commands.Add("MKD", new OnCommandHandler(Cmd_MKD));
-			this.Commands.Add("STOR", new OnCommandHandler(Cmd_STOR));
-			this.Commands.Add("APPE", new OnCommandHandler(Cmd_APPE));
-			this.Commands.Add("RETR", new OnCommandHandler(Cmd_RETR));
-			this.Commands.Add("ABOR", new OnCommandHandler(Cmd_ABOR));
+			this.Commands.Add("QUIT", Cmd_QUIT);
+			this.Commands.Add("NOOP", Cmd_NOOP);
+			this.Commands.Add("USER", Cmd_USER);
+			this.Commands.Add("ALLO", Cmd_NOOP);
+			this.Commands.Add("PASS", Cmd_PASS);
+			this.Commands.Add("ACCT", Cmd_ACCT);
+			this.Commands.Add("CWD", Cmd_CWD);
+			this.Commands.Add("CDUP", Cmd_CDUP);
+			this.Commands.Add("PWD", Cmd_PWD);
+			this.Commands.Add("SYST", Cmd_SYST);
+			this.Commands.Add("TYPE", Cmd_TYPE);
+			this.Commands.Add("PORT", Cmd_PORT);
+			this.Commands.Add("REST", Cmd_REST);
+			this.Commands.Add("LIST", Cmd_LIST);
+			this.Commands.Add("PASV", Cmd_PASV);
+			this.Commands.Add("RNFR", Cmd_RNFR);
+			this.Commands.Add("RNTO", Cmd_RNTO);
+			this.Commands.Add("DELE", Cmd_DELE);
+			this.Commands.Add("RMD", Cmd_RMD);
+			this.Commands.Add("MKD", Cmd_MKD);
+			this.Commands.Add("STOR", Cmd_STOR);
+			this.Commands.Add("APPE", Cmd_APPE);
+			this.Commands.Add("RETR", Cmd_RETR);
+			this.Commands.Add("ABOR", Cmd_ABOR);
 
 			/* Aliases */
-			this.Commands.Add("CD", new OnCommandHandler(Cmd_CWD));
+			this.Commands.Add("CD", Cmd_CWD);
 		}
 
 		/*
@@ -1680,122 +1481,23 @@ namespace RemObjects.InternetPack.Ftp
 		}
 
 		#region Properties
-		public virtual String Directory
-		{
-			get
-			{
-				return this.fDirectory;
-			}
-			set
-			{
-				this.fDirectory = value;
-			}
-		}
-		private String fDirectory;
+		public virtual String Directory { get; set; }
 
-		public virtual String RenameFrom
-		{
-			get
-			{
-				return this.fRenameFrom;
-			}
-			set
-			{
-				this.fRenameFrom = value;
-			}
-		}
-		private String fRenameFrom;
+		public virtual String RenameFrom { get; set; }
 
-		public Object UserData
-		{
-			get
-			{
-				return this.fUserData;
-			}
-			set
-			{
-				this.fUserData = value;
-			}
-		}
-		private Object fUserData;
+		public Object UserData { get; set; }
 
-		public Boolean Image
-		{
-			get
-			{
-				return this.fImage;
-			}
-			set
-			{
-				this.fImage = value;
-			}
-		}
-		private Boolean fImage;
+		public Boolean Image { get; set; }
 
-		public FtpState State
-		{
-			get
-			{
-				return this.fState;
-			}
-			set
-			{
-				this.fState = value;
-			}
-		}
-		private FtpState fState;
+		public FtpState State { get; set; }
 
-		public Int64 RestartPoint
-		{
-			get
-			{
-				return this.fRestartPoint;
-			}
-			set
-			{
-				this.fRestartPoint = value;
-			}
-		}
-		private Int64 fRestartPoint;
+		public Int64 RestartPoint { get; set; }
 
-		public SimpleServer PassiveServer
-		{
-			get
-			{
-				return this.fPassiveServer;
-			}
-			set
-			{
-				this.fPassiveServer = value;
-			}
-		}
-		private SimpleServer fPassiveServer;
+		public SimpleServer PassiveServer { get; set; }
 
-		public Connection ActiveConnection
-		{
-			get
-			{
-				return this.fActiveConnection;
-			}
-			set
-			{
-				this.fActiveConnection = value;
-			}
-		}
-		private Connection fActiveConnection;
+		public Connection ActiveConnection { get; set; }
 
-		internal FtpTransferThread TransferThread
-		{
-			get
-			{
-				return this.fTransferThread;
-			}
-			set
-			{
-				this.fTransferThread = value;
-			}
-		}
-		private FtpTransferThread fTransferThread;
+		internal FtpTransferThread TransferThread { get; set; }
 
 		public Boolean Passive
 		{
@@ -1807,42 +1509,31 @@ namespace RemObjects.InternetPack.Ftp
 			{
 				this.fPassive = value;
 
-				if (!this.fPassive && this.fPassiveServer != null)
+				if (!this.fPassive && this.PassiveServer != null)
 				{
-					this.fPassiveServer.Close();
-					this.fPassiveServer = null;
+					this.PassiveServer.Close();
+					this.PassiveServer = null;
 				}
 			}
 		}
 		private Boolean fPassive;
 
-		public String Username
-		{
-			get
-			{
-				return this.fUsername;
-			}
-			set
-			{
-				this.fUsername = value;
-			}
-		}
-		private String fUsername;
+		public String Username { get; set; }
 		#endregion
 	}
 
 	#region Transfer Thread
 	class FtpTransferThread
 	{
-		private FtpTransferEventArgs fEventArgs;
-		private Boolean fStore;
+		private readonly FtpTransferEventArgs fEventArgs;
+		private readonly Boolean fStore;
 
 		public FtpTransferThread(FtpTransferEventArgs e, Boolean store)
 		{
 			this.fEventArgs = e;
 			this.fStore = store;
 
-			new Thread(new ThreadStart(Execute)).Start();
+			new Thread(Execute).Start();
 		}
 
 		public void Abort()
@@ -1851,21 +1542,22 @@ namespace RemObjects.InternetPack.Ftp
 			{
 				((FtpSession)this.fEventArgs.Session).ActiveConnection.Close();
 			}
-			catch
+			catch (Exception)
 			{
+				// As designed
 			}
 		}
 
 		public static String GetFirstLine(String value)
 		{
-			if (value.IndexOf("\r\n") != -1)
+			if (value.IndexOf("\r\n", StringComparison.Ordinal) != -1)
 			{
-				value = value.Substring(0, value.IndexOf("\r\n"));
+				value = value.Substring(0, value.IndexOf("\r\n", StringComparison.Ordinal));
 			}
 
-			if (value.IndexOf("\n") != -1)
+			if (value.IndexOf("\n", StringComparison.Ordinal) != -1)
 			{
-				value = value.Substring(0, value.IndexOf("\n"));
+				value = value.Substring(0, value.IndexOf("\n", StringComparison.Ordinal));
 			}
 
 			return value;
@@ -1905,14 +1597,17 @@ namespace RemObjects.InternetPack.Ftp
 			{
 				((FtpSession)this.fEventArgs.Session).ActiveConnection.Close();
 			}
-			catch
+			catch (Exception)
 			{
+				// As designed
 			}
 
 			((FtpSession)this.fEventArgs.Session).ActiveConnection = null;
 
 			if (lOk)
+			{
 				this.fEventArgs.Connection.WriteLine("226 Transfer complete");
+			}
 
 			((FtpSession)this.fEventArgs.Session).TransferThread = null;
 		}

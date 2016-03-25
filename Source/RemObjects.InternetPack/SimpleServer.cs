@@ -1,48 +1,45 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System.Net;
 
 namespace RemObjects.InternetPack
 {
-    public class SimpleServer
-    {
-        public SimpleServer()
-        {
-            this.fBinding = new ServerBinding();
-            this.fBinding.Address = IPAddress.Any;
-        }
+	public class SimpleServer
+	{
+		public SimpleServer()
+		{
+			this.fBinding = new ServerBinding();
+			this.fBinding.Address = IPAddress.Any;
+		}
 
-        #region Properties
-        public ServerBinding Binding
-        {
-            get
-            {
-                return this.fBinding;
-            }
-        }
-        private ServerBinding fBinding;
-        #endregion
+		#region Properties
+		public ServerBinding Binding
+		{
+			get
+			{
+				return this.fBinding;
+			}
+		}
+		private readonly ServerBinding fBinding;
+		#endregion
 
-        public void Open()
-        {
-            this.Binding.BindUnthreaded();
-            this.Binding.ListeningSocket.Listen(this.Binding.MaxWaitConnections);
-        }
+		public void Open()
+		{
+			this.Binding.BindUnthreaded();
+			this.Binding.ListeningSocket.Listen(this.Binding.MaxWaitConnections);
+		}
 
-        public void Close()
-        {
-            this.Binding.Unbind();
-        }
+		public void Close()
+		{
+			this.Binding.Unbind();
+		}
 
-        public Connection WaitForConnection()
-        {
-            return this.Binding.Accept();
-        }
-    }
+		public Connection WaitForConnection()
+		{
+			return this.Binding.Accept();
+		}
+	}
 }

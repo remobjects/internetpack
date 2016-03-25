@@ -1,9 +1,6 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2013. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -14,60 +11,48 @@ using System.Net;
 namespace RemObjects.InternetPack.Http
 {
 #if DESIGN
-    [System.Drawing.ToolboxBitmap(typeof(RemObjects.InternetPack.Server), "Glyphs.SimpleHttpServer.bmp")]
+	[System.Drawing.ToolboxBitmap(typeof(RemObjects.InternetPack.Server), "Glyphs.SimpleHttpServer.bmp")]
 #endif
-    public class SimpleHttpServer : HttpServer
-    {
-        #region Propeties
-        [Category("Server")]
-        public String RootPath
-        {
-            get
-            {
-                return this.fRootPath;
-            }
-            set
-            {
-                this.fRootPath = value;
-            }
-        }
-        private String fRootPath;
-        #endregion
+	public class SimpleHttpServer : HttpServer
+	{
+		#region Propeties
+		[Category("Server")]
+		public String RootPath { get; set; }
+		#endregion
 
-        #region Overriden Methods
-        protected override void HandleHttpRequest(Connection connection, HttpServerRequest request, HttpServerResponse response)
-        {
-            base.HandleHttpRequest(connection, request, response);
+		#region Overriden Methods
+		protected override void HandleHttpRequest(Connection connection, HttpServerRequest request, HttpServerResponse response)
+		{
+			base.HandleHttpRequest(connection, request, response);
 
-            if (response.ContentSource == ContentSource.ContentNone)
-            {
-                if (request.Header.RequestType == "GET")
-                {
-                    String lPath = RootPath + request.Header.RequestPath.Replace('/', Path.DirectorySeparatorChar);
-                    if (lPath.IndexOf("..") == -1)
-                    {
-                        if (File.Exists(lPath))
-                        {
-                            response.Header.ContentType = "text/html";
-                            response.ContentStream = new FileStream(lPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                            response.CloseStream = true; /* Response will close stream once it's been sent */
-                        }
-                        else
-                        {
-                            response.SendError(HttpStatusCode.NotFound, String.Format("File '{0}' not found.", lPath));
-                        }
-                    }
-                    else
-                    {
-                        response.SendError(HttpStatusCode.Forbidden, String.Format("Bad Request: Path '{0}' contains '..' which is invalid.", lPath));
-                    }
-                }
-                else
-                {
-                    response.SendError(HttpStatusCode.BadRequest, String.Format("Request Type '{0}' not supported.", request.Header.RequestType));
-                }
-            }
-        }
-        #endregion
-    }
+			if (response.ContentSource != ContentSource.ContentNone)
+			{
+				return;
+			}
+
+			if (request.Header.RequestType != "GET")
+			{
+				response.SendError(HttpStatusCode.BadRequest, String.Format("Request Type '{0}' not supported.", request.Header.RequestType));
+				return;
+			}
+
+			String lPath = RootPath + request.Header.RequestPath.Replace('/', Path.DirectorySeparatorChar);
+			if (lPath.IndexOf("..", StringComparison.Ordinal) != -1)
+			{
+				response.SendError(HttpStatusCode.Forbidden, String.Format("Bad Request: Path '{0}' contains '..' which is invalid.", lPath));
+				return;
+			}
+
+			if (!File.Exists(lPath))
+			{
+				response.SendError(HttpStatusCode.NotFound, String.Format("File '{0}' not found.", lPath));
+				return;
+			}
+
+			response.Header.ContentType = "text/html";
+			response.ContentStream = new FileStream(lPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+			response.CloseStream = true; /* Response will close stream once it's been sent */
+		}
+		#endregion
+	}
 }

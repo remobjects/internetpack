@@ -1,9 +1,6 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2015. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -13,53 +10,35 @@ namespace RemObjects.InternetPack
 {
 	public abstract class AsyncWorker : IAsyncWorker
 	{
-		public AsyncServer AsyncOwner
-		{
-			get
-			{
-				return this.fOwner;
-			}
-			set
-			{
-				this.fOwner = value;
-			}
-		}
-		private AsyncServer fOwner;
+		public AsyncServer AsyncOwner { get; set; }
 
 		public virtual Server Owner
 		{
 			get
 			{
-				return this.fOwner;
+				return this.AsyncOwner;
 			}
 			set
 			{
-				this.fOwner = (AsyncServer)value;
+				this.AsyncOwner = (AsyncServer)value;
 			}
 		}
 
-		public Connection DataConnection
-		{
-			get
-			{
-				return this.fDataConnection;
-			}
-			set
-			{
-				this.fDataConnection = value;
-			}
-		}
-		private Connection fDataConnection;
+		public Connection DataConnection { get; set; }
 
 		public abstract void Setup();
 
 		public virtual void Done()
 		{
-			if (this.fOwner != null)
-				this.fOwner.ClientClosed(this);
+			if (this.AsyncOwner != null)
+			{
+				this.AsyncOwner.ClientClosed(this);
+			}
 
 			if (this.DataConnection != null)
+			{
 				this.DataConnection.Dispose();
+			}
 		}
 	}
 
@@ -69,44 +48,11 @@ namespace RemObjects.InternetPack
 		{
 		}
 
-		public Connection DataConnection
-		{
-			get
-			{
-				return this.fDataConnection;
-			}
-			set
-			{
-				this.fDataConnection = value;
-			}
-		}
-		private Connection fDataConnection;
+		public Connection DataConnection { get; set; }
 
-		public Thread Thread
-		{
-			get
-			{
-				return this.fThread;
-			}
-			set
-			{
-				this.fThread = value;
-			}
-		}
-		public Thread fThread;
+		public Thread Thread { get; set; }
 
-		public Server Owner
-		{
-			get
-			{
-				return this.fOwner;
-			}
-			set
-			{
-				this.fOwner = value;
-			}
-		}
-		private Server fOwner;
+		public Server Owner { get; set; }
 
 		protected abstract void DoWork();
 
@@ -120,6 +66,7 @@ namespace RemObjects.InternetPack
 			}
 			catch (Exception)
 			{
+				// As designed
 			}
 			finally
 			{

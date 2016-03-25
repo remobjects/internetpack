@@ -1,9 +1,6 @@
 ﻿/*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2012. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -14,22 +11,11 @@ namespace RemObjects.InternetPack.Messages
 {
 	public class MailMessage
 	{
-		private HeaderFields fFields = new HeaderFields();
+		private readonly HeaderFields fFields = new HeaderFields();
 		//private MessageAttachments fAttachments = new MessageAttachments();
 
 		#region Properties
-		public MessageEncoder Encoder
-		{
-			get
-			{
-				return fEncoder;
-			}
-			set
-			{
-				fEncoder = value;
-			}
-		}
-		private MessageEncoder fEncoder;
+		public IMessageEncoder Encoder { get; set; }
 
 		public MessageAddresses To
 		{
@@ -38,7 +24,7 @@ namespace RemObjects.InternetPack.Messages
 				return fTo;
 			}
 		}
-		private MessageAddresses fTo = new MessageAddresses();
+		private readonly MessageAddresses fTo = new MessageAddresses();
 
 		public MessageAddresses Cc
 		{
@@ -47,7 +33,7 @@ namespace RemObjects.InternetPack.Messages
 				return fCc;
 			}
 		}
-		private MessageAddresses fCc = new MessageAddresses();
+		private readonly MessageAddresses fCc = new MessageAddresses();
 
 		public MessageAddresses Bcc
 		{
@@ -56,7 +42,7 @@ namespace RemObjects.InternetPack.Messages
 				return fBcc;
 			}
 		}
-		private MessageAddresses fBcc = new MessageAddresses();
+		private readonly MessageAddresses fBcc = new MessageAddresses();
 
 		public MessageAddress From
 		{
@@ -65,7 +51,7 @@ namespace RemObjects.InternetPack.Messages
 				return fFrom;
 			}
 		}
-		private MessageAddress fFrom = new MessageAddress();
+		private readonly MessageAddress fFrom = new MessageAddress();
 
 		public MessageAddress Sender
 		{
@@ -74,7 +60,7 @@ namespace RemObjects.InternetPack.Messages
 				return fSender;
 			}
 		}
-		private MessageAddress fSender = new MessageAddress();
+		private readonly MessageAddress fSender = new MessageAddress();
 
 		public String MessageId
 		{
@@ -159,18 +145,7 @@ namespace RemObjects.InternetPack.Messages
 			}
 		}
 
-		public String Contents
-		{
-			get
-			{
-				return fContents;
-			}
-			set
-			{
-				fContents = value;
-			}
-		}
-		private String fContents;
+		public String Contents { get; set; }
 		#endregion
 
 		private void SetDateHome(DateTime value)
@@ -198,20 +173,20 @@ namespace RemObjects.InternetPack.Messages
 
 		public void ValidateEncoder()
 		{
-			if (this.fEncoder == null)
-				this.fEncoder = new DefaultEncoder();
+			if (this.Encoder == null)
+				this.Encoder = new DefaultEncoder();
 		}
 
 		public void EncodeMessage(Stream destination)
 		{
 			this.ValidateEncoder();
-			this.fEncoder.EncodeMessage(this, destination);
+			this.Encoder.EncodeMessage(this, destination);
 		}
 
 		public void DecodeMessage(Stream source)
 		{
 			this.ValidateEncoder();
-			this.fEncoder.DecodeMessage(this, source);
+			this.Encoder.DecodeMessage(this, source);
 		}
 
 		public void SaveToFile(String filename)
@@ -221,9 +196,9 @@ namespace RemObjects.InternetPack.Messages
 		}
 	}
 
-	public class DefaultEncoder : MessageEncoder
+	public class DefaultEncoder : IMessageEncoder
 	{
-		protected const String CRLF = "\r\n";
+		private const String CRLF = "\r\n";
 
 		private static String SplitMultiLine(String source, Int32 length)
 		{
@@ -251,7 +226,7 @@ namespace RemObjects.InternetPack.Messages
 			return lRes.ToString();
 		}
 
-		public override void EncodeMessage(MailMessage source, Stream destination)
+		public void EncodeMessage(MailMessage source, Stream destination)
 		{
 			StreamWriter lWrter = new StreamWriter(destination);
 
@@ -266,11 +241,11 @@ namespace RemObjects.InternetPack.Messages
 				if (lKey.Equals("Subject"))
 				{
 					lValue.Value = DefaultEncoder.EncodeUtf8Base64(lValue.Value);
-					lWrter.WriteLine(lKey + ": " + lValue.ToString());
+					lWrter.WriteLine(lKey + ": " + lValue);
 					continue;
 				}
 
-				lWrter.WriteLine(SplitMultiLine(lKey + ": " + lValue.ToString(), 80));
+				lWrter.WriteLine(SplitMultiLine(lKey + ": " + lValue, 80));
 			}
 
 			String lFromEncoded = DefaultEncoder.EncodeUtf8Base64(source.From.Name);
@@ -279,13 +254,13 @@ namespace RemObjects.InternetPack.Messages
 			lWrter.WriteLine(lFrom);
 
 			if (source.Sender.IsSet())
-				lWrter.WriteLine(SplitMultiLine("Sender: " + source.Sender.ToString(), 80));
+				lWrter.WriteLine(SplitMultiLine("Sender: " + source.Sender, 80));
 
 			if (source.To.Count > 0)
-				lWrter.WriteLine(SplitMultiLine("To: " + source.To.ToString(), 80));
+				lWrter.WriteLine(SplitMultiLine("To: " + source.To, 80));
 
 			if (source.Cc.Count > 0)
-				lWrter.WriteLine(SplitMultiLine("Cc: " + source.Cc.ToString(), 80));
+				lWrter.WriteLine(SplitMultiLine("Cc: " + source.Cc, 80));
 
 			if (-1 != DefaultEncoder.ContainsUnicodeSymbols(source.Contents))
 			{
@@ -382,7 +357,7 @@ namespace RemObjects.InternetPack.Messages
 				address.Add(lAddresses[i].Trim());
 		}
 
-		public override void DecodeMessage(MailMessage destination, Stream source)
+		public void DecodeMessage(MailMessage destination, Stream source)
 		{
 			TextReader lReader = new StreamReader(source);
 			String lMessage = lReader.ReadToEnd();
@@ -395,9 +370,11 @@ namespace RemObjects.InternetPack.Messages
 			}
 			else
 			{
-				Int32 lHeaderEnd = lMessage.IndexOf(CRLF + CRLF);
+				Int32 lHeaderEnd = lMessage.IndexOf(CRLF + CRLF, StringComparison.Ordinal);
 				if (lHeaderEnd < 0)
+				{
 					throw (new Exception("Invalid email message"));
+				}
 
 				ParseHeader(destination, lMessage.Substring(0, lHeaderEnd));
 
@@ -450,8 +427,12 @@ namespace RemObjects.InternetPack.Messages
 		public static Int32 ContainsUnicodeSymbols(String value)
 		{
 			for (Int32 i = 0; i < value.Length; i++)
-				if (value[i] < '\u0000' || value[i] > '\u007F')
+			{
+				if (value[i] > '\u007F')
+				{
 					return i;
+				}
+			}
 
 			return -1;
 		}

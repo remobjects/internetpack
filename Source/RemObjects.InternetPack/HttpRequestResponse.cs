@@ -1,9 +1,6 @@
 /*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET - Core Library
-  (c)opyright RemObjects Software, LLC. 2003-2014. All rights reserved.
-
-  Using this code requires a valid license of the RemObjects Internet Pack
-  which can be obtained at http://www.remobjects.com?ip.
+  RemObjects Internet Pack for .NET
+  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
 using System;
@@ -31,31 +28,9 @@ namespace RemObjects.InternetPack.Http
 			this.Encoding = Encoding.ASCII;
 		}
 
-		public HttpHeaders Header
-		{
-			get
-			{
-				return fHeader;
-			}
-			set
-			{
-				fHeader = value;
-			}
-		}
-		private HttpHeaders fHeader;
+		public HttpHeaders Header { get; set; }
 
-		public Encoding Encoding
-		{
-			get
-			{
-				return fEncoding;
-			}
-			set
-			{
-				fEncoding = value;
-			}
-		}
-		private Encoding fEncoding;
+		public Encoding Encoding { get; set; }
 
 		protected abstract Boolean Client { get; }
 
@@ -111,18 +86,7 @@ namespace RemObjects.InternetPack.Http
 			this.DataConnection = connection;
 		}
 
-		public Connection DataConnection
-		{
-			get
-			{
-				return fDataConnection;
-			}
-			private set
-			{
-				this.fDataConnection = value;
-			}
-		}
-		private Connection fDataConnection;
+		public Connection DataConnection { get; private set; }
 
 		const Int32 BUFFER_SIZE = 64 * 1024;
 
@@ -165,12 +129,14 @@ namespace RemObjects.InternetPack.Http
 								lNextChunkSize = ReadChunkSize();
 							}
 
-							// skip footer
-							while (DataConnection.ReadLine() != "") ;
+							// Skip footer
+							while (DataConnection.ReadLine() != "")
+							{
+							}
 						}
 						else
 						{
-							Int32 lRead = 0;
+							Int32 lRead;
 							do
 							{
 								Byte[] lBuffer = new Byte[BUFFER_SIZE];
@@ -229,11 +195,13 @@ namespace RemObjects.InternetPack.Http
 				{
 					try
 					{
+						// TryPArse is not available on CF
 						Int32.Parse(lLength);
 						return true;
 					}
 					catch (Exception)
 					{
+						// As designed
 					}
 				}
 
@@ -328,7 +296,6 @@ namespace RemObjects.InternetPack.Http
 	public abstract class HttpOutgoingRequestResponse : HttpRequestResponse
 	{
 		protected internal HttpOutgoingRequestResponse()
-			: base()
 		{
 			CloseStream = true;
 			ContentSource = ContentSource.ContentNone;
@@ -342,18 +309,7 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#region Properties: Content
-		public ContentSource ContentSource
-		{
-			get
-			{
-				return this.fContentSource;
-			}
-			private set
-			{
-				this.fContentSource = value;
-			}
-		}
-		private ContentSource fContentSource;
+		public ContentSource ContentSource { get; private set; }
 
 		public Byte[] ContentBytes
 		{
@@ -397,18 +353,7 @@ namespace RemObjects.InternetPack.Http
 		}
 		private String fContentString;
 
-		public Boolean CloseStream
-		{
-			get
-			{
-				return fCloseStream;
-			}
-			set
-			{
-				fCloseStream = value;
-			}
-		}
-		private Boolean fCloseStream;
+		public Boolean CloseStream { get; set; }
 
 		public Boolean KeepAlive
 		{
@@ -481,11 +426,9 @@ namespace RemObjects.InternetPack.Http
 		{
 			try
 			{
-				Byte[] lBuffer;
-
 				if (HasOnTransferProgress)
 				{
-					connection.OnBytesSent += new EventHandler(HandleOnBytesSent);
+					connection.OnBytesSent += HandleOnBytesSent;
 					connection.ResetStatistics();
 				}
 
@@ -499,7 +442,7 @@ namespace RemObjects.InternetPack.Http
 
 					case ContentSource.ContentStream:
 						TriggerOnTransferStart(TransferDirection.Send, ContentStream.Length);
-						lBuffer = new Byte[BUFFER_SIZE];
+						Byte[] lBuffer = new Byte[BUFFER_SIZE];
 						Int32 lBytesRead;
 						do
 						{
@@ -515,12 +458,12 @@ namespace RemObjects.InternetPack.Http
 						break;
 
 					case ContentSource.ContentNone:
-						/* Nothing to do */
+						// No action needed
 						break;
 				}
 
 				if (HasOnTransferProgress)
-					connection.OnBytesSent -= new EventHandler(HandleOnBytesSent);
+					connection.OnBytesSent -= HandleOnBytesSent;
 			}
 			finally
 			{
@@ -535,11 +478,14 @@ namespace RemObjects.InternetPack.Http
 
 	public class HttpServerRequest : HttpIncomingRequestResponse
 	{
-		protected internal HttpServerRequest(Connection connection, HttpHeaders headers)
+		private readonly String fPath;
+		private readonly String fQuery;
+
+		public HttpServerRequest(Connection connection, HttpHeaders headers)
 			: base(connection, headers)
 		{
 			String lPath = Header.RequestPath;
-			Int32 lStart = lPath.IndexOf("?");
+			Int32 lStart = lPath.IndexOf("?", StringComparison.Ordinal);
 
 			if (lStart > -1)
 			{
@@ -571,23 +517,20 @@ namespace RemObjects.InternetPack.Http
 		public override void Validate()
 		{
 			base.Validate();
-			if (Header.RequestVersion == "1.1")
+			if (Header.RequestVersion != "1.1")
 			{
-				if (Header.GetHeaderValue("Host") == null)
-					throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Bad Request: No Host Header");
+				return;
 			}
-		}
 
-		private String fPath;
-		private String fQuery;
+			if (Header.GetHeaderValue("Host") == null)
+				throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Bad Request: No Host Header");
+		}
 
 		public QueryString QueryString
 		{
 			get
 			{
-				if (fQueryString == null)
-					fQueryString = new QueryString(fQuery);
-				return fQueryString;
+				return fQueryString ?? (fQueryString = new QueryString(fQuery));
 			}
 		}
 		private QueryString fQueryString;
@@ -650,21 +593,11 @@ namespace RemObjects.InternetPack.Http
 			}
 			set
 			{
+				// Read-only property
 			}
 		}
 
-		public HttpStatusCode HttpCode
-		{
-			get
-			{
-				return fHttpCode;
-			}
-			set
-			{
-				this.fHttpCode = value;
-			}
-		}
-		private HttpStatusCode fHttpCode;
+		public HttpStatusCode HttpCode { get; set; }
 
 		public String ResponseText
 		{
@@ -710,7 +643,7 @@ namespace RemObjects.InternetPack.Http
 
 #if FULLFRAMEWORK
 			String lMessageHtml = String.Format("<h1>Error {0} {1}</h1><p>{2}: {3}</p><p>{4}</p><hr /><p>{3}</p>",
-				responseCode, ex.GetType().Name, ex.GetType().FullName, ex.Message, ex.StackTrace.ToString(), DEFAULT_SERVER_NAME);
+													responseCode, ex.GetType().Name, ex.GetType().FullName, ex.Message, ex.StackTrace);
 #else
             String lMessageHtml = String.Format("<h1>Error {0} {1}</h1><p>{2}: {3}</p><p>{4}</p><hr />",
                 responseCode, ex.GetType().Name, ex.GetType().FullName, ex.Message, DEFAULT_SERVER_NAME);
@@ -737,7 +670,6 @@ namespace RemObjects.InternetPack.Http
 	public class HttpClientRequest : HttpOutgoingRequestResponse
 	{
 		public HttpClientRequest()
-			: base()
 		{
 			this.RequestType = RequestType.Get;
 			this.Url = new UrlParser();
@@ -760,44 +692,11 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#region Properties
-		public UrlParser Url
-		{
-			get
-			{
-				return this.fUrl;
-			}
-			set
-			{
-				this.fUrl = value;
-			}
-		}
-		private UrlParser fUrl;
+		public UrlParser Url { get; set; }
 
-		public Boolean UseProxy
-		{
-			get
-			{
-				return this.fUseProxy;
-			}
-			set
-			{
-				this.fUseProxy = value;
-			}
-		}
-		private Boolean fUseProxy;
+		public Boolean UseProxy { get; set; }
 
-		public RequestType RequestType
-		{
-			get
-			{
-				return this.fRequestType;
-			}
-			set
-			{
-				this.fRequestType = value;
-			}
-		}
-		private RequestType fRequestType;
+		public RequestType RequestType { get; set; }
 		#endregion
 
 		#region Methods
@@ -1034,42 +933,36 @@ namespace RemObjects.InternetPack.Http
 
 	public class QueryString : Hashtable
 	{
+		private readonly String fQuery;
+
 		public QueryString(String query)
-			: base()
 		{
 			fQuery = query;
-			if (fQuery != null && fQuery.Length > 0)
+			if (String.IsNullOrEmpty(fQuery))
 			{
-				String[] lParams = fQuery.Split(new char[] { '&' });
-				for (Int32 i = 0; i < lParams.Length; i++)
-				{
-					Int32 lEqual = lParams[i].IndexOf('=');
-					if (lEqual > -1)
-					{
-						String lName = lParams[i].Substring(0, lEqual).Trim().ToLower();
-						String lValue = lParams[i].Substring(lEqual + 1);
-						if (ContainsKey(lName))
-							base[lName] = this[lName] + "," + lValue;
-						else
-							base[lName] = lValue;
-					}
-					else
-					{
-						this.Add(lParams[i], null);
-					}
-				}
+				return;
 			}
 
+			String[] lParams = fQuery.Split(new char[] { '&' });
+			for (Int32 i = 0; i < lParams.Length; i++)
+			{
+				Int32 lEqual = lParams[i].IndexOf('=');
+				if (lEqual > -1)
+				{
+					String lName = lParams[i].Substring(0, lEqual).Trim().ToLower();
+					String lValue = lParams[i].Substring(lEqual + 1);
+					base[lName] = ContainsKey(lName) ? this[lName] + "," + lValue : lValue;
+				}
+				else
+				{
+					this.Add(lParams[i], null);
+				}
+			}
 		}
-
-		private String fQuery;
 
 		public override String ToString()
 		{
-			if (fQuery == null)
-				return "";
-
-			return fQuery;
+			return this.fQuery ?? "";
 		}
 
 		public new String this[object key]
