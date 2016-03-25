@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleServer", "SampleServer.2010.csproj", "{81E7BAAA-3289-4806-8B37-25DD62A197C5}"
+Microsoft Visual Studio Solution File, Format Version 14.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleServer", "SampleServer.2015.csproj", "{81E7BAAA-3289-4806-8B37-25DD62A197C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

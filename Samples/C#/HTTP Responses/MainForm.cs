@@ -5,9 +5,6 @@ using System.Windows.Forms;
 
 namespace HttpResponses
 {
-	/// <summary>
-	/// Summary description for Form1.
-	/// </summary>
 	public class MainForm : System.Windows.Forms.Form
 	{
 		private RemObjects.InternetPack.Http.HttpServer httpServer;
@@ -127,7 +124,7 @@ namespace HttpResponses
 		{
 			String lRequestPath = ea.Request.Header.RequestPath;
 
-			Invoke(new MethodInvoker(delegate()
+			Invoke(new MethodInvoker(delegate
 			{
 				lb_Log.Items.Add(lRequestPath);
 			}));

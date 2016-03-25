@@ -1,7 +1,7 @@
 
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMTP Client", "SMTP Client.2010.csproj", "{87FD38B4-EDF1-48CE-ADBA-64E9C0D1DF1A}"
+Microsoft Visual Studio Solution File, Format Version 14.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMTP Client", "SMTP Client.2015.csproj", "{87FD38B4-EDF1-48CE-ADBA-64E9C0D1DF1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

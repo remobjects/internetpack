@@ -1,7 +1,7 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpResponses", "HttpResponses.2008.csproj", "{49A6BF8D-6D7C-4C3B-A7F4-4E14B6F0EAAD}"
+
+Microsoft Visual Studio Solution File, Format Version 14.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpResponses", "HttpResponses.2015.csproj", "{49A6BF8D-6D7C-4C3B-A7F4-4E14B6F0EAAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

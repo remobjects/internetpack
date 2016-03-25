@@ -1,6 +1,7 @@
+using System;
 using System.Reflection;
 
-[assembly: AssemblyTitle("Internet Pack for .NET - HttpSpy Sample")]
+[assembly: AssemblyTitle("Internet Pack for .NET - FtpSync Sample")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("RemObjects Software, LLC")]
@@ -9,6 +10,7 @@ using System.Reflection;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("2.0.0.0")]
+[assembly: CLSCompliant(true)]
 #if REMOBJECTS_SIGN_ASSEMBLY
 [assembly: AssemblyKeyName("RemObjectsSoftware")]
 #endif

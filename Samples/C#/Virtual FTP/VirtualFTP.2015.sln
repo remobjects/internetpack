@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualFTP", "VirtualFTP.2008.csproj", "{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}"
+Microsoft Visual Studio Solution File, Format Version 14.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualFTP", "VirtualFTP.2015.csproj", "{CD3244AF-1C50-47E8-A21F-6C8C3DC9CCBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

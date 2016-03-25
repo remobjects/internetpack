@@ -91,10 +91,10 @@ namespace StandardServersTest
 			this.nudCount.Size = new System.Drawing.Size(48, 20);
 			this.nudCount.TabIndex = 7;
 			this.nudCount.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
+			5,
+			0,
+			0,
+			0});
 			// 
 			// lblCount
 			// 
@@ -148,10 +148,10 @@ namespace StandardServersTest
 			this.nudPort.Size = new System.Drawing.Size(48, 20);
 			this.nudPort.TabIndex = 1;
 			this.nudPort.Value = new decimal(new int[] {
-            83,
-            0,
-            0,
-            0});
+			83,
+			0,
+			0,
+			0});
 			this.nudPort.ValueChanged += new System.EventHandler(this.nudPort_ValueChanged);
 			// 
 			// lblPort
@@ -292,9 +292,8 @@ namespace StandardServersTest
 		{
 			if (this.txtLog.InvokeRequired)
 			{
-				TextCallback d = new TextCallback(AddLog);
-				this.Invoke(d, new object[] { 
-                    Environment.NewLine + String.Format("{0}: {1}", DateTime.Now.ToLongTimeString(), line) });
+				TextCallback d = AddLog;
+				this.Invoke(d, new object[] { Environment.NewLine + String.Format("{0}: {1}", DateTime.Now.ToLongTimeString(), line) });
 			}
 			else
 			{

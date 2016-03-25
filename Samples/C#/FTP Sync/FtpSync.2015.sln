@@ -1,7 +1,7 @@
 
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpSync", "FtpSync.2010.csproj", "{F95BF882-461F-4072-90C4-979893E0CD59}"
+Microsoft Visual Studio Solution File, Format Version 14.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpSync", "FtpSync.2015.csproj", "{F95BF882-461F-4072-90C4-979893E0CD59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
