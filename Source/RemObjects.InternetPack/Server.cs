@@ -1,13 +1,7 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
-
-using System;
-using System.ComponentModel;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
 
 namespace RemObjects.InternetPack
 {
@@ -46,9 +40,9 @@ namespace RemObjects.InternetPack
 				fBindingV6.AddressFamily = AddressFamily.InterNetworkV6;
 			}
 #else
-            fBindingV4 = new ServerBinding();
-            fBindingV4.Address = IPAddress.Any;
-            fBindingV4.AddressFamily = AddressFamily.InterNetwork;
+			fBindingV4 = new ServerBinding();
+			fBindingV4.Address = IPAddress.Any;
+			fBindingV4.AddressFamily = AddressFamily.InterNetwork;
 #endif
 
 			if (fBindingV4 == null && fBindingV6 == null)

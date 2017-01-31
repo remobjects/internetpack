@@ -3,10 +3,6 @@
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
-using System;
-using System.IO;
-using System.Text;
-
 namespace RemObjects.InternetPack.Messages
 {
 	public class MailMessage

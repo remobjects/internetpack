@@ -1,11 +1,8 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using RemObjects.InternetPack.CommandBased;
 using RemObjects.InternetPack.Events;
 using RemObjects.InternetPack.Messages;

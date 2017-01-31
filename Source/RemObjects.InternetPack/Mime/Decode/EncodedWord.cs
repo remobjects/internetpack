@@ -4,10 +4,6 @@
 // Full copy of OpenPOP.NET can be obtained from http://hpop.sourceforge.net
 //
 
-using System;
-using System.Text;
-using System.Text.RegularExpressions;
-
 namespace RemObjects.InternetPack.Messages.Mime.Decode
 {
 	/// <summary>
@@ -67,8 +63,8 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			// RFC Says that NO WHITESPACE is allowed in this encoding, but there are examples
 			// where whitespace is there, and therefore this regex allows for such.
 			const String strRegEx = @"\=\?(?<Charset>\S+?)\?(?<Encoding>\w)\?(?<Content>.+?)\?\=";
-			// \w	Matches any word character including underscore. Equivalent to "[A-Za-z0-9_]".
-			// \S	Matches any nonwhite space character. Equivalent to "[^ \f\n\r\t\v]".
+			// \w    Matches any word character including underscore. Equivalent to "[A-Za-z0-9_]".
+			// \S    Matches any nonwhite space character. Equivalent to "[^ \f\n\r\t\v]".
 			// +?   non-gready equivalent to +
 			// (?<NAME>REGEX) is a named group with name NAME and regular expression REGEX
 
@@ -94,7 +90,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				switch (encoding.ToUpperInvariant())
 				{
 					// RFC:
-					// The "B" encoding is identical to the "BASE64" 
+					// The "B" encoding is identical to the "BASE64"
 					// encoding defined by RFC 2045.
 					// http://tools.ietf.org/html/rfc2045#section-6.8
 					case "B":
@@ -106,7 +102,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 					// transfer-encoding defined in RFC 2045.
 					// There are more details to this. Please check
 					// http://tools.ietf.org/html/rfc2047#section-4.2
-					// 
+					//
 					case "Q":
 						decodedText = QuotedPrintable.DecodeEncodedWord(encodedText, charsetEncoding);
 						break;

@@ -1,11 +1,7 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
-
-using System;
-using System.Collections.Generic;
-using System.Net;
 
 namespace RemObjects.InternetPack.CommandBased
 {
@@ -143,8 +139,8 @@ namespace RemObjects.InternetPack.CommandBased
 
 		protected internal virtual void HandleCommandException(Connection connection, Exception ex)
 		{
-			/* On error, just close the connection, descendand classes may implement 
-             * additional/different behavior */
+			/* On error, just close the connection, descendand classes may implement
+			 * additional/different behavior */
 			connection.Close();
 		}
 	}

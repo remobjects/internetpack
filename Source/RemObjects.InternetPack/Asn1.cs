@@ -1,13 +1,7 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text;
 
 namespace RemObjects.InternetPack.Ldap
 {
@@ -159,11 +153,11 @@ namespace RemObjects.InternetPack.Ldap
 					writer.Write((Byte)0x81);
 					writer.Write(t1);
 				}
-				// Long form. Two to 127 octets. 
-				// Bit 8 of first octet has value "1" and bits 7-1 give 
-				// the number of additional length octets. Second and 
-				// following octets give the length, base 256, most 
-				// significant digit first. 
+				// Long form. Two to 127 octets.
+				// Bit 8 of first octet has value "1" and bits 7-1 give
+				// the number of additional length octets. Second and
+				// following octets give the length, base 256, most
+				// significant digit first.
 			}
 		}
 
@@ -453,7 +447,7 @@ namespace RemObjects.InternetPack.Ldap
 			RFC1960Next(filter, ref pos, ref len, out tok, out res);
 			switch (tok)
 			{
-				// <simple> ::= <attr> <filtertype> <value> 
+				// <simple> ::= <attr> <filtertype> <value>
 				// <filtertype> ::= <equal> | <approx> | <ge> | <le>
 				// <equal> ::= '='
 				// <approx> ::= '~='
@@ -777,19 +771,19 @@ namespace RemObjects.InternetPack.Ldap
 					writer.Write((Byte)(lValue));
 				}
 			}
-			// Primitive. Contents octets give the value of the integer, base 256, in two's 
-			// complement form, most significant digit first, with the minimum number of 
+			// Primitive. Contents octets give the value of the integer, base 256, in two's
+			// complement form, most significant digit first, with the minimum number of
 			// octets. The value 0 is encoded as a single 00 octet.
 
-			// Some example BER encodings (which also happen to be DER encodings) are given in Table 3. 
+			// Some example BER encodings (which also happen to be DER encodings) are given in Table 3.
 			// Integer
-			// value	BER encoding
-			// 0	    02 01 00
-			// 127	    02 01 7F
-			// 128	    02 02 00 80
-			// 256	    02 02 01 00
-			// -128	02 01 80
-			// -129	02 02 FF 7F             
+			// value    BER encoding
+			// 0        02 01 00
+			// 127        02 01 7F
+			// 128        02 02 00 80
+			// 256        02 02 01 00
+			// -128    02 01 80
+			// -129    02 02 FF 7F
 		}
 
 		public override String ToString()

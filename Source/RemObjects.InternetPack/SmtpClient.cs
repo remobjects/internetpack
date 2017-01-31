@@ -1,16 +1,13 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using RemObjects.InternetPack.CommandBased;
 using RemObjects.InternetPack.Messages;
 
 // http://www.ietf.org/rfc/rfc0821.txt
-// http://www.faqs.org/rfcs/rfc2554.html 
+// http://www.faqs.org/rfcs/rfc2554.html
 
 namespace RemObjects.InternetPack.Email
 {

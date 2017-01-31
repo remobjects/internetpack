@@ -1,11 +1,9 @@
-// Public Domain OpenPOP.NET < http://hpop.sourceforge.net >�library MIME decoder code portions
+﻿// Public Domain OpenPOP.NET < http://hpop.sourceforge.net > library MIME decoder code portions
 //
 // Author of OpenPOP.NET library is Kasper Foens ( http://foens.users.sourceforge.net )
 // Full copy of OpenPOP.NET can be obtained from http://hpop.sourceforge.net
 //
 
-using System;
-using System.Text;
 using RemObjects.InternetPack.Messages.Mime.Header;
 
 namespace RemObjects.InternetPack.Messages.Mime

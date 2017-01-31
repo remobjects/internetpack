@@ -1,11 +1,7 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
-
-using System;
-using System.Collections;
-using System.Net.Sockets;
 
 namespace RemObjects.InternetPack
 {
@@ -176,7 +172,7 @@ namespace RemObjects.InternetPack
 			}
 			catch (Exception)
 			{
-				// avoid GC/Socket errors 
+				// avoid GC/Socket errors
 			}
 
 			if (this.fWorkers != null)

@@ -4,11 +4,6 @@
 // Full copy of OpenPOP.NET can be obtained from http://hpop.sourceforge.net
 //
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Net.Mail;
-using System.Net.Mime;
 using RemObjects.InternetPack.Messages.Mime.Decode;
 
 namespace RemObjects.InternetPack.Messages.Mime.Header
@@ -86,7 +81,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 		}
 
 		/// <summary>
-		/// Parses a the value for the header Content-Type to 
+		/// Parses a the value for the header Content-Type to
 		/// a <see cref="ContentType"/> object.
 		/// </summary>
 		/// <param name="headerValue">The value to be parsed</param>

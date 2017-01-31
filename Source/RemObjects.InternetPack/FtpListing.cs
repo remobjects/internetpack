@@ -1,12 +1,7 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
-
-using System;
-using System.Collections;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace RemObjects.InternetPack.Ftp
 {
@@ -226,25 +221,25 @@ namespace RemObjects.InternetPack.Ftp
 			if (item.StartsWith("d") || item.StartsWith("-"))
 			{
 				/*
-                 Unix Mode
-                ======================================================================
-                drwxr-xr-x    3 65025    100          4096 Dec 10 12:13 1 1
-                drwxr-xr-x    2 65025    100          4096 Dec 10 12:13 2
-                -rw-r--r--    1 65025    100            35 Dec 10 12:33 root.txt
-                -rw-r--r--    1 65025    100            43 Dec 10 12:33 root2.txt
+				 Unix Mode
+				======================================================================
+				drwxr-xr-x    3 65025    100          4096 Dec 10 12:13 1 1
+				drwxr-xr-x    2 65025    100          4096 Dec 10 12:13 2
+				-rw-r--r--    1 65025    100            35 Dec 10 12:33 root.txt
+				-rw-r--r--    1 65025    100            43 Dec 10 12:33 root2.txt
 
 
-                where
-                0 - access
-                1 - sub item count
-                2 - owner
-                3 - group
-                4 - size
-                5 - Month
-                6 - day
-                7 - Time or Year
-                8 - Filename
-                 */
+				where
+				0 - access
+				1 - sub item count
+				2 - owner
+				3 - group
+				4 - size
+				5 - Month
+				6 - day
+				7 - Time or Year
+				8 - Filename
+				 */
 				String[] lSplittedData = lRegEx.Split(item, 9);
 
 				// Copy splitted data to result
@@ -283,20 +278,20 @@ namespace RemObjects.InternetPack.Ftp
 			else
 			{
 				/*
-                 MS-DOS Mode
-                ======================================================================
-                01-14-08  01:35PM       <DIR>          1 1
-                01-14-08  01:35PM       <DIR>          2
-                01-14-08  01:36PM                   35 root.txt
-                01-14-08  01:36PM                   43 root2.txt
+				 MS-DOS Mode
+				======================================================================
+				01-14-08  01:35PM       <DIR>          1 1
+				01-14-08  01:35PM       <DIR>          2
+				01-14-08  01:36PM                   35 root.txt
+				01-14-08  01:36PM                   43 root2.txt
 
-                where
+				where
 
-                0 - date
-                1 - time
-                2 - Size or IsDir 
-                3 - Filename
-                 */
+				0 - date
+				1 - time
+				2 - Size or IsDir
+				3 - Filename
+				 */
 				String[] lSegments = lRegEx.Split(item, 4);
 				this.Directory = (lSegments[2] == "<DIR>");
 

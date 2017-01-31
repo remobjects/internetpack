@@ -4,10 +4,6 @@
 // Full copy of OpenPOP.NET can be obtained from http://hpop.sourceforge.net
 //
 
-using System;
-using System.Collections.Specialized;
-using System.IO;
-using System.Text;
 using RemObjects.InternetPack.Messages.Mime.Decode;
 
 namespace RemObjects.InternetPack.Messages.Mime.Header

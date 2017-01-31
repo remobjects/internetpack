@@ -4,12 +4,6 @@
 // Full copy of OpenPOP.NET can be obtained from http://hpop.sourceforge.net
 //
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Net.Mail;
-using System.Net.Mime;
-using System.Text;
 using RemObjects.InternetPack.Messages.Mime.Decode;
 
 namespace RemObjects.InternetPack.Messages.Mime.Header
@@ -693,8 +687,8 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 
 				// See http://tools.ietf.org/html/rfc5322#section-3.6.7
 				case "RETURN-PATH":
-					// Return-paths does not include a username, but we 
-					// may still use the address parser 
+					// Return-paths does not include a username, but we
+					// may still use the address parser
 					this.ReturnPath = MessageAddress.ParseAddress(headerValue);
 					break;
 

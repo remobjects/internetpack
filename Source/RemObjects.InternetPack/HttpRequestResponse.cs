@@ -1,14 +1,8 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
-using System;
-using System.Collections;
-using System.Globalization;
-using System.IO;
-using System.Net;
-using System.Text;
 using RemObjects.InternetPack.Events;
 
 namespace RemObjects.InternetPack.Http
@@ -645,8 +639,8 @@ namespace RemObjects.InternetPack.Http
 			String lMessageHtml = String.Format("<h1>Error {0} {1}</h1><p>{2}: {3}</p><p>{4}</p><hr /><p>{3}</p>",
 													responseCode, ex.GetType().Name, ex.GetType().FullName, ex.Message, ex.StackTrace);
 #else
-            String lMessageHtml = String.Format("<h1>Error {0} {1}</h1><p>{2}: {3}</p><p>{4}</p><hr />",
-                responseCode, ex.GetType().Name, ex.GetType().FullName, ex.Message, DEFAULT_SERVER_NAME);
+			String lMessageHtml = String.Format("<h1>Error {0} {1}</h1><p>{2}: {3}</p><p>{4}</p><hr />",
+				responseCode, ex.GetType().Name, ex.GetType().FullName, ex.Message, DEFAULT_SERVER_NAME);
 #endif
 			this.ContentBytes = Encoding.ASCII.GetBytes(lMessageHtml);
 			this.Header.ContentType = "text/html";
@@ -770,7 +764,7 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				return this.Header.ResponseCode;
+				return this.Header.HttpCode;
 			}
 		}
 

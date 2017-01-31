@@ -1,14 +1,7 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
-
-using System;
-using System.Collections;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 
 namespace RemObjects.InternetPack
 {
@@ -24,7 +17,7 @@ namespace RemObjects.InternetPack
 		#region Private fields
 		private readonly Object fSyncRoot;
 		private Boolean fTimeoutTimerEnabled;
-		private System.Threading.Timer fTimeoutTimer;
+		private Timer fTimeoutTimer;
 		#endregion
 
 		public Connection(Socket socket)
@@ -1548,9 +1541,8 @@ namespace RemObjects.InternetPack
 		#region IDisposable Members
 #if FULLFRAMEWORK
 		public new void Dispose()
-#endif
-#if COMPACTFRAMEWORK
-        public void Dispose()
+#else
+		public void Dispose()
 #endif
 		{
 			if (this.Connected)

@@ -1,13 +1,8 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
-using System;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 using RemObjects.InternetPack.CommandBased;
 using RemObjects.InternetPack.Events;
 
@@ -274,11 +269,11 @@ namespace RemObjects.InternetPack.Ftp
 			lAddress = ((IPEndPoint)this.fDataServer.Binding.ListeningSocket.LocalEndPoint).Address.GetAddressBytes();
 #endif
 #if COMPACTFRAMEWORK
-            IPAddress lIPAddress = ((IPEndPoint)this.fDataServer.Binding.ListeningSocket.LocalEndPoint).Address;
-            String[] lIPAddressstr = lIPAddress.ToString().Split(new Char[] {'.'});
-            lAddress = new Byte[lIPAddressstr.Length];
-            for (Int32 i = 0; i < lIPAddressstr.Length; i++)
-                lAddress[i] = Byte.Parse(lIPAddressstr[i]);
+			IPAddress lIPAddress = ((IPEndPoint)this.fDataServer.Binding.ListeningSocket.LocalEndPoint).Address;
+			String[] lIPAddressstr = lIPAddress.ToString().Split(new Char[] {'.'});
+			lAddress = new Byte[lIPAddressstr.Length];
+			for (Int32 i = 0; i < lIPAddressstr.Length; i++)
+				lAddress[i] = Byte.Parse(lIPAddressstr[i]);
 #endif
 
 			Int32 lPort = ((IPEndPoint)this.fDataServer.Binding.ListeningSocket.LocalEndPoint).Port;

@@ -1,10 +1,11 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
-using System;
+#if ECHOES
 using System.Security.Cryptography.X509Certificates;
+#endif
 
 namespace RemObjects.InternetPack
 {

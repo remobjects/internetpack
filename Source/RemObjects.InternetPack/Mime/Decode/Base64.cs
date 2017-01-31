@@ -4,9 +4,6 @@
 // Full copy of OpenPOP.NET can be obtained from http://hpop.sourceforge.net
 //
 
-using System;
-using System.Text;
-
 namespace RemObjects.InternetPack.Messages.Mime.Decode
 {
 	/// <summary>
@@ -25,7 +22,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		}
 
 		/// <summary>
-		/// Decodes a Base64 encoded String using a specified <see cref="System.Text.Encoding"/> 
+		/// Decodes a Base64 encoded String using a specified <see cref="System.Text.Encoding"/>
 		/// </summary>
 		/// <param name="base64Encoded">Source String to decode</param>
 		/// <param name="encoding">The encoding to use for the decoded Byte array that <paramref name="base64Encoded"/> describes</param>

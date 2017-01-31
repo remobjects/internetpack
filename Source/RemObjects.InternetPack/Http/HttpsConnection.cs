@@ -3,9 +3,6 @@
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
-using System;
-using System.ComponentModel;
-
 namespace RemObjects.InternetPack.Http
 {
 	public class HttpsConnectionFactory : SslConnectionFactory

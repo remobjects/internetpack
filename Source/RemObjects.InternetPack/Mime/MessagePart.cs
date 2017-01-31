@@ -4,11 +4,6 @@
 // Full copy of OpenPOP.NET can be obtained from http://hpop.sourceforge.net
 //
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Mime;
-using System.Text;
 using RemObjects.InternetPack.Messages.Mime.Decode;
 using RemObjects.InternetPack.Messages.Mime.Header;
 
@@ -44,20 +39,20 @@ namespace RemObjects.InternetPack.Messages.Mime
 	/// The message source in this example is:<br/>
 	/// <code>
 	/// MIME-Version: 1.0
-	///	Content-Type: multipart/mixed; boundary="frontier"
-	///	
-	///	This is a message with multiple parts in MIME format.
-	///	--frontier
+	///    Content-Type: multipart/mixed; boundary="frontier"
+	///
+	///    This is a message with multiple parts in MIME format.
+	///    --frontier
 	/// Content-Type: text/plain
-	///	
-	///	This is the body of the message.
-	///	--frontier
-	///	Content-Type: application/octet-stream
-	///	Content-Transfer-Encoding: base64
-	///	
-	///	PGh0bWw+CiAgPGHLYWQ+CiAgPC9oZWFkPgogIDxib2R5PgogICAgPHA+VGhpcyBpcyB0aGUg
-	///	Ym9keSBvZiB0aGUgbWVzc2FnZS48L3A+CiAgPC9ib2R5Pgo8L2h0bWw+Cg==
-	///	--frontier--
+	///
+	///    This is the body of the message.
+	///    --frontier
+	///    Content-Type: application/octet-stream
+	///    Content-Transfer-Encoding: base64
+	///
+	///    PGh0bWw+CiAgPGHLYWQ+CiAgPC9oZWFkPgogIDxib2R5PgogICAgPHA+VGhpcyBpcyB0aGUg
+	///    Ym9keSBvZiB0aGUgbWVzc2FnZS48L3A+CiAgPC9ib2R5Pgo8L2h0bWw+Cg==
+	///    --frontier--
 	/// </code>
 	/// The tree will look as follows, where the content-type media type of the message is listed<br/>
 	/// <code>

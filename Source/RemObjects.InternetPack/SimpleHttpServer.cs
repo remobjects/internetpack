@@ -1,12 +1,7 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
-
-using System;
-using System.ComponentModel;
-using System.IO;
-using System.Net;
 
 namespace RemObjects.InternetPack.Http
 {

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{774B9AE9-B695-4908-B24F-5482556D6175}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <AssemblyName>RemObjects.InternetPack</AssemblyName>
+    <OutputType>Library</OutputType>
+    <RootNamespace>RemObjects.InternetPack</RootNamespace>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <AllowGlobals>False</AllowGlobals>
+    <AllowLegacyCreate>False</AllowLegacyCreate>
+    <AllowLegacyOutParams>False</AllowLegacyOutParams>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+    <DefaultUses>System;System.Collections;System.Collections.Generic;System.Collections.Specialized;System.ComponentModel;System.Globalization;System.IO;System.Net;System.Net.Mail;System.Net.Mime;System.Net.Security;System.Net.Sockets;System.Security;System.Security.Cryptography;System.Security.Cryptography.X509Certificates;System.Text;System.Text.RegularExpressions;System.Threading</DefaultUses>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</DefineConstants>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>..\..\Bin\</OutputPath>
+    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</DefineConstants>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Trial|AnyCPU'">
+    <OutputPath>..\..\Bin\Trial\</OutputPath>
+    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;TRIAL</DefineConstants>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Mono|AnyCPU'">
+    <OutputPath>..\..\Bin\Mono\</OutputPath>
+    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;MONO</DefineConstants>
+    <RegisterForComInterop>false</RegisterForComInterop>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IDE|AnyCPU'">
+    <OutputPath>bin\IDE\</OutputPath>
+    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY</DefineConstants>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Licensed|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\Bin\</OutputPath>
+    <DefineConstants>DEBUG;FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</DefineConstants>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <EmbeddedResource Include="Glyphs\EchoServer.bmp" />
+    <EmbeddedResource Include="Glyphs\FtpClient.bmp" />
+    <EmbeddedResource Include="Glyphs\FtpServer.bmp" />
+    <EmbeddedResource Include="Glyphs\HttpClient.bmp" />
+    <EmbeddedResource Include="Glyphs\HttpServer.bmp" />
+    <EmbeddedResource Include="Glyphs\SimpleHttpServer.bmp" />
+    <EmbeddedResource Include="Glyphs\SmtpClient.bmp" />
+    <EmbeddedResource Include="Glyphs\TcpClient.bmp" />
+    <EmbeddedResource Include="Glyphs\TcpServer.bmp" />
+    <EmbeddedResource Include="Glyphs\NntpServer.bmp" />
+    <EmbeddedResource Include="Glyphs\Pop3Client.bmp" />
+    <EmbeddedResource Include="Glyphs\Pop3Server.bmp" />
+    <EmbeddedResource Include="Glyphs\SmtpServer.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Echoes.targets" />
+  <PropertyGroup>
+    <PreBuildEvent />
+    <PostBuildEvent />
+  </PropertyGroup>
+  <Import Project="RemObjects.InternetPack.Shared.projitems" Label="Shared" />
+</Project>
