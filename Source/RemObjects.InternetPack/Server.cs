@@ -5,7 +5,7 @@
 
 namespace RemObjects.InternetPack
 {
-	public abstract class Server : System.ComponentModel.Component
+	public abstract class Server : Component
 	{
 		protected Server()
 		{

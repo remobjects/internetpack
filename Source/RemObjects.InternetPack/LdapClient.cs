@@ -857,7 +857,7 @@ namespace RemObjects.InternetPack.Ldap
 		}
 	}
 
-	public class LdapUserLookup : System.ComponentModel.Component
+	public class LdapUserLookup : Component
 	{
 		public String UserSearchBase
 		{

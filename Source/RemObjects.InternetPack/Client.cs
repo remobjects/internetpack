@@ -7,7 +7,7 @@ using RemObjects.InternetPack.Dns;
 
 namespace RemObjects.InternetPack
 {
-	public abstract class Client : System.ComponentModel.Component
+	public abstract class Client : Component
 	{
 		protected Client()
 		{
