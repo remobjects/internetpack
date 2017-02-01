@@ -256,10 +256,10 @@
 	//[ComVisibleAttribute(true)]
 	public interface IAsyncResult
 	{
-		Object AsyncState { get; set; }
-		WaitHandle AsyncWaitHandle { get; set; }
-		Boolean CompletedSynchronously { get; set; }
-		Boolean IsCompleted { get; set; }
+		Object AsyncState { get; }
+		WaitHandle AsyncWaitHandle { get; }
+		Boolean CompletedSynchronously { get;}
+		Boolean IsCompleted { get; }
 	}
 
 	#endif

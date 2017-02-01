@@ -776,11 +776,6 @@ namespace RemObjects.InternetPack
 			throw new Exception(String.Format("{0} does not support seeking", this.GetType().Name));
 		}
 
-		public override void SetLength(Int64 length)
-		{
-			throw new Exception(String.Format("{0} does not support SetLength", this.GetType().Name));
-		}
-
 		public override void Write(Byte[] buffer, Int32 offset, Int32 size)
 		{
 			DataSocketSend(buffer, offset, size);
@@ -808,6 +803,11 @@ namespace RemObjects.InternetPack
 			{
 				return true;
 			}
+		}
+
+		public override void SetLength(Int64 length)
+		{
+			throw new Exception(String.Format("{0} does not support SetLength", this.GetType().Name));
 		}
 
 		public override Int64 Length
