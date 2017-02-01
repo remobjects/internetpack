@@ -15,15 +15,13 @@ namespace RemObjects.InternetPack
 		#endregion
 
 		#region Private fields
-		private readonly Object fSyncRoot;
+		private readonly Monitor fSyncRoot = new Monitor();
 		private Boolean fTimeoutTimerEnabled;
 		private Timer fTimeoutTimer;
 		#endregion
 
 		public Connection(Socket socket)
 		{
-			this.fSyncRoot = new Object();
-
 			this.fDataSocket = socket;
 
 			if (this.fDataSocket != null)
@@ -36,8 +34,6 @@ namespace RemObjects.InternetPack
 
 		public Connection(Binding binding)
 		{
-			this.fSyncRoot = new Object();
-
 			this.Init(binding);
 
 			this.SetDefaultValues();
@@ -180,7 +176,7 @@ namespace RemObjects.InternetPack
 				if (value && this.fTimeoutTimer == null)
 				{
 					this.fTimedOut = false;
-					this.fTimeoutTimer = new System.Threading.Timer(this.TimeoutElapsed, null, System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
+					this.fTimeoutTimer = new Timer(this.TimeoutElapsed, null, System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
 				}
 				else if (!value && this.fTimeoutTimer != null)
 				{
@@ -231,14 +227,14 @@ namespace RemObjects.InternetPack
 		#endregion
 
 		#region DataSocket access
-		public virtual System.Net.Sockets.Socket DataSocket
+		public virtual Socket DataSocket
 		{
 			get
 			{
 				return fDataSocket;
 			}
 		}
-		private System.Net.Sockets.Socket fDataSocket;
+		private Socket fDataSocket;
 
 		public virtual Boolean DataSocketConnected
 		{
@@ -334,7 +330,7 @@ namespace RemObjects.InternetPack
 		private void Abort()
 		{
 			// On older Mono versions a racing condition can arise here
-			lock (this.fSyncRoot)
+			lock (fSyncRoot)
 			{
 				if (!this.DataSocket.Connected)
 				{
@@ -357,7 +353,7 @@ namespace RemObjects.InternetPack
 		protected virtual void DataSocketClose()
 		{
 			// On older Mono versions a racing condition can arise here
-			lock (this.fSyncRoot)
+			lock (fSyncRoot)
 			{
 				try
 				{
@@ -389,7 +385,7 @@ namespace RemObjects.InternetPack
 		protected virtual void DataSocketClose(Boolean dispose)
 		{
 			// On older Mono versions a racing condition can arise here
-			lock (this.fSyncRoot)
+			lock (fSyncRoot)
 			{
 				try
 				{
@@ -506,7 +502,7 @@ namespace RemObjects.InternetPack
 			}
 
 			// less (or same) number of bytes in buffer then we need?
-			Buffer.BlockCopy(fBuffer, fBufferStart, buffer, offset, lSize);
+			fBuffer.BlockCopy(fBuffer, fBufferStart, buffer, offset, lSize);
 			fBuffer = null;
 
 			// if more bytes werer requested, and bytes are available, get them
@@ -582,7 +578,7 @@ namespace RemObjects.InternetPack
 		{
 			Byte[] result = null;
 
-			ArrayList lBlocks = new ArrayList();
+			List<DataBlock> lBlocks = new List<DataBlock>();
 
 			Int32 lTotal = 0;
 

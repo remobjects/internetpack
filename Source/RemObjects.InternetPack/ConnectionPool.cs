@@ -7,6 +7,7 @@ namespace RemObjects.InternetPack
 {
 	public class ConnectionPool : IDisposable
 	{
+		private readonly Monitor fSyncRoot = new Monitor();
 		private Timer fCleanupTimer;
 		private readonly Hashtable fCache;
 		private readonly Binding fBindingV4;
@@ -80,8 +81,8 @@ namespace RemObjects.InternetPack
 
 		private void CleanupCallback(Object state)
 		{
-			DateTime ExpireTime = DateTime.Now.AddSeconds(-this.Timeout);
-			lock (this.fCache)
+			DateTime ExpireTime = DateTime.UtcNow.AddSeconds(-this.Timeout);
+			lock (fSyncRoot)
 			{
 				foreach (DictionaryEntry entry in this.fCache)
 				{
@@ -112,7 +113,7 @@ namespace RemObjects.InternetPack
 		{
 			String lHost = endPoint.ToString();
 
-			lock (this.fCache)
+			lock (fSyncRoot)
 			{
 				ConnectionQueue lQueue = this.fCache.ContainsKey(lHost) ? (ConnectionQueue)this.fCache[lHost] : null;
 				if (lQueue != null && lQueue.Count > 0)
@@ -151,7 +152,7 @@ namespace RemObjects.InternetPack
 				lConnection = new Connection(lBinding);
 
 			lConnection.Connect(endPoint);
-			lConnection.LastUsed = DateTime.Now;
+			lConnection.LastUsed = DateTime.UtcNow;
 			lConnection.Pool = this;
 
 			return lConnection;
@@ -167,7 +168,7 @@ namespace RemObjects.InternetPack
 				return;
 			}
 
-			lock (this.fCache)
+			lock (fSyncRoot)
 			{
 				ConnectionQueue lQueue;
 				if (this.fCache.ContainsKey(lHost))
@@ -180,7 +181,7 @@ namespace RemObjects.InternetPack
 
 				if (lQueue.Count < this.fMaxQueuePerHost || this.fMaxQueuePerHost < 1)
 				{
-					connection.LastUsed = DateTime.Now;
+					connection.LastUsed = DateTime.UtcNow;
 					lQueue.Enqueue(connection);
 				}
 				else
@@ -193,7 +194,7 @@ namespace RemObjects.InternetPack
 		#region IDisposable Members
 		public virtual void Dispose()
 		{
-			lock (this.fCache)
+			lock (fSyncRoot)
 			{
 				foreach (DictionaryEntry entry in this.fCache)
 				{

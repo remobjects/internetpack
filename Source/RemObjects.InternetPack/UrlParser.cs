@@ -38,6 +38,7 @@ namespace RemObjects.InternetPack.Http
 	[TypeConverter(typeof(UrlConverter))]
 #endif
 	[Serializable]
+	[Obsolete("Use RemObjects.Elements.RTL.Url instead")]
 	public class UrlParser : MarshalByRefObject
 	{
 		private Int32 fDefaultPort;

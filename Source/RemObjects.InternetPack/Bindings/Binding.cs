@@ -12,14 +12,14 @@ namespace RemObjects.InternetPack
 	{
 		public Binding()
 		{
-			this.AddressFamily = System.Net.Sockets.AddressFamily.InterNetwork;
-			this.Protocol = System.Net.Sockets.ProtocolType.Tcp;
+			this.AddressFamily = AddressFamily.InterNetwork;
+			this.Protocol = ProtocolType.Tcp;
 		}
 
 		public Binding(AddressFamily addressFamily)
 		{
 			this.AddressFamily = addressFamily;
-			this.Protocol = System.Net.Sockets.ProtocolType.Tcp;
+			this.Protocol = ProtocolType.Tcp;
 		}
 
 		#region Properties
@@ -46,7 +46,7 @@ namespace RemObjects.InternetPack
 				switch (this.Protocol)
 				{
 					case ProtocolType.Tcp:
-						this.SocketType = System.Net.Sockets.SocketType.Stream;
+						this.SocketType = SocketType.Stream;
 						break;
 
 					case ProtocolType.Udp:

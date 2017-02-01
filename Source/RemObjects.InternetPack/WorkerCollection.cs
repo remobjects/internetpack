@@ -5,41 +5,41 @@
 
 namespace RemObjects.InternetPack
 {
-	public class WorkerCollection : ArrayList
+	public class WorkerCollection
 	{
 		#region Private fields
 
-		private readonly Object fSyncRoot;
+		private readonly Monitor fSyncRoot = new Monitor();
+		private readonly List<IWorker> fWorkers = new List<IWorker>();
 		#endregion
 
 		public WorkerCollection()
 		{
-			this.fSyncRoot = new Object();
 		}
 
 		private void OnDone(Object sender, EventArgs e)
 		{
-			lock (this.fSyncRoot)
+			lock (fSyncRoot)
 			{
-				base.Remove(sender);
+				fWorkers.Remove(sender as IWorker);
 			}
 		}
 
 		public void Add(IWorker worker)
 		{
-			lock (this.fSyncRoot)
+			lock (fSyncRoot)
 			{
 				worker.Done += OnDone;
-				base.Add(worker);
+				fWorkers.Add(worker);
 			}
 		}
 
 		public void Remove(IWorker worker)
 		{
-			lock (this.fSyncRoot)
+			lock (fSyncRoot)
 			{
 				worker.Done -= OnDone;
-				base.Remove(worker);
+				fWorkers.Remove(worker);
 			}
 		}
 
@@ -48,9 +48,9 @@ namespace RemObjects.InternetPack
 #if FULLFRAMEWORK
 			Object[] lWaitArray;
 #endif
-			lock (this.fSyncRoot)
+			lock (fSyncRoot)
 			{
-				foreach (IWorker worker in this)
+				foreach (IWorker worker in fWorkers)
 					worker.DataConnection.Close();
 
 #if FULLFRAMEWORK

@@ -5,6 +5,7 @@
 
 namespace RemObjects.InternetPack
 {
+	#if ECHOES
 	class BindingConverter : ExpandableObjectConverter
 	{
 		public override Boolean CanConvertFrom(ITypeDescriptorContext context, Type type)
@@ -23,4 +24,5 @@ namespace RemObjects.InternetPack
 			return base.ConvertTo(context, culture, value, destinationType);
 		}
 	}
+	#endif
 }

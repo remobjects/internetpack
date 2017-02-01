@@ -93,8 +93,7 @@ namespace RemObjects.InternetPack
 
 	public class OnTcpConnectionArgs : ConnectionEventArgs
 	{
-		public OnTcpConnectionArgs(Connection connection)
-			: base(connection)
+		public OnTcpConnectionArgs(Connection connection) : base(connection)
 		{
 		}
 	}

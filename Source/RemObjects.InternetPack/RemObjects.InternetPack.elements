@@ -79,4 +79,5 @@
     <PostBuildEvent />
   </PropertyGroup>
   <Import Project="RemObjects.InternetPack.Shared.projitems" Label="Shared" />
+  <Import Project="RemObjects.InternetPack.Shared.Base.projitems" Label="Shared" />
 </Project>

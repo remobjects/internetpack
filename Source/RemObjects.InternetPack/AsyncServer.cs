@@ -7,7 +7,8 @@ namespace RemObjects.InternetPack
 {
 	public abstract class AsyncServer : Server
 	{
-		private ArrayList fWorkers;
+		private List<IAsyncWorker> fWorkers;
+		private readonly Monitor fSyncRoot = new Monitor();
 
 		public override void Open()
 		{
@@ -20,7 +21,7 @@ namespace RemObjects.InternetPack
 				}
 #endif
 
-				this.fWorkers = CloseConnectionsOnShutdown ? new ArrayList() : null;
+				this.fWorkers = CloseConnectionsOnShutdown ? new List<IAsyncWorker>() : null;
 
 				Int32 lActualPort = this.Port;
 
@@ -31,7 +32,7 @@ namespace RemObjects.InternetPack
 					this.BindingV6.BindUnthreaded();
 					this.BindingV6.ListeningSocket.Listen(this.BindingV6.MaxWaitConnections);
 					this.BindingV6.ListeningSocket.BeginAccept(AcceptCallback, this.BindingV6.ListeningSocket);
-					lActualPort = ((System.Net.IPEndPoint)this.BindingV6.ListeningSocket.LocalEndPoint).Port;
+					lActualPort = ((IPEndPoint)this.BindingV6.ListeningSocket.LocalEndPoint).Port;
 				}
 
 				// There is a chance that this will fail on Mono
@@ -44,7 +45,7 @@ namespace RemObjects.InternetPack
 						this.BindingV4.BindUnthreaded();
 						this.BindingV4.ListeningSocket.Listen(this.BindingV4.MaxWaitConnections);
 						this.BindingV4.ListeningSocket.BeginAccept(AcceptCallback, this.BindingV4.ListeningSocket);
-						lActualPort = ((System.Net.IPEndPoint)this.BindingV4.ListeningSocket.LocalEndPoint).Port;
+						lActualPort = ((IPEndPoint)this.BindingV4.ListeningSocket.LocalEndPoint).Port;
 					}
 					catch (SocketException)
 					{
@@ -73,7 +74,7 @@ namespace RemObjects.InternetPack
 				{
 					lSocket = ((Socket)ar.AsyncState).EndAccept(ar);
 				}
-				catch (System.ObjectDisposedException)
+				catch (ObjectDisposedException)
 				{
 					return; // sometimes the object is gc'd before we even get here.
 				}
@@ -122,7 +123,7 @@ namespace RemObjects.InternetPack
 
 				if (this.fWorkers != null)
 				{
-					lock (this.fWorkers)
+					lock (this.fSyncRoot)
 					{
 						this.fWorkers.Add(lWorker);
 					}
@@ -177,7 +178,7 @@ namespace RemObjects.InternetPack
 
 			if (this.fWorkers != null)
 			{
-				lock (this.fWorkers)
+				lock (this.fSyncRoot)
 				{
 					for (Int32 i = this.fWorkers.Count - 1; i >= 0; i--)
 					{
@@ -207,7 +208,7 @@ namespace RemObjects.InternetPack
 			if (this.fWorkers == null)
 				return;
 
-			lock (this.fWorkers)
+			lock (this.fSyncRoot)
 			{
 				this.fWorkers.Remove(worker);
 			}
