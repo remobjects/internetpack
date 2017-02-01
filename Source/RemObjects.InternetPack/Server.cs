@@ -326,11 +326,6 @@ namespace RemObjects.InternetPack
 		#endregion
 
 		#region Methods
-		protected static Boolean IsRunningOnMono()
-		{
-			return Type.GetType("Mono.Runtime") != null;
-		}
-
 		public virtual void Open()
 		{
 			try
@@ -349,7 +344,7 @@ namespace RemObjects.InternetPack
 				{
 					this.fBindingV6.EnableNagle = EnableNagle;
 					this.fBindingV6.Bind(new Listener(this, this.GetWorkerClass()));
-					lActualPort = ((System.Net.IPEndPoint)this.fBindingV6.ListeningSocket.LocalEndPoint).Port;
+					lActualPort = ((IPEndPoint)this.fBindingV6.ListeningSocket.LocalEndPoint).Port;
 				}
 
 				// There is a chance that this will fail on Mono
@@ -363,11 +358,11 @@ namespace RemObjects.InternetPack
 							this.fBindingV4.Port = lActualPort;
 						this.fBindingV4.EnableNagle = EnableNagle;
 						this.fBindingV4.Bind(new Listener(this, this.GetWorkerClass()));
-						lActualPort = ((System.Net.IPEndPoint)this.fBindingV4.ListeningSocket.LocalEndPoint).Port;
+						lActualPort = ((IPEndPoint)this.fBindingV4.ListeningSocket.LocalEndPoint).Port;
 					}
 					catch (SocketException)
 					{
-						if (!(lBindV6 && Server.IsRunningOnMono()))
+						if (!(lBindV6 && Environment.IsMono))
 							throw;
 					}
 

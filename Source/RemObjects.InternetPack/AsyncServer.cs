@@ -49,7 +49,7 @@ namespace RemObjects.InternetPack
 					}
 					catch (SocketException)
 					{
-						if (!(lBindV6 && Server.IsRunningOnMono()))
+						if (!(lBindV6 && Environment.IsMono))
 							throw;
 					}
 				}

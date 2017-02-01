@@ -176,7 +176,7 @@ namespace RemObjects.InternetPack
 				if (value && this.fTimeoutTimer == null)
 				{
 					this.fTimedOut = false;
-					this.fTimeoutTimer = new Timer(this.TimeoutElapsed, null, System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
+					this.fTimeoutTimer = new Timer(this.TimeoutElapsed, null, -1/*Timeout.Infinite*/, -1/*Timeout.Infinite*/);
 				}
 				else if (!value && this.fTimeoutTimer != null)
 				{
@@ -211,7 +211,7 @@ namespace RemObjects.InternetPack
 
 			this.fTimeoutTimerEnabled = true;
 			this.fTimedOut = false;
-			this.fTimeoutTimer.Change(this.Timeout * 1000, System.Threading.Timeout.Infinite);
+			this.fTimeoutTimer.Change(this.Timeout * 1000, -1/*Timeout.Infinite*/);
 		}
 
 		protected void StopTimeoutTimer()
@@ -222,7 +222,7 @@ namespace RemObjects.InternetPack
 			}
 
 			this.fTimeoutTimerEnabled = false;
-			this.fTimeoutTimer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
+			this.fTimeoutTimer.Change(-1/*Timeout.Infinite*/, -1/*Timeout.Infinite*/);
 		}
 		#endregion
 
@@ -771,14 +771,14 @@ namespace RemObjects.InternetPack
 			return Receive(buffer, offset, size, true);
 		}
 
-		public override Int64 Seek(Int64 offset, System.IO.SeekOrigin origin)
+		public override Int64 Seek(Int64 offset, PlatformSeekOrigin origin)
 		{
-			throw new Exception(String.Format("{0} does not support seeking", this.GetType().FullName));
+			throw new Exception(String.Format("{0} does not support seeking", this.GetType().Name));
 		}
 
 		public override void SetLength(Int64 length)
 		{
-			throw new Exception(String.Format("{0} does not support SetLength", this.GetType().FullName));
+			throw new Exception(String.Format("{0} does not support SetLength", this.GetType().Name));
 		}
 
 		public override void Write(Byte[] buffer, Int32 offset, Int32 size)
@@ -826,7 +826,7 @@ namespace RemObjects.InternetPack
 			}
 			set
 			{
-				Seek(value, System.IO.SeekOrigin.Begin);
+				Seek(value, PlatformSeekOrigin.Begin);
 				fPosition = value;
 			}
 		}
@@ -864,7 +864,7 @@ namespace RemObjects.InternetPack
 				}
 			}
 
-			public System.Threading.WaitHandle AsyncWaitHandle
+			public WaitHandle AsyncWaitHandle
 			{
 				get
 				{
@@ -923,7 +923,7 @@ namespace RemObjects.InternetPack
 			}
 			private readonly Object fAsyncState;
 
-			public System.Threading.WaitHandle AsyncWaitHandle
+			public WaitHandle AsyncWaitHandle
 			{
 				get
 				{
@@ -1086,7 +1086,7 @@ namespace RemObjects.InternetPack
 			}
 			private readonly Object fAsyncState;
 
-			public System.Threading.WaitHandle AsyncWaitHandle
+			public WaitHandle AsyncWaitHandle
 			{
 				get
 				{

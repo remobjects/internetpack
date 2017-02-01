@@ -844,7 +844,7 @@ namespace RemObjects.InternetPack.Http
 			return lResult;
 		}
 
-		public override Int64 Seek(Int64 offset, System.IO.SeekOrigin origin)
+		public override Int64 Seek(Int64 offset, PlatformSeekOrigin origin)
 		{
 			throw new Exception(String.Format("{0} does not support seeking", this.GetType().FullName));
 		}
@@ -899,7 +899,7 @@ namespace RemObjects.InternetPack.Http
 			}
 			set
 			{
-				Seek(value, System.IO.SeekOrigin.Begin);
+				Seek(value, PlatformSeekOrigin.Begin);
 				fPosition = value;
 			}
 		}

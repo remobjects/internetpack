@@ -27,9 +27,9 @@
 		private Boolean closed;
 		internal Boolean disposed;
 		private Boolean connect_in_progress;
-		internal EndPoint seed_endpoint;
-		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType);
-		private static this .cctor();
+		internal EndPoint seed_endpoint;*/
+		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType) {}
+		/*private static this .cctor();
 		public Socket(SocketInformation socketInformation);
 		internal Socket(AddressFamily family, SocketType type, ProtocolType proto, IntPtr sock);
 		private static void AddSockets(List<Socket> sockets, IList list, String name);
@@ -134,12 +134,12 @@
 		public Int32 SendTo(Byte[] buffer, SocketFlags flags, EndPoint remote_end);
 		public Int32 SendTo(Byte[] buffer, EndPoint remote_end);
 		private static Int32 SendTo_internal(IntPtr sock, Byte[] buffer, Int32 offset, Int32 count, SocketFlags flags, SocketAddress sa, out Int32 error);
-		internal Int32 SendTo_nochecks(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, EndPoint remote_end);
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue);
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue);
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue);
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue);
-		internal static void CheckProtocolSupport();
+		internal Int32 SendTo_nochecks(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, EndPoint remote_end);*/
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue) {}
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue) {}
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue) {}
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue) {}
+		/*internal static void CheckProtocolSupport();
 		private void RegisterForBlockingSyscall();
 		private void UnRegisterForBlockingSyscall();
 		private void AbortRegisteredThreads();

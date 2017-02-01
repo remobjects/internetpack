@@ -29,6 +29,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\ConnectionEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\SystemNetTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\Socket.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\Timer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\SystemThreadingTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\Stream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ConnectionClosedException.cs" />
   </ItemGroup>
 </Project>

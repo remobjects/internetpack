@@ -1,7 +1,12 @@
 ﻿namespace RemObjects.InternetPack
 {
 	#if !ECHOES
-	public class Component : Object {}
+	public class Component : Object {
+		protected virtual void Dispose(Boolean disposing)
+		{
+			//(this as IDisposable)?.Dispose();
+		}
+	}
 	public class MarshalByRefObject : Object {}
 
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/mscorlib.dll
