@@ -1116,7 +1116,7 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			get
 			{
-				return this.Value == null ? 0 : Encoding.UTF8.GetByteCount(this.Value);
+				return this.Value == null ? 0 : System.Text.Encoding.UTF8.GetByteCount(this.Value);
 			}
 		}
 

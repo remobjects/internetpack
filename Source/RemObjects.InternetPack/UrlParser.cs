@@ -34,9 +34,10 @@ namespace RemObjects.InternetPack.Http
 		}
 	}
 
-#if FULLFRAMEWORK
+	/*
+	#if FULLFRAMEWORK
 	[TypeConverter(typeof(UrlConverter))]
-#endif
+	#endif
 	[Serializable]
 	[Obsolete("Use RemObjects.Elements.RTL.Url instead")]
 	public class UrlParser : MarshalByRefObject
@@ -138,7 +139,7 @@ namespace RemObjects.InternetPack.Http
 			if (lProtocolPosition >= 0)
 			{
 				this.Protocol = url.Substring(0, lProtocolPosition);
-				url = url.Substring(lProtocolPosition + 3); /* skip over :// */
+				url = url.Substring(lProtocolPosition + 3); /* skip over :// * /
 			}
 			else
 			{
@@ -227,8 +228,7 @@ namespace RemObjects.InternetPack.Http
 		}
 	}
 
-	#region UrlConverter class
-#if FULLFRAMEWORK
+	#if FULLFRAMEWORK
 	class UrlConverter : ExpandableObjectConverter
 	{
 		public UrlConverter()
@@ -242,18 +242,17 @@ namespace RemObjects.InternetPack.Http
 
 		public override Object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, Object value)
 		{
-			return value is String ? new UrlParser((String)value) : base.ConvertFrom(context, culture, value);
+			return value is String ? new Url.UrlWithString((String)value) : base.ConvertFrom(context, culture, value);
 		}
 
 		public override Object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, Object value, Type destinationType)
 		{
-			return destinationType == typeof(String) && value is UrlParser
-				? ((UrlParser)value).ToString()
+			return destinationType == typeof(String) && value is Url
+				? ((Url)value).ToAbsoluteString()
 				: base.ConvertTo(context, culture, value, destinationType);
 		}
 	}
-#endif
-	#endregion
+	#endif
 
 	[Serializable]
 	public class UrlParserException : Exception
@@ -272,4 +271,5 @@ namespace RemObjects.InternetPack.Http
 		{
 		}
 	}
+	*/
 }

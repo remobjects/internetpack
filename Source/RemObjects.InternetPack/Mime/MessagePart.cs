@@ -613,7 +613,7 @@ namespace RemObjects.InternetPack.Messages.Mime
 				lInnerBuilder.AppendFormat("--{0}--\r\n", this.Header.ContentType.Boundary);
 
 				String lInnerPart = lInnerBuilder.ToString();
-				this.Header["Content-Length"] = Encoding.UTF8.GetByteCount(lInnerPart).ToString();
+				this.Header["Content-Length"] = System.Text.Encoding.UTF8.GetByteCount(lInnerPart).ToString();
 
 				this.Header.Store(builder);
 				builder.Append("\r\n");

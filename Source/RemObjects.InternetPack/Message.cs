@@ -393,7 +393,7 @@ namespace RemObjects.InternetPack.Messages
 					lResult.Append(value.Substring(0, i));
 
 				lResult.Append(lStartTag);
-				lResult.Append(Convert.ToBase64String(Encoding.UTF8.GetBytes(value.Substring(i))));
+				lResult.Append(System.Convert.ToBase64String(Encoding.UTF8.GetBytes(value.Substring(i))));
 				lResult.Append(lEndTag);
 
 				return lResult.ToString();

@@ -45,7 +45,7 @@ namespace RemObjects.InternetPack.Http
 				Byte[] lByteData = Encoding.UTF8.GetBytes(this.fHttpsConnectionFactory.ProxySettings.UserName + ":" + this.fHttpsConnectionFactory.ProxySettings.Password);
 
 				lSslTunnelRequest.Append("Proxy-Authorization: Basic ");
-				lSslTunnelRequest.Append(Convert.ToBase64String(lByteData, 0, lByteData.Length));
+				lSslTunnelRequest.Append(System.Convert.ToBase64String(lByteData, 0, lByteData.Length));
 				lSslTunnelRequest.AppendLine();
 			}
 			lSslTunnelRequest.AppendLine();

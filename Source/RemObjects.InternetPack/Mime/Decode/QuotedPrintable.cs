@@ -296,7 +296,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				// Now we create a Byte array with the converted number encoded in the String as a hex value (base 16)
 				// This will also handle illegal encodings like =3d where the hex digits are not uppercase,
 				// which is a robustness requirement from RFC 2045.
-				Byte[] oneByte = new Byte[] { Convert.ToByte(numberString, 16) };
+				Byte[] oneByte = new Byte[] { System.Convert.ToByte(numberString, 16) };
 
 				// Simply return our one Byte Byte array
 				return oneByte;

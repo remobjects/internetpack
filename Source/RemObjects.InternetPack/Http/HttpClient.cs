@@ -195,7 +195,7 @@ namespace RemObjects.InternetPack.Http
 				return;
 
 			Byte[] lByteData = System.Text.Encoding.UTF8.GetBytes(username + ":" + password);
-			String lAuthData = "Basic " + Convert.ToBase64String(lByteData, 0, lByteData.Length);
+			String lAuthData = "Basic " + System.Convert.ToBase64String(lByteData, 0, lByteData.Length);
 
 			headers.SetHeaderValue(header, lAuthData);
 		}
@@ -220,7 +220,7 @@ namespace RemObjects.InternetPack.Http
 		public HttpClientResponse GetResponse(String url)
 		{
 			HttpClientRequest lRequest = new HttpClientRequest();
-			lRequest.Url.Parse(url);
+			lRequest.URL = Url.UrlWithString(url);
 			lRequest.Header.RequestType = "GET";
 			lRequest.Header.SetHeaderValue("Accept", Accept);
 			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
@@ -232,7 +232,7 @@ namespace RemObjects.InternetPack.Http
 		public String Post(String url, Byte[] content)
 		{
 			HttpClientRequest lRequest = new HttpClientRequest();
-			lRequest.Url.Parse(url);
+			lRequest.URL = Url.UrlWithString(url);
 			lRequest.RequestType = RequestType.Post;
 			lRequest.Header.SetHeaderValue("Accept", Accept);
 			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
@@ -246,7 +246,7 @@ namespace RemObjects.InternetPack.Http
 		public String Post(String url, Stream content)
 		{
 			HttpClientRequest lRequest = new HttpClientRequest();
-			lRequest.Url.Parse(url);
+			lRequest.URL = Url.UrlWithString(url);
 			lRequest.RequestType = RequestType.Post;
 			lRequest.Header.SetHeaderValue("Accept", Accept);
 			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
@@ -283,9 +283,9 @@ namespace RemObjects.InternetPack.Http
 		{
 			HttpClient.SetAuthorizationHeader(request.Header, "Authorization", this.UserName, this.Password);
 
-			String lHostname = request.Url.Hostname;
-			Int32 lPort = request.Url.Port;
-			Boolean lSslConnection = System.String.Equals(request.Url.Protocol, "https", StringComparison.OrdinalIgnoreCase);
+			String lHostname = request.URL.Host;
+			Int32 lPort = request.URL.Port;
+			Boolean lSslConnection = request.URL.Scheme?.ToLower() == "https";
 
 			// Settings for connection thru Http Proxy
 			// Note that Request should think that it uses direct connection when SSL is enabled because
@@ -299,7 +299,7 @@ namespace RemObjects.InternetPack.Http
 				HttpClient.SetAuthorizationHeader(request.Header, "Proxy-Authorization", this.ProxySettings.UserName, this.ProxySettings.Password);
 			}
 
-			Connection lConnection = this.GetHttpConnection(lSslConnection, request.Url.Hostname, request.Url.Port, lHostname, lPort);
+			Connection lConnection = this.GetHttpConnection(lSslConnection, request.URL.Host, request.URL.Port, lHostname, lPort);
 
 			try
 			{

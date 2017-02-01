@@ -502,7 +502,8 @@ namespace RemObjects.InternetPack
 			}
 
 			// less (or same) number of bytes in buffer then we need?
-			fBuffer.BlockCopy(fBuffer, fBufferStart, buffer, offset, lSize);
+			//fBuffer.BlockCopy(fBuffer, fBufferStart, buffer, offset, lSize);
+			fBuffer.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
 			fBuffer = null;
 
 			// if more bytes werer requested, and bytes are available, get them

@@ -666,7 +666,6 @@ namespace RemObjects.InternetPack.Http
 		public HttpClientRequest()
 		{
 			this.RequestType = RequestType.Get;
-			this.Url = new UrlParser();
 		}
 
 		protected override Boolean Client
@@ -686,7 +685,7 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#region Properties
-		public UrlParser Url { get; set; }
+		public Url URL { get; set; }
 
 		public Boolean UseProxy { get; set; }
 
@@ -728,9 +727,9 @@ namespace RemObjects.InternetPack.Http
 			// If connection goes thru proxy we have to provide full target Url (it is used by proxy to forward request).
 			// Otherwise only path (fe '/bin') is needed
 			// Always providing full target Url will breack the backward compatibility
-			this.Header.SetRequestHeader("1.1", lRequestTypeString, this.UseProxy ? this.Url.ToString() : this.Url.PathAndParams);
+			this.Header.SetRequestHeader("1.1", lRequestTypeString, this.UseProxy ? URL.ToAbsoluteString() : URL.PathAndQueryString);
 
-			this.Header.SetHeaderValue("Host", this.Url.HostnameAndPort);
+			this.Header.SetHeaderValue("Host", URL.HostAndPort);
 		}
 		#endregion
 	}

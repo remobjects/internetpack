@@ -117,7 +117,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				// Now we hope the only thing left in the characterSet is numbers.
 				Int32 codepageNumber = Int32.Parse(charSetUpper, CultureInfo.InvariantCulture);
 
-				return Encoding.GetEncoding(codepageNumber);
+				return System.Text.Encoding.GetEncoding(codepageNumber);
 			}
 
 			// Some emails incorrectly specify the encoding to be utf8 - but it has to be utf-8

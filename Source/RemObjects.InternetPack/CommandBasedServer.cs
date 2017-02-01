@@ -190,7 +190,7 @@ namespace RemObjects.InternetPack.CommandBased
 					}
 
 					OnCommandHandler lCommandHandler;
-					lServer.Commands.TryGetValue(lArgs.Command, out lCommandHandler);
+					lCommandHandler = lServer.Commands[lArgs.Command];
 
 					if (lCommandHandler == null)
 					{
