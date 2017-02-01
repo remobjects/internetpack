@@ -45,7 +45,7 @@ namespace RemObjects.InternetPack
 			return lResult;
 		}
 
-		public override Int64 Seek(Int64 offset, SeekOrigin origin)
+		public override Int64 Seek(Int64 offset, System.IO.SeekOrigin origin)
 		{
 			throw new Exception(String.Format("{0} does not support Seek", this.GetType().FullName));
 		}

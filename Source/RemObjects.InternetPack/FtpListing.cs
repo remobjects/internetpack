@@ -24,7 +24,7 @@ namespace RemObjects.InternetPack.Ftp
 			this.User = "user";
 			this.Group = "group";
 			this.Size = 0;
-			this.FileDate = DateTime.MinValue;
+			this.FileDate = System.DateTime.MinValue;
 		}
 
 		public FtpListingItem(String item)
@@ -98,7 +98,7 @@ namespace RemObjects.InternetPack.Ftp
 
 		public static String FtpDateToString(DateTime date)
 		{
-			Boolean lShowYear = (DateTime.Now - date).Days > 180;
+			Boolean lShowYear = (DateTime.UtcNow - date).Days > 180;
 			String lResult;
 
 			switch (date.Month)
@@ -324,8 +324,8 @@ namespace RemObjects.InternetPack.Ftp
 			try
 			{
 				#region Parsing Date (Should be MM-DD-YY)
-				String[] lDate = dateString.Split(new Char[] { '-' });
-				if (lDate.Length == 3)
+				var lDate = dateString.Split("-");
+				if (lDate.Count == 3)
 				{
 					lMonth = Convert.ToInt32(lDate[0]);
 					lDay = Convert.ToInt32(lDate[1]);
@@ -333,7 +333,7 @@ namespace RemObjects.InternetPack.Ftp
 
 					if (lDate[2].Length == 2)
 					{
-						Int32 lCentury = (DateTime.Now.Year / 100) * 100;
+						Int32 lCentury = (DateTime.UtcNow.Year / 100) * 100;
 						if ((lYear + 50) > 100)
 							lCentury -= 100;
 						lYear = lCentury + lYear;
@@ -342,8 +342,8 @@ namespace RemObjects.InternetPack.Ftp
 				#endregion
 
 				#region Parsing Time (Should be HH:MMAM/PM)
-				String[] lTime = timeString.Split(new Char[] { ':' });
-				if (lTime.Length == 2)
+				var lTime = timeString.Split(":").MutableVersion();
+				if (lTime.Count == 2)
 				{
 					lHour = Convert.ToInt32(lTime[0]);
 					if (lTime[1].Length == 4)
@@ -433,16 +433,16 @@ namespace RemObjects.InternetPack.Ftp
 				}
 
 				lDay = Int32.Parse(day);
-				lYear = DateTime.Now.Year;
+				lYear = DateTime.UtcNow.Year;
 
-				if (yearOrTime.IndexOf(":", StringComparison.Ordinal) == -1) // this is a year, not a time
+				if (yearOrTime.IndexOf(":") == -1) // this is a year, not a time
 				{
 					lYear = Int32.Parse(yearOrTime);
 				}
 				else
 				{
 					// no year, either this year or last
-					Int32 lCurrentMonth = DateTime.Now.Month;
+					Int32 lCurrentMonth = DateTime.UtcNow.Month;
 					if (lCurrentMonth < lMonth)
 						lYear -= 1;
 
@@ -458,7 +458,7 @@ namespace RemObjects.InternetPack.Ftp
 				return new DateTime(0);
 			}
 
-			return new DateTime(lYear, lMonth, lDay, lHour, lMinute, lSecond, 999);
+			return new DateTime(lYear, lMonth, lDay, lHour, lMinute, lSecond);//, 999);
 		}
 	}
 
@@ -495,7 +495,7 @@ namespace RemObjects.InternetPack.Ftp
 				if (String.IsNullOrEmpty(lItem))
 					continue;
 
-				if (lItem.StartsWith("total", StringComparison.OrdinalIgnoreCase))
+				if (lItem.ToLower().StartsWith("total"))
 					continue;
 
 				try

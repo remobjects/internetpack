@@ -46,7 +46,7 @@ namespace RemObjects.InternetPack.Messages
 					if (lRemainder[0] == '"')
 					{
 						lRemainder = lRemainder.Substring(1);
-						lSemicolonPosition = lRemainder.IndexOf("\";", StringComparison.Ordinal);
+						lSemicolonPosition = lRemainder.IndexOf("\";");
 						if (lSemicolonPosition >= 0)
 						{
 							lPropertyValue = lRemainder.Substring(0, lSemicolonPosition - 1);
@@ -118,7 +118,7 @@ namespace RemObjects.InternetPack.Messages
 				else
 					lResult.Append("; ");
 
-				lResult.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "{0}={1}", key, this[key]);
+				lResult.AppendFormat(System.Globalization.CultureInfo.InvariantCulture.ToString(), "{0}={1}", key, this[key]);
 			}
 
 			if (fUnnamedValue != "")

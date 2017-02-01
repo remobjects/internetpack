@@ -83,9 +83,9 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			// Split by semicolon, but only if not inside quotes
 			List<String> splitted = Utility.SplitStringWithCharNotInsideQuotes(toDecode.Trim(), ';');
 
-			List<KeyValuePair<String, String>> collection = new List<KeyValuePair<String, String>>(splitted.Count);
+			List<KeyValuePair<String, String>> collection = new List<KeyValuePair<String, String>> withCapacity(splitted.Count);
 
-			foreach (String part in splitted)
+			foreach (System.String part in splitted)
 			{
 				// Empty strings should not be processed
 				if (part.Length == 0)
@@ -121,7 +121,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			if (pairs == null)
 				throw new ArgumentNullException("pairs");
 
-			List<KeyValuePair<String, String>> resultPairs = new List<KeyValuePair<String, String>>(pairs.Count);
+			List<KeyValuePair<String, String>> resultPairs = new List<KeyValuePair<String, String>> withCapacity(pairs.Count);
 
 			Int32 pairsCount = pairs.Count;
 			for (Int32 i = 0; i < pairsCount; i++)
@@ -131,7 +131,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				String value = Utility.RemoveQuotesIfAny(currentPair.Value);
 
 				// Is it a continuation parameter? (encoded or not)
-				if (key.EndsWith("*0", StringComparison.OrdinalIgnoreCase) || key.EndsWith("*0*", StringComparison.OrdinalIgnoreCase))
+				if (key.EndsWith("*0") || key.EndsWith("*0*"))
 				{
 					// This encoding will not be used if we get into the if which tells us
 					// that the whole continuation is not encoded
@@ -139,7 +139,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 					String encoding = "notEncoded - Value here is never used";
 
 					// Now lets find out if it is encoded too.
-					if (key.EndsWith("*0*", StringComparison.OrdinalIgnoreCase))
+					if (key.EndsWith("*0*"))
 					{
 						// It is encoded.
 
@@ -207,7 +207,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 					value = builder.ToString();
 					resultPairs.Add(new KeyValuePair<String, String>(key, value));
 				}
-				else if (key.EndsWith("*", StringComparison.OrdinalIgnoreCase))
+				else if (key.EndsWith("*"))
 				{
 					// This parameter is only encoded - it is not part of a continuation
 					// We need to change the key from "<key>*" to "<key>" and decode the value

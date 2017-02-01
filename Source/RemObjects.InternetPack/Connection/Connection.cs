@@ -770,7 +770,7 @@ namespace RemObjects.InternetPack
 			return Receive(buffer, offset, size, true);
 		}
 
-		public override Int64 Seek(Int64 offset, SeekOrigin origin)
+		public override Int64 Seek(Int64 offset, System.IO.SeekOrigin origin)
 		{
 			throw new Exception(String.Format("{0} does not support seeking", this.GetType().FullName));
 		}
@@ -825,7 +825,7 @@ namespace RemObjects.InternetPack
 			}
 			set
 			{
-				Seek(value, SeekOrigin.Begin);
+				Seek(value, System.IO.SeekOrigin.Begin);
 				fPosition = value;
 			}
 		}

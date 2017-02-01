@@ -32,7 +32,7 @@ namespace RemObjects.InternetPack.Http
 			}
 
 			String lPath = RootPath + request.Header.RequestPath.Replace('/', Path.DirectorySeparatorChar);
-			if (lPath.IndexOf("..", StringComparison.Ordinal) != -1)
+			if (lPath.IndexOf("..") > -1)
 			{
 				response.SendError(HttpStatusCode.Forbidden, String.Format("Bad Request: Path '{0}' contains '..' which is invalid.", lPath));
 				return;

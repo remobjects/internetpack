@@ -32,10 +32,10 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				String date = ExtractDate(inputDate);
 
 				// Convert the date String into a DateTime
-				DateTime dateTime = Convert.ToDateTime(date, CultureInfo.InvariantCulture);
+				DateTime dateTime = System.Convert.ToDateTime(date, CultureInfo.InvariantCulture);
 
 				// Convert the date into UTC
-				dateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
+				dateTime = new System.DateTime(dateTime.Ticks, DateTimeKind.Utc);
 
 				// Adjust according to the time zone
 				dateTime = AdjustTimezone(dateTime, inputDate);
@@ -56,11 +56,11 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		/// <param name="dateInput">The input date, in which the timezone can be found</param>
 		/// <returns>An date altered according to the timezone</returns>
 		/// <exception cref="ArgumentException">If no timezone was found in <paramref name="dateInput"/></exception>
-		private static DateTime AdjustTimezone(DateTime dateTime, String dateInput)
+		private static DateTime AdjustTimezone(System.DateTime dateTime, String dateInput)
 		{
 			// We know that the timezones are always in the last part of the date input
-			String[] parts = dateInput.Split(' ');
-			String lastPart = parts[parts.Length - 1];
+			var parts = dateInput.Split(" ");
+			String lastPart = parts[parts.Count - 1];
 
 			// Convert timezones in older formats to [+-]dddd format.
 			lastPart = Regex.Replace(lastPart, @"UT|GMT|EST|EDT|CST|CDT|MST|MDT|PST|PDT|[A-I]|[K-Y]|Z", MatchEvaluator);

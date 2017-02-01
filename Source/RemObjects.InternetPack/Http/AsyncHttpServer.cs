@@ -365,7 +365,7 @@ namespace RemObjects.InternetPack.Http
 					return;
 				}
 
-				Int32 lPosition = lHeaderLine.IndexOf(":", StringComparison.Ordinal);
+				Int32 lPosition = lHeaderLine.IndexOf(":");
 				if (lPosition == -1)
 				{
 					SendInvalidRequest();

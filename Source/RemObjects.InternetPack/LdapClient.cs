@@ -658,7 +658,7 @@ namespace RemObjects.InternetPack.Ldap
 			{
 				if (fBinary != value)
 				{
-					fValues.Clear();
+					fValues.RemoveAll();
 					fBinary = value;
 				}
 			}
@@ -765,7 +765,7 @@ namespace RemObjects.InternetPack.Ldap
 		}
 	}
 
-	public class LdapAttributes : List<LdapAttribute>
+	public class LdapAttributes : System.Collections.Generic.List<LdapAttribute>
 	{
 		public new LdapAttribute this[Int32 index]
 		{
@@ -784,7 +784,7 @@ namespace RemObjects.InternetPack.Ldap
 			get
 			{
 				for (Int32 i = 0; i < Count; i++)
-					if (String.Equals(key, base[i].Key, StringComparison.InvariantCultureIgnoreCase))
+					if (System.String.Equals(key, base[i].Key, StringComparison.InvariantCultureIgnoreCase))
 						return base[i];
 
 				return null;
@@ -840,7 +840,7 @@ namespace RemObjects.InternetPack.Ldap
 		private LdapAttributes fAttributes;
 	}
 
-	public class LdapSearchResults : List<LdapObject>
+	public class LdapSearchResults : System.Collections.Generic.List<LdapObject>
 	{
 		public LdapSearchResults()
 		{
@@ -1242,28 +1242,28 @@ namespace RemObjects.InternetPack.Ldap
 
 		private String StripGroupBase(String dn)
 		{
-			String[] lItems = dn.Trim().Split(',');
-			String[] lGroupDN = fGroupSearchBase.Trim().Split(',');
+			var lItems = dn.Trim().Split(',').MutableVersion();
+			var lGroupDN = fGroupSearchBase.Trim().Split(',').MutableVersion();
 
-			for (Int32 i = 0; i < lItems.Length; i++)
+			for (Int32 i = 0; i < lItems.Count; i++)
 				lItems[i] = lItems[i].Trim();
 
-			for (Int32 i = 0; i < lGroupDN.Length; i++)
+			for (Int32 i = 0; i < lGroupDN.Count; i++)
 				lGroupDN[i] = lGroupDN[i].Trim();
 
-			if (lGroupDN.Length >= lItems.Length)
+			if (lGroupDN.Count >= lItems.Count)
 				return dn; // makes no sense
 
-			for (Int32 i = lGroupDN.Length - 1; i >= 0; i--)
-				if (0 != String.Compare(lItems[lItems.Length - lGroupDN.Length + i], lGroupDN[i], StringComparison.InvariantCultureIgnoreCase))
+			for (Int32 i = lGroupDN.Count - 1; i >= 0; i--)
+				if (0 != System.String.Compare(lItems[lItems.Count - lGroupDN.Count + i], lGroupDN[i], StringComparison.InvariantCultureIgnoreCase))
 					return dn; // shouldn't happen
 
 			String lResult = null;
-			for (Int32 i = lItems.Length - lGroupDN.Length - 1; i >= 0; i--)
+			for (Int32 i = lItems.Count - lGroupDN.Count - 1; i >= 0; i--)
 			{
 				String lValue = lItems[i];
 
-				if (lValue.IndexOf("=", StringComparison.Ordinal) != -1)
+				if ((lValue as System.String).IndexOf("=", StringComparison.Ordinal) != -1)
 					lValue = lValue.Substring(lValue.IndexOf('=') + 1);
 
 				lResult = (lResult == null) ? lValue : lResult + "." + lValue;

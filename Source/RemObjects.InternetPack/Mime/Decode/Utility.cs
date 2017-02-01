@@ -46,9 +46,9 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 
 			String returner = text;
 
-			if (returner.StartsWith("\"", StringComparison.OrdinalIgnoreCase))
+			if (returner.StartsWith("\""))
 				returner = returner.Substring(1);
-			if (returner.EndsWith("\"", StringComparison.OrdinalIgnoreCase))
+			if (returner.EndsWith("\""))
 				returner = returner.Substring(0, returner.Length - 1);
 
 			return returner;

@@ -479,7 +479,7 @@ namespace RemObjects.InternetPack.Http
 			: base(connection, headers)
 		{
 			String lPath = Header.RequestPath;
-			Int32 lStart = lPath.IndexOf("?", StringComparison.Ordinal);
+			Int32 lStart = lPath.IndexOf("?");
 
 			if (lStart > -1)
 			{
@@ -845,7 +845,7 @@ namespace RemObjects.InternetPack.Http
 			return lResult;
 		}
 
-		public override Int64 Seek(Int64 offset, SeekOrigin origin)
+		public override Int64 Seek(Int64 offset, System.IO.SeekOrigin origin)
 		{
 			throw new Exception(String.Format("{0} does not support seeking", this.GetType().FullName));
 		}
@@ -900,7 +900,7 @@ namespace RemObjects.InternetPack.Http
 			}
 			set
 			{
-				Seek(value, SeekOrigin.Begin);
+				Seek(value, System.IO.SeekOrigin.Begin);
 				fPosition = value;
 			}
 		}
@@ -937,19 +937,19 @@ namespace RemObjects.InternetPack.Http
 				return;
 			}
 
-			String[] lParams = fQuery.Split(new char[] { '&' });
-			for (Int32 i = 0; i < lParams.Length; i++)
+			var lParams = fQuery.Split("&");
+			foreach (string lParam in lParams)
 			{
-				Int32 lEqual = lParams[i].IndexOf('=');
+				Int32 lEqual = lParam.IndexOf('=');
 				if (lEqual > -1)
 				{
-					String lName = lParams[i].Substring(0, lEqual).Trim().ToLower();
-					String lValue = lParams[i].Substring(lEqual + 1);
+					String lName = lParam.Substring(0, lEqual).Trim().ToLower();
+					String lValue = lParam.Substring(lEqual + 1);
 					base[lName] = ContainsKey(lName) ? this[lName] + "," + lValue : lValue;
 				}
 				else
 				{
-					this.Add(lParams[i], null);
+					this.Add(lParam, null);
 				}
 			}
 		}

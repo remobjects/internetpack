@@ -17,7 +17,7 @@ namespace RemObjects.InternetPack.Email
 		public Pop3Client()
 		{
 			this.Port = 110;
-			this.fMessages = new List<MailStatus>(32);
+			this.fMessages = new List<MailStatus> withCapacity(32);
 		}
 
 		#region Private fields
@@ -99,7 +99,7 @@ namespace RemObjects.InternetPack.Email
 
 		public void ClearMessages()
 		{
-			this.fMessages.Clear();
+			this.fMessages.RemoveAll();
 		}
 
 		public MailMessage GetHeaders(Int32 messageIndex, Int32 messageNumber)
@@ -187,13 +187,13 @@ namespace RemObjects.InternetPack.Email
 
 		public void Stat()
 		{
-			this.fMessages.Clear();
+			this.fMessages.RemoveAll();
 
 			String lResponse = SendAndReceive("STAT");
 			if (lResponse.StartsWith("-ERR"))
 				throw new Exception(String.Format("Could not retrieve mailbox status: {0}", lResponse));
 
-			String[] lResponses = lResponse.Split(new Char[] { ' ' });
+			var lResponses = lResponse.Split(" ");
 			Int32 lCount = Int32.Parse(lResponses[1]);
 
 			for (Int32 i = 0; i < lCount; i++)

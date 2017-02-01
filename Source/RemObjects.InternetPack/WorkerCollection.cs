@@ -45,24 +45,23 @@ namespace RemObjects.InternetPack
 
 		public void Close()
 		{
-#if FULLFRAMEWORK
+			#if FULLFRAMEWORK
 			Object[] lWaitArray;
-#endif
+			#endif
 			lock (fSyncRoot)
 			{
 				foreach (IWorker worker in fWorkers)
 					worker.DataConnection.Close();
 
-#if FULLFRAMEWORK
-				lWaitArray = new Object[Count];
-				this.CopyTo(lWaitArray);
-#endif
+				#if FULLFRAMEWORK
+				lWaitArray = fWorkers.ToArray();
+				#endif
 			}
 
-#if FULLFRAMEWORK
+			#if FULLFRAMEWORK
 			foreach (IWorker worker in lWaitArray)
 				worker.Thread.Join();
-#endif
+			#endif
 		}
 	}
 }

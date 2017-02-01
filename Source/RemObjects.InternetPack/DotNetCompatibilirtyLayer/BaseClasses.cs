@@ -36,4 +36,8 @@
 	}
 	public class ObjectDisposedException : Exception {}
 	#endif
+
+	#if ECHOES
+	public class Monitor : Object {}
+	#endif
 }

@@ -19,7 +19,7 @@ namespace RemObjects.InternetPack.Http
 
 		public HttpHeader(String line)
 		{
-			Int32 lPos = line.IndexOf(":", StringComparison.Ordinal);
+			Int32 lPos = line.IndexOf(":");
 			if (lPos == -1)
 				throw new HttpHeaderException("Invalid HTTP Header Line \"" + line + "\"");
 
@@ -77,7 +77,7 @@ namespace RemObjects.InternetPack.Http
 			}
 			set
 			{
-				this.fValues.Clear();
+				this.fValues.RemoveAll();
 				this.fValues.Add(value);
 			}
 		}
@@ -158,9 +158,9 @@ namespace RemObjects.InternetPack.Http
 				throw new HttpHeaderException("HTTP Header is empty");
 
 			String lHeaderLine = this.FirstHeader;
-			String[] lRequestHeaderValues = lHeaderLine.Split(' ');
+			var lRequestHeaderValues = lHeaderLine.Split(" ");
 
-			if (lRequestHeaderValues.Length < 3)
+			if (lRequestHeaderValues.Count < 3)
 				throw new HttpHeaderException("Invalid HTTP Header Line \"" + lHeaderLine + "\"");
 
 			if (lHeaderLine.StartsWith("HTTP/"))
@@ -306,7 +306,7 @@ namespace RemObjects.InternetPack.Http
 			if (lStart == null)
 				return false;
 
-			if (String.Equals(lStart, String.Empty, StringComparison.Ordinal))
+			if (length(lStart) == 0)
 				throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Invalid HTTP Request, 'POST', 'MERGE', 'GET', 'DELETE', 'PUT' or 'HEAD' header expected.");
 
 			String lHeaderLine;
@@ -322,7 +322,7 @@ namespace RemObjects.InternetPack.Http
 					}
 					else
 					{
-						Int32 lPos = lHeaderLine.IndexOf(":", StringComparison.Ordinal);
+						Int32 lPos = lHeaderLine.IndexOf(":");
 						if (lPos == -1)
 						{
 							throw new HttpHeaderException("Invalid HTTP Header Line \"" + lHeaderLine + "\"");
@@ -434,7 +434,7 @@ namespace RemObjects.InternetPack.Http
 
 			foreach (HttpHeader header in this)
 			{
-				lResult.Append(header);
+				lResult.Append(header.ToString());
 				lResult.Append("\r\n");
 			}
 

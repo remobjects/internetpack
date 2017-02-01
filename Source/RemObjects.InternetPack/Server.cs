@@ -30,7 +30,7 @@ namespace RemObjects.InternetPack
 			}
 			catch (ArgumentException)
 			{
-				lIsIPv6Supported = (Environment.OSVersion.Platform == PlatformID.Unix); // Mono reports Unix platform for MacOSX
+				lIsIPv6Supported = (Environment.OS != OperatingSystem.Windows); // Mono reports Unix platform for MacOSX
 			}
 
 			if (lIsIPv6Supported)

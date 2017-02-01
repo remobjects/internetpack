@@ -9,13 +9,13 @@ namespace RemObjects.InternetPack
 	{
 		private readonly Monitor fSyncRoot = new Monitor();
 		private Timer fCleanupTimer;
-		private readonly Hashtable fCache;
+		private readonly Dictionary<string,ConnectionQueue> fCache;
 		private readonly Binding fBindingV4;
 		private readonly Binding fBindingV6;
 
 		public ConnectionPool(Binding bindingV4, Binding bindingV6)
 		{
-			this.fCache = new Hashtable();
+			this.fCache = new Dictionary<string,ConnectionQueue>();
 			this.fBindingV4 = bindingV4;
 			this.fBindingV6 = bindingV6;
 			this.fCleanupTimer = new Timer(CleanupCallback, null, 30000, 30000);
@@ -84,9 +84,9 @@ namespace RemObjects.InternetPack
 			DateTime ExpireTime = DateTime.UtcNow.AddSeconds(-this.Timeout);
 			lock (fSyncRoot)
 			{
-				foreach (DictionaryEntry entry in this.fCache)
+				foreach (string key in this.fCache.Keys)
 				{
-					ConnectionQueue lQueue = (ConnectionQueue)entry.Value;
+					ConnectionQueue lQueue = fCache[key];
 					Boolean lModified = false;
 
 					for (Int32 i = lQueue.UnderlyingArray.Length - 1; i >= 0; i--)
@@ -196,19 +196,19 @@ namespace RemObjects.InternetPack
 		{
 			lock (fSyncRoot)
 			{
-				foreach (DictionaryEntry entry in this.fCache)
+				foreach (string key in fCache.Keys)
 				{
-					while (((ConnectionQueue)entry.Value).Count > 0)
+					while (fCache[key].Count > 0)
 					{
 						try
 						{
-							((ConnectionQueue)entry.Value).Dequeue().Dispose();
+							fCache[key].Dequeue().Dispose();
 						}
 						catch (System.Net.Sockets.SocketException) // ignore socket errors
 						{
 						}
 					}
-					this.fCache.Clear();
+					this.fCache.RemoveAll();
 				}
 			}
 

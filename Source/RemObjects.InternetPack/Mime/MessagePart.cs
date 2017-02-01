@@ -237,8 +237,8 @@ namespace RemObjects.InternetPack.Messages.Mime
 		{
 			get
 			{
-				String mediaType = ContentType.MediaType;
-				return mediaType.StartsWith("text/", StringComparison.OrdinalIgnoreCase) || mediaType.Equals("message/rfc822", StringComparison.OrdinalIgnoreCase);
+				String mediaType = ContentType.MediaType.ToLower();
+				return mediaType.StartsWith("text/") || mediaType.Equals("message/rfc822");
 			}
 		}
 
@@ -420,7 +420,7 @@ namespace RemObjects.InternetPack.Messages.Mime
 			List<Byte[]> bodyParts = GetMultiPartParts(rawBody, multipartBoundary);
 
 			// Initialize the MessageParts property, with room to as many bodies as we have found
-			MessageParts = new List<MessagePart>(bodyParts.Count);
+			MessageParts = new List<MessagePart> withCapacity(bodyParts.Count);
 
 			// Now parse each Byte array as a message body and add it the the MessageParts property
 			foreach (Byte[] bodyPart in bodyParts)
@@ -540,10 +540,10 @@ namespace RemObjects.InternetPack.Messages.Mime
 
 				// The MultiPart boundary is the MultiPartBoundary with "--" in front of it
 				// which is to be at the very start of a line
-				if (line.StartsWith("--" + multiPartBoundary, StringComparison.Ordinal))
+				if ((line as System.String).StartsWith("--" + multiPartBoundary, StringComparison.Ordinal))
 				{
 					// Check if the found boundary was also the last one
-					lastMultipartBoundaryFound = line.StartsWith("--" + multiPartBoundary + "--", StringComparison.OrdinalIgnoreCase);
+					lastMultipartBoundaryFound = (line as System.String).StartsWith("--" + multiPartBoundary + "--", StringComparison.OrdinalIgnoreCase);
 					return currentPos;
 				}
 			}

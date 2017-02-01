@@ -5,9 +5,9 @@
 
 namespace RemObjects.InternetPack.Http
 {
-#if FULLFRAMEWORK
+	#if FULLFRAMEWORK
 	[TypeConverter(typeof(ExpandableObjectConverter))]
-#endif
+	#endif
 	public sealed class HttpProxySettings
 	{
 		private const String DEFAULT_HOSTNAME = @"192.168.1.1";

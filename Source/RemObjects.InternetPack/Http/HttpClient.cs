@@ -156,7 +156,7 @@ namespace RemObjects.InternetPack.Http
 			return Get(url, null);
 		}
 
-		private static System.Text.Encoding GetEncodingFromContentType(String contentType)
+		private static System.Text.Encoding GetEncodingFromContentType(System.String contentType)
 		{
 			Int32 lStartPos = contentType.IndexOf(HttpClient.CHARSET_KEY, StringComparison.Ordinal);
 			if (lStartPos == -1)
@@ -174,16 +174,16 @@ namespace RemObjects.InternetPack.Http
 
 			lCharsetName = lCharsetName.ToLower(CultureInfo.InvariantCulture);
 
-			if (String.Equals(lCharsetName, "utf-7", StringComparison.Ordinal))
+			if (System.String.Equals(lCharsetName, "utf-7", StringComparison.Ordinal))
 				return System.Text.Encoding.UTF7;
 
-			if (String.Equals(lCharsetName, "utf-8", StringComparison.Ordinal))
+			if (System.String.Equals(lCharsetName, "utf-8", StringComparison.Ordinal))
 				return System.Text.Encoding.UTF8;
 
-			if (String.Equals(lCharsetName, "unicode", StringComparison.Ordinal))
+			if (System.String.Equals(lCharsetName, "unicode", StringComparison.Ordinal))
 				return System.Text.Encoding.Unicode;
 
-			if (String.Equals(lCharsetName, "unicodeFFFE", StringComparison.Ordinal))
+			if (System.String.Equals(lCharsetName, "unicodeFFFE", StringComparison.Ordinal))
 				return System.Text.Encoding.BigEndianUnicode;
 
 			return System.Text.Encoding.ASCII;
@@ -285,7 +285,7 @@ namespace RemObjects.InternetPack.Http
 
 			String lHostname = request.Url.Hostname;
 			Int32 lPort = request.Url.Port;
-			Boolean lSslConnection = String.Equals(request.Url.Protocol, "https", StringComparison.OrdinalIgnoreCase);
+			Boolean lSslConnection = System.String.Equals(request.Url.Protocol, "https", StringComparison.OrdinalIgnoreCase);
 
 			// Settings for connection thru Http Proxy
 			// Note that Request should think that it uses direct connection when SSL is enabled because

@@ -12,7 +12,7 @@ namespace RemObjects.InternetPack
 		public SslConnectionFactory()
 		{
 			this.fLockRoot = new Object();
-			this.UseMono = Environment.OSVersion.Platform != PlatformID.Win32NT;
+			this.UseMono = Environment.OS != OperatingSystem.Windows;
 			this.UseTls = true;
 		}
 

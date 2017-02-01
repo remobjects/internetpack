@@ -18,7 +18,7 @@ namespace RemObjects.InternetPack
 
 			public SaslString()
 			{
-				this.fValues = new Dictionary<String, String>(16, StringComparer.OrdinalIgnoreCase);
+				this.fValues = new Dictionary<String, String>();//(16, StringComparer.OrdinalIgnoreCase);
 			}
 
 			public SaslString(String source)
@@ -295,29 +295,30 @@ namespace RemObjects.InternetPack
 				StringBuilder lResult = new StringBuilder();
 				Boolean lFirst = true;
 
-				foreach (KeyValuePair<String, String> entry in fValues)
+				foreach (string key in fValues.Keys)
 				{
 					if (lFirst)
 						lFirst = false;
 					else
 						lResult.Append(',');
 
-					if (entry.Key == null)
+					if (key == null)
 						continue;
 
-					lResult.Append(entry.Key);
+					lResult.Append(key);
 					lResult.Append("=");
-					if (entry.Value != null)
+					var val = fValues[key];
+					if (val != null)
 					{
-						if (entry.Value.IndexOfAny(new char[] { ',', '"', '\'' }) != -1)
+						if (val.IndexOfAny(new char[] { ',', '"', '\'' }) != -1)
 						{
 							lResult.Append('"');
-							lResult.Append(entry.Value.Replace("\"", "\"\""));
+							lResult.Append(val.Replace("\"", "\"\""));
 							lResult.Append('"');
 						}
 						else
 						{
-							lResult.Append(entry.Value);
+							lResult.Append(val);
 						}
 					}
 				}

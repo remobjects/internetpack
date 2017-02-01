@@ -1009,7 +1009,7 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			this.TypeCodeTag = code;
 			if (args != null)
-				this.fItems.AddRange(args);
+				this.fItems.Add(args);
 		}
 
 		public IList<BerValue> Items
@@ -1065,7 +1065,7 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			this.TypeCodeTag = code;
 			Byte[] lData = reader.ReadBytes(length);
-			this.fItems.Clear();
+			this.fItems.RemoveAll();
 
 			BinaryReader lReader = new BinaryReader(new MemoryStream(lData, false));
 			while (lReader.PeekChar() >= 0)
@@ -1082,7 +1082,7 @@ namespace RemObjects.InternetPack.Ldap
 				if (i != 0)
 					lResult.Append(", ");
 
-				lResult.Append(this.Items[i]);
+				lResult.Append(this.Items[i].ToString());
 			}
 			lResult.Append("}");
 

@@ -26,7 +26,7 @@ namespace RemObjects.InternetPack.Messages
 
 	public class MessageAttachments
 	{
-		private readonly IList<MessageAttachment> fItems = new List<MessageAttachment>(8);
+		private readonly IList<MessageAttachment> fItems = new List<MessageAttachment> withCapacity(8);
 
 		public Int32 Count
 		{

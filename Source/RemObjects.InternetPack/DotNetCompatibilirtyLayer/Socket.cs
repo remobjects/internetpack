@@ -1,5 +1,6 @@
 ﻿namespace RemObjects.InternetPack
 {
+	#if !ECHOES
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
 	public class Socket : Object, IDisposable
 	{
@@ -165,7 +166,7 @@
 		private static Int32 Send_internal(IntPtr sock, Byte[] buf, Int32 offset, Int32 count, SocketFlags flags, out Int32 error);
 		internal Int32 Send_nochecks(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags, out SocketError error);
 		private static void Shutdown_internal(IntPtr socket, SocketShutdown how, out Int32 error);*/
-		public void Shutdown(SocketShutdown how);
+		public void Shutdown(SocketShutdown how) {}
 		/*private static void SetSocketOption_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, Object obj_val, Byte[] byte_val, Int32 int_val, out Int32 error);
 		private void ThrowIfUpd();
 		private IAsyncResult BeginMConnect(Socket.SocketAsyncResult req);
@@ -213,4 +214,5 @@
 		//public SocketError SocketErrorCode { get; set; }
 		//public override String Message { get; set; }
 	}
+	#endif
 }

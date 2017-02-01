@@ -226,7 +226,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 			// Remove whitespace in front and behind since
 			// whitespace is allowed there
 			// Remove the last > and the first <
-			return headerValue.Trim().TrimEnd('>').TrimStart('<');
+			return headerValue.Trim().TrimEnd(new [] {'>'}).TrimStart(new [] {'<'});
 		}
 
 		/// <summary>
@@ -241,7 +241,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 			// Split the String by >
 			// We cannot use ' ' (space) here since this is a possible value:
 			// <test@test.com><test2@test.com>
-			String[] ids = headerValue.Trim().Split(new char[] { '>' }, StringSplitOptions.RemoveEmptyEntries);
+			String[] ids = (headerValue.Trim() as System.String).Split(new char[] { '>' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (String id in ids)
 			{
 				returner.Add(ParseId(id));

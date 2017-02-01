@@ -9,12 +9,12 @@
     <AssemblyName>RemObjects.InternetPack</AssemblyName>
     <OutputType>Library</OutputType>
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AllowGlobals>False</AllowGlobals>
     <AllowLegacyCreate>False</AllowLegacyCreate>
     <AllowLegacyOutParams>False</AllowLegacyOutParams>
     <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
-    <DefaultUses>System;System.Collections;System.Collections.Generic;System.Collections.Specialized;System.ComponentModel;System.Globalization;System.IO;System.Net;System.Net.Mail;System.Net.Mime;System.Net.Security;System.Net.Sockets;System.Security;System.Security.Cryptography;System.Security.Cryptography.X509Certificates;System.Text;System.Text.RegularExpressions;System.Threading</DefaultUses>
+    <DefaultUses>System;System.Collections;System.Collections.Generic;System.Collections.Specialized;System.ComponentModel;System.Globalization;System.IO;System.Net;System.Net.Mail;System.Net.Mime;System.Net.Security;System.Net.Sockets;System.Security;System.Security.Cryptography;System.Security.Cryptography.X509Certificates;System.Text;System.Text.RegularExpressions;System.Threading;RemObjects.Elements.RTL;</DefaultUses>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <OutputPath>..\..\bin\</OutputPath>
@@ -72,6 +72,10 @@
     <EmbeddedResource Include="Glyphs\Pop3Client.bmp" />
     <EmbeddedResource Include="Glyphs\Pop3Server.bmp" />
     <EmbeddedResource Include="Glyphs\SmtpServer.bmp" />
+    <Reference Include="Elements">
+      <Private>True</Private>
+      <HintPath>..\..\..\..\RTL2\Source\bin\Debug\Elements.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Echoes.targets" />
   <PropertyGroup>

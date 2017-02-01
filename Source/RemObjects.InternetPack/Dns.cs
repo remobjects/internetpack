@@ -65,8 +65,8 @@ namespace RemObjects.InternetPack.Dns
 				}
 			}
 
-			String[] lFields = hostname.Split('.');
-			if (lFields.Length != 4)
+			var lFields = hostname.Split('.');
+			if (lFields.Count != 4)
 			{
 				return null;
 			}

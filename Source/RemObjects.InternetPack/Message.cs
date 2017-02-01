@@ -159,11 +159,11 @@ namespace RemObjects.InternetPack.Messages
 
 			try
 			{
-				return DateTime.Parse(lDate, new System.Globalization.DateTimeFormatInfo(), System.Globalization.DateTimeStyles.AllowWhiteSpaces);
+				return System.DateTime.Parse(lDate, new System.Globalization.DateTimeFormatInfo(), System.Globalization.DateTimeStyles.AllowWhiteSpaces);
 			}
 			catch
 			{
-				return DateTime.ParseExact(lDate, "ddd, d MMM yyyy HH':'mm':'ss zzz", new System.Globalization.DateTimeFormatInfo(), System.Globalization.DateTimeStyles.AllowWhiteSpaces);
+				return System.DateTime.ParseExact(lDate, "ddd, d MMM yyyy HH':'mm':'ss zzz", new System.Globalization.DateTimeFormatInfo(), System.Globalization.DateTimeStyles.AllowWhiteSpaces);
 			}
 		}
 
@@ -347,10 +347,9 @@ namespace RemObjects.InternetPack.Messages
 
 		private void SetAddresses(MessageAddresses address, String names)
 		{
-			String[] lAddresses = names.Split(';');
-
-			for (Int32 i = 0; i < lAddresses.Length; i++)
-				address.Add(lAddresses[i].Trim());
+			var lAddresses = names?.Split(";");
+			foreach (string a in lAddresses)
+				address.Add(a.Trim());
 		}
 
 		public void DecodeMessage(MailMessage destination, Stream source)
@@ -366,7 +365,7 @@ namespace RemObjects.InternetPack.Messages
 			}
 			else
 			{
-				Int32 lHeaderEnd = lMessage.IndexOf(CRLF + CRLF, StringComparison.Ordinal);
+				Int32 lHeaderEnd = lMessage.IndexOf(CRLF + CRLF);
 				if (lHeaderEnd < 0)
 				{
 					throw (new Exception("Invalid email message"));

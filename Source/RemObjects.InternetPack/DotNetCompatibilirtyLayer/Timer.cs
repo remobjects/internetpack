@@ -1,5 +1,6 @@
-﻿namespace RemObjects.InternetPack.Shared.Base
+﻿namespace RemObjects.InternetPack
 {
+	#if !ECHOES
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/mscorlib.dll
 	//[ComVisibleAttribute(true)]
 	public static abstract /*final*/ class Timeout : Object
@@ -34,6 +35,7 @@
 		public Boolean Change(TimeSpan dueTime, TimeSpan period);
 		public Boolean Change(Int32 dueTime, Int32 period);
 		public Boolean Dispose(WaitHandle notifyObject);*/
-		public new void Dispose();
+		public new void Dispose() {}
 	}
+	#endif
 }

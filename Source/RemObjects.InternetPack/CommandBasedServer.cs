@@ -154,8 +154,6 @@ namespace RemObjects.InternetPack.CommandBased
 
 	class CommandBasedWorker : Worker
 	{
-		private readonly Char[] SPACE = { ' ' };
-
 		protected override void DoWork()
 		{
 			CommandBasedServer lServer = (CommandBasedServer)Owner;
@@ -188,7 +186,7 @@ namespace RemObjects.InternetPack.CommandBased
 					{
 						lArgs.Command = lCmdLine.Substring(0, tempidx).ToUpper();
 						lArgs.AllParameters = lCmdLine.Substring(tempidx + 1).Trim();
-						lArgs.Parameters = lArgs.AllParameters.Split(SPACE);
+						lArgs.Parameters = lArgs.AllParameters.Split(" ").ToArray();
 					}
 
 					OnCommandHandler lCommandHandler;

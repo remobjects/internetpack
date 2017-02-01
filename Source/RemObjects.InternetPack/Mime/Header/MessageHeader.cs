@@ -652,7 +652,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 				// The field are intended to have only human-readable content
 				// with information about the message
 				case "KEYWORDS":
-					String[] keywordsTemp = headerValue.Split(',');
+					var keywordsTemp = headerValue.Split(",");
 					foreach (String keyword in keywordsTemp)
 					{
 						// Remove the quotes if there is any
@@ -789,13 +789,9 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 
 		public void Store(StringBuilder sb)
 		{
-			foreach (KeyValuePair<String, String> aHeader in fAllHeaders)
-			{
-				if (!aHeader.Key.StartsWith("_"))
-				{
-					sb.Append(String.Format("{0}:{1}\r\n", aHeader.Key, aHeader.Value));
-				}
-			}
+			foreach (string key in fAllHeaders.Keys)
+				if (!key.StartsWith("_"))
+					sb.Append(String.Format("{0}:{1}\r\n", key, fAllHeaders[key]));
 		}
 	}
 

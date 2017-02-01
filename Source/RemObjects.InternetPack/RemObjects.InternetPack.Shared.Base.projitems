@@ -17,7 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Client.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dns.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ConnectionPool.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Connection\ConnectionPool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\BaseClasses.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpServer.cs" />

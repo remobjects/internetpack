@@ -63,7 +63,7 @@ namespace RemObjects.InternetPack.Messages
 		}
 	}
 
-	public class MessageAddresses : List<MessageAddress>
+	public class MessageAddresses : System.Collections.Generic.List<MessageAddress>
 	{
 		public MessageAddress Add(String name, String address)
 		{
@@ -102,7 +102,7 @@ namespace RemObjects.InternetPack.Messages
 					lIsFirstItem = false;
 				}
 
-				lResult.Append(address);
+				lResult.Append(address.ToString());
 			}
 
 			return lResult.ToString();

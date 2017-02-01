@@ -134,7 +134,7 @@ namespace RemObjects.InternetPack.Http
 
 		public void Parse(String url)
 		{
-			Int32 lProtocolPosition = url.IndexOf("://", StringComparison.Ordinal);
+			Int32 lProtocolPosition = url.IndexOf("://");
 			if (lProtocolPosition >= 0)
 			{
 				this.Protocol = url.Substring(0, lProtocolPosition);
