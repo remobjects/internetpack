@@ -27,6 +27,7 @@ namespace RemObjects.InternetPack.Dns
 			return lAddresses[0];
 		}
 
+		#if !NEEDS_PORTING
 		public static IPAddress ResolveRandom(String hostname)
 		{
 			IPAddress[] lAddresses = ResolveAll(hostname);
@@ -38,6 +39,7 @@ namespace RemObjects.InternetPack.Dns
 			Random lRandom = new Random();
 			return lAddresses[lRandom.Next(lAddresses.Length)];
 		}
+		#endif
 
 		public static IPAddress[] ResolveAll(String hostname)
 		{
@@ -47,8 +49,10 @@ namespace RemObjects.InternetPack.Dns
 				return new IPAddress[] { lAddress };
 			}
 
+			#if !NEEDS_PORTING
 			IPHostEntry lEntry = System.Net.Dns.GetHostEntry(hostname);
 			return lEntry.AddressList;
+			#endif
 		}
 
 		public static IPAddress TryStringAsIPAddress(String hostname)
@@ -96,11 +100,12 @@ namespace RemObjects.InternetPack.Dns
 			}
 		}
 
+		#if !NEEDS_PORTING
 		public static String ReverseResolve(IPAddress address)
 		{
 			IPHostEntry lEntry = System.Net.Dns.GetHostEntry(address);
-
 			return lEntry.HostName;
 		}
+		#endif
 	}
 }

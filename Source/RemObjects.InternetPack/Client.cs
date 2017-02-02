@@ -113,6 +113,7 @@ namespace RemObjects.InternetPack
 		}
 		private IPAddress fHostAddress;
 
+		#if ECHOES
 		[Browsable(false)]
 		public Type ConnectionClass
 		{
@@ -130,6 +131,7 @@ namespace RemObjects.InternetPack
 			}
 		}
 		private Type fConnectionClass;
+		#endif
 
 		[Browsable(false)]
 		public IConnectionFactory ConnectionFactory { get; set; }
@@ -255,12 +257,13 @@ namespace RemObjects.InternetPack
 				return this.ConnectionFactory.CreateClientConnection(binding);
 			}
 
+			#if ECHOES
 			if (this.fConnectionClass != null)
 			{
 				return (Connection)Activator.CreateInstance(this.fConnectionClass);
 			}
-
-#if FULLFRAMEWORK
+			#endif
+			#if FULLFRAMEWORK
 			if (this.SslOptions.Enabled)
 			{
 				Connection lSslConnection = this.SslOptions.CreateClientConnection(binding);
@@ -268,7 +271,7 @@ namespace RemObjects.InternetPack
 
 				return lSslConnection;
 			}
-#endif
+			#endif
 			Connection lConnection = new Connection(binding);
 			lConnection.EnableNagle = this.EnableNagle;
 

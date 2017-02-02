@@ -71,7 +71,6 @@
       <DesignableClassName>SmtpClient</DesignableClassName>
     </Compile>
     <Compile Include="UrlParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\DnsResolveException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\FtpException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpHeaderException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpRequestInvalidException.cs" />

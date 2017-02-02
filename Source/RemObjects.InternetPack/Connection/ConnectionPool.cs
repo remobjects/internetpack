@@ -61,6 +61,7 @@ namespace RemObjects.InternetPack
 
 		public IConnectionFactory ConnectionFactory { get; set; }
 
+		#if ECHOES
 		public Type ConnectionClass
 		{
 			get
@@ -78,6 +79,7 @@ namespace RemObjects.InternetPack
 			}
 		}
 		private Type fConnectionClass;
+		#endif
 
 		private void CleanupCallback(Object state)
 		{
@@ -146,8 +148,10 @@ namespace RemObjects.InternetPack
 			Connection lConnection;
 			if (this.ConnectionFactory != null)
 				lConnection = this.ConnectionFactory.CreateClientConnection(lBinding);
+			#if ECHOES
 			else if (fConnectionClass != null)
 				lConnection = (Connection)Activator.CreateInstance(this.fConnectionClass);
+			#endif
 			else
 				lConnection = new Connection(lBinding);
 
@@ -204,7 +208,7 @@ namespace RemObjects.InternetPack
 						{
 							fCache[key].Dequeue().Dispose();
 						}
-						catch (System.Net.Sockets.SocketException) // ignore socket errors
+						catch (SocketException) // ignore socket errors
 						{
 						}
 					}

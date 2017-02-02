@@ -15,11 +15,12 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
     <DefaultUses>RemObjects.Elements.RTL</DefaultUses>
+    <KnownConditionalDefines>DEBUG;NEEDS_PORTING;TRACE</KnownConditionalDefines>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <Optimize>False</Optimize>
     <OutputPath>.\bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;</DefineConstants>
+    <DefineConstants>DEBUG;NEEDS_PORTING;TRACE</DefineConstants>
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <CaptureConsoleOutput>False</CaptureConsoleOutput>
     <StartMode>Project</StartMode>
@@ -48,9 +49,11 @@
   <ItemGroup>
     <Reference Include="gc" />
     <Reference Include="rtl" />
-    <Reference Include="Elements.fx" />
     <Reference Include="Island">
       <HintPath>..\..\..\..\IslandRTL\Source\Bin\Debug\Windows\x86_64\Island.fx</HintPath>
+    </Reference>
+    <Reference Include="Elements">
+      <HintPath>..\..\..\..\RTL2\Source\bin\Debug\Windows\x86_64\Elements.fx</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Island.Windows.targets" />

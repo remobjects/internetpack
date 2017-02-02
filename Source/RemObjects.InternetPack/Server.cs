@@ -201,6 +201,7 @@ namespace RemObjects.InternetPack
 			return (Port != DefaultPort);
 		}
 
+		#if ECHOES
 		[Browsable(false), DefaultValue(null)]
 		public Type ConnectionClass
 		{
@@ -217,6 +218,7 @@ namespace RemObjects.InternetPack
 			}
 		}
 		private Type fConnectionClass;
+		#endif
 
 		[Browsable(false), DefaultValue(null)]
 		public IConnectionFactory ConnectionFactory
@@ -468,7 +470,11 @@ namespace RemObjects.InternetPack
 
 					if (lSocket != null)
 					{
+						#if !NEEDS_PORTING
 						Object lObject = Activator.CreateInstance(WorkerClass);
+						#else
+						Object lObject = null;
+						#endif
 						IWorker lWorker = lObject as IWorker;
 						lWorker.Owner = Owner;
 
@@ -476,28 +482,32 @@ namespace RemObjects.InternetPack
 						{
 							lWorker.DataConnection = Owner.ConnectionFactory.CreateServerConnection(lSocket);
 						}
+						#if ECHOES
 						else if (Owner.ConnectionClass != null)
 						{
 							lWorker.DataConnection = (Connection)Activator.CreateInstance(Owner.ConnectionClass);
 							lWorker.DataConnection.Init(lSocket);
 						}
-#if FULLFRAMEWORK
+						#endif
+						#if FULLFRAMEWORK
 						else if (Owner.SslOptions.Enabled)
 						{
 							lWorker.DataConnection = Owner.SslOptions.CreateServerConnection(lSocket);
 						}
-#endif
+						#endif
 						else
 						{
 							lWorker.DataConnection = new Connection(lSocket);
 						}
-#if FULLFRAMEWORK
+
+						#if FULLFRAMEWORK
 						if (Owner.TimeoutEnabled)
 						{
 							lWorker.DataConnection.TimeoutEnabled = true;
 							lWorker.DataConnection.Timeout = Owner.Timeout;
 						}
-#endif
+						#endif
+
 						if (Owner.MaxLineLengthEnabled)
 						{
 							lWorker.DataConnection.MaxLineLengthEnabled = true;
@@ -514,13 +524,12 @@ namespace RemObjects.InternetPack
 							continue;
 						}
 
-						lWorker.Thread = new Thread(lWorker.Work);
+						lWorker.Thread = new Thread( () => { lWorker.Work(); });
 						try
 						{
-#if FULLFRAMEWORK
+							#if FULLFRAMEWORK
 							lWorker.Thread.Name = String.Format("Internet Pack {0} for {1}", WorkerClass.Name, lSocket.RemoteEndPoint);
-#endif
-
+							#endif
 						}
 						catch (SocketException)
 						{

@@ -83,7 +83,11 @@ namespace RemObjects.InternetPack
 					return;
 				}
 
+				#if !NEEDS_PORTING
 				Object lObject = Activator.CreateInstance(this.GetWorkerClass());
+				#else
+				Object lObject = null;
+				#endif
 
 				IAsyncWorker lWorker = (IAsyncWorker)lObject;
 				lWorker.Owner = this;
@@ -92,17 +96,19 @@ namespace RemObjects.InternetPack
 				{
 					lWorker.DataConnection = ConnectionFactory.CreateServerConnection(lSocket);
 				}
+				#if ECHOES
 				else if (this.ConnectionClass != null)
 				{
 					lWorker.DataConnection = (Connection)Activator.CreateInstance(ConnectionClass);
 					lWorker.DataConnection.Init(lSocket);
 				}
-#if FULLFRAMEWORK
+				#endif
+				#if FULLFRAMEWORK
 				else if (this.SslOptions.Enabled)
 				{
 					lWorker.DataConnection = this.SslOptions.CreateServerConnection(lSocket);
 				}
-#endif
+				#endif
 				else
 				{
 					lWorker.DataConnection = new Connection(lSocket);

@@ -160,13 +160,22 @@
 		Both = 2
 	}
 
+	// Generated from C:\Windows\Microsoft.NET\Framework\v2.0.50727\System.dll
+	public class IPHostEntry : Object
+	{
+		public String HostName { get; set; }
+		public String[] Aliases { get; set; }
+		public IPAddress[] AddressList { get; set; }
+		public IPHostEntry() {}
+	}
+
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/4.0/System.dll
 	public class IPAddress : Object
 	{
 		/*private Int64 m_Address;
 		private AddressFamily m_Family;
 		private UInt16[] m_Numbers;
-		private Int64 m_ScopeId;
+		private Int64 m_ScopeId;*/
 		public static IPAddress Any;
 		public static IPAddress Broadcast;
 		public static IPAddress Loopback;
@@ -174,7 +183,7 @@
 		public static IPAddress IPv6Any;
 		public static IPAddress IPv6Loopback;
 		public static IPAddress IPv6None;
-		private Int32 m_HashCode;
+		/*private Int32 m_HashCode;
 		private static this .cctor();
 		internal System.Net.IPAddress(UInt16[] address, Int64 scopeId);
 		public System.Net.IPAddress(Byte[] address, Int64 scopeid);
@@ -229,10 +238,10 @@
 		public Int32 Port { get; set; }
 		/*private Int32 port;
 		public static const Int32 MaxPort = 65535;
-		public static const Int32 MinPort = 0;
-		public System.Net.IPEndPoint(Int64 address, Int32 port);
-		public System.Net.IPEndPoint(IPAddress address, Int32 port);
-		public override EndPoint Create(SocketAddress socketAddress);
+		public static const Int32 MinPort = 0;*/
+		public IPEndPoint(Int64 address, Int32 port) {}
+		public IPEndPoint(IPAddress address, Int32 port) {}
+		/*public override EndPoint Create(SocketAddress socketAddress);
 		public override SocketAddress Serialize();
 		public override String ToString();
 		public override Boolean Equals(Object comparand);

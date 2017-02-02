@@ -40,12 +40,12 @@
 		private static SocketAddress LocalEndPoint_internal(IntPtr socket, Int32 family, out Int32 error);
 		public Boolean AcceptAsync(SocketAsyncEventArgs e);
 		private static IntPtr Accept_internal(IntPtr sock, out Int32 error, Boolean blocking);
-		internal void Accept(Socket acceptSocket);
-		public Socket Accept();
-		public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state);
-		public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state);
-		public IAsyncResult BeginAccept(AsyncCallback callback, Object state);
-		public IAsyncResult BeginConnect(IPAddress[] addresses, Int32 port, AsyncCallback callback, Object state);
+		internal void Accept(Socket acceptSocket);*/
+		public Socket Accept() {}
+		public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginAccept(AsyncCallback callback, Object state) {}
+		/*public IAsyncResult BeginConnect(IPAddress[] addresses, Int32 port, AsyncCallback callback, Object state);
 		public IAsyncResult BeginConnect(EndPoint end_point, AsyncCallback callback, Object state);
 		public IAsyncResult BeginConnect(String host, Int32 port, AsyncCallback callback, Object state);
 		public IAsyncResult BeginConnect(IPAddress address, Int32 port, AsyncCallback callback, Object state);
@@ -78,9 +78,9 @@
 		public void Disconnect(Boolean reuseSocket) {}
 		/*public SocketInformation DuplicateAndClose(Int32 targetProcessId);
 		public Socket EndAccept(out Byte[] buffer, out Int32 bytesTransferred, IAsyncResult asyncResult);
-		public Socket EndAccept(out Byte[] buffer, IAsyncResult asyncResult);
-		public Socket EndAccept(IAsyncResult result);
-		public void EndConnect(IAsyncResult result);
+		public Socket EndAccept(out Byte[] buffer, IAsyncResult asyncResult);*/
+		public Socket EndAccept(IAsyncResult result) {}
+		/*public void EndConnect(IAsyncResult result);
 		public void EndDisconnect(IAsyncResult asyncResult);
 		public Int32 EndReceiveMessageFrom(IAsyncResult asyncResult, ref SocketFlags socketFlags, ref EndPoint endPoint, out IPPacketInformation ipPacketInformation);
 		public void EndSendFile(IAsyncResult asyncResult);
@@ -92,9 +92,9 @@
 		private static Int32 WSAIoctl(IntPtr sock, Int32 ioctl_code, Byte[] input, Byte[] output, out Int32 error);
 		public Int32 IOControl(IOControlCode ioControlCode, Byte[] optionInValue, Byte[] optionOutValue);
 		public Int32 IOControl(Int32 ioctl_code, Byte[] in_value, Byte[] out_value);
-		private static void Listen_internal(IntPtr sock, Int32 backlog, out Int32 error);
-		public void Listen(Int32 backlog);
-		public Boolean Poll(Int32 time_us, SelectMode mode);
+		private static void Listen_internal(IntPtr sock, Int32 backlog, out Int32 error);*/
+		public void Listen(Int32 backlog) {}
+		/*public Boolean Poll(Int32 time_us, SelectMode mode);
 		[CLSCompliantAttribute(false)]
 		public Int32 Receive(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, out SocketError errorCode);
 		[CLSCompliantAttribute(false)]

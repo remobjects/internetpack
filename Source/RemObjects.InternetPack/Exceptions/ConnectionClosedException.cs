@@ -24,10 +24,11 @@ namespace RemObjects.InternetPack
 		{
 		}
 
-		public ConnectionClosedException(Exception innerException)
-			: base("Connection was closed.", innerException)
+		#if ECHOES
+		public ConnectionClosedException(Exception innerException) : base("Connection was closed.", innerException)
 		{
 		}
+		#endif
 
 		public Boolean Timeout
 		{

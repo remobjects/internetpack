@@ -19,7 +19,7 @@
 
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/mscorlib.dll
 	//[ComVisibleAttribute(true)]
-	delegate void AsyncCallback ();
+	public delegate void AsyncCallback(IAsyncResult ar);
 
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/mscorlib.dll
 	//[ComVisibleAttribute(true)]

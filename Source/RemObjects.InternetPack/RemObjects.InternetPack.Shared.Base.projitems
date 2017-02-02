@@ -32,5 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\SystemThreadingTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\Stream.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ConnectionClosedException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\DnsResolveException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.Async.cs" />
   </ItemGroup>
 </Project>
