@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # RemObjects Fire
-Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack", "RemObjects.InternetPack.elements", "{774B9AE9-B695-4908-B24F-5482556D6175}"
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Echoes", "RemObjects.InternetPack.Echoes.elements", "{774B9AE9-B695-4908-B24F-5482556D6175}"
 EndProject
 Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Island.Windows", "RemObjects.InternetPack.Island.Windows.elements", "{D95A0330-C681-4114-8EE2-A7DCBB7D0972}"
 EndProject

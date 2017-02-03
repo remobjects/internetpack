@@ -16,11 +16,12 @@
     <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
     <DefaultUses>RemObjects.Elements.RTL</DefaultUses>
     <KnownConditionalDefines>DEBUG;NEEDS_PORTING;TRACE</KnownConditionalDefines>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <Optimize>False</Optimize>
-    <OutputPath>.\bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;NEEDS_PORTING;TRACE</DefineConstants>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <CaptureConsoleOutput>False</CaptureConsoleOutput>
     <StartMode>Project</StartMode>
@@ -33,7 +34,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <Optimize>true</Optimize>
-    <OutputPath>.\bin\Release</OutputPath>
+    <OutputPath>..\..\bin\</OutputPath>
     <GenerateDebugInfo>False</GenerateDebugInfo>
     <EnableAsserts>False</EnableAsserts>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -45,6 +46,7 @@
     <XmlDoc>False</XmlDoc>
     <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>
     <EnableUnmanagedDebugging>False</EnableUnmanagedDebugging>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="gc" />

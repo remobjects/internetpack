@@ -29,30 +29,6 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Trial|AnyCPU'">
-    <OutputPath>..\..\Bin\Trial\</OutputPath>
-    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;TRIAL</DefineConstants>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Mono|AnyCPU'">
-    <OutputPath>..\..\Bin\Mono\</OutputPath>
-    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;MONO</DefineConstants>
-    <RegisterForComInterop>false</RegisterForComInterop>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IDE|AnyCPU'">
-    <OutputPath>bin\IDE\</OutputPath>
-    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY</DefineConstants>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Licensed|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\Bin\</OutputPath>
-    <DefineConstants>DEBUG;FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</DefineConstants>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
