@@ -26,7 +26,7 @@
     <StartMode>Project</StartMode>
     <CpuType>x86</CpuType>
     <RuntimeVersion>v25</RuntimeVersion>
-    <Architecture>x86_64</Architecture>
+    <Architecture>i386</Architecture>
     <XmlDoc>False</XmlDoc>
     <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>
     <EnableUnmanagedDebugging>False</EnableUnmanagedDebugging>
@@ -50,10 +50,10 @@
     <Reference Include="gc" />
     <Reference Include="rtl" />
     <Reference Include="Island">
-      <HintPath>..\..\..\..\IslandRTL\Source\Bin\Debug\Windows\x86_64\Island.fx</HintPath>
+      <HintPath>..\..\..\..\IslandRTL\Source\Bin\Debug\Windows\i386\Island.fx</HintPath>
     </Reference>
     <Reference Include="Elements">
-      <HintPath>..\..\..\..\RTL2\Source\bin\Debug\Windows\x86_64\Elements.fx</HintPath>
+      <HintPath>..\..\..\..\RTL2\Source\bin\Debug\Windows\i386\Elements.fx</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Island.Windows.targets" />
