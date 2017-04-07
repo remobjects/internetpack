@@ -169,13 +169,22 @@
 		public IPHostEntry() {}
 	}
 
+    public struct sockaddr_in6 
+    {
+        public rtl.USHORT sin6_family;
+        public rtl.USHORT sin6_port;
+        public rtl.ULONG sin6_flowinfo;
+        public rtl.in6_addr sin6_addr;
+        public rtl.ULONG sin6_scope_id;
+    }
+
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/4.0/System.dll
 	public class IPAddress : Object
 	{
-		/*private Int64 m_Address;
-		private AddressFamily m_Family;
-		private UInt16[] m_Numbers;
-		private Int64 m_ScopeId;*/
+		private Int64 fAddress;
+		private AddressFamily fFamily;
+		private UInt16[] fNumbers = new UInt16[IPv6Length / 2];
+		private Int64 fScopeId;
 		public static IPAddress Any;
 		public static IPAddress Broadcast;
 		public static IPAddress Loopback;
@@ -185,11 +194,43 @@
 		public static IPAddress IPv6None;
 		/*private Int32 m_HashCode;
 		private static this .cctor();
-		internal System.Net.IPAddress(UInt16[] address, Int64 scopeId);
-		public System.Net.IPAddress(Byte[] address, Int64 scopeid);
-		public System.Net.IPAddress(Byte[] address);
-		public System.Net.IPAddress(Int64 newAddress);
-		private static Int16 SwapShort(Int16 number);
+		internal System.Net.IPAddress(UInt16[] address, Int64 scopeId);*/
+
+        private const int IPv4Length =  4;
+        private const int IPv6Length = 16;
+		
+        public IPAddress(Byte[] address, Int64 scopeid)
+        {
+            fFamily = AddressFamily.InterNetworkV6;
+            for (int i = 0; i < IPv6Length / 2; i++)
+                fNumbers[i] = (ushort)(address[i * 2] * 256 + address[i * 2 + 1]);
+
+            fScopeId = scopeid;
+        }
+		
+        public IPAddress(Byte[] address)
+        {
+            if (address.Length == IPv4Length)
+            {
+                fFamily = AddressFamily.InterNetwork;
+                fAddress = ((address[3] << 24 | address[2] <<16 | address[1] << 8| address[0]) & 0x0FFFFFFFF);
+            }
+            else {
+                fFamily = AddressFamily.InterNetworkV6;
+
+                for (int i = 0; i < IPv6Length / 2; i++) {
+                    fNumbers[i] = (ushort)(address[i * 2] * 256 + address[i * 2 + 1]);
+                }
+            }
+        }
+
+		public IPAddress(Int64 newAddress)
+        {
+            fFamily = AddressFamily.InterNetwork;
+            fAddress = newAddress;
+        }
+
+		/*private static Int16 SwapShort(Int16 number);
 		private static Int32 SwapInt(Int32 number);
 		private static Int64 SwapLong(Int64 number);
 		public static Int64 HostToNetworkOrder(Int64 host);
@@ -198,26 +239,161 @@
 		public static Int64 NetworkToHostOrder(Int64 network);
 		public static Int32 NetworkToHostOrder(Int32 network);
 		public static Int16 NetworkToHostOrder(Int16 network);*/
-		public static IPAddress Parse(String ipString) {}
-		/*public static Boolean TryParse(String ipString, out IPAddress address);
-		private static IPAddress ParseIPV4(String ip);
-		private static IPAddress ParseIPV6(String ip);
-		public Byte[] GetAddressBytes();
-		public static Boolean IsLoopback(IPAddress address);
+		
+        public static IPAddress Parse(String ipString)        
+        {
+            IPAddress lAddress;
+            if (TryParse(ipString, out lAddress))
+                return lAddress;
+            else
+                ; // throw exception
+        }
+
+		private static Boolean TryParseIPV4(String ipString, out IPAddress address)
+        {
+            bool lResult = false;
+            var lNumbers = ipString.Trim().Split('.');
+            int? lNumber;
+            byte[] lBytes = new byte[IPv4Length];
+           
+            if (lNumbers.Count == IPv4Length)
+            {
+                for (int i = 0; i < IPv4Length; i++)
+                {
+                    lNumber = Convert.TryToInt32(lNumbers[i]);
+                    if (lNumber != null)
+                        lBytes[i] = lNumber;
+                    else
+                        return false;
+                }
+                address = new IPAddress(lBytes);
+            }
+            else
+                lResult = false;
+
+            return lResult;
+        }
+
+   		private static Boolean TryParseIPV6(String ipString, out IPAddress address)
+        {
+            var lString = (RemObjects.Elements.System.String)ipString;
+            rtl.PADDRINFOW lAddrInfo;
+            sockaddr_in6 *lSockAddr;
+            Byte[] lBytes = new Byte[16]; 
+
+            if (rtl.GetAddrInfo(lString.FirstChar, null, null, &lAddrInfo) != 0)
+                return false;
+
+            lSockAddr = (sockaddr_in6 *)(*lAddrInfo).ai_addr;
+
+            for (int i = 0; i < IPv6Length; i++)
+                lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];
+
+            address = new IPAddress(lBytes, (*lSockAddr).sin6_scope_id);
+            return true;
+        }
+        
+        public static Boolean TryParse(String ipString, out IPAddress address)
+        {
+            if (ipString.Contains(':'))
+                return TryParseIPV6(ipString, out address);
+            else
+                return TryParseIPV4(ipString, out address);
+        }
+
+		private static IPAddress ParseIPV4(String ip)
+        {
+            IPAddress lResult;
+
+            if (TryParseIPV4(ip, out lResult))
+                return lResult;
+            else
+                ; // Exception
+        }
+
+		private static IPAddress ParseIPV6(String ip)
+        {
+            IPAddress lResult;
+
+            if (TryParseIPV6(ip, out lResult))
+                return lResult;
+            else
+                ; // Exception
+        }
+		
+        public Byte[] GetAddressBytes()
+        {
+            Byte[] lBytes;
+            if (AddressFamily == AddressFamily.InterNetworkV6 ) 
+            {
+                lBytes = new Byte[IPv6Length];
+
+                int j = 0;
+                for ( int i = 0; i < IPv6Length / 2; i++)
+                {
+                    lBytes[j++] = (Byte)((fNumbers[i] >> 8) & 0xFF);
+                    lBytes[j++] = (Byte)((fNumbers[i]) & 0xFF);
+                }
+            }
+            else 
+            {
+                lBytes = new Byte[IPv4Length];
+                lBytes[0] = (Byte)(Address);
+                lBytes[1] = (Byte)(Address >> 8);
+                lBytes[2] = (Byte)(Address >> 16);
+                lBytes[3] = (Byte)(Address >> 24);
+            }
+            return lBytes;
+        }
+
+		/*public static Boolean IsLoopback(IPAddress address);
 		private static String ToString(Int64 addr);
 		public override String ToString();
 		public override Boolean Equals(Object comparand);
 		public override Int32 GetHashCode();
 		private static Int32 Hash(Int32 i, Int32 j, Int32 k, Int32 l);
 		[ObsoleteAttribute("This property is obsolete. Use GetAddressBytes.")]
-		public Int64 Address { get; set; }*/
+        */
+		public Int64 Address
+        {
+            get
+            {
+                return fAddress;
+            }
+            set
+            {
+                fAddress = value;
+            }
+         }
+ 
 		//internal Int64 InternalIPv4Address { get; set; }
 		public Boolean IsIPv6LinkLocal { get; set; }
 		public Boolean IsIPv6SiteLocal { get; set; }
 		public Boolean IsIPv6Multicast { get; set; }
 		public Boolean IsIPv6Teredo { get; set; }
-		public Int64 ScopeId { get; set; }
-		public AddressFamily AddressFamily { get; set; }
+		public Int64 ScopeId
+        {
+            get
+            {
+                return fScopeId;
+            }
+            set
+            {
+                fScopeId = value;
+            }
+        }
+
+		public AddressFamily AddressFamily 
+        { 
+            get 
+            { 
+                return fFamily;
+            }
+            set
+            {
+                fFamily = value;
+            }
+        }
 	}
 
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
@@ -234,13 +410,22 @@
 	public class IPEndPoint : EndPoint
 	{
 		public IPAddress Address { get; set; }
-		/*private IPAddress address;*/
 		public Int32 Port { get; set; }
-		/*private Int32 port;
-		public static const Int32 MaxPort = 65535;
-		public static const Int32 MinPort = 0;*/
-		public IPEndPoint(Int64 address, Int32 port) {}
-		public IPEndPoint(IPAddress address, Int32 port) {}
+		public const Int32 MaxPort = 65535;
+		public const Int32 MinPort = 0;
+		
+        public IPEndPoint(Int64 address, Int32 port)
+        {
+            Address = new IPAddress(address);
+            Port = port;
+        }
+
+		public IPEndPoint(IPAddress address, Int32 port)        
+        {
+            Address = address;
+            Port = port;
+        }
+
 		/*public override EndPoint Create(SocketAddress socketAddress);
 		public override SocketAddress Serialize();
 		public override String ToString();

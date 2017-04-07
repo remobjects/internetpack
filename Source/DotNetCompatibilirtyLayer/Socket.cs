@@ -2,8 +2,9 @@
 {
 	#if !ECHOES
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
-	public class Socket : Object, IDisposable
+	public class OldSocket : Object, IDisposable
 	{
+
 		/*private Boolean islistening;
 		private Boolean useoverlappedIO;
 		private static const Int32 SOCKET_CLOSED = 10004;
@@ -28,7 +29,7 @@
 		internal Boolean disposed;
 		private Boolean connect_in_progress;
 		internal EndPoint seed_endpoint;*/
-		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType) {}
+		public OldSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType) {}
 		/*private static this .cctor();
 		public Socket(SocketInformation socketInformation);
 		internal Socket(AddressFamily family, SocketType type, ProtocolType proto, IntPtr sock);
@@ -204,6 +205,183 @@
 		public Int16 Ttl { get; set; }*/
 		public EndPoint RemoteEndPoint { get; set; }
 	}
+
+	public class Socket : Object, IDisposable
+	{
+		private rtl.SOCKET fHandle;
+                    
+        public Boolean Connected { get; set; }
+		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)        
+        {
+            AddressFamily = addressFamily;
+            SocketType = socketType;
+            ProtocolType = protocolType;
+            fHandle = rtl.__Global.socket((rtl.Int)addressFamily, (rtl.Int)socketType, (rtl.Int)protocolType);
+            // TODO check exception
+        }
+
+        private Socket(rtl.SOCKET handle)
+        {
+            fHandle = handle;
+        }
+
+        static Socket()
+        {
+            rtl.WSADATA data;
+            rtl.WSAStartup(rtl.WINSOCK_VERSION, &data);
+        }
+                
+        public Socket Accept()
+        {            
+            var lSocket = rtl.accept(fHandle, null, null);
+            if (lSocket == rtl.INVALID_SOCKET)
+                ; // raise error
+
+            return new Socket(lSocket);
+        }
+
+		//public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state) {}
+		//public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginAccept(AsyncCallback callback, Object state) {}
+		        
+        public void Bind(EndPoint local_end)       
+        {
+            var lEndPoint = (IPEndPoint)local_end;
+            void *lPointer;
+            int lSize;
+            rtl.SOCKADDR_IN lIPv4;
+            sockaddr_in6 lIPv6;
+
+            switch (lEndPoint.AddressFamily)
+            {
+                case AddressFamily.InterNetworkV6:
+                    lIPv6.sin6_family = AddressFamily.InterNetworkV6;
+                    lIPv6.sin6_port = rtl.htons(lEndPoint.Port);
+                    lIPv6.sin6_scope_id = lEndPoint.Address.ScopeId;
+                    var lBytes = lEndPoint.Address.GetAddressBytes();
+                    for (int i = 0; i < 16; i++)
+                        lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
+                    lPointer = &lIPv6;
+                    lSize = sizeof(sockaddr_in6);
+                    break;
+
+                default:
+                    lIPv4.sin_family = AddressFamily.InterNetwork;
+                    lIPv4.sin_port = rtl.htons(lEndPoint.Port);
+                    lIPv4.sin_addr.S_un.S_addr = lEndPoint.Address.Address;
+                    lPointer = &lIPv4;
+                    lSize = sizeof(rtl.SOCKADDR_IN);
+            }            
+            if (rtl.bind(fHandle, lPointer, lSize) != 0)
+                ; // throw exception
+        }
+
+		public void Connect(EndPoint remoteEP)
+        {
+
+        }
+
+		public void Connect(String host, Int32 port)        
+        {
+            
+        }
+
+		public void Connect(IPAddress[] addresses, Int32 port)
+        {
+            IPEndPoint lEndPoint;
+            Exception lEx = null;
+            foreach(IPAddress lAddress in addresses)
+            {
+                lEndPoint = new IPEndPoint(lAddress, port);
+                try
+                {
+                    Connect(lEndPoint);
+                    lEx = null;
+                    break;
+                }
+                catch(Exception lCurrent)
+                {
+                    lEx = lCurrent;
+                }
+            }
+
+            if (lEx != null)
+                throw lEx;
+
+            if (!Connected)
+                ; // throw exception
+        }
+
+		public void Connect(IPAddress address, Int32 port)
+        {
+            var lEndPoint = new IPEndPoint(address, port);
+            Connect(lEndPoint);
+        }
+		
+        public void Disconnect(Boolean reuseSocket)
+        {
+            Dispose();
+        }
+
+		public Socket EndAccept(IAsyncResult result) {}
+		
+        public void Listen(Int32 backlog)
+        {
+            if (rtl.listen(fHandle, backlog) != 0)
+                ; // TODO check exception
+        }
+
+		public Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags) {}
+		public Int32 Receive(Byte[] buffer, Int32 size, SocketFlags flags) {}
+		public Int32 Receive(Byte[] buffer, SocketFlags flags) {}
+		public Int32 Receive(Byte[] buffer) {}
+		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags) {}
+		public Int32 Send(Byte[] buf, Int32 size, SocketFlags flags) {}
+		public Int32 Send(Byte[] buf, SocketFlags flags) {}
+		public Int32 Send(Byte[] buf) {}
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue) {}
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue) {}
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue) {}
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue) {}
+		
+        private new void Dispose() 
+        {
+            if (rtl.closesocket(fHandle) != 0)
+                ; // raise exception
+            
+            Connected = false;
+        }
+		
+        public void Close() 
+        {
+            Dispose();
+        }
+		
+        public void Shutdown(SocketShutdown how) 
+        {
+            if (rtl.shutdown(fHandle, (int)how) != 0)
+                ; // throw exception
+        }
+
+		public Int32 Available
+        {
+            get
+            {
+                rtl.u_long lData;
+                if (rtl.ioctlsocket(fHandle,rtl.FIONREAD, &lData) != 0)
+                    ; // throw exception
+
+                return lData;
+            }
+        }
+
+		public EndPoint LocalEndPoint { get; set; }
+		public SocketType SocketType { get; set; }
+		public AddressFamily AddressFamily { get; set; }
+		public ProtocolType ProtocolType { get; set; }
+		public EndPoint RemoteEndPoint { get; set; }
+	}
+
 
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
 	public class SocketException : Exception

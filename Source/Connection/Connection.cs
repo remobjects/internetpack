@@ -767,6 +767,7 @@ namespace RemObjects.InternetPack
 			}
 		}
 
+/*
 		#if ECHOES
 		public override Int32 Read(Byte[] buffer, Int32 offset, Int32 size)
 		{
@@ -778,7 +779,8 @@ namespace RemObjects.InternetPack
 			DataSocketSend(buffer, offset, size);
 		}
 		#else if ISLAND
-		public override bool IsValid()
+		                
+        /*public override bool IsValid()
 		{
 			return Connected;
 		}
@@ -789,12 +791,23 @@ namespace RemObjects.InternetPack
 		public override Int32 Write(void *buf, Int32 Count)
 		{
 			#warning Implement for Island
-		}
-		#endif
+		}*/
 
-		public override Int64 Seek(Int64 offset, PlatformSeekOrigin origin)
+        public override Int32 Read(Byte[] buffer, Int32 offset, Int32 count)
+        {
+            return Receive(buffer, offset, count, true);
+        }
+                        
+        public override Int32 Write(Byte[] buffer, Int32 offset, Int32 count)
+        {
+             DataSocketSend(buffer, offset, count);
+        }
+
+		//#endif
+
+		public override Int64 Seek(Int64 offset, SeekOrigin origin)
 		{
-			throw new Exception(String.Format("{0} does not support seeking", this.GetType().Name));
+            throw new Exception(String.Format("{0} does not support seeking", this.GetType().Name));
 		}
 
 		public override Boolean CanRead
@@ -821,32 +834,26 @@ namespace RemObjects.InternetPack
 			}
 		}
 
-		public override void SetLength(Int64 length)
+		/*public override void SetLength(Int64 length)
 		{
 			throw new Exception(String.Format("{0} does not support SetLength", this.GetType().Name));
+		}*/
+
+		public override Int64 GetLength()
+		{
+			return Position + DataSocketAvailable;
 		}
 
-		public override Int64 Length
+		public override Int64 GetPosition()
 		{
-			get
-			{
-				return fPosition + DataSocketAvailable;
-			}
-		}
+		    return Position;
+        }
 
-		public override Int64 Position
+        public override void SetPosition(Int64 value)
 		{
-			get
-			{
-				return fPosition;
-			}
-			set
-			{
-				Seek(value, PlatformSeekOrigin.Begin);
-				fPosition = value;
-			}
+		    Seek(value, SeekOrigin.Begin);
+			Position = value;
 		}
-		private Int64 fPosition;
 		#endregion
 
 		// returns null if there's nothing in the buffer; returns "" if it's an empty line else the line in the buffer
