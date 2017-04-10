@@ -278,12 +278,18 @@
 
 		public void Connect(EndPoint remoteEP)
         {
-
+            var lEndPoint = (IPEndPoint)remoteEP;
+            var lBytes = lEndPoint.Address.GetAddressBytes();
+            if (rtl.connect(fHandle, &lBytes[0], lBytes.Length) != 0)
+                ;// raise error
+            
+            Connected = true;
         }
 
 		public void Connect(String host, Int32 port)        
         {
-            
+            var lAddress = IPAddress.Parse(host);
+            Connect(new IPEndPoint(lAddress, port));
         }
 
 		public void Connect(IPAddress[] addresses, Int32 port)
@@ -331,18 +337,79 @@
                 ; // TODO check exception
         }
 
-		public Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags) {}
-		public Int32 Receive(Byte[] buffer, Int32 size, SocketFlags flags) {}
-		public Int32 Receive(Byte[] buffer, SocketFlags flags) {}
-		public Int32 Receive(Byte[] buffer) {}
-		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags) {}
-		public Int32 Send(Byte[] buf, Int32 size, SocketFlags flags) {}
-		public Int32 Send(Byte[] buf, SocketFlags flags) {}
-		public Int32 Send(Byte[] buf) {}
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue) {}
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue) {}
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue) {}
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue) {}
+		public Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags) 
+        {
+            void *lPointer;
+            lPointer = &buffer[0];
+            return rtl.recv(fHandle, (AnsiChar *)lPointer, size, (int)flags);
+        }
+
+		public Int32 Receive(Byte[] buffer, Int32 size, SocketFlags flags)
+        {
+            return Receive(buffer, 0, size, flags);
+        }
+
+		public Int32 Receive(Byte[] buffer, SocketFlags flags) 
+        {
+            return Receive(buffer, 0, buffer.Length, flags);
+        }
+
+		public Int32 Receive(Byte[] buffer)
+        {
+            return Receive(buffer, 0, buffer.Length, SocketFlags.None);
+        }
+
+		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags)
+        {
+            void *lPointer;
+            lPointer = &buf[0];
+            return rtl.send(fHandle, (AnsiChar *)lPointer, size, (int)flags);
+        }
+
+		public Int32 Send(Byte[] buf, Int32 size, SocketFlags flags)
+        {
+            return Send(buf, 0, size, flags);
+        }
+
+		public Int32 Send(Byte[] buf, SocketFlags flags)
+        {
+            return Send(buf, 0, buf.Length, flags);
+        }
+
+		public Int32 Send(Byte[] buf)        
+        {
+            return Send(buf, 0, buf.Length, SocketFlags.None);
+        }
+
+        private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, void *optionValue, Int32 optionValueLength)
+        {
+            if (rtl.setsockopt(fHandle, (int)optionLevel, (int)optionName, (AnsiChar *)optionValue, optionValueLength) != 0)
+                ;// Error
+        }
+
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
+        {
+            void *lValue = &optionValue;
+            InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Int32));
+        }
+
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue)
+        {
+            void *lValue = &optionValue;
+            InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Boolean));
+        }
+
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue)
+        {
+            void *lValue = &optionValue;
+            InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Object));
+        }
+
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue)
+        {
+            void *lValue = &optionValue[0];
+            InternalSetSocketOption(optionLevel, optionName, lValue, optionValue.Length);
+        }
 		
         private new void Dispose() 
         {
