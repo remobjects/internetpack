@@ -267,6 +267,7 @@
                         return false;
                 }
                 address = new IPAddress(lBytes);
+                lResult = true;
             }
             else
                 lResult = false;

@@ -252,35 +252,45 @@
             rtl.SOCKADDR_IN lIPv4;
             sockaddr_in6 lIPv6;
 
-            switch (lEndPoint.AddressFamily)
-            {
-                case AddressFamily.InterNetworkV6:
-                    lIPv6.sin6_family = AddressFamily.InterNetworkV6;
-                    lIPv6.sin6_port = rtl.htons(lEndPoint.Port);
-                    lIPv6.sin6_scope_id = lEndPoint.Address.ScopeId;
-                    var lBytes = lEndPoint.Address.GetAddressBytes();
-                    for (int i = 0; i < 16; i++)
-                        lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
-                    lPointer = &lIPv6;
-                    lSize = sizeof(sockaddr_in6);
-                    break;
-
-                default:
-                    lIPv4.sin_family = AddressFamily.InterNetwork;
-                    lIPv4.sin_port = rtl.htons(lEndPoint.Port);
-                    lIPv4.sin_addr.S_un.S_addr = lEndPoint.Address.Address;
-                    lPointer = &lIPv4;
-                    lSize = sizeof(rtl.SOCKADDR_IN);
-            }            
+            IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);            
             if (rtl.bind(fHandle, lPointer, lSize) != 0)
                 ; // throw exception
         }
 
+        private void IPEndPointToNative(IPEndPoint endPoint, out rtl.SOCKADDR_IN lIPv4, out sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
+        {
+            switch (endPoint.AddressFamily)
+            {
+                case AddressFamily.InterNetworkV6:
+                    lIPv6.sin6_family = AddressFamily.InterNetworkV6;
+                    lIPv6.sin6_port = rtl.htons(endPoint.Port);
+                    lIPv6.sin6_scope_id = endPoint.Address.ScopeId;
+                    var lBytes = endPoint.Address.GetAddressBytes();
+                    for (int i = 0; i < 16; i++)
+                        lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
+                    ipPointer = &lIPv6;
+                    ipSize = sizeof(sockaddr_in6);
+                    break;
+
+                default:
+                    lIPv4.sin_family = AddressFamily.InterNetwork;
+                    lIPv4.sin_port = rtl.htons(endPoint.Port);
+                    lIPv4.sin_addr.S_un.S_addr = endPoint.Address.Address;
+                    ipPointer = &lIPv4;
+                    ipSize = sizeof(rtl.SOCKADDR_IN);
+            }            
+        }
+
 		public void Connect(EndPoint remoteEP)
         {
+            void *lPointer;
+            int lSize;
+            rtl.SOCKADDR_IN lIPv4;
+            sockaddr_in6 lIPv6;            
             var lEndPoint = (IPEndPoint)remoteEP;
-            var lBytes = lEndPoint.Address.GetAddressBytes();
-            if (rtl.connect(fHandle, &lBytes[0], lBytes.Length) != 0)
+
+            IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
+            if (rtl.connect(fHandle, lPointer, lSize) != 0)
                 ;// raise error
             
             Connected = true;
