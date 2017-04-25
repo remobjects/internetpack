@@ -891,7 +891,7 @@ namespace RemObjects.InternetPack.Ldap
 
 		protected override void IntRead(BinaryReader reader, Byte code, Int32 length)
 		{
-			this.Value = reader.ReadBytes(length);
+			this.Value = reader.Read(length);
 		}
 
 		protected override void IntWrite(BinaryWriter writer)
@@ -1064,7 +1064,7 @@ namespace RemObjects.InternetPack.Ldap
 		protected override void IntRead(BinaryReader reader, Byte code, Int32 length)
 		{
 			this.TypeCodeTag = code;
-			Byte[] lData = reader.ReadBytes(length);
+			Byte[] lData = reader.Read(length);
 			this.fItems.RemoveAll();
 
 			BinaryReader lReader = new BinaryReader(new MemoryStream(lData, false));
@@ -1129,7 +1129,7 @@ namespace RemObjects.InternetPack.Ldap
 		protected override void IntRead(BinaryReader reader, Byte code, Int32 length)
 		{
 			this.TypeCodeTag = code;
-			Byte[] lValue = reader.ReadBytes(length);
+			Byte[] lValue = reader.Read(length);
 			this.Value = Encoding.UTF8.GetString(lValue, 0, lValue.Length);
 		}
 
@@ -1196,7 +1196,7 @@ namespace RemObjects.InternetPack.Ldap
 
 		protected override void IntRead(BinaryReader reader, Byte code, Int32 length)
 		{
-			this.fValue = new IPAddress(reader.ReadBytes(length));
+			this.fValue = new IPAddress(reader.Read(length));
 		}
 
 		public IPAddress Value
@@ -1251,7 +1251,7 @@ namespace RemObjects.InternetPack.Ldap
 		protected override void IntRead(BinaryReader reader, Byte code, Int32 length)
 		{
 			this.TypeCodeTag = code;
-			this.Value = reader.ReadBytes(length);
+			this.Value = reader.Read(length);
 		}
 
 		public override Byte TypeTag

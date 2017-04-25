@@ -362,7 +362,7 @@ namespace RemObjects.InternetPack
 					throw new ConnectionClosedException("Size limit for ReadLine() was exceeded.");
 				}
 
-				Byte[] lBuffer = lRequest.Data.GetBuffer();
+				Byte[] lBuffer = lRequest.Data.ToArray();
 				if (lRequest.Data.Length > 0 && lBuffer[lRequest.Data.Length - 1] == 13)
 					return Encoding.GetString(lBuffer, 0, (Int32)lRequest.Data.Length - 1); // on the rare occasion that the split is between the #13 and the #10
 

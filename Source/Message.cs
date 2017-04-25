@@ -187,7 +187,7 @@ namespace RemObjects.InternetPack.Messages
 
 		public void SaveToFile(String filename)
 		{
-			using (FileStream stream = new FileStream(filename, FileMode.Create))
+			using (FileStream stream = new FileStream(filename, FileOpenMode.Create))
 				this.EncodeMessage(stream);
 		}
 	}
