@@ -2,6 +2,7 @@
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
+using RemObjects.InternetPack.Shared.Base;
 
 namespace RemObjects.InternetPack
 {
@@ -263,12 +264,12 @@ namespace RemObjects.InternetPack
 		#region SSL stream management
 		private void CreateSslServerStream()
 		{
-			this.fSslStream = new SslStream(this.fInnerConnection, true, NetSsl_RemoteCertificateValidation);
+			this.fSslStream = new SslStream(new WrappedStream(this.fInnerConnection), true, NetSsl_RemoteCertificateValidation);
 		}
 
 		private void CreateSslClientStream()
 		{
-			this.fSslStream = new SslStream(this.fInnerConnection, true, this.NetSsl_RemoteCertificateValidation);
+			this.fSslStream = new SslStream(new WrappedStream(this.fInnerConnection), true, this.NetSsl_RemoteCertificateValidation);
 		}
 
 		private System.Security.Authentication.SslProtocols GetNetSecurityProtocol()

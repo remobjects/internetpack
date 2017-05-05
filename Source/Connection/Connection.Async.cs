@@ -374,7 +374,7 @@ namespace RemObjects.InternetPack
 			}
 		}
 
-		public override IAsyncResult BeginRead(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)
+		public /*override*/ IAsyncResult BeginRead(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)
 		{
 			if (!this.BufferedAsync)
 				return IntBeginRead(buffer, offset, count, callback, state);
@@ -494,12 +494,12 @@ namespace RemObjects.InternetPack
 			}
 		}
 
-		public override Int32 EndRead(IAsyncResult ar)
+		public /*override*/ Int32 EndRead(IAsyncResult ar)
 		{
 			return this.BufferedAsync ? ((AsyncRequest)ar).AsyncCount - ((AsyncRequest)ar).AsyncRest : IntEndRead(ar);
 		}
 
-		public override IAsyncResult BeginWrite(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)
+		public /*override*/ IAsyncResult BeginWrite(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)
 		{
 			try
 			{
@@ -512,7 +512,7 @@ namespace RemObjects.InternetPack
 			}
 		}
 
-		public override void EndWrite(IAsyncResult ar)
+		public /*override*/ void EndWrite(IAsyncResult ar)
 		{
 			try
 			{

@@ -45,7 +45,7 @@ namespace RemObjects.InternetPack.Http
 			}
 
 			response.Header.ContentType = "text/html";
-			response.ContentStream = new FileStream(lPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+			response.ContentStream = new FileStream(lPath, FileOpenMode.ReadOnly);
 			response.CloseStream = true; /* Response will close stream once it's been sent */
 		}
 		#endregion

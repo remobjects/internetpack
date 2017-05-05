@@ -6,6 +6,7 @@
 using RemObjects.InternetPack.CommandBased;
 using RemObjects.InternetPack.Events;
 using RemObjects.InternetPack.Messages;
+using RemObjects.InternetPack.Shared.Base;
 
 namespace RemObjects.InternetPack.Email
 {

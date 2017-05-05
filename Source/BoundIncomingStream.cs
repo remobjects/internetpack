@@ -45,17 +45,17 @@ namespace RemObjects.InternetPack
 			return lResult;
 		}
 
-		public override Int64 Seek(Int64 offset, PlatformSeekOrigin origin)
+        public override Int64 Seek(Int64 offset, SeekOrigin origin)
 		{
 			throw new Exception(String.Format("{0} does not support Seek", this.GetType().FullName));
 		}
 
-		public override void SetLength(Int64 length)
+		/*public override void SetLength(Int64 length)
 		{
 			throw new Exception(String.Format("{0} does not support SetLength", this.GetType().FullName));
-		}
+		}*/
 
-		public override void Write(Byte[] buffer, Int32 offset, Int32 count)
+		public override Int32 Write(Byte[] buffer, Int32 offset, Int32 count)
 		{
 			throw new Exception(String.Format("{0} is a read-only Stream", this.GetType().FullName));
 		}
