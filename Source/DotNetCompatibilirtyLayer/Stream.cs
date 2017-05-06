@@ -4,6 +4,8 @@ namespace RemObjects.InternetPack.Shared.Base
 {    
     public abstract class TextReader:  MarshalByRefObject, IDisposable
     {                
+        protected Encoding fEncoding;
+
         void Dispose()
         {
 
@@ -16,7 +18,7 @@ namespace RemObjects.InternetPack.Shared.Base
 
         public virtual string ReadToEnd()
         {
-
+            return "";
         }
 
         public virtual void Write(string Value)
@@ -27,43 +29,46 @@ namespace RemObjects.InternetPack.Shared.Base
     
     public class StreamReader : TextReader
     {
+        protected Stream fStream;
+
         public StreamReader(Stream stream)
         {
-
+            fStream = stream;
+            fEncoding = Encoding.UTF8;
         }
 
         public override string ReadToEnd()
         {
+            var lBytes = fStream.Length - fStream.Position;
+            var lBuffer = new byte[lBytes];
+            fStream.Read(lBuffer, 0, lBytes);
 
+            return fEncoding.GetString(lBuffer, 0, lBytes);
         }
-
     }
 
-    public class StreamWriter : TextReader
+    public class StreamWriter : StreamReader
     {
-        public StreamWriter(Stream Value)
-        {
-         
-        }
-
         public override void Flush()
         {
-
+            fStream.Flush();
         }
         
         public virtual void WriteLine()
         {
-
+            WriteLine("");
         }
         
         public virtual void WriteLine(string Value)
         {
-            
+            var lBuffer = fEncoding.GetBytes(Value + Environment.LineBreak);
+            fStream.Write(lBuffer, lBuffer.Length);
         }
 
         public override void Write(string Value)
         {
-
+            var lBuffer = fEncoding.GetBytes(Value);
+            fStream.Write(lBuffer, lBuffer.Length);
         }
     }
 
