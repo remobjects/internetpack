@@ -1,11 +1,11 @@
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Windows.Forms;
+using RemObjects.Elements.RTL;
 
 namespace HttpResponses
 {
-	public class MainForm : System.Windows.Forms.Form
+    public class MainForm : System.Windows.Forms.Form
 	{
 		private RemObjects.InternetPack.Http.HttpServer httpServer;
 		private System.Windows.Forms.LinkLabel llblinkLabel1;
@@ -122,12 +122,12 @@ namespace HttpResponses
 
 		private void httpServer_OnHttpRequest(Object sender, RemObjects.InternetPack.Http.HttpRequestEventArgs ea)
 		{
-			String lRequestPath = ea.Request.Header.RequestPath;
+            string lRequestPath = ea.Request.Header.RequestPath;
 
-			Invoke(new MethodInvoker(delegate
+			/*Invoke(new MethodInvoker(delegate
 			{
 				lb_Log.Items.Add(lRequestPath);
-			}));
+			}));*/
 
 
 			switch (ea.Request.Header.RequestPath)
@@ -152,19 +152,19 @@ namespace HttpResponses
 					break;
 
 				case "/file":
-					String lExeName = this.GetType().Assembly.Location;
+					string lExeName = this.GetType().Assembly.Location;
 					try
 					{
-						ea.Response.ContentStream = new FileStream(lExeName,
-						  FileMode.Open, FileAccess.Read, FileShare.Read);
+                        ea.Response.ContentStream = new RemObjects.Elements.RTL.FileStream(lExeName,
+                          FileOpenMode.ReadOnly);
 						ea.Response.Header.SetHeaderValue("Content-Disposition",
-						  String.Format("filename=\"{0}\"", Path.GetFileName(lExeName)));
+						  string.Format("filename=\"{0}\"", System.IO.Path.GetFileName(lExeName)));
 						ea.Response.Header.SetHeaderValue("Content-Type", "application/binary");
 						ea.Response.CloseStream = true; /* default, anyway */
 					}
 					catch (Exception)
 					{
-						ea.Response.SendError(System.Net.HttpStatusCode.NotFound, String.Format("File {0} not found", lExeName));
+						ea.Response.SendError(System.Net.HttpStatusCode.NotFound, string.Format("File {0} not found", lExeName));
 					}
 					break;
 

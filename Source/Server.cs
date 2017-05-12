@@ -523,8 +523,8 @@ namespace RemObjects.InternetPack
 							lWorker.DataConnection.Dispose();
 							continue;
 						}
-
-						lWorker.Thread = new Thread( () => { lWorker.Work(); });
+                        
+                        lWorker.Thread = new System.Threading.Thread( () => { lWorker.Work(); });
 						try
 						{
 							#if FULLFRAMEWORK
@@ -540,7 +540,7 @@ namespace RemObjects.InternetPack
 							lWorkers.Add(lWorker);
 
 						lWorker.Thread.Start();
-					}
+                    }
 				}
 				while (lSocket != null);
 			}
