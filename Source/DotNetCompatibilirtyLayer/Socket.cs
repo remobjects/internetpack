@@ -208,27 +208,42 @@
 
 	public class Socket : Object, IDisposable
 	{
-		private rtl.SOCKET fHandle;
-                    
+		#if posix
+        private int fHandle;        
+        #else
+        private rtl.SOCKET fHandle;
+        #endif
+                            
         public Boolean Connected { get; set; }
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)        
         {
             AddressFamily = addressFamily;
             SocketType = socketType;
             ProtocolType = protocolType;
+            #if posix
+            fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.Int32_t)socketType, (rtl.Int32_t)protocolType);
+            #else
             fHandle = rtl.__Global.socket((rtl.Int)addressFamily, (rtl.Int)socketType, (rtl.Int)protocolType);
+            #endif
+
             // TODO check exception
         }
 
+        #if posix
+        private Socket(int handle)
+        #else
         private Socket(rtl.SOCKET handle)
+        #endif
         {
             fHandle = handle;
         }
 
         static Socket()
         {
+            #if windows
             rtl.WSADATA data;
             rtl.WSAStartup(rtl.WINSOCK_VERSION, &data);
+            #endif
         }
                 
         public Socket Accept()

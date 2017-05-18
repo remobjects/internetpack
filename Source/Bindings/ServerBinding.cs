@@ -70,7 +70,7 @@ namespace RemObjects.InternetPack
 			for (Int32 i = 0; i < this.fListenThreads.Length; i++)
 			{
 				listener.ListeningSocket = this.fListeningSocket;
-				fListenThreads[i] = new System.Threading.Thread( () => listener.Listen() );
+				fListenThreads[i] = new Thread( () => listener.Listen() );
 #if FULLFRAMEWORK
 				fListenThreads[i].Name = String.Format("Internet Pack Listener {0} for {1}", i, this.EndPoint);
 #endif

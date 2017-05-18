@@ -524,7 +524,7 @@ namespace RemObjects.InternetPack
 							continue;
 						}
                         
-                        lWorker.Thread = new System.Threading.Thread( () => { lWorker.Work(); });
+                        lWorker.Thread = new Thread( () => { lWorker.Work(); });
 						try
 						{
 							#if FULLFRAMEWORK
