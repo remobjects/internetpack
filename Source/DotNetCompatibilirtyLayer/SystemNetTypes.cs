@@ -169,6 +169,7 @@
 		public IPHostEntry() {}
 	}
 
+    #if windows
     public struct sockaddr_in6 
     {
         public rtl.USHORT sin6_family;
@@ -177,6 +178,7 @@
         public rtl.in6_addr sin6_addr;
         public rtl.ULONG sin6_scope_id;
     }
+    #endif
 
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/4.0/System.dll
 	public class IPAddress : Object
@@ -246,7 +248,7 @@
             if (TryParse(ipString, out lAddress))
                 return lAddress;
             else
-                ; // throw exception
+                throw new Exception(String.Format("'{0}' is not a valid IP address", ipString));
         }
 
 		private static Boolean TryParseIPV4(String ipString, out IPAddress address)
@@ -278,17 +280,30 @@
    		private static Boolean TryParseIPV6(String ipString, out IPAddress address)
         {
             var lString = (RemObjects.Elements.System.String)ipString;
-            rtl.PADDRINFOW lAddrInfo;
-            sockaddr_in6 *lSockAddr;
             Byte[] lBytes = new Byte[16]; 
 
+            #if posix || macos
+            rtl.__struct_addrinfo *lAddrInfo;
+            rtl.__struct_sockaddr_in6 *lSockAddr;
+            if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) != 0)
+                return false;
+            lSockAddr = (rtl.__struct_sockaddr_in6 *)(*lAddrInfo).ai_addr;
+            #else
+            rtl.PADDRINFOW lAddrInfo;
+            sockaddr_in6 *lSockAddr;
+            
             if (rtl.GetAddrInfo(lString.FirstChar, null, null, &lAddrInfo) != 0)
                 return false;
 
             lSockAddr = (sockaddr_in6 *)(*lAddrInfo).ai_addr;
+            #endif
 
             for (int i = 0; i < IPv6Length; i++)
+                #if posix || macos
+                lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
+                #else
                 lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];
+                #endif
 
             address = new IPAddress(lBytes, (*lSockAddr).sin6_scope_id);
             return true;
@@ -309,7 +324,7 @@
             if (TryParseIPV4(ip, out lResult))
                 return lResult;
             else
-                ; // Exception
+                throw new Exception(String.Format("Can not parse '{0}' as IPv4 address", ip));
         }
 
 		private static IPAddress ParseIPV6(String ip)
@@ -319,7 +334,7 @@
             if (TryParseIPV6(ip, out lResult))
                 return lResult;
             else
-                ; // Exception
+                throw new Exception(String.Format("Can not parse '{0}' as IPv6 address", ip));
         }
 		
         public Byte[] GetAddressBytes()

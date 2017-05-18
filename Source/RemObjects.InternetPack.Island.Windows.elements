@@ -49,14 +49,17 @@
     <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Elements.fx">
+      <HintPath>..\..\RTL2\Source\bin\Debug\Windows\i386\Elements.fx</HintPath>
+    </Reference>
     <Reference Include="gc" />
     <Reference Include="rtl" />
     <Reference Include="Island">
       <HintPath>..\..\..\..\IslandRTL\Source\Bin\Debug\Windows\i386\Island.fx</HintPath>
     </Reference>
-    <Reference Include="Elements">
-      <HintPath>..\..\..\..\RTL2\Source\bin\Debug\Windows\i386\Elements.fx</HintPath>
-    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Island.Windows.targets" />
   <Import Project="RemObjects.InternetPack.Shared.Base.projitems" Label="Shared" />

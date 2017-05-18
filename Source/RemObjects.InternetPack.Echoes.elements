@@ -30,6 +30,9 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Elements">
+      <HintPath>..\..\RTL2\Source\bin\Debug\Elements.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -48,16 +51,17 @@
     <EmbeddedResource Include="Glyphs\Pop3Client.bmp" />
     <EmbeddedResource Include="Glyphs\Pop3Server.bmp" />
     <EmbeddedResource Include="Glyphs\SmtpServer.bmp" />
-    <Reference Include="Elements">
-      <Private>True</Private>
-      <HintPath>..\..\..\..\RTL2\Source\bin\Debug\Elements.dll</HintPath>
-    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Glyphs\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Echoes.targets" />
+  <PropertyGroup>
+  </PropertyGroup>
+  <Import Project="RemObjects.InternetPack.Shared.projitems" Label="Shared" />
+  <Import Project="RemObjects.InternetPack.Shared.Base.projitems" Label="Shared" />
   <PropertyGroup>
     <PreBuildEvent />
     <PostBuildEvent />
   </PropertyGroup>
-  <Import Project="RemObjects.InternetPack.Shared.projitems" Label="Shared" />
-  <Import Project="RemObjects.InternetPack.Shared.Base.projitems" Label="Shared" />
 </Project>

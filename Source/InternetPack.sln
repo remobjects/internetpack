@@ -2,15 +2,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Echoes", "C:\dev\ro\internetpack\Source\RemObjects.InternetPack.Echoes.elements", "{774B9AE9-B695-4908-B24F-5482556D6175}"
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Echoes", "RemObjects.InternetPack.Echoes.elements", "{774B9AE9-B695-4908-B24F-5482556D6175}"
 EndProject
-Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Island.Windows", "C:\dev\ro\internetpack\Source\RemObjects.InternetPack.Island.Windows.elements", "{D95A0330-C681-4114-8EE2-A7DCBB7D0972}"
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Island.Windows", "RemObjects.InternetPack.Island.Windows.elements", "{D95A0330-C681-4114-8EE2-A7DCBB7D0972}"
 EndProject
-Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Shared", "C:\dev\ro\internetpack\Source\RemObjects.InternetPack.Shared.elements", "{2123E0BC-AD64-4083-B40F-994E170E5917}"
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Shared", "RemObjects.InternetPack.Shared.elements", "{2123E0BC-AD64-4083-B40F-994E170E5917}"
 EndProject
-Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Shared.Base", "C:\dev\ro\internetpack\Source\RemObjects.InternetPack.Shared.Base.elements", "{2435289C-B662-4110-8C83-8BF70878094F}"
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Shared.Base", "RemObjects.InternetPack.Shared.Base.elements", "{2435289C-B662-4110-8C83-8BF70878094F}"
 EndProject
 Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Island.Linux", "RemObjects.InternetPack.Island.Linux.elements", "{67372E98-71A2-4578-8C21-841B9D849021}"
+EndProject
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Toffee.macOS", "RemObjects.InternetPack.Toffee.macOS.elements", "{D09979C9-4077-44A9-A055-610C86E53FC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -100,6 +102,30 @@ Global
 		{67372E98-71A2-4578-8C21-841B9D849021}.Trial|AnyCPU.Build.0 = Release|AnyCPU
 		{67372E98-71A2-4578-8C21-841B9D849021}.Trial|x86_64.ActiveCfg = Release|AnyCPU
 		{67372E98-71A2-4578-8C21-841B9D849021}.Trial|x86_64.Build.0 = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Debug|x86_64.ActiveCfg = Debug|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Debug|x86_64.Build.0 = Debug|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.IDE|AnyCPU.ActiveCfg = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.IDE|AnyCPU.Build.0 = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.IDE|x86_64.ActiveCfg = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.IDE|x86_64.Build.0 = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Licensed|AnyCPU.ActiveCfg = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Licensed|AnyCPU.Build.0 = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Licensed|x86_64.ActiveCfg = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Licensed|x86_64.Build.0 = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Mono|AnyCPU.ActiveCfg = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Mono|AnyCPU.Build.0 = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Mono|x86_64.ActiveCfg = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Mono|x86_64.Build.0 = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Release|AnyCPU.Build.0 = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Release|x86_64.ActiveCfg = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Release|x86_64.Build.0 = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Trial|AnyCPU.ActiveCfg = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Trial|AnyCPU.Build.0 = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Trial|x86_64.ActiveCfg = Release|AnyCPU
+		{D09979C9-4077-44A9-A055-610C86E53FC7}.Trial|x86_64.Build.0 = Release|AnyCPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

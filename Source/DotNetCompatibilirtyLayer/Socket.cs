@@ -208,8 +208,9 @@
 
 	public class Socket : Object, IDisposable
 	{
-		#if posix
-        private int fHandle;        
+		#if posix || macos
+        private int fHandle; 
+        public const Int32 FIONREAD = 1074004095;       
         #else
         private rtl.SOCKET fHandle;
         #endif
@@ -220,16 +221,17 @@
             AddressFamily = addressFamily;
             SocketType = socketType;
             ProtocolType = protocolType;
-            #if posix
+            #if posix || macos
             fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.Int32_t)socketType, (rtl.Int32_t)protocolType);
             #else
             fHandle = rtl.__Global.socket((rtl.Int)addressFamily, (rtl.Int)socketType, (rtl.Int)protocolType);
             #endif
 
-            // TODO check exception
+            if (fHandle < 0)
+                throw new Exception("Error creating socket");
         }
 
-        #if posix
+        #if posix || macos
         private Socket(int handle)
         #else
         private Socket(rtl.SOCKET handle)
@@ -248,9 +250,16 @@
                 
         public Socket Accept()
         {            
+            #if posix || macos
+            rtl.__SOCKADDR_ARG lSockAddr;
+            lSockAddr.__sockaddr__ = null;
+            var lSocket = rtl.accept(fHandle, lSockAddr, null);
+            if (lSocket == -1)
+            #else
             var lSocket = rtl.accept(fHandle, null, null);
             if (lSocket == rtl.INVALID_SOCKET)
-                ; // raise error
+            #endif
+                throw new Exception("Error calling accept function");
 
             return new Socket(lSocket);
         }
@@ -264,15 +273,30 @@
             var lEndPoint = (IPEndPoint)local_end;
             void *lPointer;
             int lSize;
+            #if posix || macos
+            rtl.__struct_sockaddr_in lIPv4;
+            rtl.__struct_sockaddr_in6 lIPv6;
+            rtl.__CONST_SOCKADDR_ARG lSockAddr;
+            #else
             rtl.SOCKADDR_IN lIPv4;
             sockaddr_in6 lIPv6;
-
-            IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);            
+            #endif
+            
+            IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
+            #if posix || macos
+            lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
+            rtl.__Global.bind(fHandle, lSockAddr, lSize);
+            #else
             if (rtl.bind(fHandle, lPointer, lSize) != 0)
-                ; // throw exception
+            #endif
+                throw new Exception("Error calling bind function");
         }
 
+        #if posix || macos
+        private void IPEndPointToNative(IPEndPoint endPoint, out rtl.__struct_sockaddr_in lIPv4, out rtl.__struct_sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
+        #else
         private void IPEndPointToNative(IPEndPoint endPoint, out rtl.SOCKADDR_IN lIPv4, out sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
+        #endif
         {
             switch (endPoint.AddressFamily)
             {
@@ -280,19 +304,32 @@
                     lIPv6.sin6_family = AddressFamily.InterNetworkV6;
                     lIPv6.sin6_port = rtl.htons(endPoint.Port);
                     lIPv6.sin6_scope_id = endPoint.Address.ScopeId;
-                    var lBytes = endPoint.Address.GetAddressBytes();
+                    var lBytes = endPoint.Address.GetAddressBytes();                    
                     for (int i = 0; i < 16; i++)
+                        #if posix || macos
+                        lIPv6.sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
+                        #else
                         lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
+                        #endif
                     ipPointer = &lIPv6;
+                    #if posix || macos
+                    ipSize = sizeof(rtl.__struct_sockaddr_in6);
+                    #else
                     ipSize = sizeof(sockaddr_in6);
+                    #endif
                     break;
 
                 default:
                     lIPv4.sin_family = AddressFamily.InterNetwork;
                     lIPv4.sin_port = rtl.htons(endPoint.Port);
-                    lIPv4.sin_addr.S_un.S_addr = endPoint.Address.Address;
-                    ipPointer = &lIPv4;
+                    #if posix || macos
+                    lIPv4.sin_addr.s_addr = endPoint.Address.Address;
+                    ipSize = sizeof(rtl.__struct_sockaddr_in);
+                    #else
+                    lIPv4.sin_addr.S_un.S_addr = endPoint.Address.Address;                    
                     ipSize = sizeof(rtl.SOCKADDR_IN);
+                    #endif
+                    ipPointer = &lIPv4;
             }            
         }
 
@@ -300,13 +337,24 @@
         {
             void *lPointer;
             int lSize;
+            #if posix || macos
+            rtl.__struct_sockaddr_in lIPv4;
+            rtl.__struct_sockaddr_in6 lIPv6;            
+            rtl.__CONST_SOCKADDR_ARG lSockAddr;
+            #else
             rtl.SOCKADDR_IN lIPv4;
-            sockaddr_in6 lIPv6;            
+            sockaddr_in6 lIPv6;
+            #endif
             var lEndPoint = (IPEndPoint)remoteEP;
 
             IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
+            #if posix || macos
+            lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
+            if (rtl.connect(fHandle, lSockAddr, lSize) != 0)
+            #else
             if (rtl.connect(fHandle, lPointer, lSize) != 0)
-                ;// raise error
+            #endif
+                throw new Exception("Error connecting socket");
             
             Connected = true;
         }
@@ -340,7 +388,7 @@
                 throw lEx;
 
             if (!Connected)
-                ; // throw exception
+                throw new Exception("Error connecting socket");
         }
 
 		public void Connect(IPAddress address, Int32 port)
@@ -359,7 +407,7 @@
         public void Listen(Int32 backlog)
         {
             if (rtl.listen(fHandle, backlog) != 0)
-                ; // TODO check exception
+                throw new Exception("Error calling to listen function");
         }
 
 		public Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags) 
@@ -409,7 +457,7 @@
         private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, void *optionValue, Int32 optionValueLength)
         {
             if (rtl.setsockopt(fHandle, (int)optionLevel, (int)optionName, (AnsiChar *)optionValue, optionValueLength) != 0)
-                ;// Error
+                throw new Exception("Can not change socket option");
         }
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
@@ -438,8 +486,12 @@
 		
         private new void Dispose() 
         {
+            #if posix || macos
+            if (rtl.close(fHandle) != 0)
+            #else
             if (rtl.closesocket(fHandle) != 0)
-                ; // raise exception
+            #endif
+                throw new Exception("Error closing socket");
             
             Connected = false;
         }
@@ -452,7 +504,7 @@
         public void Shutdown(SocketShutdown how) 
         {
             if (rtl.shutdown(fHandle, (int)how) != 0)
-                ; // throw exception
+                throw new Exception("Error closing socket");
         }
 
 		public Int32 Available
@@ -460,8 +512,12 @@
             get
             {
                 rtl.u_long lData;
+                #if posix || macos
+                if (rtl.ioctl(fHandle,FIONREAD, &lData) != 0)
+                #else
                 if (rtl.ioctlsocket(fHandle,rtl.FIONREAD, &lData) != 0)
-                    ; // throw exception
+                #endif
+                    throw new Exception("Error calling ioctl function");
 
                 return lData;
             }
