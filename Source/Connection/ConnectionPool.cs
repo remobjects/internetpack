@@ -7,7 +7,7 @@ namespace RemObjects.InternetPack
 {
 	public class ConnectionPool : IDisposable
 	{
-		#if macos
+		#if macos || ios
         private readonly Object fSyncRoot = new Object();        
         #else
         private readonly Monitor fSyncRoot = new Monitor();

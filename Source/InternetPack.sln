@@ -14,6 +14,8 @@ Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Isl
 EndProject
 Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Toffee.macOS", "RemObjects.InternetPack.Toffee.macOS.elements", "{D09979C9-4077-44A9-A055-610C86E53FC7}"
 EndProject
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Toffee.iOS", "RemObjects.InternetPack.Toffee.iOS.elements", "{4C7346AB-EB0D-454B-9B4F-93596472063F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AnyCPU = Debug|AnyCPU
@@ -126,6 +128,30 @@ Global
 		{D09979C9-4077-44A9-A055-610C86E53FC7}.Trial|AnyCPU.Build.0 = Release|AnyCPU
 		{D09979C9-4077-44A9-A055-610C86E53FC7}.Trial|x86_64.ActiveCfg = Release|AnyCPU
 		{D09979C9-4077-44A9-A055-610C86E53FC7}.Trial|x86_64.Build.0 = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Debug|x86_64.ActiveCfg = Debug|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Debug|x86_64.Build.0 = Debug|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.IDE|AnyCPU.ActiveCfg = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.IDE|AnyCPU.Build.0 = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.IDE|x86_64.ActiveCfg = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.IDE|x86_64.Build.0 = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Licensed|AnyCPU.ActiveCfg = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Licensed|AnyCPU.Build.0 = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Licensed|x86_64.ActiveCfg = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Licensed|x86_64.Build.0 = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Mono|AnyCPU.ActiveCfg = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Mono|AnyCPU.Build.0 = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Mono|x86_64.ActiveCfg = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Mono|x86_64.Build.0 = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Release|AnyCPU.Build.0 = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Release|x86_64.ActiveCfg = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Release|x86_64.Build.0 = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Trial|AnyCPU.ActiveCfg = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Trial|AnyCPU.Build.0 = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Trial|x86_64.ActiveCfg = Release|AnyCPU
+		{4C7346AB-EB0D-454B-9B4F-93596472063F}.Trial|x86_64.Build.0 = Release|AnyCPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

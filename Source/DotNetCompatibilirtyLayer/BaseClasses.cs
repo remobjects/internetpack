@@ -41,7 +41,7 @@
 	}
 	public class ObjectDisposedException : Exception {}
 
-    #if macos
+    #if macos || ios
     public interface IDisposable
     {
 	    void Dispose();

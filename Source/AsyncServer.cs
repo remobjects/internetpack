@@ -2,7 +2,7 @@
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
-#if macos
+#if macos || ios
 using RemObjects.Elements.RTL.Reflection;
 #endif
 
@@ -11,7 +11,7 @@ namespace RemObjects.InternetPack
 	public abstract class AsyncServer : Server
 	{
 		private List<IAsyncWorker> fWorkers;
-		#if macos
+		#if macos || ios
         private readonly Object fSyncRoot = new Object();        
         #else
         private readonly Monitor fSyncRoot = new Monitor();
