@@ -15,7 +15,11 @@ namespace RemObjects.InternetPack
 		#endregion
 
 		#region Private fields
-		private readonly Monitor fSyncRoot = new Monitor();
+    	#if macos
+        private readonly Object fSyncRoot = new Object();        
+        #else
+        private readonly Monitor fSyncRoot = new Monitor();
+        #endif
 		private Boolean fTimeoutTimerEnabled;
 		private Timer fTimeoutTimer;
 		#endregion
@@ -70,9 +74,14 @@ namespace RemObjects.InternetPack
 			this.MaxLineLength = DEFAULT_MAX_LINE_LENGTH;
 		}
 
-		public override String ToString()
+		[ToString]
+        public override String ToString()
 		{
-			return String.Format("{0} Local: {1} Remote {2}", this.GetType().Name, this.LocalEndPoint, this.RemoteEndPoint);
+            #if macos
+            return String.Format("{0} Local: {1} Remote {2}", this.ToString(), this.LocalEndPoint, this.RemoteEndPoint);
+            #else
+            return String.Format("{0} Local: {1} Remote {2}", this.GetType().Name, this.LocalEndPoint, this.RemoteEndPoint);
+            #endif
 		}
 
 		#region Properties
@@ -494,16 +503,20 @@ namespace RemObjects.InternetPack
 
 			if (lSize > size)
 			{
-				// more bytes in buffer than we need?
+                // more bytes in buffer than we need?
 				Array.Copy(fBuffer, fBufferStart, buffer, offset, size);
-				fBufferStart += size;
+                fBufferStart += size;
 
 				return size;
 			}
 
 			// less (or same) number of bytes in buffer then we need?
 			//fBuffer.BlockCopy(fBuffer, fBufferStart, buffer, offset, lSize);
-			fBuffer.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
+			#if macos
+            Array.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
+            #else
+            fBuffer.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
+            #endif
 			fBuffer = null;
 
 			// if more bytes werer requested, and bytes are available, get them
@@ -807,7 +820,11 @@ namespace RemObjects.InternetPack
 
 		public override Int64 Seek(Int64 offset, SeekOrigin origin)
 		{
+            #if macos
+            throw new Exception(String.Format("{0} does not support seeking", this.ToString()));
+            #else
             throw new Exception(String.Format("{0} does not support seeking", this.GetType().Name));
+            #endif
 		}
 
 		public override Boolean CanRead
@@ -849,11 +866,26 @@ namespace RemObjects.InternetPack
 		    return Position;
         }
 
+        public override Int64 Position 
+        { 
+            get
+            {
+                return base.Position;
+            }
+            set
+            {
+		        Seek(value, SeekOrigin.Begin);
+			    Position = value;
+            }
+        }
+
+        #if !macos
         public override void SetPosition(Int64 value)
 		{
 		    Seek(value, SeekOrigin.Begin);
 			Position = value;
 		}
+        #endif
 		#endregion
 
 		// returns null if there's nothing in the buffer; returns "" if it's an empty line else the line in the buffer

@@ -79,7 +79,9 @@
 	}
 
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
-	[FlagsAttribute]
+	#if !macos
+    [FlagsAttribute]
+    #endif
 	public enum SocketFlags
 	{
 		None = 0,
@@ -212,7 +214,7 @@
 		
         public IPAddress(Byte[] address)
         {
-            if (address.Length == IPv4Length)
+            if (length(address) == IPv4Length)
             {
                 fFamily = AddressFamily.InterNetwork;
                 fAddress = ((address[3] << 24 | address[2] <<16 | address[1] << 8| address[0]) & 0x0FFFFFFFF);
@@ -285,7 +287,11 @@
             #if posix || macos
             rtl.__struct_addrinfo *lAddrInfo;
             rtl.__struct_sockaddr_in6 *lSockAddr;
+            #if macos
+            if (rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo) != 0)
+            #else
             if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) != 0)
+            #endif
                 return false;
             lSockAddr = (rtl.__struct_sockaddr_in6 *)(*lAddrInfo).ai_addr;
             #else
@@ -299,8 +305,10 @@
             #endif
 
             for (int i = 0; i < IPv6Length; i++)
-                #if posix || macos
+                #if posix
                 lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
+                #elif macos
+                lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
                 #else
                 lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];
                 #endif

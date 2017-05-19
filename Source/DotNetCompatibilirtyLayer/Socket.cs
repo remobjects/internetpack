@@ -1,10 +1,9 @@
 ﻿namespace RemObjects.InternetPack
 {
-	#if !ECHOES
+    #if !ECHOES
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
 	public class OldSocket : Object, IDisposable
 	{
-
 		/*private Boolean islistening;
 		private Boolean useoverlappedIO;
 		private static const Int32 SOCKET_CLOSED = 10004;
@@ -250,14 +249,14 @@
                 
         public Socket Accept()
         {            
-            #if posix || macos
+            #if posix
             rtl.__SOCKADDR_ARG lSockAddr;
             lSockAddr.__sockaddr__ = null;
             var lSocket = rtl.accept(fHandle, lSockAddr, null);
             if (lSocket == -1)
             #else
             var lSocket = rtl.accept(fHandle, null, null);
-            if (lSocket == rtl.INVALID_SOCKET)
+            if (lSocket < 0)
             #endif
                 throw new Exception("Error calling accept function");
 
@@ -276,22 +275,33 @@
             #if posix || macos
             rtl.__struct_sockaddr_in lIPv4;
             rtl.__struct_sockaddr_in6 lIPv6;
+            #if posix
             rtl.__CONST_SOCKADDR_ARG lSockAddr;
+            #endif
             #else
             rtl.SOCKADDR_IN lIPv4;
             sockaddr_in6 lIPv6;
             #endif
             
             IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
-            #if posix || macos
+            #if posix
             lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
             rtl.__Global.bind(fHandle, lSockAddr, lSize);
+            #elif macos
+            if (rtl.bind(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
             #else
             if (rtl.bind(fHandle, lPointer, lSize) != 0)
             #endif
                 throw new Exception("Error calling bind function");
         }
 
+        #if macos
+        private int htons(int port)
+        {
+            return (__uint16_t)((((__uint16_t)(port) & 0xff00) >> 8) | (((__uint16_t)(port) & 0x00ff) << 8));
+        }
+        #endif
+        
         #if posix || macos
         private void IPEndPointToNative(IPEndPoint endPoint, out rtl.__struct_sockaddr_in lIPv4, out rtl.__struct_sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
         #else
@@ -300,13 +310,19 @@
         {
             switch (endPoint.AddressFamily)
             {
-                case AddressFamily.InterNetworkV6:
+                case AddressFamily.InterNetworkV6:                    
                     lIPv6.sin6_family = AddressFamily.InterNetworkV6;
+                    #if macos
+                    lIPv6.sin6_port = htons(endPoint.Port);
+                    #else
                     lIPv6.sin6_port = rtl.htons(endPoint.Port);
+                    #endif
                     lIPv6.sin6_scope_id = endPoint.Address.ScopeId;
                     var lBytes = endPoint.Address.GetAddressBytes();                    
                     for (int i = 0; i < 16; i++)
-                        #if posix || macos
+                        #if macos
+                        lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
+                        #elif posix
                         lIPv6.sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
                         #else
                         lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
@@ -321,7 +337,12 @@
 
                 default:
                     lIPv4.sin_family = AddressFamily.InterNetwork;
+                    #if macos
+                    lIPv4.sin_port = htons(endPoint.Port);
+                    #else
                     lIPv4.sin_port = rtl.htons(endPoint.Port);
+                    #endif
+
                     #if posix || macos
                     lIPv4.sin_addr.s_addr = endPoint.Address.Address;
                     ipSize = sizeof(rtl.__struct_sockaddr_in);
@@ -330,6 +351,7 @@
                     ipSize = sizeof(rtl.SOCKADDR_IN);
                     #endif
                     ipPointer = &lIPv4;
+                    break;
             }            
         }
 
@@ -339,8 +361,12 @@
             int lSize;
             #if posix || macos
             rtl.__struct_sockaddr_in lIPv4;
-            rtl.__struct_sockaddr_in6 lIPv6;            
+            rtl.__struct_sockaddr_in6 lIPv6;
+            #if posix
             rtl.__CONST_SOCKADDR_ARG lSockAddr;
+            #else
+            rtl.__struct_sockaddr lSockAddr;
+            #endif
             #else
             rtl.SOCKADDR_IN lIPv4;
             sockaddr_in6 lIPv6;
@@ -348,9 +374,11 @@
             var lEndPoint = (IPEndPoint)remoteEP;
 
             IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
-            #if posix || macos
+            #if posix
             lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
             if (rtl.connect(fHandle, lSockAddr, lSize) != 0)
+            #elif macos
+            if (rtl.connect(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
             #else
             if (rtl.connect(fHandle, lPointer, lSize) != 0)
             #endif
@@ -424,12 +452,12 @@
 
 		public Int32 Receive(Byte[] buffer, SocketFlags flags) 
         {
-            return Receive(buffer, 0, buffer.Length, flags);
+            return Receive(buffer, 0, length(buffer), flags);
         }
 
 		public Int32 Receive(Byte[] buffer)
         {
-            return Receive(buffer, 0, buffer.Length, SocketFlags.None);
+            return Receive(buffer, 0, length(buffer), SocketFlags.None);
         }
 
 		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags)
@@ -446,12 +474,12 @@
 
 		public Int32 Send(Byte[] buf, SocketFlags flags)
         {
-            return Send(buf, 0, buf.Length, flags);
+            return Send(buf, 0, length(buf), flags);
         }
 
 		public Int32 Send(Byte[] buf)        
         {
-            return Send(buf, 0, buf.Length, SocketFlags.None);
+            return Send(buf, 0, length(buf), SocketFlags.None);
         }
 
         private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, void *optionValue, Int32 optionValueLength)
@@ -481,7 +509,7 @@
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue)
         {
             void *lValue = &optionValue[0];
-            InternalSetSocketOption(optionLevel, optionName, lValue, optionValue.Length);
+            InternalSetSocketOption(optionLevel, optionName, lValue, length(optionValue));
         }
 		
         private new void Dispose() 

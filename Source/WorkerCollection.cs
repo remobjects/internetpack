@@ -9,7 +9,11 @@ namespace RemObjects.InternetPack
 	{
 		#region Private fields
 
-		private readonly Monitor fSyncRoot = new Monitor();
+    	#if macos
+        private readonly Object fSyncRoot = new Object();        
+        #else
+        private readonly Monitor fSyncRoot = new Monitor();
+        #endif
 		private readonly List<IWorker> fWorkers = new List<IWorker>();
 		#endregion
 

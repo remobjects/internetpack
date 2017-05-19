@@ -8,7 +8,7 @@ namespace RemObjects.InternetPack.Dns
 #if FULLFRAMEWORK
 	[System.Serializable()]
 #endif
-	public class DnsResolveException : Exception
+	public class DnsResolveException : RTLException
 	{
 		public DnsResolveException(String message)
 			: base(message)

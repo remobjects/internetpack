@@ -6,7 +6,7 @@
 namespace RemObjects.InternetPack
 {
 	[Serializable]
-	public class ConnectionClosedException : Exception
+	public class ConnectionClosedException : RTLException
 	{
 		public ConnectionClosedException()
 			: base("Connection was closed.")

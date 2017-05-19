@@ -36,10 +36,27 @@
 		public DefaultValueAttribute(object ignore) {}
 	}
 
-	public class ArgumentOutOfRangeException : Exception {
+	public class ArgumentOutOfRangeException : RTLException {
 		public ArgumentOutOfRangeException() : base("Argument out of range") {}
 	}
 	public class ObjectDisposedException : Exception {}
+
+    #if macos
+    public interface IDisposable
+    {
+	    void Dispose();
+    }
+    
+    public static class Array : Object
+    {
+	    public static void Copy(byte[] aSource, Int32 aSourceOffset, byte[] aDest, Int32 aDestOffset, Int32 aCount)
+        {
+            for (int i = 0; i < aCount; i++)
+                aDest[aDestOffset + i] = aSource[aSourceOffset + i];
+
+        }
+    }
+    #endif
 	#endif
 
 	#if ECHOES
