@@ -15,7 +15,7 @@ namespace RemObjects.InternetPack
 		#endregion
 
 		#region Private fields
-    	#if macos || ios
+    	#if macos || ios || cooper
         private readonly Object fSyncRoot = new Object();        
         #else
         private readonly Monitor fSyncRoot = new Monitor();

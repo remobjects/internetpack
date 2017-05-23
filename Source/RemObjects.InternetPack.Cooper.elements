@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
+  <PropertyGroup>
+    <ProductVersion>3.5</ProductVersion>
+    <RootNamespace>RemObjects.InternetPack</RootNamespace>
+    <ProjectGuid>{5cf4d43e-e14d-4ad8-9d38-82cdf2ad543d}</ProjectGuid>
+    <OutputType>StaticLibrary</OutputType>
+    <AssemblyName>InternetPack</AssemblyName>
+    <AllowGlobals>False</AllowGlobals>
+    <AllowLegacyWith>False</AllowLegacyWith>
+    <AllowLegacyOutParams>False</AllowLegacyOutParams>
+    <AllowLegacyCreate>False</AllowLegacyCreate>
+    <AllowUnsafeCode>False</AllowUnsafeCode>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+    <DefaultUses>RemObjects.Elements.RTL</DefaultUses>
+    <KnownConditionalDefines>DEBUG;NEEDS_PORTING;TRACE</KnownConditionalDefines>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <MangleTypeNames>True</MangleTypeNames>
+    <CreateHeaderFile>True</CreateHeaderFile>
+    <Name>RemObjects.InternetPack.Cooper</Name>
+    <CrossPlatform>True</CrossPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <Optimize>False</Optimize>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <GenerateDebugInfo>True</GenerateDebugInfo>
+    <CaptureConsoleOutput>False</CaptureConsoleOutput>
+    <StartMode>Project</StartMode>
+    <CpuType>anycpu</CpuType>
+    <RuntimeVersion>v25</RuntimeVersion>
+    <XmlDoc>False</XmlDoc>
+    <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>
+    <EnableUnmanagedDebugging>False</EnableUnmanagedDebugging>
+    <CrossPlatform>True</CrossPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\</OutputPath>
+    <GenerateDebugInfo>False</GenerateDebugInfo>
+    <EnableAsserts>False</EnableAsserts>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <CaptureConsoleOutput>False</CaptureConsoleOutput>
+    <StartMode>Project</StartMode>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <CpuType>anycpu</CpuType>
+    <RuntimeVersion>v25</RuntimeVersion>
+    <XmlDoc>False</XmlDoc>
+    <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>
+    <EnableUnmanagedDebugging>False</EnableUnmanagedDebugging>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <CrossPlatform>True</CrossPlatform>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="elements.jar">
+      <HintPath>..\..\RTL2\Source\bin\Debug\elements.jar</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="rt.jar" />
+    <Reference Include="cooper.jar">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Cooper.targets" />
+  <Import Project="RemObjects.InternetPack.Shared.Base.projitems" Label="Shared" />
+</Project>

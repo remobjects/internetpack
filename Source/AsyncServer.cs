@@ -11,7 +11,7 @@ namespace RemObjects.InternetPack
 	public abstract class AsyncServer : Server
 	{
 		private List<IAsyncWorker> fWorkers;
-		#if macos || ios
+		#if macos || ios || cooper
         private readonly Object fSyncRoot = new Object();        
         #else
         private readonly Monitor fSyncRoot = new Monitor();
@@ -211,7 +211,11 @@ namespace RemObjects.InternetPack
 			this.fActive = false;
 		}
 
+        #if cooper
+        public override Class GetWorkerClass()
+        #else
 		public override Type GetWorkerClass()
+        #endif
 		{
 			return typeof(AsyncWorker);
 		}

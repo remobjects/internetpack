@@ -79,7 +79,7 @@
 	}
 
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
-	#if !macos && !ios
+	#if !macos && !ios && !cooper
     [FlagsAttribute]
     #endif
 	public enum SocketFlags

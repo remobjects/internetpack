@@ -394,7 +394,11 @@ namespace RemObjects.InternetPack
 				fBindingV6.Unbind(true);
 		}
 
-		public virtual Type GetWorkerClass()
+		#if cooper
+        public virtual Class GetWorkerClass()
+        #else
+        public virtual Type GetWorkerClass()
+        #endif
 		{
 			return typeof(Worker);
 		}
@@ -403,7 +407,11 @@ namespace RemObjects.InternetPack
 
 	public class Listener : IListener
 	{
-		public Listener(Server owner, Type workerClass)
+		#if cooper
+        public Listener(Server owner, Class workerClass)
+        #else
+        public Listener(Server owner, Type workerClass)
+        #endif
 		{
 			fOwner = owner;
 			fWorkerClass = workerClass;
@@ -423,14 +431,22 @@ namespace RemObjects.InternetPack
 		}
 		private Socket fListeningSocket;
 
-		public Type WorkerClass
+		#if cooper
+        public Class WorkerClass
+        #else
+        public Type WorkerClass
+        #endif
 		{
 			get
 			{
 				return fWorkerClass;
 			}
 		}
-		private readonly Type fWorkerClass;
+		#if cooper
+        private readonly Class fWorkerClass;
+        #else
+        private readonly Type fWorkerClass;
+        #endif
 
 		public Server Owner
 		{

@@ -41,7 +41,7 @@
 	}
 	public class ObjectDisposedException : Exception {}
 
-    #if macos || ios
+    #if macos || ios || cooper
     public interface IDisposable
     {
 	    void Dispose();
@@ -57,6 +57,14 @@
         }
     }
     #endif
+
+    #if cooper
+    public class Attribute
+    {
+    
+    }
+    #endif
+
 	#endif
 
 	#if ECHOES

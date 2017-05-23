@@ -207,7 +207,10 @@
 
 	public class Socket : Object, IDisposable
 	{
-		#if posix || macos || ios
+		#if cooper
+        private java.net.Socket fHandle;
+        private java.net.DatagramSocket fDgramHandle;
+        #elif posix || macos || ios
         private int fHandle; 
         public const Int32 FIONREAD = 1074004095;       
         #else
@@ -215,12 +218,30 @@
         #endif
                             
         public Boolean Connected { get; set; }
+
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)        
         {
             AddressFamily = addressFamily;
             SocketType = socketType;
             ProtocolType = protocolType;
-            #if posix || macos || ios
+            #if cooper
+            if ((AddressFamily != AddressFamily.InterNetwork) && (AddressFamily != AddressFamily.InterNetworkV6))
+                throw new Exception("Address family not supported on current platform");
+
+            switch(SocketType)
+            {
+                case SocketType.Stream:
+                    fHandle = new java.net.Socket();
+                    break;
+
+                case SocketType.Dgram:
+                    fDgramHandle = new java.net.DatagramSocket();
+                    break;
+
+                default:
+                    throw new Exception("Socket type not supported on current platform");
+            }            
+            #elif posix || macos || ios
             fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.Int32_t)socketType, (rtl.Int32_t)protocolType);
             #else
             fHandle = rtl.__Global.socket((rtl.Int)addressFamily, (rtl.Int)socketType, (rtl.Int)protocolType);
@@ -230,7 +251,9 @@
                 throw new Exception("Error creating socket");
         }
 
-        #if posix || macos || ios
+        #if cooper
+        private Socket(java.net.Socket handle)
+        #elif posix || macos || ios
         private Socket(int handle)
         #else
         private Socket(rtl.SOCKET handle)

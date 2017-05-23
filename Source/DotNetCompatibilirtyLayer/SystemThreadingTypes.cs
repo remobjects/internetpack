@@ -33,7 +33,9 @@
 		private Boolean Change(Int64 dueTime, Int64 period, Boolean first);
 		public Boolean Change(Int64 dueTime, Int64 period);
 		[CLSCompliantAttribute(false)]*/
-		public Boolean Change(UInt32 dueTime, UInt32 period) {}
+		#if !cooper
+        public Boolean Change(UInt32 dueTime, UInt32 period) {}
+        #endif
 		public Boolean Change(TimeSpan dueTime, TimeSpan period) {}
 		public Boolean Change(Int32 dueTime, Int32 period) {}
 		//public Boolean Dispose(WaitHandle notifyObject);*/
