@@ -284,6 +284,12 @@
             var lString = (RemObjects.Elements.System.String)ipString;
             Byte[] lBytes = new Byte[16]; 
 
+            #if cooper
+            var lInetAddress = java.net.Inet6Address.getByName(ipString);
+            lBytes = lInet6Address.getAddress();
+            address = new IPAddress(lBytes, lInetAddress.getScopeId());
+            return true;            
+            #else
             #if posix || macos || ios
             rtl.__struct_addrinfo *lAddrInfo;
             rtl.__struct_sockaddr_in6 *lSockAddr;
@@ -315,6 +321,7 @@
 
             address = new IPAddress(lBytes, (*lSockAddr).sin6_scope_id);
             return true;
+            #endif
         }
         
         public static Boolean TryParse(String ipString, out IPAddress address)

@@ -209,7 +209,12 @@
 	{
 		#if cooper
         private java.net.Socket fHandle;
+        private java.net.ServerSocket fServerHandle;
         private java.net.DatagramSocket fDgramHandle;
+        private bool fIsServer = false;
+        private java.io.InputStream fSocketInput;
+        private java.io.OutputStream fSocketOutput;
+        private java.net.InetSocketAddress fSocketAddress;
         #elif posix || macos || ios
         private int fHandle; 
         public const Int32 FIONREAD = 1074004095;       
@@ -231,7 +236,7 @@
             switch(SocketType)
             {
                 case SocketType.Stream:
-                    fHandle = new java.net.Socket();
+                    //fHandle = new java.net.Socket();
                     break;
 
                 case SocketType.Dgram:
@@ -260,6 +265,10 @@
         #endif
         {
             fHandle = handle;
+            #if cooper
+            fSocketInput = fHandle.getInputStream();
+            fSocketOutput = fHandle.getOutputStream();
+            #endif
         }
 
         static Socket()
@@ -272,6 +281,9 @@
                 
         public Socket Accept()
         {            
+            #if cooper
+            var lSocket = fServerHandle.accept();
+            #else
             #if posix
             rtl.__SOCKADDR_ARG lSockAddr;
             lSockAddr.__sockaddr__ = null;
@@ -282,8 +294,11 @@
             if (lSocket < 0)
             #endif
                 throw new Exception("Error calling accept function");
+            #endif
 
-            return new Socket(lSocket);
+            var lNewSocket = new Socket(lSocket);
+            lNewSocket.Connected = true;
+            return lNewSocket;
         }
 
 		//public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state) {}
@@ -293,6 +308,13 @@
         public void Bind(EndPoint local_end)       
         {
             var lEndPoint = (IPEndPoint)local_end;
+            #if cooper
+            var lAddress = InetAddress.getByAddress(lEndPoint.Address.GetAddresBytes());
+            java.net.InetSocketAddress fSocketAddress = new java.net.InetSocketAddress(lAddress, lEndPoint.Port);
+            fIsServer = true;
+            fServerHandle = new java.net.ServerSocket();
+            
+            #else
             void *lPointer;
             int lSize;
             #if posix || macos || ios
@@ -316,6 +338,7 @@
             if (rtl.bind(fHandle, lPointer, lSize) != 0)
             #endif
                 throw new Exception("Error calling bind function");
+            #endif
         }
 
         #if macos || ios
@@ -325,6 +348,7 @@
         }
         #endif
         
+        #if !cooper
         #if posix || macos || ios
         private void IPEndPointToNative(IPEndPoint endPoint, out rtl.__struct_sockaddr_in lIPv4, out rtl.__struct_sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
         #else
@@ -377,9 +401,17 @@
                     break;
             }            
         }
+        #endif
 
 		public void Connect(EndPoint remoteEP)
         {
+            var lEndPoint = (IPEndPoint)remoteEP;
+            #if cooper
+            var lAddress = InetAddress.getByAddress(lEndPoint.Address.GetAddresBytes());
+            fHandle = new java.net.Socket(lAddress, lEndPoint.Port);
+            fSocketInput = fHandle.getInputStream();
+            fSocketOutput = fHandle.getOutputStream();
+            #else
             void *lPointer;
             int lSize;
             #if posix || macos || ios
@@ -394,7 +426,7 @@
             rtl.SOCKADDR_IN lIPv4;
             sockaddr_in6 lIPv6;
             #endif
-            var lEndPoint = (IPEndPoint)remoteEP;
+            
 
             IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
             #if posix
@@ -406,6 +438,7 @@
             if (rtl.connect(fHandle, lPointer, lSize) != 0)
             #endif
                 throw new Exception("Error connecting socket");
+            #endif
             
             Connected = true;
         }
@@ -457,15 +490,25 @@
 		
         public void Listen(Int32 backlog)
         {
+            #if cooper
+            fServerHandle.bind(fSocketAddress, backlog);
+            #else
             if (rtl.listen(fHandle, backlog) != 0)
                 throw new Exception("Error calling to listen function");
+            #endif
         }
 
 		public Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags) 
         {
+            #if cooper
+            if (fSocketInput == null)
+                throw new Exception("Socket is not connected");
+            return fSocketInput.read(buffer, offset, size);
+            #else
             void *lPointer;
             lPointer = &buffer[0];
             return rtl.recv(fHandle, (AnsiChar *)lPointer, size, (int)flags);
+            #endif
         }
 
 		public Int32 Receive(Byte[] buffer, Int32 size, SocketFlags flags)
@@ -485,9 +528,16 @@
 
 		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags)
         {
+            #if cooper
+            if (fSocketOutput == null)
+                throw new Exception("Socket is not connected");
+            fSocketOutput.write(buf, offset, size);
+            return size;
+            #else
             void *lPointer;
             lPointer = &buf[0];
             return rtl.send(fHandle, (AnsiChar *)lPointer, size, (int)flags);
+            #endif
         }
 
 		public Int32 Send(Byte[] buf, Int32 size, SocketFlags flags)
@@ -507,8 +557,26 @@
 
         private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, void *optionValue, Int32 optionValueLength)
         {
+            #if cooper
+            switch(optionName)
+            {
+                case SocketOptionName.ReuseAddress:                
+                    
+                case SocketOptionName.KeepAlive:
+                case SocketOptionName.Linger:
+                case SocketOptionName.DontLinger:
+            	case SocketOptionName.OutOfBandInline:
+                case SocketOptionName.SendBuffer:
+                case SocketOptionName.ReceiveBuffer:
+                case SocketOptionName.SendTimeout:
+                case SocketOptionName.ReceiveTimeout:
+                    break;
+
+            } 
+            #else
             if (rtl.setsockopt(fHandle, (int)optionLevel, (int)optionName, (AnsiChar *)optionValue, optionValueLength) != 0)
                 throw new Exception("Can not change socket option");
+            #endif
         }
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
@@ -537,12 +605,18 @@
 		
         private new void Dispose() 
         {
+            #if cooper
+            if (!fIsServer)
+                fHandle.close();
+            else
+                fServerHandle.close();
             #if posix || macos || ios
             if (rtl.close(fHandle) != 0)
             #else
             if (rtl.closesocket(fHandle) != 0)
             #endif
                 throw new Exception("Error closing socket");
+            #endif
             
             Connected = false;
         }
@@ -562,6 +636,12 @@
         {
             get
             {
+                #if cooper
+                if (fSocketInput != null)
+                    return fSocketInput.available();
+                else                    
+                    return 0;
+                #else
                 rtl.u_long lData;
                 #if posix || macos  || ios
                 if (rtl.ioctl(fHandle, FIONREAD, &lData) != 0)
@@ -571,6 +651,7 @@
                     throw new Exception("Error calling ioctl function");
 
                 return lData;
+                #endif
             }
         }
 
@@ -587,7 +668,7 @@
 	{
 		//public SocketException(Int32 error);
 		//public SocketException();
-		public /*override*/ Int32 ErrorCode { get; set; }
+		public Int32 ErrorCode { get; set; }
 		//public SocketError SocketErrorCode { get; set; }
 		//public override String Message { get; set; }
 	}
