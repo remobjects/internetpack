@@ -287,7 +287,7 @@
             #if cooper
             var lInetAddress = java.net.Inet6Address.getByName(ipString);
             lBytes = lInetAddress.getAddress();
-            address = new IPAddress(lBytes, lInetAddress.getScopeId());
+            address = new IPAddress(lBytes, 0);
             return true;            
             #else
             #if posix || macos || ios

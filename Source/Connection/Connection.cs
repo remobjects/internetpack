@@ -77,7 +77,7 @@ namespace RemObjects.InternetPack
 		[ToString]
         public override String ToString()
 		{
-            #if macos || ios
+            #if macos || ios || cooper
             return String.Format("{0} Local: {1} Remote {2}", this.ToString(), this.LocalEndPoint, this.RemoteEndPoint);
             #else
             return String.Format("{0} Local: {1} Remote {2}", this.GetType().Name, this.LocalEndPoint, this.RemoteEndPoint);
@@ -512,7 +512,7 @@ namespace RemObjects.InternetPack
 
 			// less (or same) number of bytes in buffer then we need?
 			//fBuffer.BlockCopy(fBuffer, fBufferStart, buffer, offset, lSize);
-			#if macos || ios
+			#if macos || ios || cooper
             Array.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
             #else
             fBuffer.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
@@ -820,7 +820,7 @@ namespace RemObjects.InternetPack
 
 		public override Int64 Seek(Int64 offset, SeekOrigin origin)
 		{
-            #if macos || ios
+            #if macos || ios || cooper
             throw new Exception(String.Format("{0} does not support seeking", this.ToString()));
             #else
             throw new Exception(String.Format("{0} does not support seeking", this.GetType().Name));
@@ -879,7 +879,7 @@ namespace RemObjects.InternetPack
             }
         }
 
-        #if !macos && !ios
+        #if !macos && !ios && !cooper
         public override void SetPosition(Int64 value)
 		{
 		    Seek(value, SeekOrigin.Begin);

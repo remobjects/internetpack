@@ -59,7 +59,7 @@
     #endif
 
     #if cooper
-    public class Attribute
+    public interface Attribute
     {
     
     }

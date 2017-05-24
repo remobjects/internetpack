@@ -245,8 +245,9 @@
 
                 default:
                     throw new Exception("Socket type not supported on current platform");
-            }            
-            #elif posix || macos || ios
+            }
+            #else
+            #if posix || macos || ios
             fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.Int32_t)socketType, (rtl.Int32_t)protocolType);
             #else
             fHandle = rtl.__Global.socket((rtl.Int)addressFamily, (rtl.Int)socketType, (rtl.Int)protocolType);
@@ -254,6 +255,7 @@
 
             if (fHandle < 0)
                 throw new Exception("Error creating socket");
+            #endif
         }
 
         #if cooper
@@ -309,7 +311,7 @@
         {
             var lEndPoint = (IPEndPoint)local_end;
             #if cooper
-            var lAddress = InetAddress.getByAddress(lEndPoint.Address.GetAddresBytes());
+            var lAddress = java.net.InetAddress.getByAddress(lEndPoint.Address.GetAddressBytes());
             java.net.InetSocketAddress fSocketAddress = new java.net.InetSocketAddress(lAddress, lEndPoint.Port);
             fIsServer = true;
             fServerHandle = new java.net.ServerSocket();
@@ -555,6 +557,25 @@
             return Send(buf, 0, length(buf), SocketFlags.None);
         }
 
+        #if cooper
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
+        {
+            //void *lValue = &optionValue;
+            //InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Int32));
+        }
+
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue)
+        {
+            //void *lValue = &optionValue;
+            //InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Boolean));
+        }
+
+		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue)
+        {
+            //void *lValue = &optionValue;
+            //InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Object));
+        }
+        #else
         private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, void *optionValue, Int32 optionValueLength)
         {
             #if cooper
@@ -602,6 +623,7 @@
             void *lValue = &optionValue[0];
             InternalSetSocketOption(optionLevel, optionName, lValue, length(optionValue));
         }
+        #endif
 		
         private new void Dispose() 
         {
