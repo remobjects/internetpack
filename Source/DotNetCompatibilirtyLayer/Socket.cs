@@ -407,7 +407,7 @@
         {
             var lEndPoint = (IPEndPoint)remoteEP;
             #if cooper
-            var lAddress = InetAddress.getByAddress(lEndPoint.Address.GetAddresBytes());
+            var lAddress = java.net.InetAddress.getByAddress(lEndPoint.Address.GetAddressBytes());
             fHandle = new java.net.Socket(lAddress, lEndPoint.Port);
             fSocketInput = fHandle.getInputStream();
             fSocketOutput = fHandle.getOutputStream();
@@ -535,7 +535,7 @@
             return size;
             #else
             void *lPointer;
-            lPointer = &buf[0];
+            lPointer = &buf[offset];
             return rtl.send(fHandle, (AnsiChar *)lPointer, size, (int)flags);
             #endif
         }
@@ -610,6 +610,7 @@
                 fHandle.close();
             else
                 fServerHandle.close();
+            #else
             #if posix || macos || ios
             if (rtl.close(fHandle) != 0)
             #else
@@ -628,8 +629,15 @@
 		
         public void Shutdown(SocketShutdown how) 
         {
+            #if cooper
+            if (fIsServer)
+                fServerHandle.close();
+            else
+                fHandle.close();
+            #else
             if (rtl.shutdown(fHandle, (int)how) != 0)
                 throw new Exception("Error closing socket");
+            #endif
         }
 
 		public Int32 Available
