@@ -856,7 +856,8 @@ namespace RemObjects.InternetPack
 			throw new Exception(String.Format("{0} does not support SetLength", this.GetType().Name));
 		}*/
 
-		public override Int64 GetLength()
+		#if !cooper
+        public override Int64 GetLength()
 		{
 			return Position + DataSocketAvailable;
 		}
@@ -865,6 +866,7 @@ namespace RemObjects.InternetPack
 		{
 		    return Position;
         }
+        #endif
 
         public override Int64 Position 
         { 

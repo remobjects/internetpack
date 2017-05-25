@@ -25,6 +25,18 @@
 	//[ComVisibleAttribute(true)]
 	public delegate void EventHandler(Object sender, EventArgs e);
 
+    #if cooper
+	public interface SerializableAttribute : java.lang.annotation.Annotation {} 
+	public interface BrowsableAttribute : java.lang.annotation.Annotation {
+		bool Value();
+	}
+	public interface CategoryAttribute : java.lang.annotation.Annotation {
+		string Value();
+	}
+	public interface DefaultValueAttribute : java.lang.annotation.Annotation {
+		object Value(); 
+	}
+    #else
 	public class SerializableAttribute : Attribute {}
 	public class BrowsableAttribute : Attribute {
 		public BrowsableAttribute(bool ignore) {}
@@ -35,6 +47,7 @@
 	public class DefaultValueAttribute : Attribute {
 		public DefaultValueAttribute(object ignore) {}
 	}
+    #endif
 
 	public class ArgumentOutOfRangeException : RTLException {
 		public ArgumentOutOfRangeException() : base("Argument out of range") {}
@@ -53,15 +66,7 @@
         {
             for (int i = 0; i < aCount; i++)
                 aDest[aDestOffset + i] = aSource[aSourceOffset + i];
-
         }
-    }
-    #endif
-
-    #if cooper
-    public interface Attribute
-    {
-    
     }
     #endif
 
