@@ -23,7 +23,7 @@
     <Name>RemObjects.InternetPack.Toffee.macOS</Name>
     <CrossPlatform>True</CrossPlatform>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>False</Optimize>
     <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>NEEDS_PORTING</DefineConstants>
@@ -38,7 +38,7 @@
     <EnableUnmanagedDebugging>False</EnableUnmanagedDebugging>
     <CrossPlatform>True</CrossPlatform>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\</OutputPath>
     <GenerateDebugInfo>False</GenerateDebugInfo>
@@ -56,14 +56,14 @@
     <CrossPlatform>True</CrossPlatform>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Foundation.fx" />
-    <Reference Include="libElements.fx">
+    <Reference Include="Foundation" />
+    <Reference Include="libElements">
       <HintPath>..\..\RTL2\Source\bin\Debug\macOS\libElements.fx</HintPath>
     </Reference>
-    <Reference Include="libToffee.fx">
+    <Reference Include="libToffee">
       <HintPath>C:\Program Files (x86)\RemObjects Software\Elements\Toffee\Reference Libraries\macOS\libToffee.fx</HintPath>
     </Reference>
-    <Reference Include="rtl.fx" />
+    <Reference Include="rtl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

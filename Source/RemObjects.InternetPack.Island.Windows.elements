@@ -18,7 +18,7 @@
     <KnownConditionalDefines>DEBUG;NEEDS_PORTING;TRACE</KnownConditionalDefines>
     <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>False</Optimize>
     <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>NEEDS_PORTING</DefineConstants>
@@ -32,7 +32,7 @@
     <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>
     <EnableUnmanagedDebugging>False</EnableUnmanagedDebugging>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\</OutputPath>
     <GenerateDebugInfo>False</GenerateDebugInfo>
@@ -49,7 +49,7 @@
     <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Elements.fx">
+    <Reference Include="Elements">
       <HintPath>..\..\RTL2\Source\bin\Debug\Windows\i386\Elements.fx</HintPath>
     </Reference>
     <Reference Include="gc" />

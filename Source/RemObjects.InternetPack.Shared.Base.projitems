@@ -18,7 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dns.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\ConnectionPool.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\BaseClasses.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\BaseClasses.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Worker.cs" />
@@ -27,10 +27,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)AsyncServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\TransferEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\ConnectionEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\SystemNetTypes.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\Socket.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\SystemThreadingTypes.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilirtyLayer\Stream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\SystemNetTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\Socket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\SystemThreadingTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\Stream.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ConnectionClosedException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\DnsResolveException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.Async.cs" />

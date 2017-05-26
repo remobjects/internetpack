@@ -22,7 +22,7 @@
     <Name>RemObjects.InternetPack.Cooper</Name>
     <CrossPlatform>True</CrossPlatform>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>False</Optimize>
     <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>NEEDS_PORTING</DefineConstants>
@@ -36,7 +36,7 @@
     <EnableUnmanagedDebugging>False</EnableUnmanagedDebugging>
     <CrossPlatform>True</CrossPlatform>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\</OutputPath>
     <GenerateDebugInfo>False</GenerateDebugInfo>
@@ -54,12 +54,12 @@
     <CrossPlatform>True</CrossPlatform>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="elements.jar">
+    <Reference Include="elements">
       <HintPath>..\..\RTL2\Source\bin\Debug\elements.jar</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="rt.jar" />
-    <Reference Include="cooper.jar">
+    <Reference Include="rt" />
+    <Reference Include="cooper">
       <Private>True</Private>
     </Reference>
   </ItemGroup>

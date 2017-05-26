@@ -18,7 +18,7 @@
     <KnownConditionalDefines>DEBUG;NEEDS_PORTING;TRACE</KnownConditionalDefines>
     <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>False</Optimize>
     <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>NEEDS_PORTING</DefineConstants>
@@ -32,7 +32,7 @@
     <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>
     <EnableUnmanagedDebugging>False</EnableUnmanagedDebugging>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\</OutputPath>
     <GenerateDebugInfo>False</GenerateDebugInfo>
@@ -49,16 +49,16 @@
     <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Elements.fx">
+    <Reference Include="Elements">
       <HintPath>..\..\RTL2\Source\bin\Debug\Linux\x86_64\Elements.fx</HintPath>
     </Reference>
-    <Reference Include="gc.fx">
+    <Reference Include="gc">
       <HintPath>C:\Program Files (x86)\RemObjects Software\Elements\Island\Reference Libraries\Linux\x86_64\gc.fx</HintPath>
     </Reference>
-    <Reference Include="Island.fx">
+    <Reference Include="Island">
       <HintPath>..\..\IslandRTL\Source\Bin\Debug\Linux\x86_64\Island.fx</HintPath>
     </Reference>
-    <Reference Include="rtl.fx">
+    <Reference Include="rtl">
       <HintPath>C:\Program Files (x86)\RemObjects Software\Elements\Island\Reference Libraries\Linux\x86_64\rtl.fx</HintPath>
     </Reference>
   </ItemGroup>
