@@ -312,7 +312,7 @@
             var lEndPoint = (IPEndPoint)local_end;
             #if cooper
             var lAddress = java.net.InetAddress.getByAddress(lEndPoint.Address.GetAddressBytes());
-            java.net.InetSocketAddress fSocketAddress = new java.net.InetSocketAddress(lAddress, lEndPoint.Port);
+            fSocketAddress = new java.net.InetSocketAddress(lAddress, lEndPoint.Port);
             fIsServer = true;
             fServerHandle = new java.net.ServerSocket();
             
