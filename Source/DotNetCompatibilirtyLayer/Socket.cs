@@ -558,72 +558,104 @@
         }
 
         #if cooper
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
+        private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
         {
-            //void *lValue = &optionValue;
-            //InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Int32));
-        }
+            switch(optionName)
+            {
+                case SocketOptionName.ReuseAddress:
+                    if (fIsServer)
+                        fServerHandle.setReuseAddress((bool)optionValue);
+                    else
+                        fHandle.setReuseAddress((bool)optionValue);
+                    break;
+                    
+                case SocketOptionName.KeepAlive:
+                    fHandle.setKeepAlive((bool)optionValue);
+                    break;
 
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue)
-        {
-            //void *lValue = &optionValue;
-            //InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Boolean));
-        }
+                case SocketOptionName.DontLinger:
+                    fHandle.setSoLinger(false, 0);
+                    break;
 
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue)
-        {
-            //void *lValue = &optionValue;
-            //InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Object));
+            	case SocketOptionName.OutOfBandInline:
+                    fHandle.setOOBInline((bool)optionValue);
+                    break;
+
+                case SocketOptionName.SendBuffer:
+                    fHandle.setSendBufferSize(optionValue);
+                    break;
+
+                case SocketOptionName.ReceiveBuffer:
+                    if (fIsServer)
+                        fServerHandle.setReceiveBufferSize(optionValue);
+                    else
+                        fHandle.setReceiveBufferSize(optionValue);
+                    break;
+
+                case SocketOptionName.NoDelay:
+                    fHandle.setTcpNoDelay((bool)optionValue);
+                    break;
+
+                case SocketOptionName.SendTimeout:
+                case SocketOptionName.ReceiveTimeout:
+                    if (fIsServer)
+                        fServerHandle.setSoTimeout(optionValue);
+                    else
+                        fHandle.setSoTimeout(optionValue);
+                    break;
+            }
         }
         #else
         private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, void *optionValue, Int32 optionValueLength)
         {
-            #if cooper
-            switch(optionName)
-            {
-                case SocketOptionName.ReuseAddress:                
-                    
-                case SocketOptionName.KeepAlive:
-                case SocketOptionName.Linger:
-                case SocketOptionName.DontLinger:
-            	case SocketOptionName.OutOfBandInline:
-                case SocketOptionName.SendBuffer:
-                case SocketOptionName.ReceiveBuffer:
-                case SocketOptionName.SendTimeout:
-                case SocketOptionName.ReceiveTimeout:
-                    break;
-
-            } 
-            #else
             if (rtl.setsockopt(fHandle, (int)optionLevel, (int)optionName, (AnsiChar *)optionValue, optionValueLength) != 0)
                 throw new Exception("Can not change socket option");
-            #endif
         }
+        #endif
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
         {
+            #if cooper
+            InternalSetSocketOption(optionLevel, optionName, optionValue);            
+            #else
             void *lValue = &optionValue;
             InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Int32));
+            #endif
         }
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue)
         {
+            #if cooper
+            InternalSetSocketOption(optionLevel, optionName, (Int32)optionValue);
+            #else
             void *lValue = &optionValue;
             InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Boolean));
+            #endif
         }
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue)
         {
+            #if cooper
+            if (optionName == SocketOptionName.Linger  && optionName == SocketOptionName.DontLinger)
+            {
+                var lValue = (LingerOption)optionValue;
+                fHandle.setSoLinger(lValue.Enabled, lValue.LingerTime);
+            }
+            #else
             void *lValue = &optionValue;
             InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Object));
+            #endif
         }
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue)
         {
+            #if cooper
+            InternalSetSocketOption(optionLevel, optionName, optionValue[0]);
+            #else
             void *lValue = &optionValue[0];
             InternalSetSocketOption(optionLevel, optionName, lValue, length(optionValue));
+            #endif
         }
-        #endif
 		
         private new void Dispose() 
         {
