@@ -72,6 +72,66 @@ namespace RemObjects.InternetPack.Shared.Base
         }
     }
 
+    public class BinaryReader
+    {
+         protected BinaryStream fBinStream;
+         
+         public BinaryReader(Stream Value)
+         {
+            fBinStream = new BinaryStream(Value);
+         }
+
+         public byte ReadByte()
+         {
+             return fBinStream.ReadByte();
+         }
+
+         public sbyte ReadSByte()
+         {
+             return (sbyte)fBinStream.ReadByte();
+         }
+
+         public byte[] Read(Int32 Length)
+         {
+             return fBinStream.Read(Length);
+         }
+
+         public Int32 PeekChar()
+         {
+             return fBinStream.PeekChar();
+         }
+    }
+
+    public class BinaryWriter
+    {
+         protected BinaryStream fBinStream;
+         
+         public BinaryWriter(Stream Value)
+         {
+            fBinStream = new BinaryStream(Value);
+         }
+
+         public void Write(byte Value)
+         {
+             fBinStream.Write(Value);
+         }
+         
+         public void Write(byte[] Value)
+         {
+            Write(Value, 0, length(Value));
+         }
+
+         public void Write(byte[] Value, Int32 Offset, Int32 Count)
+         {
+            fBinStream.Write(Value, Offset, Count);
+         }
+
+         public void Flush()
+         {
+
+         }
+    }
+
     #if echoes
     public class WrappedStream: System.IO.Stream
     {
