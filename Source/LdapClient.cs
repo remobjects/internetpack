@@ -3,6 +3,8 @@
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
+using RemObjects.InternetPack.Shared.Base;
+
 namespace RemObjects.InternetPack.Ldap
 {
 	// http://tools.ietf.org/html/rfc4511 << ldap
