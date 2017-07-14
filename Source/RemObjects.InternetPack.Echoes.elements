@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Elements">
-      <HintPath>..\..\RTL2\Source\bin\Debug\Elements.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\RemObjects Software\Elements\Echoes\Reference Assemblies\Elements.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />

@@ -75,4 +75,42 @@
 	#if ECHOES
 	public class Monitor : Object {}
 	#endif
+
+    #if island
+    public class Exception : RemObjects.Elements.System.Exception
+    {
+		public Exception() : base("Exception happened")
+		{
+		}
+
+        public Exception(String message) : base(message)
+		{
+		}
+
+		public Exception(String message, Exception innerException)
+			: base(message + ' ' + innerException.ToString())
+		{
+		}
+    }
+    #endif
+
+    #if toffee
+    public class Exception : Foundation.NSException
+    {
+		public Exception()
+		{
+            initWithName("Exception") reason("unknown") userInfo(null);
+		}
+
+        public Exception(String message)
+		{
+            initWithName("Exception") reason(message) userInfo(null);
+		}
+
+		public Exception(String message, Exception innerException)
+		{
+            initWithName("Exception") reason(message + ' ' + innerException.ToString()) userInfo(null);
+		}
+    }
+    #endif
 }

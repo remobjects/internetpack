@@ -28,7 +28,11 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#region ToString
-		public override String ToString()
+		#if echoes || island
+        public override String ToString()
+        #else
+        public String ToString()
+        #endif
 		{
 			if (this.Count == 1)
 				return String.Format("{0}: {1}", this.Name, this.fValues[0]);
@@ -94,7 +98,7 @@ namespace RemObjects.InternetPack.Http
 		}
 	}
 
-	class HttpHeaderEnumerator : IEnumerator
+	/*class HttpHeaderEnumerator : IEnumerator
 	{
 		public HttpHeaderEnumerator(IEnumerator parent)
 		{
@@ -122,16 +126,18 @@ namespace RemObjects.InternetPack.Http
 			return this.fParent.MoveNext();
 		}
 		#endregion
-	}
+	}*/
 
-	public class HttpHeaders : IEnumerable
+	public class HttpHeaders : /*IEnumerable*/ ISequence<HttpHeader>
 	{
 		// Cannot use Dictionary<> here because non-generic Enumerator is exposed
-		private readonly Hashtable fHeaders;
+		//private readonly Hashtable fHeaders;
+        private readonly Dictionary<String, HttpHeader> fHeaders;
 
 		public HttpHeaders()
 		{
-			this.fHeaders = new Hashtable(StringComparer.OrdinalIgnoreCase);
+			//this.fHeaders = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            this.fHeaders = new Dictionary<String, HttpHeader>();
 			this.HttpCode = HttpStatusCode.OK;
 			this.Initialize();
 		}
@@ -168,7 +174,8 @@ namespace RemObjects.InternetPack.Http
 				// HTTP Response
 				try
 				{
-					this.HttpCode = (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), lRequestHeaderValues[1], true);
+					//this.HttpCode = (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), lRequestHeaderValues[1], true);
+                    this.HttpCode = (HttpStatusCode)Convert.ToInt32(lRequestHeaderValues[1]);
 				}
 				catch (ArgumentException)
 				{
@@ -426,7 +433,11 @@ namespace RemObjects.InternetPack.Http
 			return null;
 		}
 
-		public override String ToString()
+		#if echoes || island
+        public override String ToString()
+        #else
+        public String ToString()
+        #endif
 		{
 			StringBuilder lResult = new StringBuilder();
 			lResult.Append(FirstHeader);
@@ -444,11 +455,43 @@ namespace RemObjects.InternetPack.Http
 		}
 		#endregion
 
-		#region IEnumerable Members
+		/*#region IEnumerable Members
 		public IEnumerator GetEnumerator()
 		{
 			return new HttpHeaderEnumerator(this.fHeaders.GetEnumerator());
 		}
 		#endregion
+        */
+
+        #if cooper
+        public java.util.Iterator<HttpHeader> iterator()
+        {
+
+        }
+        #elif echoes
+        public System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() /*GetNonGenericEnumerator*/
+        {
+
+        }
+
+        public System.Collections.Generic.IEnumerator<HttpHeader> GetEnumerator()
+        {
+
+        }
+        #elif island
+        public IEnumerator IEnumerable.GetEnumerator() /*GetNonGenericEnumerator*/
+        {
+
+        }
+
+        public IEnumerator<HttpHeader> GetEnumerator()
+        {
+
+        }
+        #elif toffee
+        public Foundation.NSUInteger countByEnumeratingWithState(Foundation.NSFastEnumerationState* aState) objects(HttpHeader* stackbuf) count(Foundation.NSUInteger len)
+        {
+        }
+        #endif
 	}
 }

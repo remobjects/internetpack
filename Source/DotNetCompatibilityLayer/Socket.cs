@@ -303,9 +303,13 @@
             return lNewSocket;
         }
 
-		//public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state) {}
-		//public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state) {}
 		public IAsyncResult BeginAccept(AsyncCallback callback, Object state) {}
+
+   		public Socket EndAccept(out Byte[] buffer, out Int32 bytesTransferred, IAsyncResult asyncResult) {}
+		public Socket EndAccept(out Byte[] buffer, IAsyncResult asyncResult) {}
+		public Socket EndAccept(IAsyncResult result) {}
 		        
         public void Bind(EndPoint local_end)       
         {
@@ -482,13 +486,21 @@
             var lEndPoint = new IPEndPoint(address, port);
             Connect(lEndPoint);
         }
-		
+
+        public IAsyncResult BeginConnect(IPAddress[] addresses, Int32 port, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginConnect(EndPoint end_point, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginConnect(String host, Int32 port, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginConnect(IPAddress address, Int32 port, AsyncCallback callback, Object state) {}
+
+        public void EndConnect(IAsyncResult result) {}
+				
         public void Disconnect(Boolean reuseSocket)
         {
             Dispose();
         }
 
-		public Socket EndAccept(IAsyncResult result) {}
+        public IAsyncResult BeginDisconnect(Boolean reuseSocket, AsyncCallback callback, Object state) {}
+        public void EndDisconnect(IAsyncResult asyncResult) {}
 		
         public void Listen(Int32 backlog)
         {
@@ -528,6 +540,14 @@
             return Receive(buffer, 0, length(buffer), SocketFlags.None);
         }
 
+        //public IAsyncResult BeginReceive(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state) {}
+		//public IAsyncResult BeginReceive(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, out SocketError error, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state) {}
+
+   		public Int32 EndReceive(IAsyncResult asyncResult, out SocketError errorCode) {}
+		public Int32 EndReceive(IAsyncResult result) {}
+
 		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags)
         {
             #if cooper
@@ -556,6 +576,17 @@
         {
             return Send(buf, 0, length(buf), SocketFlags.None);
         }
+
+   		//public IAsyncResult BeginSend(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state) {}
+		//public IAsyncResult BeginSend(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state) {}
+		//public IAsyncResult BeginSendFile(String fileName, Byte[] preBuffer, Byte[] postBuffer, TransmitFileOptions flags, AsyncCallback callback, Object state);
+		//public IAsyncResult BeginSendFile(String fileName, AsyncCallback callback, Object state);
+
+   		//public void EndSendFile(IAsyncResult asyncResult);
+		public Int32 EndSend(IAsyncResult asyncResult, out SocketError errorCode) {}
+		public Int32 EndSend(IAsyncResult result) {}
 
         #if cooper
         private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)

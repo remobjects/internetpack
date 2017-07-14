@@ -14,8 +14,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Bindings\Binding.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bindings\BindingConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bindings\ServerBinding.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Client.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Server.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client.cs">
+      <DesignableClassName>RemObjects.InternetPack.Client</DesignableClassName>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\SslConnection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpHeaderException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpRequestInvalidException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpHeader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Server.cs">
+      <DesignableClassName>RemObjects.InternetPack.Server</DesignableClassName>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Dns.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\ConnectionPool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\BaseClasses.cs" />
@@ -34,5 +42,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ConnectionClosedException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\DnsResolveException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.Async.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Bindings\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Connection\" />
+    <Folder Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\" />
+    <Folder Include="$(MSBuildThisFileDirectory)EventArgs\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Exceptions\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Http" />
   </ItemGroup>
 </Project>
