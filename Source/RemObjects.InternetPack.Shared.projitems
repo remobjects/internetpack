@@ -32,12 +32,6 @@
     </Compile>
     <Compile Include="FtpListing.cs" />
     <Compile Include="FtpServer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpClient.cs">
-      <SubType>Component</SubType>
-      <DesignableClassName>HttpClient</DesignableClassName>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpProxySettings.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpRequestResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Http\HttpServer.cs">
       <SubType>Component</SubType>
       <DesignableClassName>HttpServer</DesignableClassName>

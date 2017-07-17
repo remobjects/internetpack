@@ -156,37 +156,37 @@ namespace RemObjects.InternetPack.Http
 			return Get(url, null);
 		}
 
-		private static System.Text.Encoding GetEncodingFromContentType(System.String contentType)
+		private static Encoding GetEncodingFromContentType(String contentType)
 		{
-			Int32 lStartPos = contentType.IndexOf(HttpClient.CHARSET_KEY, StringComparison.Ordinal);
+			Int32 lStartPos = contentType.IndexOf(HttpClient.CHARSET_KEY);
 			if (lStartPos == -1)
-				return System.Text.Encoding.ASCII;
+				return Encoding.ASCII;
 
 			lStartPos += HttpClient.CHARSET_KEY.Length;
-			Int32 lEndPos = contentType.IndexOf(";", lStartPos, StringComparison.Ordinal);
+			Int32 lEndPos = contentType.IndexOf(";", lStartPos);
 			if (lEndPos == -1)
 				lEndPos = contentType.Length;
 
 			String lCharsetName = contentType.Substring(lStartPos, lEndPos - lStartPos).Trim();
 
 			if (String.IsNullOrEmpty(lCharsetName))
-				return System.Text.Encoding.ASCII;
+				return Encoding.ASCII;
 
-			lCharsetName = lCharsetName.ToLower(CultureInfo.InvariantCulture);
+			lCharsetName = lCharsetName.ToLowerInvariant();
 
-			if (System.String.Equals(lCharsetName, "utf-7", StringComparison.Ordinal))
-				return System.Text.Encoding.UTF7;
+			/*if (System.String.Equals(lCharsetName, "utf-7", StringComparison.Ordinal))
+				return System.Text.Encoding.UTF7;*/
 
-			if (System.String.Equals(lCharsetName, "utf-8", StringComparison.Ordinal))
-				return System.Text.Encoding.UTF8;
+			if (String.Equals(lCharsetName, "utf-8"))
+				return Encoding.UTF8;
 
-			if (System.String.Equals(lCharsetName, "unicode", StringComparison.Ordinal))
-				return System.Text.Encoding.Unicode;
+			if (String.Equals(lCharsetName, "unicode"))
+				return Encoding.UTF16LE;
 
-			if (System.String.Equals(lCharsetName, "unicodeFFFE", StringComparison.Ordinal))
-				return System.Text.Encoding.BigEndianUnicode;
+			if (String.Equals(lCharsetName, "unicodeFFFE"))
+				return Encoding.UTF16BE;
 
-			return System.Text.Encoding.ASCII;
+			return Encoding.ASCII;
 		}
 
 		private static void SetAuthorizationHeader(HttpHeaders headers, String header, String username, String password)
@@ -194,13 +194,14 @@ namespace RemObjects.InternetPack.Http
 			if (String.IsNullOrEmpty(username))
 				return;
 
-			Byte[] lByteData = System.Text.Encoding.UTF8.GetBytes(username + ":" + password);
-			String lAuthData = "Basic " + System.Convert.ToBase64String(lByteData, 0, lByteData.Length);
+			Byte[] lByteData = Encoding.UTF8.GetBytes(username + ":" + password);
+			//String lAuthData = "Basic " + System.Convert.ToBase64String(lByteData, 0, lByteData.Length); // TODO!!!
+            String lAuthData = "";
 
 			headers.SetHeaderValue(header, lAuthData);
 		}
 
-		public String Get(String url, System.Text.Encoding encoding)
+		public String Get(String url, Encoding encoding)
 		{
 			using (HttpClientResponse response = GetResponse(url))
 			{
@@ -315,7 +316,7 @@ namespace RemObjects.InternetPack.Http
 				lConnection = this.GetNewHttpConnection(lHostname, lPort);
 				request.WriteHeaderToConnection(lConnection);
 			}
-			catch (System.Net.Sockets.SocketException)
+			catch (SocketException)
 			{
 				lConnection = this.GetNewHttpConnection(lHostname, lPort);
 				request.WriteHeaderToConnection(lConnection);

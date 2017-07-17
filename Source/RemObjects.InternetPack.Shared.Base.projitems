@@ -20,7 +20,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\SslConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpHeaderException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpRequestInvalidException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Http\HttpHeader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpProxySettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpRequestResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Server.cs">
       <DesignableClassName>RemObjects.InternetPack.Server</DesignableClassName>
     </Compile>
