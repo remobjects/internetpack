@@ -51,7 +51,7 @@ namespace RemObjects.InternetPack.Http
 		#endregion
 
 		#region Properties
-		public String Name { get; set; }
+        public String Name { get; set; }
 
 		public Int32 Count
 		{
@@ -386,11 +386,13 @@ namespace RemObjects.InternetPack.Http
 			connection.WriteLine("");
 		}
 
-		[Obsolete("Provide HTTP code using a System.Net.HttpStatusCode value")]
+		#if !cooper
+        [Obsolete("Provide HTTP code using a System.Net.HttpStatusCode value")]
 		public void SetResponseHeader(String version, Int32 code)
 		{
 			this.SetResponseHeader(version, (HttpStatusCode)code);
 		}
+        #endif
 
 		public void SetResponseHeader(String version, HttpStatusCode code)
 		{
@@ -462,11 +464,11 @@ namespace RemObjects.InternetPack.Http
 		}
 		#endregion
         */
-
+        
         #if cooper
         public java.util.Iterator<HttpHeader> iterator()
         {
-
+            return fHeaders.GetSequence().iterator();
         }
         #elif echoes
         public System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() /*GetNonGenericEnumerator*/

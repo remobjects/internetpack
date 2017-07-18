@@ -236,7 +236,7 @@
             switch(SocketType)
             {
                 case SocketType.Stream:
-                    //fHandle = new java.net.Socket();
+                    fHandle = new java.net.Socket();
                     break;
 
                 case SocketType.Dgram:

@@ -49,10 +49,19 @@ namespace RemObjects.InternetPack.Dns
 				return new IPAddress[] { lAddress };
 			}
 
-			#if !NEEDS_PORTING
-			IPHostEntry lEntry = System.Net.Dns.GetHostEntry(hostname);
+            #if echoes
+            IPHostEntry lEntry = System.Net.Dns.GetHostEntry(hostname);
 			return lEntry.AddressList;
-			#endif
+			#elif cooper
+            var lTemp = java.net.InetAddress.getAllByName(hostname);
+            var lAddresses = new IPAddress[lTemp.length];
+            for (int i = 0; i < lTemp.length; i++)
+            {
+                lAddresses[i] = new IPAddress(lTemp[i].Address);
+            }            
+            return lAddresses;
+            #endif
+            // TODO other platforms!!!!
 		}
 
 		public static IPAddress TryStringAsIPAddress(String hostname)

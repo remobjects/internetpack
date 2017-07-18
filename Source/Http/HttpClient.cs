@@ -195,8 +195,7 @@ namespace RemObjects.InternetPack.Http
 				return;
 
 			Byte[] lByteData = Encoding.UTF8.GetBytes(username + ":" + password);
-			//String lAuthData = "Basic " + System.Convert.ToBase64String(lByteData, 0, lByteData.Length); // TODO!!!
-            String lAuthData = "";
+			String lAuthData = "Basic " + Convert.ToBase64String(lByteData, 0, lByteData.Length);
 
 			headers.SetHeaderValue(header, lAuthData);
 		}
