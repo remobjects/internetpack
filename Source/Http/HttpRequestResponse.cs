@@ -970,7 +970,11 @@ namespace RemObjects.InternetPack.Http
             fQuery = query;
 			if (String.IsNullOrEmpty(fQuery))
 			{
-				return;
+				#if toffee
+                return null;
+                #else
+                return;
+                #endif
 			}
 
 			var lParams = fQuery.Split("&");

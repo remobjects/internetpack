@@ -63,7 +63,6 @@
       <SubType>Component</SubType>
       <DesignableClassName>SmtpClient</DesignableClassName>
     </Compile>
-    <Compile Include="UrlParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\FtpException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SSL\SslConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SSL\SslConnectionFactory.cs" />

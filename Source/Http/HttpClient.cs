@@ -220,7 +220,7 @@ namespace RemObjects.InternetPack.Http
 		public HttpClientResponse GetResponse(String url)
 		{
 			HttpClientRequest lRequest = new HttpClientRequest();
-			lRequest.URL = Url.UrlWithString(url);
+			lRequest.URL = UrlParser.UrlWithString(url);
 			lRequest.Header.RequestType = "GET";
 			lRequest.Header.SetHeaderValue("Accept", Accept);
 			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
@@ -232,7 +232,7 @@ namespace RemObjects.InternetPack.Http
 		public String Post(String url, Byte[] content)
 		{
 			HttpClientRequest lRequest = new HttpClientRequest();
-			lRequest.URL = Url.UrlWithString(url);
+			lRequest.URL = UrlParser.UrlWithString(url);
 			lRequest.RequestType = RequestType.Post;
 			lRequest.Header.SetHeaderValue("Accept", Accept);
 			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
@@ -246,7 +246,7 @@ namespace RemObjects.InternetPack.Http
 		public String Post(String url, Stream content)
 		{
 			HttpClientRequest lRequest = new HttpClientRequest();
-			lRequest.URL = Url.UrlWithString(url);
+			lRequest.URL = UrlParser.UrlWithString(url);
 			lRequest.RequestType = RequestType.Post;
 			lRequest.Header.SetHeaderValue("Accept", Accept);
 			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);

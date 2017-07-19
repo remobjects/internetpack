@@ -25,18 +25,22 @@
 		private static this .cctor();
 		public Timer(TimerCallback callback);
 		[CLSCompliantAttribute(false)]*/
-		public Timer(TimerCallback callback, Object state, UInt32 dueTime, UInt32 period) {}
+		#if !cooper
+        public Timer(TimerCallback callback, Object state, UInt32 dueTime, UInt32 period) {}
 		public Timer(TimerCallback callback, Object state, TimeSpan dueTime, TimeSpan period) {}
-		public Timer(TimerCallback callback, Object state, Int64 dueTime, Int64 period) {}
+        #endif
+        public Timer(TimerCallback callback, Object state, Int64 dueTime, Int64 period) {}
+        #if !cooper
 		public Timer(TimerCallback callback, Object state, Int32 dueTime, Int32 period) {}
+        #endif
 		/*private void Init(TimerCallback callback, Object state, Int64 dueTime, Int64 period);
 		private Boolean Change(Int64 dueTime, Int64 period, Boolean first);
 		public Boolean Change(Int64 dueTime, Int64 period);
 		[CLSCompliantAttribute(false)]*/
 		#if !cooper
         public Boolean Change(UInt32 dueTime, UInt32 period) {}
-        #endif
 		public Boolean Change(TimeSpan dueTime, TimeSpan period) {}
+        #endif
 		public Boolean Change(Int32 dueTime, Int32 period) {}
 		//public Boolean Dispose(WaitHandle notifyObject);*/
 		public new void Dispose() {}

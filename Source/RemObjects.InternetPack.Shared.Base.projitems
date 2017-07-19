@@ -32,6 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\BaseClasses.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UrlParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Worker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorkerCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces.cs" />

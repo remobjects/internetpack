@@ -464,35 +464,49 @@ namespace RemObjects.InternetPack.Http
 		}
 		#endregion
         */
+
+        public ISequence<HttpHeader> GetHeaders()
+        {
+            foreach(String lPair in fHeaders.Keys)
+            {
+                yield return fHeaders[lPair];
+            }
+        }
         
         #if cooper
         public java.util.Iterator<HttpHeader> iterator()
         {
-            return fHeaders.GetSequence().iterator();
+            return GetHeaders().iterator();
         }
         #elif echoes
         public System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() /*GetNonGenericEnumerator*/
         {
-
+            return GetEnumerator();
         }
 
         public System.Collections.Generic.IEnumerator<HttpHeader> GetEnumerator()
         {
-
+            var lHeaders = GetHeaders();
+            return lHeaders.GetEnumerator();
         }
         #elif island
         public IEnumerator IEnumerable.GetEnumerator() /*GetNonGenericEnumerator*/
         {
-
+            return GetEnumerator();
         }
 
         public IEnumerator<HttpHeader> GetEnumerator()
         {
-
+            var lHeaders = GetHeaders();
+            return lHeaders.GetEnumerator();
         }
         #elif toffee
         public Foundation.NSUInteger countByEnumeratingWithState(Foundation.NSFastEnumerationState* aState) objects(HttpHeader* stackbuf) count(Foundation.NSUInteger len)
         {
+            if (aState->state != 0)
+                return 0;
+
+            return GetHeaders().countByEnumeratingWithState(aState) objects(stackbuf) count(len);
         }
         #endif
 	}

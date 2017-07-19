@@ -60,6 +60,48 @@ namespace RemObjects.InternetPack.Dns
                 lAddresses[i] = new IPAddress(lTemp[i].Address);
             }            
             return lAddresses;
+            #else
+
+
+            
+            var lString = (RemObjects.Elements.System.String)hostname;
+            Byte[] lBytes = new Byte[16];             
+            #if posix || macos || ios            
+            rtl.__struct_addrinfo *lAddrInfo;
+            rtl.__struct_sockaddr_in6 *lSockAddr;
+            #if macos || ios
+            if (rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo) != 0)
+            #else
+            if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) != 0)
+            #endif
+                /*return false*/;
+            lSockAddr = (rtl.__struct_sockaddr_in6 *)(*lAddrInfo).ai_addr;
+            #else
+            rtl.PADDRINFOW lAddrInfo;
+            sockaddr_in6 *lSockAddr;
+            
+            if (rtl.GetAddrInfo(lString.FirstChar, null, null, &lAddrInfo) != 0)
+                /*return false*/;
+
+            lSockAddr = (sockaddr_in6 *)(*lAddrInfo).ai_addr;
+            #endif
+
+            for (int i = 0; i < 16 /*IPv6Length*/; i++)
+                #if posix
+                lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i];
+                #elif macos || ios
+                lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
+                #else
+                lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];
+                #endif
+
+            /*
+            address = new IPAddress(lBytes, (*lSockAddr).sin6_scope_id);
+            return true;
+            #endif
+            */
+
+
             #endif
             // TODO other platforms!!!!
 		}
