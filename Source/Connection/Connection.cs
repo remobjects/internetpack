@@ -110,12 +110,16 @@ namespace RemObjects.InternetPack
 			}
 		}
 
-		public Encoding Encoding
+		public RemObjects.Elements.RTL.Encoding Encoding
 		{
 			get
 			{
-				return this.fEncoding ?? (this.fEncoding = Encoding.Default);
-			}
+                if (this.fEncoding == null)
+                    return RemObjects.Elements.RTL.Encoding.Default;
+                else
+                    return this.fEncoding;
+                //return this.fEncoding ?? (this.fEncoding = Encoding.Default);
+            }
 			set
 			{
 				this.fEncoding = value;

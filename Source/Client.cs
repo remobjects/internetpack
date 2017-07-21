@@ -236,7 +236,7 @@ namespace RemObjects.InternetPack
 					break;
 			}
 
-			Connection lConnection = this.NewConnection(lBinding);
+            Connection lConnection = this.NewConnection(lBinding);
 			lConnection.Connect(host, port);
 
 			return lConnection;
@@ -280,7 +280,7 @@ namespace RemObjects.InternetPack
 
 		public static Connection Connect(String hostname, Int32 port, Binding binding)
 		{
-			IPAddress lHostAddress = Dns.DnsLookup.ResolveFirst(hostname);
+            IPAddress lHostAddress = Dns.DnsLookup.ResolveFirst(hostname);
 
 			return Client.Connect(lHostAddress, port, binding);
 		}

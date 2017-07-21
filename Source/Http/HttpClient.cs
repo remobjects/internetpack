@@ -204,7 +204,7 @@ namespace RemObjects.InternetPack.Http
 		{
 			using (HttpClientResponse response = GetResponse(url))
 			{
-				response.Encoding = (encoding != null) ? encoding : GetEncodingFromContentType(response.Header.ContentType);
+                response.Encoding = (encoding != null) ? encoding : GetEncodingFromContentType(response.Header.ContentType);
 				return response.ContentString;
 			}
 		}
@@ -219,7 +219,7 @@ namespace RemObjects.InternetPack.Http
 
 		public HttpClientResponse GetResponse(String url)
 		{
-			HttpClientRequest lRequest = new HttpClientRequest();
+            HttpClientRequest lRequest = new HttpClientRequest();
 			lRequest.URL = UrlParser.UrlWithString(url);
 			lRequest.Header.RequestType = "GET";
 			lRequest.Header.SetHeaderValue("Accept", Accept);
@@ -299,11 +299,11 @@ namespace RemObjects.InternetPack.Http
 				HttpClient.SetAuthorizationHeader(request.Header, "Proxy-Authorization", this.ProxySettings.UserName, this.ProxySettings.Password);
 			}
 
-			Connection lConnection = this.GetHttpConnection(lSslConnection, request.URL.Host, request.URL.Port, lHostname, lPort);
+            Connection lConnection = this.GetHttpConnection(lSslConnection, request.URL.Host, request.URL.Port, lHostname, lPort);
 
 			try
 			{
-				request.WriteHeaderToConnection(lConnection);
+                request.WriteHeaderToConnection(lConnection);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -321,8 +321,7 @@ namespace RemObjects.InternetPack.Http
 				request.WriteHeaderToConnection(lConnection);
 			}
 
-			request.WriteBodyToConnection(lConnection);
-
+            request.WriteBodyToConnection(lConnection);
 
 			HttpClientResponse lResponse;
 			do

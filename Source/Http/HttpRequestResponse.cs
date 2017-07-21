@@ -128,7 +128,7 @@ namespace RemObjects.InternetPack.Http
 				{
 					if (HasContentLength) /* Server must always have on ContentLength */
 					{
-						fContentBytes = new Byte[ContentLength];
+                        fContentBytes = new Byte[ContentLength];
 						Int32 lRead = ContentStream.Read(fContentBytes, 0, fContentBytes.Length);
 						if (lRead != fContentBytes.Length)
 							throw new Exception("Unexpected end of response");
@@ -207,10 +207,11 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				if (fContentString == null)
+				// TODO here island fails
+                if (fContentString == null)
 					fContentString = Encoding.GetString(ContentBytes, 0, ContentBytes.Length);
 
-				return fContentString;
+                return fContentString;
 			}
 		}
 		private String fContentString;
