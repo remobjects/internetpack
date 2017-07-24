@@ -493,7 +493,8 @@ namespace RemObjects.InternetPack
 
 		private Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, Boolean block)
 		{
-			// If there is no buffer allocated
+			writeLn("A recibir!");
+            // If there is no buffer allocated
 			if (this.fBuffer == null)
 			{
 				if (block)
@@ -817,7 +818,7 @@ namespace RemObjects.InternetPack
                         
         public override Int32 Write(Byte[] buffer, Int32 offset, Int32 count)
         {
-             DataSocketSend(buffer, offset, count);
+             return DataSocketSend(buffer, offset, count);
         }
 
 		//#endif
@@ -938,6 +939,13 @@ namespace RemObjects.InternetPack
 					fBuffer = new Byte[READLINE_BUFFER_SIZE];
 					fBufferStart = 0;
 					fBufferEnd = DataSocketReceiveWhatsAvaiable(fBuffer, 0, fBuffer.Length);
+                    writeLn("HE LEIDO: " + Convert.ToString(fBufferEnd));
+                    String ToWrite = "";
+                    for(int j = 0; j < fBufferEnd;j++)
+                            ToWrite = ToWrite + chr(fBuffer[j]);
+
+                    writeLn("BUFFER:" + ToWrite);
+                    writeLn("ENCODING:" + Encoding.Name);
 
 					if (fBufferEnd == 0)
 						throw new ConnectionClosedException();
@@ -959,16 +967,20 @@ namespace RemObjects.InternetPack
 					{
 						// if last character is 13, of yes we have a Windows style CRLF line end and must discard the CR, too
 						lResult = lResult + Encoding.GetString(fBuffer, fBufferStart, i - fBufferStart - 2);
+                        writeLn("LDONE 13: " + lResult);
+                        writeLn("POSICION: " + Convert.ToString(fBufferStart) + "->" + Convert.ToString(i - fBufferStart - 2));
 					}
 					else
 					{
 						// else just discard the 10 (LF)
-						lResult = lResult + Encoding.GetString(fBuffer, fBufferStart, i - fBufferStart - 1);
+						lResult = lResult + Encoding.GetString(fBuffer, fBufferStart, i - fBufferStart - 1);                        
+                        writeLn("LDONE 10: " + lResult);
 					}
 				}
 				else
 				{
 					lResult = lResult + Encoding.GetString(fBuffer, fBufferStart, i - fBufferStart);
+                    writeLn("NO LDONE: " + lResult);
 				}
 
 				if (lDone)

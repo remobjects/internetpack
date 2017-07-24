@@ -124,18 +124,23 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				if (fContentBytes == null)
+				writeLn("ContentBytes 1");
+                if (fContentBytes == null)
 				{
 					if (HasContentLength) /* Server must always have on ContentLength */
 					{
+                        writeLn("ContentBytes 2: HasContentLength");
                         fContentBytes = new Byte[ContentLength];
+                        writeLn("ContentBytes 2: Despues de crear el tema");
 						Int32 lRead = ContentStream.Read(fContentBytes, 0, fContentBytes.Length);
+                        writeLn("ContentBytes 2: Leido " + Convert.ToString(lRead));
 						if (lRead != fContentBytes.Length)
 							throw new Exception("Unexpected end of response");
 					}
 					else
 					{
-						Boolean lChunked = Chunked;
+						writeLn("ContentBytes 3: NO HasContentLength");
+                        Boolean lChunked = Chunked;
 						Boolean lKeepAlive = KeepAlive;
 						if (lKeepAlive && !lChunked)
 							throw new Exception("Content-Length or Chunked Transfer-Encoding required for Keep-Alive.");
@@ -207,9 +212,11 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				// TODO here island fails
+				writeLn("ContentString 1");
+                // TODO here island fails
                 if (fContentString == null)
 					fContentString = Encoding.GetString(ContentBytes, 0, ContentBytes.Length);
+                writeLn("ContentString 2");
 
                 return fContentString;
 			}
@@ -221,6 +228,7 @@ namespace RemObjects.InternetPack.Http
 			get
 			{
 				String lLength = Header.GetHeaderValue("Content-Length");
+                writeLn("Cabecera: " + lLength);
 				if (!String.IsNullOrEmpty(lLength))
 				{
 					try
@@ -839,10 +847,12 @@ namespace RemObjects.InternetPack.Http
 	{
 		public HttpIncomingStream(HttpIncomingRequestResponse owner)
 		{
-			if (owner.Chunked)
+			writeLn("Creando un HttpIncomingRequestResponse");
+            if (owner.Chunked)
 				throw new Exception("ContentStream is currently not supported for Chunked HTTP transfer.");
 
 			this.fOwner = owner;
+            writeLn("Fin!");
 		}
 
 		private HttpIncomingRequestResponse fOwner;
@@ -872,10 +882,12 @@ namespace RemObjects.InternetPack.Http
 
 		public override Int32 Read(Byte[] buffer, Int32 offset, Int32 size)
 		{
-			if (size > Length - fPosition) size = (Int32)Length - (Int32)fPosition;
+			writeLn("IncodingContentStream 1");
+            if (size > Length - fPosition) size = (Int32)Length - (Int32)fPosition;
 
 			if (size <= 0) return 0;
-			Int32 lResult = fOwner.DataConnection.Receive(buffer, offset, size);
+			writeLn("IncodingContentStream 2");
+            Int32 lResult = fOwner.DataConnection.Receive(buffer, offset, size);
 			fPosition += lResult;
 			return lResult;
 		}

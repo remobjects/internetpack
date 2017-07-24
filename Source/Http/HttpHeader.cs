@@ -15,6 +15,7 @@ namespace RemObjects.InternetPack.Http
 		{
 			this.Name = name;
 			this.fValues.Add(value);
+            writeLn("Header:" + name + ":" + value);
 		}
 
 		public HttpHeader(String line)
@@ -25,6 +26,7 @@ namespace RemObjects.InternetPack.Http
 
 			this.Name = line.Substring(0, lPos);
 			this.fValues.Add(line.Substring(lPos + 2));
+            writeLn("Header:" + this.Name + ":" + line.Substring(lPos + 2));
 		}
 
 		#region ToString
@@ -320,6 +322,7 @@ namespace RemObjects.InternetPack.Http
 			do
 			{
 				lHeaderLine = connection.ReadLine();
+                writeLn("LEO:->" + lHeaderLine + "<-");
 
 				if (!String.IsNullOrEmpty(lHeaderLine))
 				{
@@ -378,10 +381,12 @@ namespace RemObjects.InternetPack.Http
 		public void WriteHeader(Connection connection)
 		{
 			connection.WriteLine(FirstHeader);
+            writeLn("Escribo:" + FirstHeader);
 
 			foreach (HttpHeader header in this)
 			{
 				connection.WriteLine(header.ToString());
+                writeLn("Escribo:" + header.ToString());
 			}
 			connection.WriteLine("");
 		}
