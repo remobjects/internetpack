@@ -38,7 +38,7 @@ namespace RemObjects.InternetPack.Dns
 			}
 
 			Random lRandom = new Random();
-			return lAddresses[lRandom.Next(lAddresses.Length)];
+			return lAddresses[lRandom.NextInt(lAddresses.Length)];
 		}
 		#endif
 

@@ -28,7 +28,11 @@ namespace RemObjects.InternetPack.Http
 		}
 #endif
 
+        #if cooper
+        public override Class GetWorkerClass()
+        #else
 		public override Type GetWorkerClass()
+        #endif
 		{
 			return typeof(HttpWorker);
 		}

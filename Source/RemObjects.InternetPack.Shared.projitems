@@ -14,28 +14,18 @@
       <SubType>Component</SubType>
       <DesignableClassName>AsyncHttpServer</DesignableClassName>
     </Compile>
-    <Compile Include="BoundIncomingStream.cs" />
-    <Compile Include="CommandBasedClient.cs">
-      <SubType>Component</SubType>
-      <DesignableClassName>CommandBasedClient</DesignableClassName>
-    </Compile>
     <Compile Include="CommandBasedServer.cs" />
     <Compile Include="EchoServer.cs">
       <SubType>Component</SubType>
       <DesignableClassName>EchoServer</DesignableClassName>
     </Compile>
     <Compile Include="EventArgs\AsyncHttpRequestEventArgs.cs" />
-    <Compile Include="EventArgs\HttpRequestEventArgs.cs" />
     <Compile Include="FtpClient.cs">
       <SubType>Component</SubType>
       <DesignableClassName>FtpClient</DesignableClassName>
     </Compile>
     <Compile Include="FtpListing.cs" />
     <Compile Include="FtpServer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpServer.cs">
-      <SubType>Component</SubType>
-      <DesignableClassName>HttpServer</DesignableClassName>
-    </Compile>
     <Compile Include="LdapClient.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageAddress.cs" />
@@ -58,7 +48,6 @@
       <DesignableClassName>Pop3Client</DesignableClassName>
     </Compile>
     <Compile Include="Sasl.cs" />
-    <Compile Include="SimpleServer.cs" />
     <Compile Include="SmtpClient.cs">
       <SubType>Component</SubType>
       <DesignableClassName>SmtpClient</DesignableClassName>
@@ -70,7 +59,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\SslValidateCertificateEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Http\HttpsConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Http\HttpSslConnection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Http\SimpleHttpServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Exceptions\" />
