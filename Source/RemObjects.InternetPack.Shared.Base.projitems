@@ -12,7 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)BoundIncomingStream.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandBasedClient.cs">
       <SubType>Component</SubType>
-      <DesignableClassName>CommandBasedClient</DesignableClassName>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\IConnectionTimeouts.cs" />
@@ -23,6 +22,10 @@
       <DesignableClassName>RemObjects.InternetPack.Client</DesignableClassName>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\SslConnection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EchoServer.cs">
+      <SubType>Component</SubType>
+      <DesignableClassName>EchoServer</DesignableClassName>      
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\HttpRequestEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpHeaderException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpRequestInvalidException.cs" />
@@ -32,9 +35,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Http\HttpRequestResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Http\HttpServer.cs">
       <SubType>Component</SubType>
-      <DesignableClassName>HttpServer</DesignableClassName>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Http\SimpleHttpServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\Base64.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sasl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Server.cs">
       <DesignableClassName>RemObjects.InternetPack.Server</DesignableClassName>
     </Compile>
@@ -66,5 +70,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)EventArgs\" />
     <Folder Include="$(MSBuildThisFileDirectory)Exceptions\" />
     <Folder Include="$(MSBuildThisFileDirectory)Http" />
+    <Folder Include="$(MSBuildThisFileDirectory)Mime" />
+    <Folder Include="$(MSBuildThisFileDirectory)Mime\Decode" />
   </ItemGroup>
 </Project>

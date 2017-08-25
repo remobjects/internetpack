@@ -111,7 +111,7 @@ namespace RemObjects.InternetPack
 				#if echoes
                 throw new Exception(String.Format("{0} does not support Seek", this.GetType().FullName));
                 #else
-                throw new Exception(String.Format("{0} does not support Seek", this.toString()));
+                throw new Exception(String.Format("{0} does not support Seek", this.ToString()));
                 #endif
 			}
 		}

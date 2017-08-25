@@ -14,7 +14,7 @@ namespace RemObjects.InternetPack
 
 		public class SaslString
 		{
-			private readonly IDictionary<String, String> fValues;
+			private readonly Dictionary<String, String> fValues;
 
 			public SaslString()
 			{
@@ -36,7 +36,7 @@ namespace RemObjects.InternetPack
 			}
 			private Boolean fIsMisformed;
 
-			public IDictionary<String, String> Values
+			public Dictionary<String, String> Values
 			{
 				get
 				{
@@ -105,7 +105,7 @@ namespace RemObjects.InternetPack
 
 			public void Clear()
 			{
-				fValues.Clear();
+                fValues.RemoveAll();
 			}
 
 			public void Remove(String name)
@@ -290,7 +290,11 @@ namespace RemObjects.InternetPack
 				}
 			}
 
-			public override String ToString()
+			#if echoes
+            public override String ToString()
+            #else
+            public String ToString()
+            #endif
 			{
 				StringBuilder lResult = new StringBuilder();
 				Boolean lFirst = true;

@@ -15,10 +15,6 @@
       <DesignableClassName>AsyncHttpServer</DesignableClassName>
     </Compile>
     <Compile Include="CommandBasedServer.cs" />
-    <Compile Include="EchoServer.cs">
-      <SubType>Component</SubType>
-      <DesignableClassName>EchoServer</DesignableClassName>
-    </Compile>
     <Compile Include="EventArgs\AsyncHttpRequestEventArgs.cs" />
     <Compile Include="FtpClient.cs">
       <SubType>Component</SubType>
@@ -32,7 +28,6 @@
     <Compile Include="MessageAttachment.cs" />
     <Compile Include="MessageEncoder.cs" />
     <Compile Include="MessageHeaderField.cs" />
-    <Compile Include="Mime\Decode\Base64.cs" />
     <Compile Include="Mime\Decode\EncodedWord.cs" />
     <Compile Include="Mime\Decode\QuotedPrintable.cs" />
     <Compile Include="Mime\Decode\Rfc2231Decoder.cs" />
@@ -47,7 +42,6 @@
       <SubType>Component</SubType>
       <DesignableClassName>Pop3Client</DesignableClassName>
     </Compile>
-    <Compile Include="Sasl.cs" />
     <Compile Include="SmtpClient.cs">
       <SubType>Component</SubType>
       <DesignableClassName>SmtpClient</DesignableClassName>
