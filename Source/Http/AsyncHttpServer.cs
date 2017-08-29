@@ -29,7 +29,11 @@ namespace RemObjects.InternetPack.Http
 		}
 #endif
 
-		public override Type GetWorkerClass()
+		#if !cooper
+        public override Type GetWorkerClass()
+        #else
+        public override Class GetWorkerClass()
+        #endif
 		{
 			return typeof(AsyncHttpWorker);
 		}
@@ -300,12 +304,15 @@ namespace RemObjects.InternetPack.Http
 				{
 					// we've got the last line. Process it
 					if (lRequireBody)
-					{
-						Int64 lContentLength;
+					{					
 #if FULLFRAMEWORK
-						if (!Int64.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
+						Int64 lContentLength;
+                        if (!Int64.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
 #else
-						if (!LongHelper.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
+						Int64? lContentLength;
+                        lContentLength = RemObjects.elements.rtl.Convert.TryToInt64(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"));
+                        if (lContentLength == null)
+                        //if (!LongHelper.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
 #endif
 							lContentLength = 0;
 

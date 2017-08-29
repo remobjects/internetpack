@@ -10,12 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Asn1.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Http\AsyncHttpServer.cs">
-      <SubType>Component</SubType>
-      <DesignableClassName>AsyncHttpServer</DesignableClassName>
-    </Compile>
     <Compile Include="CommandBasedServer.cs" />
-    <Compile Include="EventArgs\AsyncHttpRequestEventArgs.cs" />
     <Compile Include="FtpClient.cs">
       <SubType>Component</SubType>
       <DesignableClassName>FtpClient</DesignableClassName>
