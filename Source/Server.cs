@@ -489,10 +489,16 @@ namespace RemObjects.InternetPack
 
 					if (lSocket != null)
 					{
-						#if !NEEDS_PORTING
+						#if echoes
 						Object lObject = Activator.CreateInstance(WorkerClass);
-						#else
-						Object lObject = null;
+						#elif cooper
+						Object lObject = Class.getDeclaredConstructor(WorkerClass).newInstance();
+                        #elif island
+                        Object lObject = WorkerClass.Instantiate();
+                        #elif toffee
+                        Object lObject = WorkerClass.init();
+                        #else
+                        Object lObject = null;
 						#endif
 						IWorker lWorker = lObject as IWorker;
 						lWorker.Owner = Owner;

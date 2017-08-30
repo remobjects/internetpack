@@ -31,7 +31,7 @@ namespace RemObjects.InternetPack.Http
         #if cooper
         public override Class GetWorkerClass()
         #else
-		public override Type GetWorkerClass()
+		public override RemObjects.Elements.RTL.Reflection.Type GetWorkerClass()
         #endif
 		{
 			return typeof(HttpWorker);

@@ -19,7 +19,7 @@ namespace RemObjects.InternetPack.StandardServers
 		#if cooper
         public override Class GetWorkerClass()
         #else
-        public override Type GetWorkerClass()
+        public override RemObjects.Elements.RTL.Reflection.Type GetWorkerClass()
         #endif
 		{
 			return typeof(EchoWorker);

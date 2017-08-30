@@ -30,7 +30,7 @@ namespace RemObjects.InternetPack.Http
 #endif
 
 		#if !cooper
-        public override Type GetWorkerClass()
+        public override RemObjects.Elements.RTL.Reflection.Type GetWorkerClass()
         #else
         public override Class GetWorkerClass()
         #endif
