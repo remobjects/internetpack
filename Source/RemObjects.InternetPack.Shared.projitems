@@ -10,7 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Asn1.cs" />
-    <Compile Include="CommandBasedServer.cs" />
     <Compile Include="FtpClient.cs">
       <SubType>Component</SubType>
       <DesignableClassName>FtpClient</DesignableClassName>

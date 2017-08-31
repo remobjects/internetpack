@@ -5,7 +5,7 @@
 
 namespace RemObjects.InternetPack
 {
-	static class Sasl
+	public static class Sasl
 	{
 		public static String MD5Login(String saslChallenge, String username, String password, String hostname)
 		{

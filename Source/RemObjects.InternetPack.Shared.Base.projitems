@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BoundIncomingStream.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommandBasedClient.cs">
+    <Compile Include="CommandBasedServer.cs" />    
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.cs" />
