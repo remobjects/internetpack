@@ -45,6 +45,7 @@ namespace RemObjects.InternetPack.Dns
 		public static IPAddress[] ResolveAll(String hostname)
 		{
 			IPAddress lAddress = TryStringAsIPAddress(hostname);
+            writeLn("Despues de TryStringASIPAddress");
 			if (lAddress != null)
 			{
 				return new IPAddress[] { lAddress };
@@ -82,7 +83,10 @@ namespace RemObjects.InternetPack.Dns
             #if macos || ios
             if (rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo) == 0)
             #elif posix
-            if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) == 0)
+            writeLn("antes de getaddrinfo");
+            AnsiChar[] lHost = lString.ToAnsiChars(true);
+            if (rtl.getaddrinfo(&lHost[0], null, null, &lAddrInfo) == 0)
+            //if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) == 0)
             #elif island
             char[] lHost = lString.ToCharArray(true);
             ExternalCalls.memset(&lJenson, 0, sizeof(rtl.ADDRINFOW));
@@ -95,12 +99,14 @@ namespace RemObjects.InternetPack.Dns
             if (rtl.GetAddrInfoW(&lHost[0], null, null, &lAddrInfo) == 0)
             #endif
             {
+                writeLn("despues de getaddrinfo");
                 #if posix || macos || ios
                 for(lPtr = lAddrInfo; lPtr != null; lPtr = (rtl.__struct_addrinfo *)lPtr->ai_next)
                 #else
                 for(lPtr = lAddrInfo; lPtr != null; lPtr = (rtl.ADDRINFOW*)lPtr->ai_next) 
                 #endif
-                {
+                {                    
+                    writeLn("En el for");
                     switch(lPtr->ai_family)
                     {
                         case AddressFamily.InterNetwork:

@@ -736,8 +736,8 @@
                     return 0;
                 #else
                 rtl.u_long lData = 0;
-                #if posix || macos  || ios
-                if (rtl.ioctl(fHandle, FIONREAD, &lData) != 0)
+                #if posix || macos || ios
+                if (rtl.ioctl(fHandle, FIONREAD, &lData) < 0)
                 #else
                 var lRes = 0;
                 if (rtl.ioctlsocket(fHandle, rtl.FIONREAD, &lData) != 0)
@@ -746,7 +746,8 @@
                 }
                 if((lRes != 0) && (lRes != rtl.WSAEOPNOTSUPP))
                 #endif
-                    throw new Exception("Error calling ioctl function");
+                    lData = 0;
+                    //throw new Exception("Error calling ioctl function");
 
                 return lData;
                 #endif
