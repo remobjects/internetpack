@@ -10,10 +10,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BoundIncomingStream.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandBasedClient.cs">
-    <Compile Include="CommandBasedServer.cs" />    
+    <Compile Include="$(MSBuildThisFileDirectory)CommandBasedClient.cs">    
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CommandBasedServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\IConnectionTimeouts.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bindings\Binding.cs" />
