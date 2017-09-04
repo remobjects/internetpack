@@ -125,7 +125,7 @@ namespace RemObjects.InternetPack.CommandBased
             #elif island
             return (CommandBasedSession)lType.Instantiate();
             #elif toffee
-            return (CommandBasedSession)lType.init();
+            return null; // TODO
             #endif
 		}
 

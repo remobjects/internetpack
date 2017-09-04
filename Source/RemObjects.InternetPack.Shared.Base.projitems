@@ -27,14 +27,9 @@
       <SubType>Component</SubType>
       <DesignableClassName>EchoServer</DesignableClassName>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\AsyncHttpRequestEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\HttpRequestEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpHeaderException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpRequestInvalidException.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Http\AsyncHttpServer.cs">
-      <SubType>Component</SubType>
-      <DesignableClassName>AsyncHttpServer</DesignableClassName>
-    </Compile>  
     <Compile Include="$(MSBuildThisFileDirectory)Http\HttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Http\HttpHeader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Http\HttpProxySettings.cs" />
