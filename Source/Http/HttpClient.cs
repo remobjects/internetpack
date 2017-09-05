@@ -158,7 +158,6 @@ namespace RemObjects.InternetPack.Http
 
 		private static Encoding GetEncodingFromContentType(String contentType)
 		{
-			writeLn("in GetEncodingFromContentType: " + contentType);
             Int32 lStartPos = contentType.IndexOf(HttpClient.CHARSET_KEY);
 			if (lStartPos == -1)
 				return Encoding.ASCII;
@@ -205,7 +204,6 @@ namespace RemObjects.InternetPack.Http
 		{
 			using (HttpClientResponse response = GetResponse(url))
 			{
-                writeLn("After GetResponse");
                 response.Encoding = (encoding != null) ? encoding : GetEncodingFromContentType(response.Header.ContentType);
 				return response.ContentString;
 			}
@@ -301,9 +299,7 @@ namespace RemObjects.InternetPack.Http
 				HttpClient.SetAuthorizationHeader(request.Header, "Proxy-Authorization", this.ProxySettings.UserName, this.ProxySettings.Password);
 			}
 
-            writeLn("Before GetHttpConnection");
             Connection lConnection = this.GetHttpConnection(lSslConnection, request.URL.Host, request.URL.Port, lHostname, lPort);
-            writeLn("After GetHttpConnection");
 
 			try
 			{
@@ -326,7 +322,6 @@ namespace RemObjects.InternetPack.Http
 			}
 
             request.WriteBodyToConnection(lConnection);
-            writeLn("After WriteBody");
 
 			HttpClientResponse lResponse;
 			do
@@ -338,7 +333,6 @@ namespace RemObjects.InternetPack.Http
 			}
 			while (lResponse.Header.HttpCode == HttpStatusCode.Continue); // 100 CONTINUE means useless response.
 
-			writeLn("After headers");
             if (!lResponse.KeepAlive)
 			{
 				this.fConnectionUrl = null;
