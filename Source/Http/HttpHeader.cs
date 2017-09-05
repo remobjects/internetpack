@@ -29,10 +29,10 @@ namespace RemObjects.InternetPack.Http
 
 		#region ToString
 		#if echoes || island
-        public override String ToString()
-        #else
-        public String ToString()
-        #endif
+		public override String ToString()
+		#else
+		public String ToString()
+		#endif
 		{
 			if (this.Count == 1)
 				return String.Format("{0}: {1}", this.Name, this.fValues[0]);
@@ -51,7 +51,7 @@ namespace RemObjects.InternetPack.Http
 		#endregion
 
 		#region Properties
-        public String Name { get; set; }
+		public String Name { get; set; }
 
 		public Int32 Count
 		{
@@ -98,46 +98,16 @@ namespace RemObjects.InternetPack.Http
 		}
 	}
 
-	/*class HttpHeaderEnumerator : IEnumerator
-	{
-		public HttpHeaderEnumerator(IEnumerator parent)
-		{
-			this.fParent = parent;
-		}
-
-		private readonly IEnumerator fParent;
-
-		#region IEnumerator Members
-		public void Reset()
-		{
-			this.fParent.Reset();
-		}
-
-		public object Current
-		{
-			get
-			{
-				return ((DictionaryEntry)(this.fParent.Current)).Value;
-			}
-		}
-
-		public Boolean MoveNext()
-		{
-			return this.fParent.MoveNext();
-		}
-		#endregion
-	}*/
-
-	public class HttpHeaders : /*IEnumerable*/ ISequence<HttpHeader>
+	public class HttpHeaders
 	{
 		// Cannot use Dictionary<> here because non-generic Enumerator is exposed
 		//private readonly Hashtable fHeaders;
-        private readonly Dictionary<String, HttpHeader> fHeaders;
+		private readonly Dictionary<String, HttpHeader> fHeaders;
 
 		public HttpHeaders()
 		{
 			//this.fHeaders = new Hashtable(StringComparer.OrdinalIgnoreCase);
-            this.fHeaders = new Dictionary<String, HttpHeader>();
+			this.fHeaders = new Dictionary<String, HttpHeader>();
 			this.HttpCode = HttpStatusCode.OK;
 			this.Initialize();
 		}
@@ -175,7 +145,7 @@ namespace RemObjects.InternetPack.Http
 				try
 				{
 					//this.HttpCode = (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), lRequestHeaderValues[1], true);
-                    this.HttpCode = (HttpStatusCode)Convert.ToInt32(lRequestHeaderValues[1]);
+					this.HttpCode = (HttpStatusCode)Convert.ToInt32(lRequestHeaderValues[1]);
 				}
 				catch (ArgumentException)
 				{
@@ -387,12 +357,12 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#if !cooper
-        [Obsolete("Provide HTTP code using a System.Net.HttpStatusCode value")]
+		[Obsolete("Provide HTTP code using a System.Net.HttpStatusCode value")]
 		public void SetResponseHeader(String version, Int32 code)
 		{
 			this.SetResponseHeader(version, (HttpStatusCode)code);
 		}
-        #endif
+		#endif
 
 		public void SetResponseHeader(String version, HttpStatusCode code)
 		{
@@ -436,10 +406,10 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#if echoes || island
-        public override String ToString()
-        #else
-        public String ToString()
-        #endif
+		public override String ToString()
+		#else
+		public String ToString()
+		#endif
 		{
 			StringBuilder lResult = new StringBuilder();
 			lResult.Append(FirstHeader);
@@ -457,57 +427,12 @@ namespace RemObjects.InternetPack.Http
 		}
 		#endregion
 
-		/*#region IEnumerable Members
-		public IEnumerator GetEnumerator()
+		public ISequence<HttpHeader> GetSequence()
 		{
-			return new HttpHeaderEnumerator(this.fHeaders.GetEnumerator());
+			foreach(String lPair in fHeaders.Keys)
+			{
+				yield return fHeaders[lPair];
+			}
 		}
-		#endregion
-        */
-
-        public ISequence<HttpHeader> GetHeaders()
-        {
-            foreach(String lPair in fHeaders.Keys)
-            {
-                yield return fHeaders[lPair];
-            }
-        }
-        
-        #if cooper
-        public java.util.Iterator<HttpHeader> iterator()
-        {
-            return GetHeaders().iterator();
-        }
-        #elif echoes
-        public System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() /*GetNonGenericEnumerator*/
-        {
-            return GetEnumerator();
-        }
-
-        public System.Collections.Generic.IEnumerator<HttpHeader> GetEnumerator()
-        {
-            var lHeaders = GetHeaders();
-            return lHeaders.GetEnumerator();
-        }
-        #elif island
-        public IEnumerator IEnumerable.GetEnumerator() /*GetNonGenericEnumerator*/
-        {
-            return GetEnumerator();
-        }
-
-        public IEnumerator<HttpHeader> GetEnumerator()
-        {
-            var lHeaders = GetHeaders();
-            return lHeaders.GetEnumerator();
-        }
-        #elif toffee
-        public Foundation.NSUInteger countByEnumeratingWithState(Foundation.NSFastEnumerationState* aState) objects(HttpHeader* stackbuf) count(Foundation.NSUInteger len)
-        {
-            if (aState->state != 0)
-                return 0;
-
-            return GetHeaders().countByEnumeratingWithState(aState) objects(stackbuf) count(len);
-        }
-        #endif
 	}
 }
