@@ -18,6 +18,8 @@ Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Tof
 EndProject
 Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Toffee.tvOS", "RemObjects.InternetPack.Toffee.tvOS.elements", "{889ED07E-5E86-41DC-A173-38C31493E4D9}"
 EndProject                                                                                                            
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Toffee.watchOS", "RemObjects.InternetPack.Toffee.watchOS.elements", "{332A5421-F39A-4A3A-88F6-8808F4A3F546}"
+EndProject                                                                                                            
 Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Cooper", "RemObjects.InternetPack.Cooper.elements", "{5CF4D43E-E14D-4AD8-9D38-82CDF2AD543D}"
 EndProject
 Global
@@ -180,6 +182,30 @@ Global
 		{889ED07E-5E86-41DC-A173-38C31493E4D9}.Trial|AnyCPU.Build.0 = Release|AnyCPU
 		{889ED07E-5E86-41DC-A173-38C31493E4D9}.Trial|x86_64.ActiveCfg = Release|AnyCPU
 		{889ED07E-5E86-41DC-A173-38C31493E4D9}.Trial|x86_64.Build.0 = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Debug|x86_64.ActiveCfg = Debug|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Debug|x86_64.Build.0 = Debug|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.IDE|AnyCPU.ActiveCfg = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.IDE|AnyCPU.Build.0 = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.IDE|x86_64.ActiveCfg = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.IDE|x86_64.Build.0 = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Licensed|AnyCPU.ActiveCfg = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Licensed|AnyCPU.Build.0 = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Licensed|x86_64.ActiveCfg = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Licensed|x86_64.Build.0 = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Mono|AnyCPU.ActiveCfg = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Mono|AnyCPU.Build.0 = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Mono|x86_64.ActiveCfg = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Mono|x86_64.Build.0 = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Release|AnyCPU.Build.0 = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Release|x86_64.ActiveCfg = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Release|x86_64.Build.0 = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Trial|AnyCPU.ActiveCfg = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Trial|AnyCPU.Build.0 = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Trial|x86_64.ActiveCfg = Release|AnyCPU
+		{332A5421-F39A-4A3A-88F6-8808F4A3F546}.Trial|x86_64.Build.0 = Release|AnyCPU    
 		{5CF4D43E-E14D-4AD8-9D38-82CDF2AD543D}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
 		{5CF4D43E-E14D-4AD8-9D38-82CDF2AD543D}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
 		{5CF4D43E-E14D-4AD8-9D38-82CDF2AD543D}.Debug|x86_64.ActiveCfg = Debug|AnyCPU
