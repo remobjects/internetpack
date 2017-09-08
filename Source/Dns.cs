@@ -74,13 +74,13 @@ namespace RemObjects.InternetPack.Dns
             rtl.ADDRINFOW lJenson;
             rtl.SOCKADDR_IN *lSockAddrIPv4;
             sockaddr_in6 *lSockAddr;
-            #elif posix || macos || ios            
+            #elif posix || toffee            
             rtl.__struct_addrinfo *lAddrInfo;
             rtl.__struct_addrinfo *lPtr;
             rtl.__struct_sockaddr_in *lSockAddrIPv4;
             rtl.__struct_sockaddr_in6 *lSockAddr;
             #endif
-            #if macos || ios
+            #if toffee
             if (rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo) == 0)
             #elif posix
             AnsiChar[] lHost = lString.ToAnsiChars(true);
@@ -98,7 +98,7 @@ namespace RemObjects.InternetPack.Dns
             if (rtl.GetAddrInfoW(&lHost[0], null, null, &lAddrInfo) == 0)
             #endif
             {
-                #if posix || macos || ios
+                #if posix || toffee
                 for(lPtr = lAddrInfo; lPtr != null; lPtr = (rtl.__struct_addrinfo *)lPtr->ai_next)
                 #else
                 for(lPtr = lAddrInfo; lPtr != null; lPtr = (rtl.ADDRINFOW*)lPtr->ai_next) 
@@ -107,7 +107,7 @@ namespace RemObjects.InternetPack.Dns
                     switch(lPtr->ai_family)
                     {
                         case AddressFamily.InterNetwork:
-                            #if posix || macos || ios
+                            #if posix || toffee
                             lSockAddrIPv4 = (rtl.__struct_sockaddr_in *)(*lPtr).ai_addr;                            
                             lBytesIPv4[0] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr);                                                    
                             lBytesIPv4[1] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr >> 8);
@@ -124,7 +124,7 @@ namespace RemObjects.InternetPack.Dns
                             break;
 
                         case AddressFamily.InterNetworkV6:
-                            #if posix || macos || ios
+                            #if posix || toffee
                             lSockAddr = (rtl.__struct_sockaddr_in6 *)(*lPtr).ai_addr;
                             #elif island && windows
                             lSockAddr = (sockaddr_in6 *)(*lPtr).ai_addr;
@@ -132,7 +132,7 @@ namespace RemObjects.InternetPack.Dns
                             for (int i = 0; i < 16 /*IPv6Length*/; i++)
                                 #if posix
                                 lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i];
-                                #elif macos || ios
+                                #elif toffee
                                 lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
                                 #else
                                 lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];

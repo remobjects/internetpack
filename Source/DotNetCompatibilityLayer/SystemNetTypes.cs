@@ -79,7 +79,7 @@
 	}
 
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
-	#if !macos && !ios && !cooper
+	#if !toffee && !cooper
     [FlagsAttribute]
     #endif
 	public enum SocketFlags
@@ -290,10 +290,10 @@
             address = new IPAddress(lBytes, 0);
             return true;            
             #else
-            #if posix || macos || ios
+            #if posix || toffee
             rtl.__struct_addrinfo *lAddrInfo;
             rtl.__struct_sockaddr_in6 *lSockAddr;
-            #if macos || ios
+            #if toffee
             if (rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo) != 0)
             #else
             if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) != 0)
@@ -313,7 +313,7 @@
             for (int i = 0; i < IPv6Length; i++)
                 #if posix
                 lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
-                #elif macos || ios
+                #elif toffee
                 lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
                 #else
                 lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];

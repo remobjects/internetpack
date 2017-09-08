@@ -11,7 +11,7 @@
         private java.io.InputStream fSocketInput;
         private java.io.OutputStream fSocketOutput;
         private java.net.InetSocketAddress fSocketAddress;
-        #elif posix || macos || ios
+        #elif posix || toffee
         private int fHandle; 
         public const Int32 FIONREAD = 1074004095;       
         #else
@@ -43,7 +43,7 @@
                     throw new Exception("Socket type not supported on current platform");
             }
             #else
-            #if posix || macos || ios
+            #if posix || toffee
             fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.Int32_t)socketType, (rtl.Int32_t)protocolType);
             #else
             fHandle = rtl.__Global.socket((rtl.Int)addressFamily, (rtl.Int)socketType, (rtl.Int)protocolType);
@@ -56,7 +56,7 @@
 
         #if cooper
         private Socket(java.net.Socket handle)
-        #elif posix || macos || ios
+        #elif posix || toffee
         private Socket(int handle)
         #else
         private Socket(rtl.SOCKET handle)
@@ -118,7 +118,7 @@
             #else
             void *lPointer;
             int lSize;
-            #if posix || macos || ios
+            #if posix || toffee
             rtl.__struct_sockaddr_in lIPv4;
             rtl.__struct_sockaddr_in6 lIPv6;
             #if posix
@@ -134,7 +134,7 @@
             lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
             lSockAddr.__sockaddr_in__ = (rtl.__struct_sockaddr_in *) lPointer;
             if (rtl.__Global.bind(fHandle, lSockAddr, lSize) != 0)
-            #elif macos || ios
+            #elif toffee
             if (rtl.bind(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
             #elif island && windows
             if (rtl.bind(fHandle, lPointer, lSize) != 0)
@@ -143,7 +143,7 @@
             #endif
         }
 
-        #if macos || ios
+        #if toffee
         private int htons(int port)
         {
             return (__uint16_t)((((__uint16_t)(port) & 0xff00) >> 8) | (((__uint16_t)(port) & 0x00ff) << 8));
@@ -151,7 +151,7 @@
         #endif
         
         #if !cooper
-        #if posix || macos || ios
+        #if posix || toffee
         private void IPEndPointToNative(IPEndPoint endPoint, out rtl.__struct_sockaddr_in lIPv4, out rtl.__struct_sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
         #else
         private void IPEndPointToNative(IPEndPoint endPoint, out rtl.SOCKADDR_IN lIPv4, out sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
@@ -161,7 +161,7 @@
             {
                 case AddressFamily.InterNetworkV6:                    
                     lIPv6.sin6_family = AddressFamily.InterNetworkV6;
-                    #if macos || ios
+                    #if toffee
                     lIPv6.sin6_port = htons(endPoint.Port);
                     #else
                     lIPv6.sin6_port = rtl.htons(endPoint.Port);
@@ -169,7 +169,7 @@
                     lIPv6.sin6_scope_id = endPoint.Address.ScopeId;
                     var lBytes = endPoint.Address.GetAddressBytes();                    
                     for (int i = 0; i < 16; i++)
-                        #if macos || ios
+                        #if toffee
                         lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
                         #elif posix
                         lIPv6.sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
@@ -177,7 +177,7 @@
                         lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
                         #endif
                     ipPointer = &lIPv6;
-                    #if posix || macos || ios
+                    #if posix || toffee
                     ipSize = sizeof(rtl.__struct_sockaddr_in6);
                     #else
                     ipSize = sizeof(sockaddr_in6);
@@ -186,13 +186,13 @@
 
                 default:
                     lIPv4.sin_family = AddressFamily.InterNetwork;
-                    #if macos || ios
+                    #if toffee
                     lIPv4.sin_port = htons(endPoint.Port);
                     #else
                     lIPv4.sin_port = rtl.htons(endPoint.Port);
                     #endif
 
-                    #if posix || macos || ios
+                    #if posix || toffee
                     lIPv4.sin_addr.s_addr = endPoint.Address.Address;
                     ipSize = sizeof(rtl.__struct_sockaddr_in);
                     #else
@@ -216,7 +216,7 @@
             #else
             void *lPointer;
             int lSize;
-            #if posix || macos || ios
+            #if posix || toffee
             rtl.__struct_sockaddr_in lIPv4;
             rtl.__struct_sockaddr_in6 lIPv6;
             #if posix
@@ -234,7 +234,7 @@
             #if posix
             lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
             if (rtl.connect(fHandle, lSockAddr, lSize) != 0)
-            #elif macos || ios
+            #elif toffee
             if (rtl.connect(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
             #else
             if (rtl.connect(fHandle, lPointer, lSize) != 0)
@@ -492,7 +492,7 @@
             else
                 fServerHandle.close();
             #else
-            #if posix || macos || ios
+            #if posix || toffee
             if (rtl.close(fHandle) != 0)
             #else
             if (rtl.closesocket(fHandle) != 0)
@@ -532,7 +532,7 @@
                     return 0;
                 #else
                 rtl.u_long lData = 0;
-                #if posix || macos || ios
+                #if posix || toffee
                 if (rtl.ioctl(fHandle, FIONREAD, &lData) < 0)
                 #else
                 var lRes = 0;

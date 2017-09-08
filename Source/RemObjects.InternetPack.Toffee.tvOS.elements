@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
   <PropertyGroup>
     <ProductVersion>3.5</ProductVersion>
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
-    <ProjectGuid>{4c7346ab-eb0d-454b-9b4f-93596472063f}</ProjectGuid>
+    <ProjectGuid>{889ed07e-5e86-41dc-a173-38c31493e4d9}</ProjectGuid>
     <OutputType>StaticLibrary</OutputType>
     <AssemblyName>InternetPack</AssemblyName>
     <AllowGlobals>False</AllowGlobals>
