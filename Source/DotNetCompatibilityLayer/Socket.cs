@@ -283,12 +283,79 @@
             Connect(lEndPoint);
         }
 
-        public IAsyncResult BeginConnect(IPAddress[] addresses, Int32 port, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginConnect(EndPoint end_point, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginConnect(String host, Int32 port, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginConnect(IPAddress address, Int32 port, AsyncCallback callback, Object state) {}
+        public IAsyncResult BeginConnect(IPAddress[] addresses, Int32 port, AsyncCallback callback, Object state)
+        {
+            IPEndPoint lEndPoint;
+            var lResult = new AsyncResult(state);
 
-        public void EndConnect(IAsyncResult result) {}
+            Task.Run(() =>
+            {
+                foreach(IPAddress lAddress in addresses)
+                {
+                    lEndPoint = new IPEndPoint(lAddress, port);
+                    try
+                    {
+                        Connect(lEndPoint);
+                        lResult.DelayedException = null;
+                        lResult.CompletedSynchronously = true;
+                        lResult.IsCompleted = true;                      
+                        break;
+                    }
+                    catch(Exception lCurrent)
+                    {
+                        lResult.DelayedException = lCurrent;
+                    }
+                }
+                
+                callback(lResult);
+            });
+
+            return lResult;
+        }
+
+		public IAsyncResult BeginConnect(EndPoint end_point, AsyncCallback callback, Object state) 
+        {
+            var lIPEndPoint = (IPEndPoint)end_point;            
+            return BeginConnect(new IPAddress[] {lIPEndPoint.Address}, lIPEndPoint.Port, callback, state);
+
+            /*var lResult = new AsyncResult(state);
+            Task.Run(() =>
+            {
+                try
+                {
+                    Connect(end_point);
+                    lResult.CompletedSynchronously = true;
+                    lResult.IsCompleted = true;
+                }
+                catch(Exception ex)
+                {
+                    lResult.DelayedException = ex;
+                }
+                callback(lResult);
+            });
+
+            return lResult;*/
+        }
+
+		public IAsyncResult BeginConnect(String host, Int32 port, AsyncCallback callback, Object state)
+        {
+            var lAddress = IPAddress.Parse(host);
+            return BeginConnect(new IPEndPoint(lAddress, port), callback, state);
+        }
+
+		public IAsyncResult BeginConnect(IPAddress address, Int32 port, AsyncCallback callback, Object state)
+        {
+            var lEndPoint = new IPEndPoint(address, port);
+            return BeginConnect(lEndPoint, callback, state);
+        }
+
+        public void EndConnect(IAsyncResult result) 
+        {
+            var lAsyncResult = (AsyncResult)result;
+
+            if (lAsyncResult.DelayedException != null)
+                throw lAsyncResult.DelayedException;
+        }
 				
         public void Disconnect(Boolean reuseSocket)
         {

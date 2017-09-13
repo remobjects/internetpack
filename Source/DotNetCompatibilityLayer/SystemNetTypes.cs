@@ -483,9 +483,23 @@
 	{
 		Object AsyncState { get; }
 		WaitHandle AsyncWaitHandle { get; }
-		Boolean CompletedSynchronously { get;}
+		Boolean CompletedSynchronously { get; }
 		Boolean IsCompleted { get; }
 	}
+
+    public class AsyncResult: IAsyncResult
+    {
+        public Object AsyncState { get; set; }
+        public WaitHandle AsyncWaitHandle { get; set; }
+		public Boolean CompletedSynchronously { get; set; }
+		public Boolean IsCompleted { get; set; }
+        public Exception DelayedException { get; set; }
+
+        public AsyncResult(Object AnAsyncState)
+        {
+            AsyncState = AnAsyncState;
+        }
+    }
 
     public enum HttpStatusCode
     {
