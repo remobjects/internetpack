@@ -85,12 +85,51 @@
 		public virtual Boolean WaitOne(TimeSpan timeout, Boolean exitContext);
 		public virtual Boolean WaitOne(TimeSpan timeout);
 		public virtual Boolean WaitOne(Int32 millisecondsTimeout);
-		public virtual Boolean WaitOne(Int32 millisecondsTimeout, Boolean exitContext);
-		public virtual Boolean WaitOne();
-		internal void CheckDisposed();
+		public virtual Boolean WaitOne(Int32 millisecondsTimeout, Boolean exitContext);*/
+		public abstract Boolean WaitOne();
+		/*internal void CheckDisposed();
 		[ObsoleteAttribute("In the profiles > 2.x, use SafeHandle instead of Handle")]
 		public virtual IntPtr Handle { get; set; }
 		public SafeWaitHandle SafeWaitHandle { get; set; }*/
 	}
+
+    public class EventWaitHandle: WaitHandle
+    {
+        #if island
+        private Monitor fHandle;
+        #elif cooper
+        private java.util.concurrent.locks.ReentrantLock fHandle;
+        #elif toffee
+        private Foundation.NSRecursiveLock fHandle;
+        #endif
+        
+        public override Boolean WaitOne()
+        {
+            #if island
+            fHandle.Wait();
+            #elif cooper || toffee
+            fHandle.lock();
+            #endif
+
+            return true;
+        }
+
+        public Boolean Set()
+        {
+            #if island
+            fHandle.Release();
+            #elif cooper || toffee
+            fHandle.unlock();
+            #endif
+
+            return true;
+        }
+
+        
+        public new void Dispose()
+        {
+
+        }
+    }
 	#endif
 }

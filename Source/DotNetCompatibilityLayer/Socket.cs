@@ -18,6 +18,48 @@
         private rtl.SOCKET fHandle;
         #endif
                             
+        private List<Thread> fPendingAsyncOps;
+        #if cooper || toffee
+        private readonly Object fMonitor = new Object();
+        #else
+        private readonly Monitor fMonitor = new Monitor();
+        #endif
+
+        private void AddAsyncOp(Thread op)
+        {
+            lock(this.fMonitor)
+            {
+                if (fPendingAsyncOps == null)
+                    fPendingAsyncOps = new List<Thread>();
+
+                fPendingAsyncOps.Add(op);
+            }
+        }
+
+        private void ClearAsyncOps()
+        {
+            foreach(var lThread in fPendingAsyncOps)
+            {
+                if (lThread.IsAlive)
+                {
+                    lThread.Abort();
+                }
+            }
+            
+            lock(fMonitor);
+            {
+                fPendingAsyncOps.RemoveAll();
+            }
+        }
+
+        private void RemoveOp(Thread op)
+        {
+            lock(fMonitor)
+            {
+                fPendingAsyncOps.Remove(op);
+            }
+        }
+        
         public Boolean Connected { get; set; }
 
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)        
@@ -288,8 +330,9 @@
             IPEndPoint lEndPoint;
             var lResult = new AsyncResult(state);
 
-            Task.Run(() =>
+            var lThread = new Thread(() =>
             {
+                lResult.AsyncWaitHandle.WaitOne();
                 foreach(IPAddress lAddress in addresses)
                 {
                     lEndPoint = new IPEndPoint(lAddress, port);
@@ -297,7 +340,6 @@
                     {
                         Connect(lEndPoint);
                         lResult.DelayedException = null;
-                        lResult.CompletedSynchronously = true;
                         lResult.IsCompleted = true;                      
                         break;
                     }
@@ -307,8 +349,13 @@
                     }
                 }
                 
+                RemoveOp((Thread)lResult.Data);
+                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
                 callback(lResult);
             });
+            AddAsyncOp(lThread);
+            lResult.Data = lThread;
+            lThread.Start();
 
             return lResult;
         }
@@ -317,24 +364,6 @@
         {
             var lIPEndPoint = (IPEndPoint)end_point;            
             return BeginConnect(new IPAddress[] {lIPEndPoint.Address}, lIPEndPoint.Port, callback, state);
-
-            /*var lResult = new AsyncResult(state);
-            Task.Run(() =>
-            {
-                try
-                {
-                    Connect(end_point);
-                    lResult.CompletedSynchronously = true;
-                    lResult.IsCompleted = true;
-                }
-                catch(Exception ex)
-                {
-                    lResult.DelayedException = ex;
-                }
-                callback(lResult);
-            });
-
-            return lResult;*/
         }
 
 		public IAsyncResult BeginConnect(String host, Int32 port, AsyncCallback callback, Object state)
@@ -351,10 +380,30 @@
 
         public void EndConnect(IAsyncResult result) 
         {
+            if (!result.IsCompleted)
+            {
+                result.AsyncWaitHandle.WaitOne();
+                (result.AsyncWaitHandle as EventWaitHandle).Set();
+            }
+
+            CheckAsyncException(result);
+        }
+
+        private void CheckAsyncException(IAsyncResult result)
+        {
             var lAsyncResult = (AsyncResult)result;
 
             if (lAsyncResult.DelayedException != null)
                 throw lAsyncResult.DelayedException;
+        }
+
+        private void CheckAsyncTerminate(IAsyncResult result)
+        {
+            if (!result.IsCompleted)
+            {
+                result.AsyncWaitHandle.WaitOne();
+                (result.AsyncWaitHandle as EventWaitHandle).Set();
+            }
         }
 				
         public void Disconnect(Boolean reuseSocket)
@@ -362,8 +411,28 @@
             Dispose();
         }
 
-        public IAsyncResult BeginDisconnect(Boolean reuseSocket, AsyncCallback callback, Object state) {}
-        public void EndDisconnect(IAsyncResult asyncResult) {}
+        public IAsyncResult BeginDisconnect(Boolean reuseSocket, AsyncCallback callback, Object state) 
+        {
+            var lResult = new AsyncResult(state);
+            var lThread = new Thread(() =>
+            {
+                lResult.AsyncWaitHandle.WaitOne();
+                Disconnect(reuseSocket);
+                lResult.IsCompleted = true;
+                ClearAsyncOps();
+                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
+                callback(lResult);
+            });
+            lThread.Start();
+
+            return lResult;
+        }
+
+        public void EndDisconnect(IAsyncResult asyncResult)        
+        {
+            CheckAsyncTerminate(asyncResult);                
+            CheckAsyncException(asyncResult);
+        }
 		
         public void Listen(Int32 backlog)
         {

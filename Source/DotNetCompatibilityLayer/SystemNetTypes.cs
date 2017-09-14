@@ -494,10 +494,12 @@
 		public Boolean CompletedSynchronously { get; set; }
 		public Boolean IsCompleted { get; set; }
         public Exception DelayedException { get; set; }
+        public Object Data { get; set; }
 
         public AsyncResult(Object AnAsyncState)
         {
             AsyncState = AnAsyncState;
+            AsyncWaitHandle = new EventWaitHandle();
         }
     }
 
