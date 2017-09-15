@@ -141,13 +141,84 @@
             return lNewSocket;
         }
 
-		public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginAccept(AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state)
+        {
+            var lResult = new AsyncResult(state);
+            lResult.AcceptSocket = acceptSocket;
+            lResult.NBytes = receiveSize;
 
-   		public Socket EndAccept(out Byte[] buffer, out Int32 bytesTransferred, IAsyncResult asyncResult) {}
-		public Socket EndAccept(out Byte[] buffer, IAsyncResult asyncResult) {}
-		public Socket EndAccept(IAsyncResult result) {}
+            var lThread = new Thread(() =>
+            {
+                lResult.AsyncWaitHandle.WaitOne();
+                try
+                {
+                    if (lResult.AcceptSocket != null)
+                        lResult.AcceptedSocket = acceptSocket.Accept();
+                    else
+                        lResult.AcceptedSocket = Accept();
+
+                    if (receiveSize < 0)
+                        throw new Exception("Bad receiveSize value:" + receiveSize.ToString() + " in BeginAccept call");
+ 
+                    if (receiveSize > 0)
+                    {
+                        lResult.Buffer = new byte[receiveSize];
+                        lResult.NBytes = Receive(lResult.Buffer, receiveSize, SocketFlags.None);
+                    }                                                           
+                }
+                catch(Exception lCurrent)
+                {
+                    lResult.DelayedException = lCurrent;
+                }
+                
+                RemoveOp((Thread)lResult.Data);
+                lResult.IsCompleted = true;
+                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
+                callback(lResult);
+            });
+            AddAsyncOp(lThread);
+            lResult.Data = lThread;
+            lThread.Start();
+
+            return lResult;
+        }
+
+		public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state)        
+        {
+            return BeginAccept(null, receiveSize, callback, state);
+        }
+		
+        public IAsyncResult BeginAccept(AsyncCallback callback, Object state)
+        {
+            return BeginAccept(null, 0, callback, state);
+        }
+
+   		public Socket EndAccept(out Byte[] buffer, out Int32 bytesTransferred, IAsyncResult asyncResult)
+        {
+            AsyncResult lResult = asyncResult as AsyncResult;
+
+            CheckAsyncTerminate(asyncResult);
+            CheckAsyncException(asyncResult);
+            
+            buffer = lResult.Buffer;
+            bytesTransferred = lResult.NBytes;
+
+            return lResult.AcceptedSocket;
+        }
+
+		public Socket EndAccept(out Byte[] buffer, IAsyncResult asyncResult)        
+        {
+            int lBytes;
+            return EndAccept(out buffer, out lBytes, asyncResult);
+        }
+
+		public Socket EndAccept(IAsyncResult result)
+        {
+            int lBytes;
+            byte [] lBuffer;
+
+            return EndAccept(out lBuffer, out lBytes, result);
+        }
 		        
         public void Bind(EndPoint local_end)       
         {
@@ -340,7 +411,6 @@
                     {
                         Connect(lEndPoint);
                         lResult.DelayedException = null;
-                        lResult.IsCompleted = true;                      
                         break;
                     }
                     catch(Exception lCurrent)
@@ -350,6 +420,7 @@
                 }
                 
                 RemoveOp((Thread)lResult.Data);
+                lResult.IsCompleted = true;                      
                 (lResult.AsyncWaitHandle as EventWaitHandle).Set();
                 callback(lResult);
             });
@@ -380,12 +451,7 @@
 
         public void EndConnect(IAsyncResult result) 
         {
-            if (!result.IsCompleted)
-            {
-                result.AsyncWaitHandle.WaitOne();
-                (result.AsyncWaitHandle as EventWaitHandle).Set();
-            }
-
+            CheckAsyncTerminate(result);
             CheckAsyncException(result);
         }
 
@@ -472,13 +538,62 @@
             return Receive(buffer, 0, length(buffer), SocketFlags.None);
         }
 
-        //public IAsyncResult BeginReceive(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state) {}
-		//public IAsyncResult BeginReceive(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, out SocketError error, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, out SocketError error, AsyncCallback callback, Object state)
+        {
+            var lResult = new AsyncResult(state);
+            lResult.Error = error;
 
-   		public Int32 EndReceive(IAsyncResult asyncResult, out SocketError errorCode) {}
-		public Int32 EndReceive(IAsyncResult result) {}
+            var lThread = new Thread(() =>
+            {
+                lResult.AsyncWaitHandle.WaitOne();
+                try
+                {
+                    lResult.NBytes = Receive(buffer, offset, size, flags);
+                }
+                catch(Exception lCurrent)
+                {
+                    if (lResult.Error == SocketError.NoValue)
+                        lResult.DelayedException = lCurrent;
+
+                    lResult.Error = SocketError.SocketError;
+                }
+                
+                RemoveOp((Thread)lResult.Data);
+                lResult.IsCompleted = true;                                         
+                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
+                callback(lResult);
+            });
+            AddAsyncOp(lThread);
+            lResult.Data = lThread;
+            lThread.Start();
+
+            return lResult;
+        }
+
+		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state)
+        {
+            SocketError lError = SocketError.NoValue;
+
+            return BeginReceive(buffer, offset, size, socket_flags, out lError, callback, state);
+        }
+
+   		public Int32 EndReceive(IAsyncResult asyncResult, out SocketError errorCode)        
+        {
+            AsyncResult lResult = asyncResult as AsyncResult;
+
+            CheckAsyncTerminate(asyncResult);                
+            CheckAsyncException(asyncResult);
+            errorCode = lResult.Error;
+
+            return lResult.NBytes;
+        }
+
+		public Int32 EndReceive(IAsyncResult result)
+        {
+            SocketError lError;
+
+            return EndReceive(result, out lError);
+        }
 
 		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags)
         {
@@ -509,16 +624,60 @@
             return Send(buf, 0, length(buf), SocketFlags.None);
         }
 
-   		//public IAsyncResult BeginSend(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state) {}
-		//public IAsyncResult BeginSend(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state) {}
-		//public IAsyncResult BeginSendFile(String fileName, Byte[] preBuffer, Byte[] postBuffer, TransmitFileOptions flags, AsyncCallback callback, Object state);
-		//public IAsyncResult BeginSendFile(String fileName, AsyncCallback callback, Object state);
+		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state)        
+        {
+            var lResult = new AsyncResult(state);
+            lResult.Error = errorCode;
 
-   		//public void EndSendFile(IAsyncResult asyncResult);
-		public Int32 EndSend(IAsyncResult asyncResult, out SocketError errorCode) {}
-		public Int32 EndSend(IAsyncResult result) {}
+            var lThread = new Thread(() =>
+            {
+                lResult.AsyncWaitHandle.WaitOne();
+                try
+                {
+                    lResult.NBytes = Send(buffer, offset, size, socketFlags);
+                }
+                catch(Exception lCurrent)
+                {
+                    if (lResult.Error == SocketError.NoValue)
+                        lResult.DelayedException = lCurrent;
+                    
+                    lResult.Error = SocketError.SocketError;
+                }
+                
+                RemoveOp((Thread)lResult.Data);
+                lResult.IsCompleted = true;
+                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
+                callback(lResult);
+            });
+            AddAsyncOp(lThread);
+            lResult.Data = lThread;
+            lThread.Start();
+
+            return lResult;
+        }
+
+		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state)
+        {
+            SocketError lError = SocketError.NoValue;
+            return BeginSend(buffer, offset, size, socket_flags, out lError, callback, state);
+        }
+
+		public Int32 EndSend(IAsyncResult asyncResult, out SocketError errorCode) 
+        {
+            AsyncResult lResult = asyncResult as AsyncResult;
+
+            CheckAsyncTerminate(asyncResult);                
+            CheckAsyncException(asyncResult);
+            errorCode = lResult.Error;
+
+            return lResult.NBytes;
+        }
+
+		public Int32 EndSend(IAsyncResult result)
+        {
+            SocketError lError = SocketError.SocketError;
+            return EndSend(result, out lError);
+        }
 
         #if cooper
         private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)

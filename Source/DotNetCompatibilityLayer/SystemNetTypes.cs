@@ -495,6 +495,11 @@
 		public Boolean IsCompleted { get; set; }
         public Exception DelayedException { get; set; }
         public Object Data { get; set; }
+        public Socket AcceptSocket { get; set; }
+        public int NBytes {get; set; }
+        public byte[] Buffer { get; set; }
+        public Socket AcceptedSocket { get; set; }
+        public SocketError Error { get; set; }
 
         public AsyncResult(Object AnAsyncState)
         {
@@ -601,7 +606,8 @@
 	    NoRecovery = 11003,
 	    NoData = 11004,
 	    IOPending = 997,
-	    OperationAborted = 995
+	    OperationAborted = 995,
+        NoValue = -999
     }
 
 	#endif
