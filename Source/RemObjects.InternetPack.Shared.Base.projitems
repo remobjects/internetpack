@@ -9,10 +9,12 @@
     <Import_RootNamespace>RemObjects.InternetPack.Shared.Base</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Asn1.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BoundIncomingStream.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommandBasedClient.cs">    
+    <Compile Include="$(MSBuildThisFileDirectory)CommandBasedClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\LdapException.cs" />
     <Compile Include="CommandBasedServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\IConnectionTimeouts.cs" />
