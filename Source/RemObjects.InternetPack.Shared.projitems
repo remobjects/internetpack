@@ -15,7 +15,6 @@
     </Compile>
     <Compile Include="FtpListing.cs" />
     <Compile Include="FtpServer.cs" />
-    <Compile Include="LdapClient.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageAddress.cs" />
     <Compile Include="MessageAttachment.cs" />

@@ -15,6 +15,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\LdapException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LdapClient.cs" />
     <Compile Include="CommandBasedServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\IConnectionTimeouts.cs" />

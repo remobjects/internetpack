@@ -359,7 +359,11 @@ namespace RemObjects.InternetPack.Ldap
 #endif
 			try
 			{
-				return Dns.DnsLookup.ReverseResolve(lAddress);
+				#if echoes
+                return Dns.DnsLookup.ReverseResolve(lAddress);
+                #else             
+                throw new LdapException("Not implemented");
+                #endif
 			}
 			catch (Exception)
 			{
@@ -669,17 +673,19 @@ namespace RemObjects.InternetPack.Ldap
 		}
 	}
 
-	public class LdapAttributes : System.Collections.Generic.List<LdapAttribute>
+	public class LdapAttributes 
 	{
-		public new LdapAttribute this[Int32 index]
+        private List<LdapAttribute> fData;
+
+		public LdapAttribute this[Int32 index]
 		{
 			get
 			{
-				return base[index];
+				return fData[index];
 			}
 			set
 			{
-				base[index] = value;
+				fData[index] = value;
 			}
 		}
 
@@ -687,9 +693,9 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			get
 			{
-				for (Int32 i = 0; i < Count; i++)
-					if (System.String.Equals(key, base[i].Key, StringComparison.InvariantCultureIgnoreCase))
-						return base[i];
+				for (Int32 i = 0; i < fData.Count; i++)
+					if (String.EqualsIgnoringCaseInvariant(key, fData[i].Key))
+						return fData[i];
 
 				return null;
 			}
@@ -705,6 +711,19 @@ namespace RemObjects.InternetPack.Ldap
 				return Convert.ToString(lAttribute.SingleBinaryValue);
 
 			return lAttribute.SingleStringValue;
+		}
+
+        public void Add(LdapAttribute anAttribute)
+        {
+            fData.Add(anAttribute);
+        }
+
+        public ISequence<LdapAttribute> GetSequence()
+		{			
+			foreach(LdapAttribute lItem in fData)
+			{
+				yield return lItem;
+			}
 		}
 	}
 
@@ -744,19 +763,35 @@ namespace RemObjects.InternetPack.Ldap
 		private LdapAttributes fAttributes;
 	}
 
-	public class LdapSearchResults : System.Collections.Generic.List<LdapObject>
+	public class LdapSearchResults
 	{
-		public LdapSearchResults()
+		private List<LdapObject> fData;
+        
+        public LdapSearchResults()
 		{
 			this.fReferals = new List<String>();
+            fData = new List<LdapObject>();
 		}
 
 		private List<String> fReferals;
-		public IList<String> Referals
+		public List<String> Referals
 		{
 			get
 			{
 				return fReferals;
+			}
+		}
+
+        public void Add(LdapObject aObject)
+        {
+            fData.Add(aObject);
+        }
+
+        public ISequence<LdapObject> GetSequence()
+		{			
+			foreach(LdapObject lItem in fData)
+			{
+				yield return lItem;
 			}
 		}
 	}
@@ -1159,7 +1194,7 @@ namespace RemObjects.InternetPack.Ldap
 				return dn; // makes no sense
 
 			for (Int32 i = lGroupDN.Count - 1; i >= 0; i--)
-				if (0 != System.String.Compare(lItems[lItems.Count - lGroupDN.Count + i], lGroupDN[i], StringComparison.InvariantCultureIgnoreCase))
+				if (0 != String.Compare(lItems[lItems.Count - lGroupDN.Count + i], lGroupDN[i]))
 					return dn; // shouldn't happen
 
 			String lResult = null;
@@ -1167,7 +1202,7 @@ namespace RemObjects.InternetPack.Ldap
 			{
 				String lValue = lItems[i];
 
-				if ((lValue as System.String).IndexOf("=", StringComparison.Ordinal) != -1)
+				if ((lValue as String).IndexOf("=") != -1)
 					lValue = lValue.Substring(lValue.IndexOf('=') + 1);
 
 				lResult = (lResult == null) ? lValue : lResult + "." + lValue;
@@ -1176,11 +1211,19 @@ namespace RemObjects.InternetPack.Ldap
 			return lResult;
 		}
 
-		public event EventHandler<LdapEventArgs> BeforeConnect;
-
+		#if echoes
+        public event EventHandler<LdapEventArgs> BeforeConnect;
+        
 		public event EventHandler<LdapEventArgs> AfterConnect;
 
 		public event EventHandler<LdapEventArgs> Disconnected;
+        #else
+        public event EventHandler BeforeConnect;
+        
+		public event EventHandler AfterConnect;
+
+		public event EventHandler Disconnected;
+        #endif
 	}
 
 	public class LdapEventArgs : EventArgs
