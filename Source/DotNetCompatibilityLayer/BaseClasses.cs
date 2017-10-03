@@ -113,4 +113,47 @@
 		}
     }
     #endif
+
+    #if !echoes
+    public class ArrayList
+    {
+        private List<Object> fList;
+
+        public ArrayList()
+        {
+            fList = new List<Object>();
+        }
+
+		public Object this[Int32 index]
+		{
+			get
+			{
+				return fList[index];
+			}
+		}
+
+        public void Add(Object item)
+        {
+            fList.Add(item);
+        }
+
+        public void Insert(Int32 pos, Object item)
+        {
+            fList.Insert(pos, item);
+        }
+
+        public void Clear()
+        {
+            fList.RemoveAll();
+        }
+
+        public Int32 Count
+        {
+            get
+            {
+                return fList.Count;
+            }
+        }
+    }
+    #endif
 }

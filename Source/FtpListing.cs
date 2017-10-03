@@ -24,7 +24,10 @@ namespace RemObjects.InternetPack.Ftp
 			this.User = "user";
 			this.Group = "group";
 			this.Size = 0;
-			this.FileDate = System.DateTime.MinValue;
+            #if echoes
+            // TODO
+            this.FileDate = DateTime.MinValue;
+            #endif
 		}
 
 		public FtpListingItem(String item)
@@ -175,8 +178,12 @@ namespace RemObjects.InternetPack.Ftp
 			return lResult;
 		}
 
-		public override String ToString()
-		{
+		#if !cooper
+        public override String ToString()
+		#else
+        public String ToString()
+        #endif
+        {
 			Char[] lRights = new Char[] { 'd', 'r', 'w', 'x', 'r', 'w', 'x', 'r', 'w', 'x' };
 
 			if (!this.Directory)
@@ -213,9 +220,27 @@ namespace RemObjects.InternetPack.Ftp
 				this.Group, this.Size, FtpListingItem.FtpDateToString(this.FileDate), this.FileName);
 		}
 
+        private static String[] ParseLine(String item, int maxItems)
+        {
+            var lItems = item.Split(" ");
+            var lResult = new List<String>();
+            var lCount = 0;
+            foreach (var lItem in lItems)
+            {
+                if (lItem != "")
+                {
+                    lResult.Add(lItem);
+                    lCount++;
+                    if (lCount >= maxItems) break;
+                }
+            }
+
+            return lResult.ToArray();
+        }
+
 		public void Parse(String item)
 		{
-			Regex lRegEx = new Regex(@"\s+");
+			//Regex lRegEx = new Regex(@"\s+");
 
 			// there is two modes possible Unix mode or MS-DOS mode
 			if (item.StartsWith("d") || item.StartsWith("-"))
@@ -240,7 +265,8 @@ namespace RemObjects.InternetPack.Ftp
 				7 - Time or Year
 				8 - Filename
 				 */
-				String[] lSplittedData = lRegEx.Split(item, 9);
+				//String[] lSplittedData = lRegEx.Split(item, 9);
+                String[] lSplittedData = ParseLine(item, 9);
 
 				// Copy splitted data to result
 				// Problem is that at least one FTP server doesn;t return Group segment
@@ -262,10 +288,10 @@ namespace RemObjects.InternetPack.Ftp
 				this.OtherWrite = lSegments[0][8] != '-';
 				this.OtherExec = lSegments[0][9] != '-';
 
-				this.SubItemCount = Int32.Parse(lSegments[1]);
+				this.SubItemCount = Convert.ToInt32(lSegments[1]);
 				this.User = lSegments[2];
 				this.Group = lSegments[3];
-				this.Size = Int64.Parse(lSegments[4]);
+				this.Size = Convert.ToInt64(lSegments[4]);
 
 				String lMonthShortName = lSegments[5];
 				String lDay = lSegments[6];
@@ -292,10 +318,11 @@ namespace RemObjects.InternetPack.Ftp
 				2 - Size or IsDir
 				3 - Filename
 				 */
-				String[] lSegments = lRegEx.Split(item, 4);
+				//String[] lSegments = lRegEx.Split(item, 4);
+                String[] lSegments = ParseLine(item, 4);
 				this.Directory = (lSegments[2] == "<DIR>");
 
-				this.Size = this.Directory ? 0 : Int64.Parse(lSegments[2]);
+				this.Size = this.Directory ? 0 : Convert.ToInt64(lSegments[2]);
 
 				String lDateStr = lSegments[0];
 				String lTimeStr = lSegments[1];
@@ -307,7 +334,8 @@ namespace RemObjects.InternetPack.Ftp
 
 		public static DateTime StringToFtpDate(String value)
 		{
-			String[] lParts = Regex.Split(value, @"\w+");
+			//String[] lParts = Regex.Split(value, @"\w+");
+            String[] lParts = ParseLine(value, 3);
 
 			return FtpListingItem.StringToFtpDate(lParts[0], lParts[1], lParts[2]);
 		}
@@ -432,12 +460,12 @@ namespace RemObjects.InternetPack.Ftp
 						return new DateTime(0);
 				}
 
-				lDay = Int32.Parse(day);
+				lDay = Convert.ToInt32(day);
 				lYear = DateTime.UtcNow.Year;
 
 				if (yearOrTime.IndexOf(":") == -1) // this is a year, not a time
 				{
-					lYear = Int32.Parse(yearOrTime);
+					lYear = Convert.ToInt32(yearOrTime);
 				}
 				else
 				{
@@ -446,11 +474,12 @@ namespace RemObjects.InternetPack.Ftp
 					if (lCurrentMonth < lMonth)
 						lYear -= 1;
 
-					String[] lTimes = Regex.Split(yearOrTime, ":");
-					lHour = Int32.Parse(lTimes[0]);
-					lMinute = Int32.Parse(lTimes[1]);
+					//String[] lTimes = Regex.Split(yearOrTime, ":");
+                    String[] lTimes = yearOrTime.Split(":").ToArray();
+					lHour = Convert.ToInt32(lTimes[0]);
+					lMinute = Convert.ToInt32(lTimes[1]);
 					if (lTimes.Length > 2)
-						lSecond = Int32.Parse(lTimes[2]);
+						lSecond = Convert.ToInt32(lTimes[2]);
 				}
 			}
 			catch (Exception) // don't need any exception here.
@@ -480,13 +509,38 @@ namespace RemObjects.InternetPack.Ftp
 			return lResult;
 		}
 
+        private static String[] SplitLines(String line)
+        {
+            // TODO need test
+            var lPointer = 0;
+            var lLast = 0;
+            var lResult = new List<String>();
+
+            while (lPointer < line.Length)
+            {
+                while ((line[lPointer] != '\n') && (line[lPointer] != '\r') && (lPointer < line.Length))
+                {
+                    lPointer++;
+                }
+                lResult.Add(line.Substring(lLast, (lPointer - lLast)));
+                if ((lPointer < line.Length) && (line[lPointer] == '\r'))
+                    lPointer++;
+                if ((lPointer < line.Length) && (line[lPointer] == '\n'))
+                    lPointer++;
+                lLast = lPointer;
+            }
+
+            return lResult.ToArray();
+        }
+
 		public void Parse(String list, Boolean includeUpDir)
 		{
 			this.Clear();
 
 			Boolean lFoundUpDir = false;
 
-			String[] lItems = Regex.Split(list, @"(?:\r\n|\r|\n)");
+			//String[] lItems = Regex.Split(list, @"(?:\r\n|\r|\n)");
+            String[] lItems = SplitLines(list);
 
 			for (Int32 i = 0; i < lItems.Length; i++)
 			{
@@ -508,9 +562,13 @@ namespace RemObjects.InternetPack.Ftp
 					if (lNewItem.Directory && lNewItem.FileName == "..")
 						lFoundUpDir = true;
 				}
-				catch (IndexOutOfRangeException)
+				#if echoes
+                catch (IndexOutOfRangeException)
+                #else
+                catch (RTLException)
 				{
 				}
+                #endif
 				catch (FormatException)
 				{
 				}
@@ -525,8 +583,12 @@ namespace RemObjects.InternetPack.Ftp
 			}
 		}
 
-		public override String ToString()
-		{
+		#if !cooper
+        public override String ToString()
+		#else
+        public String ToString()
+        #endif
+        {
 			StringBuilder lResult = new StringBuilder();
 
 			for (Int32 i = 0; i < this.Count; i++)
