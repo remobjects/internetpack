@@ -156,37 +156,37 @@ namespace RemObjects.InternetPack.Http
 			return Get(url, null);
 		}
 
-		private static System.Text.Encoding GetEncodingFromContentType(System.String contentType)
+		private static Encoding GetEncodingFromContentType(String contentType)
 		{
-			Int32 lStartPos = contentType.IndexOf(HttpClient.CHARSET_KEY, StringComparison.Ordinal);
+            Int32 lStartPos = contentType.IndexOf(HttpClient.CHARSET_KEY);
 			if (lStartPos == -1)
-				return System.Text.Encoding.ASCII;
+				return Encoding.ASCII;
 
 			lStartPos += HttpClient.CHARSET_KEY.Length;
-			Int32 lEndPos = contentType.IndexOf(";", lStartPos, StringComparison.Ordinal);
+			Int32 lEndPos = contentType.IndexOf(";", lStartPos);
 			if (lEndPos == -1)
 				lEndPos = contentType.Length;
 
 			String lCharsetName = contentType.Substring(lStartPos, lEndPos - lStartPos).Trim();
 
 			if (String.IsNullOrEmpty(lCharsetName))
-				return System.Text.Encoding.ASCII;
+				return Encoding.ASCII;
 
-			lCharsetName = lCharsetName.ToLower(CultureInfo.InvariantCulture);
+			lCharsetName = lCharsetName.ToLowerInvariant();
 
-			if (System.String.Equals(lCharsetName, "utf-7", StringComparison.Ordinal))
-				return System.Text.Encoding.UTF7;
+			/*if (System.String.Equals(lCharsetName, "utf-7", StringComparison.Ordinal))
+				return System.Text.Encoding.UTF7;*/
 
-			if (System.String.Equals(lCharsetName, "utf-8", StringComparison.Ordinal))
-				return System.Text.Encoding.UTF8;
+			if (String.Equals(lCharsetName, "utf-8"))
+				return Encoding.UTF8;
 
-			if (System.String.Equals(lCharsetName, "unicode", StringComparison.Ordinal))
-				return System.Text.Encoding.Unicode;
+			if (String.Equals(lCharsetName, "unicode"))
+				return Encoding.UTF16LE;
 
-			if (System.String.Equals(lCharsetName, "unicodeFFFE", StringComparison.Ordinal))
-				return System.Text.Encoding.BigEndianUnicode;
+			if (String.Equals(lCharsetName, "unicodeFFFE"))
+				return Encoding.UTF16BE;
 
-			return System.Text.Encoding.ASCII;
+			return Encoding.ASCII;
 		}
 
 		private static void SetAuthorizationHeader(HttpHeaders headers, String header, String username, String password)
@@ -194,17 +194,17 @@ namespace RemObjects.InternetPack.Http
 			if (String.IsNullOrEmpty(username))
 				return;
 
-			Byte[] lByteData = System.Text.Encoding.UTF8.GetBytes(username + ":" + password);
-			String lAuthData = "Basic " + System.Convert.ToBase64String(lByteData, 0, lByteData.Length);
+			Byte[] lByteData = Encoding.UTF8.GetBytes(username + ":" + password);
+			String lAuthData = "Basic " + Convert.ToBase64String(lByteData, 0, lByteData.Length);
 
 			headers.SetHeaderValue(header, lAuthData);
 		}
 
-		public String Get(String url, System.Text.Encoding encoding)
+		public String Get(String url, Encoding encoding)
 		{
 			using (HttpClientResponse response = GetResponse(url))
 			{
-				response.Encoding = (encoding != null) ? encoding : GetEncodingFromContentType(response.Header.ContentType);
+                response.Encoding = (encoding != null) ? encoding : GetEncodingFromContentType(response.Header.ContentType);
 				return response.ContentString;
 			}
 		}
@@ -219,8 +219,8 @@ namespace RemObjects.InternetPack.Http
 
 		public HttpClientResponse GetResponse(String url)
 		{
-			HttpClientRequest lRequest = new HttpClientRequest();
-			lRequest.URL = Url.UrlWithString(url);
+            HttpClientRequest lRequest = new HttpClientRequest();
+			lRequest.URL = UrlParser.UrlWithString(url);
 			lRequest.Header.RequestType = "GET";
 			lRequest.Header.SetHeaderValue("Accept", Accept);
 			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
@@ -232,7 +232,7 @@ namespace RemObjects.InternetPack.Http
 		public String Post(String url, Byte[] content)
 		{
 			HttpClientRequest lRequest = new HttpClientRequest();
-			lRequest.URL = Url.UrlWithString(url);
+			lRequest.URL = UrlParser.UrlWithString(url);
 			lRequest.RequestType = RequestType.Post;
 			lRequest.Header.SetHeaderValue("Accept", Accept);
 			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
@@ -246,7 +246,7 @@ namespace RemObjects.InternetPack.Http
 		public String Post(String url, Stream content)
 		{
 			HttpClientRequest lRequest = new HttpClientRequest();
-			lRequest.URL = Url.UrlWithString(url);
+			lRequest.URL = UrlParser.UrlWithString(url);
 			lRequest.RequestType = RequestType.Post;
 			lRequest.Header.SetHeaderValue("Accept", Accept);
 			lRequest.Header.SetHeaderValue("User-Agent", UserAgent);
@@ -299,11 +299,11 @@ namespace RemObjects.InternetPack.Http
 				HttpClient.SetAuthorizationHeader(request.Header, "Proxy-Authorization", this.ProxySettings.UserName, this.ProxySettings.Password);
 			}
 
-			Connection lConnection = this.GetHttpConnection(lSslConnection, request.URL.Host, request.URL.Port, lHostname, lPort);
+            Connection lConnection = this.GetHttpConnection(lSslConnection, request.URL.Host, request.URL.Port, lHostname, lPort);
 
 			try
 			{
-				request.WriteHeaderToConnection(lConnection);
+                request.WriteHeaderToConnection(lConnection);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -315,14 +315,13 @@ namespace RemObjects.InternetPack.Http
 				lConnection = this.GetNewHttpConnection(lHostname, lPort);
 				request.WriteHeaderToConnection(lConnection);
 			}
-			catch (System.Net.Sockets.SocketException)
+			catch (SocketException)
 			{
 				lConnection = this.GetNewHttpConnection(lHostname, lPort);
 				request.WriteHeaderToConnection(lConnection);
 			}
 
-			request.WriteBodyToConnection(lConnection);
-
+            request.WriteBodyToConnection(lConnection);
 
 			HttpClientResponse lResponse;
 			do
@@ -334,7 +333,7 @@ namespace RemObjects.InternetPack.Http
 			}
 			while (lResponse.Header.HttpCode == HttpStatusCode.Continue); // 100 CONTINUE means useless response.
 
-			if (!lResponse.KeepAlive)
+            if (!lResponse.KeepAlive)
 			{
 				this.fConnectionUrl = null;
 				this.fConnection = null;

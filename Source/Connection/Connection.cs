@@ -15,7 +15,7 @@ namespace RemObjects.InternetPack
 		#endregion
 
 		#region Private fields
-    	#if macos || ios || cooper
+    	#if toffee || cooper
         private readonly Object fSyncRoot = new Object();        
         #else
         private readonly Monitor fSyncRoot = new Monitor();
@@ -77,7 +77,7 @@ namespace RemObjects.InternetPack
 		[ToString]
         public override String ToString()
 		{
-            #if macos || ios || cooper
+            #if toffee || cooper
             return String.Format("{0} Local: {1} Remote {2}", this.ToString(), this.LocalEndPoint, this.RemoteEndPoint);
             #else
             return String.Format("{0} Local: {1} Remote {2}", this.GetType().Name, this.LocalEndPoint, this.RemoteEndPoint);
@@ -110,12 +110,16 @@ namespace RemObjects.InternetPack
 			}
 		}
 
-		public Encoding Encoding
+		public RemObjects.Elements.RTL.Encoding Encoding
 		{
 			get
 			{
-				return this.fEncoding ?? (this.fEncoding = Encoding.Default);
-			}
+                if (this.fEncoding == null)
+                    return RemObjects.Elements.RTL.Encoding.Default;
+                else
+                    return this.fEncoding;
+                //return this.fEncoding ?? (this.fEncoding = Encoding.Default);
+            }
 			set
 			{
 				this.fEncoding = value;
@@ -489,7 +493,7 @@ namespace RemObjects.InternetPack
 
 		private Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, Boolean block)
 		{
-			// If there is no buffer allocated
+            // If there is no buffer allocated
 			if (this.fBuffer == null)
 			{
 				if (block)
@@ -512,7 +516,7 @@ namespace RemObjects.InternetPack
 
 			// less (or same) number of bytes in buffer then we need?
 			//fBuffer.BlockCopy(fBuffer, fBufferStart, buffer, offset, lSize);
-			#if macos || ios || cooper
+			#if toffee || cooper
             Array.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
             #else
             fBuffer.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
@@ -813,14 +817,14 @@ namespace RemObjects.InternetPack
                         
         public override Int32 Write(Byte[] buffer, Int32 offset, Int32 count)
         {
-             DataSocketSend(buffer, offset, count);
+             return DataSocketSend(buffer, offset, count);
         }
 
 		//#endif
 
 		public override Int64 Seek(Int64 offset, SeekOrigin origin)
 		{
-            #if macos || ios || cooper
+            #if toffee || cooper
             throw new Exception(String.Format("{0} does not support seeking", this.ToString()));
             #else
             throw new Exception(String.Format("{0} does not support seeking", this.GetType().Name));
@@ -881,7 +885,7 @@ namespace RemObjects.InternetPack
             }
         }
 
-        #if !macos && !ios && !cooper
+        #if !toffee && !cooper
         public override void SetPosition(Int64 value)
 		{
 		    Seek(value, SeekOrigin.Begin);
@@ -934,6 +938,9 @@ namespace RemObjects.InternetPack
 					fBuffer = new Byte[READLINE_BUFFER_SIZE];
 					fBufferStart = 0;
 					fBufferEnd = DataSocketReceiveWhatsAvaiable(fBuffer, 0, fBuffer.Length);
+                    String ToWrite = "";
+                    for(int j = 0; j < fBufferEnd;j++)
+                            ToWrite = ToWrite + chr(fBuffer[j]);
 
 					if (fBufferEnd == 0)
 						throw new ConnectionClosedException();
@@ -959,7 +966,7 @@ namespace RemObjects.InternetPack
 					else
 					{
 						// else just discard the 10 (LF)
-						lResult = lResult + Encoding.GetString(fBuffer, fBufferStart, i - fBufferStart - 1);
+						lResult = lResult + Encoding.GetString(fBuffer, fBufferStart, i - fBufferStart - 1);                        
 					}
 				}
 				else

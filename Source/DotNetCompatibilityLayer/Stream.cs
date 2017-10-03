@@ -2,7 +2,7 @@
 
 namespace RemObjects.InternetPack.Shared.Base
 {    
-    public abstract class TextReader:  MarshalByRefObject, IDisposable
+    public abstract class TextReader: MarshalByRefObject, IDisposable
     {                
         protected Encoding fEncoding;
 

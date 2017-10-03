@@ -4,6 +4,7 @@
 ---------------------------------------------------------------------------*/
 
 using RemObjects.InternetPack.Shared.Base;
+using RemObjects.InternetPack;
 
 namespace RemObjects.InternetPack.Ldap
 {
@@ -336,8 +337,8 @@ namespace RemObjects.InternetPack.Ldap
 									stop = true;
 									break;
 								case '\\':
-									sb.Append((char)(Byte.Parse(value[pos + len + 1].ToString()) * 16 +
-									Byte.Parse(value[pos + len + 2].ToString())));
+									sb.Append((char)(Convert.ToByte(value[pos + len + 1].ToString()) * 16 +
+									Convert.ToByte(value[pos + len + 2].ToString())));
 									len += 2;
 									break;
 								default:
@@ -788,7 +789,11 @@ namespace RemObjects.InternetPack.Ldap
 			// -129    02 02 FF 7F
 		}
 
-		public override String ToString()
+		#if !cooper
+        public override String ToString()
+        #else
+        public String ToString()
+        #endif
 		{
 			return Value.ToString();
 		}
@@ -870,7 +875,11 @@ namespace RemObjects.InternetPack.Ldap
 
 		public UInt32 Value { get; set; }
 
-		public override String ToString()
+		#if !cooper
+        public override String ToString()
+        #else
+        public String ToString()
+        #endif
 		{
 			return this.Value.ToString();
 		}
@@ -919,7 +928,11 @@ namespace RemObjects.InternetPack.Ldap
 
 		public Byte[] Value { get; set; }
 
-		public override String ToString()
+		#if !cooper
+        public override String ToString()
+        #else
+        public String ToString()
+        #endif
 		{
 			return (this.Value == null) ? "" : Convert.ToString(this.Value);
 		}
@@ -964,8 +977,12 @@ namespace RemObjects.InternetPack.Ldap
 			}
 		}
 
-		public override String ToString()
-		{
+		#if !cooper
+        public override String ToString()
+        #else
+        public String ToString()
+		#endif        
+        {
 			return this.Value.ToString();
 		}
 	}
@@ -1014,7 +1031,7 @@ namespace RemObjects.InternetPack.Ldap
 				this.fItems.Add(args);
 		}
 
-		public IList<BerValue> Items
+		public List<BerValue> Items
 		{
 			get
 			{
@@ -1074,8 +1091,12 @@ namespace RemObjects.InternetPack.Ldap
 				this.fItems.Add(BerValue.Read(lReader));
 		}
 
-		public override String ToString()
-		{
+		#if !cooper
+        public override String ToString()
+        #else
+		public String ToString()
+        #endif
+        {
 			StringBuilder lResult = new StringBuilder();
 			lResult.Append("{");
 
@@ -1118,7 +1139,11 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			get
 			{
-				return this.Value == null ? 0 : System.Text.Encoding.UTF8.GetByteCount(this.Value);
+                #if cooper
+                return this.Value == null ? 0 : Encoding.UTF8.GetBytes(this.Value).length;
+                #else
+                return this.Value == null ? 0 : length(Encoding.UTF8.GetBytes(this.Value));
+                #endif
 			}
 		}
 
@@ -1147,7 +1172,11 @@ namespace RemObjects.InternetPack.Ldap
 
 		public String Value { get; set; }
 
-		public override String ToString()
+		#if !cooper
+        public override String ToString()
+        #else
+        public String ToString()
+        #endif
 		{
 			if (this.Value == null)
 				return "";
@@ -1182,7 +1211,7 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			get
 			{
-				return (this.fValue.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) ? 16 : 4;
+				return (this.fValue.AddressFamily == AddressFamily.InterNetworkV6) ? 16 : 4;
 			}
 		}
 
@@ -1190,7 +1219,7 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			Byte[] lValue = this.fValue.GetAddressBytes();
 
-			if (this.fValue.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+			if (this.fValue.AddressFamily == AddressFamily.InterNetworkV6)
 				writer.Write(lValue, 0, 16);
 			else
 				writer.Write(lValue, 0, 4);
@@ -1214,7 +1243,11 @@ namespace RemObjects.InternetPack.Ldap
 		}
 		private IPAddress fValue;
 
-		public override String ToString()
+		#if !cooper
+        public override String ToString()        
+        #else
+        public String ToString()        
+        #endif
 		{
 			if (this.Value == null)
 				return "";
@@ -1268,8 +1301,12 @@ namespace RemObjects.InternetPack.Ldap
 
 		public Byte TypeCodeTag { get; set; }
 
-		public override String ToString()
-		{
+		#if !cooper
+        public override String ToString()
+        #else
+		public String ToString()
+        #endif
+        {
 			return (this.Value == null) ? "" : Convert.ToString(this.Value);
 		}
 	}

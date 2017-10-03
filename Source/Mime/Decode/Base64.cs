@@ -18,7 +18,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		/// <returns>A Byte array that the base64 String described</returns>
 		public static Byte[] Decode(String base64Encoded)
 		{
-			return System.Convert.FromBase64String(base64Encoded);
+			return Convert.Base64StringToByteArray(base64Encoded);
 		}
 
 		/// <summary>

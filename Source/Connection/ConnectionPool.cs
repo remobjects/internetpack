@@ -7,7 +7,7 @@ namespace RemObjects.InternetPack
 {
 	public class ConnectionPool : IDisposable
 	{
-		#if macos || ios || cooper
+		#if toffee || cooper
         private readonly Object fSyncRoot = new Object();        
         #else
         private readonly Monitor fSyncRoot = new Monitor();
@@ -229,7 +229,7 @@ namespace RemObjects.InternetPack
 		#endregion
 	}
 
-	static class DefaultPool
+	public static class DefaultPool
 	{
 		public static ConnectionPool ConnectionPool
 		{

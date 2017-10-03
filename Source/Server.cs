@@ -2,7 +2,7 @@
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
-#if macos || ios
+#if toffee || cooper
 using RemObjects.Elements.RTL.Reflection;
 #endif
 
@@ -394,11 +394,7 @@ namespace RemObjects.InternetPack
 				fBindingV6.Unbind(true);
 		}
 
-		#if cooper
-        public virtual Class GetWorkerClass()
-        #else
         public virtual Type GetWorkerClass()
-        #endif
 		{
 			return typeof(Worker);
 		}
@@ -407,11 +403,7 @@ namespace RemObjects.InternetPack
 
 	public class Listener : IListener
 	{
-		#if cooper
-        public Listener(Server owner, Class workerClass)
-        #else
         public Listener(Server owner, Type workerClass)
-        #endif
 		{
 			fOwner = owner;
 			fWorkerClass = workerClass;
@@ -431,22 +423,14 @@ namespace RemObjects.InternetPack
 		}
 		private Socket fListeningSocket;
 
-		#if cooper
-        public Class WorkerClass
-        #else
         public Type WorkerClass
-        #endif
 		{
 			get
 			{
 				return fWorkerClass;
 			}
 		}
-		#if cooper
-        private readonly Class fWorkerClass;
-        #else
         private readonly Type fWorkerClass;
-        #endif
 
 		public Server Owner
 		{
@@ -489,10 +473,14 @@ namespace RemObjects.InternetPack
 
 					if (lSocket != null)
 					{
-						#if !NEEDS_PORTING
+						#if echoes
 						Object lObject = Activator.CreateInstance(WorkerClass);
-						#else
-						Object lObject = null;
+						#elif cooper
+						Object lObject = Class.getDeclaredConstructor(WorkerClass).newInstance();
+                        #elif island
+                        Object lObject = WorkerClass.Instantiate();
+                        #elif toffee
+                        Object lObject = WorkerClass.init();
 						#endif
 						IWorker lWorker = lObject as IWorker;
 						lWorker.Owner = Owner;

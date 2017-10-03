@@ -39,9 +39,44 @@ namespace RemObjects.InternetPack.Http
 
 		public void CloneEvents(HttpRequestResponse source)
 		{
-			OnTransferStart = source.OnTransferStart;
+            #if cooper || island || toffee
+            foreach(TransferStartEventHandler item in source.OnTransferStart)
+            {
+                #if cooper
+                OnTransferStart.add(item);
+                #elif island
+                OnTransferStart.Add(item);
+                #elif toffee
+                OnTransferStart.addObject(item);
+                #endif
+            }
+
+            foreach(TransferEndEventHandler item in source.OnTransferEnd)
+            {
+                #if cooper
+                OnTransferEnd.add(item);
+                #elif island
+                OnTransferEnd.Add(item);
+                #else
+                OnTransferEnd.addObject(item);
+                #endif
+            }
+
+            foreach(TransferProgressEventHandler item in source.OnTransferProgress)
+            {
+                #if cooper
+                OnTransferProgress.add(item);
+                #elif island
+                OnTransferProgress.Add(item);
+                #else                
+                OnTransferProgress.addObject(item);
+                #endif
+            }
+            #elif echoes
+            OnTransferStart = source.OnTransferStart;
 			OnTransferEnd = source.OnTransferEnd;
 			OnTransferProgress = source.OnTransferProgress;
+            #endif
 		}
 
 		protected Boolean HasOnTransferProgress
@@ -89,18 +124,18 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				if (fContentBytes == null)
+                if (fContentBytes == null)
 				{
 					if (HasContentLength) /* Server must always have on ContentLength */
 					{
-						fContentBytes = new Byte[ContentLength];
+                        fContentBytes = new Byte[ContentLength];
 						Int32 lRead = ContentStream.Read(fContentBytes, 0, fContentBytes.Length);
 						if (lRead != fContentBytes.Length)
 							throw new Exception("Unexpected end of response");
 					}
 					else
 					{
-						Boolean lChunked = Chunked;
+                        Boolean lChunked = Chunked;
 						Boolean lKeepAlive = KeepAlive;
 						if (lKeepAlive && !lChunked)
 							throw new Exception("Content-Length or Chunked Transfer-Encoding required for Keep-Alive.");
@@ -172,10 +207,10 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				if (fContentString == null)
+                if (fContentString == null)
 					fContentString = Encoding.GetString(ContentBytes, 0, ContentBytes.Length);
 
-				return fContentString;
+                return fContentString;
 			}
 		}
 		private String fContentString;
@@ -190,7 +225,7 @@ namespace RemObjects.InternetPack.Http
 					try
 					{
 						// TryPArse is not available on CF
-						Int32.Parse(lLength);
+						Convert.ToInt32(lLength);
 						return true;
 					}
 					catch (Exception)
@@ -213,7 +248,7 @@ namespace RemObjects.InternetPack.Http
 					if (String.IsNullOrEmpty(lLength))
 						throw new HttpHeaderException("No Content-Lengh specified in header.");
 
-					fContentLength = Int32.Parse(lLength);
+					fContentLength = Convert.ToInt32(lLength);
 				}
 
 				return fContentLength;
@@ -227,7 +262,7 @@ namespace RemObjects.InternetPack.Http
 			{
 				String lConnection = Header.GetHeaderValue("Connection");
 
-				return lConnection != null && lConnection.ToLower(CultureInfo.InvariantCulture) == "keep-alive";
+				return lConnection != null && lConnection.ToLowerInvariant() == "keep-alive";
 			}
 		}
 
@@ -282,7 +317,7 @@ namespace RemObjects.InternetPack.Http
 				lLine = lLine.Substring(0, lPos);
 			lLine = lLine.Trim();
 
-			return Int32.Parse(lLine, NumberStyles.AllowHexSpecifier);
+			return Convert.HexStringToInt32(lLine);
 		}
 
 	}
@@ -640,7 +675,7 @@ namespace RemObjects.InternetPack.Http
 													responseCode, ex.GetType().Name, ex.GetType().FullName, ex.Message, ex.StackTrace);
 #else
 			String lMessageHtml = String.Format("<h1>Error {0} {1}</h1><p>{2}: {3}</p><p>{4}</p><hr />",
-				responseCode, ex.GetType().Name, ex.GetType().FullName, ex.Message, DEFAULT_SERVER_NAME);
+				responseCode, ex.ToString(), ex.ToString(), ex.Message, DEFAULT_SERVER_NAME);
 #endif
 			this.ContentBytes = Encoding.ASCII.GetBytes(lMessageHtml);
 			this.Header.ContentType = "text/html";
@@ -763,7 +798,7 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				return this.Header.HttpCode;
+				return (Int32)this.Header.HttpCode;
 			}
 		}
 
@@ -803,7 +838,7 @@ namespace RemObjects.InternetPack.Http
 	{
 		public HttpIncomingStream(HttpIncomingRequestResponse owner)
 		{
-			if (owner.Chunked)
+            if (owner.Chunked)
 				throw new Exception("ContentStream is currently not supported for Chunked HTTP transfer.");
 
 			this.fOwner = owner;
@@ -836,17 +871,17 @@ namespace RemObjects.InternetPack.Http
 
 		public override Int32 Read(Byte[] buffer, Int32 offset, Int32 size)
 		{
-			if (size > Length - fPosition) size = (Int32)Length - (Int32)fPosition;
+            if (size > Length - fPosition) size = (Int32)Length - (Int32)fPosition;
 
 			if (size <= 0) return 0;
-			Int32 lResult = fOwner.DataConnection.Receive(buffer, offset, size);
+            Int32 lResult = fOwner.DataConnection.Receive(buffer, offset, size);
 			fPosition += lResult;
 			return lResult;
 		}
 
 		public override Int64 Seek(Int64 offset, SeekOrigin origin)
 		{
-			throw new Exception(String.Format("{0} does not support seeking", this.GetType().FullName));
+			throw new Exception(String.Format("{0} does not support seeking", this.ToString()));
 		}
 
 		/*public override void SetLength(Int64 length)
@@ -856,7 +891,7 @@ namespace RemObjects.InternetPack.Http
 
 		public override Int32 Write(Byte[] buffer, Int32 offset, Int32 size)
 		{
-			throw new Exception(String.Format("{0} is a read-only Stream", this.GetType().FullName));
+			throw new Exception(String.Format("{0} is a read-only Stream", this.ToString()));
 		}
 
 		public override Boolean CanRead
@@ -924,16 +959,22 @@ namespace RemObjects.InternetPack.Http
 		Head
 	}
 
-	public class QueryString : Hashtable
+	public class QueryString
 	{
 		private readonly String fQuery;
+        private Dictionary<String, String> fData;
 
 		public QueryString(String query)
 		{
-			fQuery = query;
+			fData = new Dictionary<String, String>();
+            fQuery = query;
 			if (String.IsNullOrEmpty(fQuery))
 			{
-				return;
+				#if toffee
+                return null;
+                #else
+                return;
+                #endif
 			}
 
 			var lParams = fQuery.Split("&");
@@ -944,16 +985,20 @@ namespace RemObjects.InternetPack.Http
 				{
 					String lName = lParam.Substring(0, lEqual).Trim().ToLower();
 					String lValue = lParam.Substring(lEqual + 1);
-					base[lName] = ContainsKey(lName) ? this[lName] + "," + lValue : lValue;
+					fData[lName] = fData.ContainsKey(lName) ? fData[lName] + "," + lValue : lValue;
 				}
 				else
 				{
-					this.Add(lParam, null);
+					fData.Add(lParam, null);
 				}
 			}
 		}
 
-		public override String ToString()
+		#if echoes || island
+        public override String ToString()
+        #else
+        public String ToString()
+        #endif
 		{
 			return this.fQuery ?? "";
 		}
@@ -962,7 +1007,7 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				return (String)base[key];
+				return fData[(String)key];
 			}
 		}
 

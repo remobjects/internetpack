@@ -1,210 +1,6 @@
 ﻿namespace RemObjects.InternetPack
 {
     #if !ECHOES
-	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
-	public class OldSocket : Object, IDisposable
-	{
-		/*private Boolean islistening;
-		private Boolean useoverlappedIO;
-		private static const Int32 SOCKET_CLOSED = 10004;
-		private static String timeout_exc_msg;
-		private Queue readQ;
-		private Queue writeQ;
-		private static Int32 ipv4Supported;
-		private static Int32 ipv6Supported;
-		private Int32 linger_timeout;
-		private IntPtr socket;
-		private AddressFamily address_family;
-		private SocketType socket_type;
-		private ProtocolType protocol_type;
-		public Boolean Blocking { get; set; }
-		internal Boolean blocking;
-		private List<Thread> blocking_threads;
-		public Boolean IsBound { get; set; }
-		private Boolean isbound;*/
-		public Boolean Connected { get; set; }
-		/*private Boolean connected;
-		private Boolean closed;
-		internal Boolean disposed;
-		private Boolean connect_in_progress;
-		internal EndPoint seed_endpoint;*/
-		public OldSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType) {}
-		/*private static this .cctor();
-		public Socket(SocketInformation socketInformation);
-		internal Socket(AddressFamily family, SocketType type, ProtocolType proto, IntPtr sock);
-		private static void AddSockets(List<Socket> sockets, IList list, String name);
-		private static void Select_internal(ref Socket[] sockets, Int32 microSeconds, out Int32 error);
-		public static void Select(IList checkRead, IList checkWrite, IList checkError, Int32 microSeconds);
-		private void SocketDefaults();
-		private static Int32 Available_internal(IntPtr socket, out Int32 error);
-		private static SocketAddress LocalEndPoint_internal(IntPtr socket, Int32 family, out Int32 error);
-		public Boolean AcceptAsync(SocketAsyncEventArgs e);
-		private static IntPtr Accept_internal(IntPtr sock, out Int32 error, Boolean blocking);
-		internal void Accept(Socket acceptSocket);*/
-		public Socket Accept() {}
-		public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginAccept(AsyncCallback callback, Object state) {}
-		/*public IAsyncResult BeginConnect(IPAddress[] addresses, Int32 port, AsyncCallback callback, Object state);
-		public IAsyncResult BeginConnect(EndPoint end_point, AsyncCallback callback, Object state);
-		public IAsyncResult BeginConnect(String host, Int32 port, AsyncCallback callback, Object state);
-		public IAsyncResult BeginConnect(IPAddress address, Int32 port, AsyncCallback callback, Object state);
-		public IAsyncResult BeginDisconnect(Boolean reuseSocket, AsyncCallback callback, Object state);
-		private void CheckRange(Byte[] buffer, Int32 offset, Int32 size);
-		[CLSCompliantAttribute(false)]
-		public IAsyncResult BeginReceive(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state);
-		[CLSCompliantAttribute(false)]
-		public IAsyncResult BeginReceive(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, Object state);
-		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, out SocketError error, AsyncCallback callback, Object state);
-		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state);
-		public IAsyncResult BeginReceiveFrom(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, ref EndPoint remote_end, AsyncCallback callback, Object state);
-		public IAsyncResult BeginReceiveMessageFrom(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags, ref EndPoint remoteEP, AsyncCallback callback, Object state);
-		[CLSCompliantAttribute(false)]
-		public IAsyncResult BeginSend(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state);
-		public IAsyncResult BeginSend(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, Object state);
-		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state);
-		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state);
-		public IAsyncResult BeginSendFile(String fileName, Byte[] preBuffer, Byte[] postBuffer, TransmitFileOptions flags, AsyncCallback callback, Object state);
-		public IAsyncResult BeginSendFile(String fileName, AsyncCallback callback, Object state);
-		public IAsyncResult BeginSendTo(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, EndPoint remote_end, AsyncCallback callback, Object state);
-		private static void Bind_internal(IntPtr sock, SocketAddress sa, out Int32 error);*/
-		public void Bind(EndPoint local_end) {}
-		public void Connect(EndPoint remoteEP) {}
-		public void Connect(String host, Int32 port) {}
-		public void Connect(IPAddress[] addresses, Int32 port) {}
-		public void Connect(IPAddress address, Int32 port) {}
-		/*public Boolean DisconnectAsync(SocketAsyncEventArgs e);
-		private static void Disconnect_internal(IntPtr sock, Boolean reuse, out Int32 error);*/
-		public void Disconnect(Boolean reuseSocket) {}
-		/*public SocketInformation DuplicateAndClose(Int32 targetProcessId);
-		public Socket EndAccept(out Byte[] buffer, out Int32 bytesTransferred, IAsyncResult asyncResult);
-		public Socket EndAccept(out Byte[] buffer, IAsyncResult asyncResult);*/
-		public Socket EndAccept(IAsyncResult result) {}
-		/*public void EndConnect(IAsyncResult result);
-		public void EndDisconnect(IAsyncResult asyncResult);
-		public Int32 EndReceiveMessageFrom(IAsyncResult asyncResult, ref SocketFlags socketFlags, ref EndPoint endPoint, out IPPacketInformation ipPacketInformation);
-		public void EndSendFile(IAsyncResult asyncResult);
-		public Int32 EndSendTo(IAsyncResult result);
-		private static void GetSocketOption_arr_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref Byte[] byte_val, out Int32 error);
-		public Object GetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName);
-		public Byte[] GetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 length);
-		public void GetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue);
-		private static Int32 WSAIoctl(IntPtr sock, Int32 ioctl_code, Byte[] input, Byte[] output, out Int32 error);
-		public Int32 IOControl(IOControlCode ioControlCode, Byte[] optionInValue, Byte[] optionOutValue);
-		public Int32 IOControl(Int32 ioctl_code, Byte[] in_value, Byte[] out_value);
-		private static void Listen_internal(IntPtr sock, Int32 backlog, out Int32 error);*/
-		public void Listen(Int32 backlog) {}
-		/*public Boolean Poll(Int32 time_us, SelectMode mode);
-		[CLSCompliantAttribute(false)]
-		public Int32 Receive(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, out SocketError errorCode);
-		[CLSCompliantAttribute(false)]
-		public Int32 Receive(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags);
-		public Int32 Receive(IList<ArraySegment<Byte>> buffers);
-		public Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, out SocketError error);*/
-		public Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags) {}
-		public Int32 Receive(Byte[] buffer, Int32 size, SocketFlags flags) {}
-		public Int32 Receive(Byte[] buffer, SocketFlags flags) {}
-		public Int32 Receive(Byte[] buffer) {}
-		/*public Boolean ReceiveFromAsync(SocketAsyncEventArgs e);
-		public Int32 ReceiveFrom(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, ref EndPoint remoteEP);
-		public Int32 ReceiveFrom(Byte[] buffer, Int32 size, SocketFlags flags, ref EndPoint remoteEP);
-		public Int32 ReceiveFrom(Byte[] buffer, SocketFlags flags, ref EndPoint remoteEP);
-		public Int32 ReceiveFrom(Byte[] buffer, ref EndPoint remoteEP);
-		private static Int32 RecvFrom_internal(IntPtr sock, Byte[] buffer, Int32 offset, Int32 count, SocketFlags flags, ref SocketAddress sockaddr, out Int32 error);
-		internal Int32 ReceiveFrom_nochecks(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags, ref EndPoint remote_end);
-		internal Int32 ReceiveFrom_nochecks_exc(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags, ref EndPoint remote_end, Boolean throwOnError, out Int32 error);
-		public Boolean ReceiveMessageFromAsync(SocketAsyncEventArgs e);
-		public Int32 ReceiveMessageFrom(Byte[] buffer, Int32 offset, Int32 size, ref SocketFlags socketFlags, ref EndPoint remoteEP, out IPPacketInformation ipPacketInformation);
-		public Boolean SendPacketsAsync(SocketAsyncEventArgs e);
-		[CLSCompliantAttribute(false)]
-		public Int32 Send(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags, out SocketError errorCode);
-		public Int32 Send(IList<ArraySegment<Byte>> buffers, SocketFlags socketFlags);
-		public Int32 Send(IList<ArraySegment<Byte>> buffers);
-		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags, out SocketError error);*/
-		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags) {}
-		public Int32 Send(Byte[] buf, Int32 size, SocketFlags flags) {}
-		public Int32 Send(Byte[] buf, SocketFlags flags) {}
-		public Int32 Send(Byte[] buf) {}
-		/*public void SendFile(String fileName, Byte[] preBuffer, Byte[] postBuffer, TransmitFileOptions flags);
-		public void SendFile(String fileName);
-		private static Boolean SendFile(IntPtr sock, String filename, Byte[] pre_buffer, Byte[] post_buffer, TransmitFileOptions flags);
-		public Boolean SendToAsync(SocketAsyncEventArgs e);
-		public Int32 SendTo(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, EndPoint remote_end);
-		public Int32 SendTo(Byte[] buffer, Int32 size, SocketFlags flags, EndPoint remote_end);
-		public Int32 SendTo(Byte[] buffer, SocketFlags flags, EndPoint remote_end);
-		public Int32 SendTo(Byte[] buffer, EndPoint remote_end);
-		private static Int32 SendTo_internal(IntPtr sock, Byte[] buffer, Int32 offset, Int32 count, SocketFlags flags, SocketAddress sa, out Int32 error);
-		internal Int32 SendTo_nochecks(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, EndPoint remote_end);*/
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue) {}
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue) {}
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue) {}
-		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue) {}
-		/*internal static void CheckProtocolSupport();
-		private void RegisterForBlockingSyscall();
-		private void UnRegisterForBlockingSyscall();
-		private void AbortRegisteredThreads();
-		private IntPtr Socket_internal(AddressFamily family, SocketType type, ProtocolType proto, out Int32 error);
-		protected override void Finalize();
-		private static void Blocking_internal(IntPtr socket, Boolean block, out Int32 error);
-		private static SocketAddress RemoteEndPoint_internal(IntPtr socket, Int32 family, out Int32 error);
-		private void Linger(IntPtr handle);
-		private static void cancel_blocking_socket_operation(Thread thread);
-		protected virtual void Dispose(Boolean disposing);*/
-		private new void /*System.IDisposable.*/Dispose() {}
-		/*private static void Close_internal(IntPtr socket, out Int32 error);
-		public void Close(Int32 timeout);*/
-		public void Close() {}
-		/*private static void Connect_internal(IntPtr sock, SocketAddress sa, out Int32 error);
-		public Boolean ReceiveAsync(SocketAsyncEventArgs e);
-		public Boolean SendAsync(SocketAsyncEventArgs e);
-		private static Boolean Poll_internal(IntPtr socket, SelectMode mode, Int32 timeout, out Int32 error);
-		private static Int32 Receive_internal(IntPtr sock, Socket.WSABUF[] bufarray, SocketFlags flags, out Int32 error);
-		private static Int32 Receive_internal(IntPtr sock, Byte[] buffer, Int32 offset, Int32 count, SocketFlags flags, out Int32 error);
-		internal Int32 Receive_nochecks(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags, out SocketError error);
-		private static void GetSocketOption_obj_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, out Object obj_val, out Int32 error);
-		private static Int32 Send_internal(IntPtr sock, Socket.WSABUF[] bufarray, SocketFlags flags, out Int32 error);
-		private static Int32 Send_internal(IntPtr sock, Byte[] buf, Int32 offset, Int32 count, SocketFlags flags, out Int32 error);
-		internal Int32 Send_nochecks(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags, out SocketError error);
-		private static void Shutdown_internal(IntPtr socket, SocketShutdown how, out Int32 error);*/
-		public void Shutdown(SocketShutdown how) {}
-		/*private static void SetSocketOption_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, Object obj_val, Byte[] byte_val, Int32 int_val, out Int32 error);
-		private void ThrowIfUpd();
-		private IAsyncResult BeginMConnect(Socket.SocketAsyncResult req);
-		private Boolean GetCheckedIPs(SocketAsyncEventArgs e, out IPAddress[] addresses);
-		private Boolean ConnectAsyncReal(SocketAsyncEventArgs e);
-		public Boolean ConnectAsync(SocketAsyncEventArgs e);
-		private Exception InvalidAsyncOp(String method);
-		public Int32 EndReceive(IAsyncResult asyncResult, out SocketError errorCode);
-		public Int32 EndReceive(IAsyncResult result);
-		public Int32 EndSend(IAsyncResult asyncResult, out SocketError errorCode);
-		public Int32 EndSend(IAsyncResult result);
-		public Int32 EndReceiveFrom(IAsyncResult result, ref EndPoint end_point);
-		private static void socket_pool_queue(Socket.SocketAsyncCall d, Socket.SocketAsyncResult r);*/
-		public Int32 Available { get; set; }
-		/*public Boolean DontFragment { get; set; }
-		public Boolean EnableBroadcast { get; set; }
-		public Boolean ExclusiveAddressUse { get; set; }
-		public LingerOption LingerState { get; set; }
-		public Boolean MulticastLoopback { get; set; }
-		public Boolean UseOnlyOverlappedIO { get; set; }
-		public IntPtr Handle { get; set; }*/
-		public EndPoint LocalEndPoint { get; set; }
-		public SocketType SocketType { get; set; }
-		/*public Int32 SendTimeout { get; set; }
-		public Int32 ReceiveTimeout { get; set; }
-		public static Boolean SupportsIPv4 { get; set; }
-		[ObsoleteAttribute("Use OSSupportsIPv6 instead")]
-		public static Boolean SupportsIPv6 { get; set; }
-		public static Boolean OSSupportsIPv6 { get; set; }*/
-		public AddressFamily AddressFamily { get; set; }
-		public ProtocolType ProtocolType { get; set; }
-		/*public Boolean NoDelay { get; set; }
-		public Int32 ReceiveBufferSize { get; set; }
-		public Int32 SendBufferSize { get; set; }
-		public Int16 Ttl { get; set; }*/
-		public EndPoint RemoteEndPoint { get; set; }
-	}
-
 	public class Socket : Object, IDisposable
 	{
 		#if cooper
@@ -215,13 +11,55 @@
         private java.io.InputStream fSocketInput;
         private java.io.OutputStream fSocketOutput;
         private java.net.InetSocketAddress fSocketAddress;
-        #elif posix || macos || ios
+        #elif posix || toffee
         private int fHandle; 
         public const Int32 FIONREAD = 1074004095;       
         #else
         private rtl.SOCKET fHandle;
         #endif
                             
+        private List<Thread> fPendingAsyncOps;
+        #if cooper || toffee
+        private readonly Object fMonitor = new Object();
+        #else
+        private readonly Monitor fMonitor = new Monitor();
+        #endif
+
+        private void AddAsyncOp(Thread op)
+        {
+            lock(this.fMonitor)
+            {
+                if (fPendingAsyncOps == null)
+                    fPendingAsyncOps = new List<Thread>();
+
+                fPendingAsyncOps.Add(op);
+            }
+        }
+
+        private void ClearAsyncOps()
+        {
+            foreach(var lThread in fPendingAsyncOps)
+            {
+                if (lThread.IsAlive)
+                {
+                    lThread.Abort();
+                }
+            }
+            
+            lock(fMonitor);
+            {
+                fPendingAsyncOps.RemoveAll();
+            }
+        }
+
+        private void RemoveOp(Thread op)
+        {
+            lock(fMonitor)
+            {
+                fPendingAsyncOps.Remove(op);
+            }
+        }
+        
         public Boolean Connected { get; set; }
 
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)        
@@ -236,7 +74,7 @@
             switch(SocketType)
             {
                 case SocketType.Stream:
-                    //fHandle = new java.net.Socket();
+                    fHandle = new java.net.Socket();
                     break;
 
                 case SocketType.Dgram:
@@ -247,7 +85,7 @@
                     throw new Exception("Socket type not supported on current platform");
             }
             #else
-            #if posix || macos || ios
+            #if posix || toffee
             fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.Int32_t)socketType, (rtl.Int32_t)protocolType);
             #else
             fHandle = rtl.__Global.socket((rtl.Int)addressFamily, (rtl.Int)socketType, (rtl.Int)protocolType);
@@ -260,7 +98,7 @@
 
         #if cooper
         private Socket(java.net.Socket handle)
-        #elif posix || macos || ios
+        #elif posix || toffee
         private Socket(int handle)
         #else
         private Socket(rtl.SOCKET handle)
@@ -303,9 +141,84 @@
             return lNewSocket;
         }
 
-		//public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state) {}
-		//public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state) {}
-		public IAsyncResult BeginAccept(AsyncCallback callback, Object state) {}
+		public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state)
+        {
+            var lResult = new AsyncResult(state);
+            lResult.AcceptSocket = acceptSocket;
+            lResult.NBytes = receiveSize;
+
+            var lThread = new Thread(() =>
+            {
+                lResult.AsyncWaitHandle.WaitOne();
+                try
+                {
+                    if (lResult.AcceptSocket != null)
+                        lResult.AcceptedSocket = acceptSocket.Accept();
+                    else
+                        lResult.AcceptedSocket = Accept();
+
+                    if (receiveSize < 0)
+                        throw new Exception("Bad receiveSize value:" + receiveSize.ToString() + " in BeginAccept call");
+ 
+                    if (receiveSize > 0)
+                    {
+                        lResult.Buffer = new byte[receiveSize];
+                        lResult.NBytes = Receive(lResult.Buffer, receiveSize, SocketFlags.None);
+                    }                                                           
+                }
+                catch(Exception lCurrent)
+                {
+                    lResult.DelayedException = lCurrent;
+                }
+                
+                RemoveOp((Thread)lResult.Data);
+                lResult.IsCompleted = true;
+                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
+                callback(lResult);
+            });
+            AddAsyncOp(lThread);
+            lResult.Data = lThread;
+            lThread.Start();
+
+            return lResult;
+        }
+
+		public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state)        
+        {
+            return BeginAccept(null, receiveSize, callback, state);
+        }
+		
+        public IAsyncResult BeginAccept(AsyncCallback callback, Object state)
+        {
+            return BeginAccept(null, 0, callback, state);
+        }
+
+   		public Socket EndAccept(out Byte[] buffer, out Int32 bytesTransferred, IAsyncResult asyncResult)
+        {
+            AsyncResult lResult = asyncResult as AsyncResult;
+
+            CheckAsyncTerminate(asyncResult);
+            CheckAsyncException(asyncResult);
+            
+            buffer = lResult.Buffer;
+            bytesTransferred = lResult.NBytes;
+
+            return lResult.AcceptedSocket;
+        }
+
+		public Socket EndAccept(out Byte[] buffer, IAsyncResult asyncResult)        
+        {
+            int lBytes;
+            return EndAccept(out buffer, out lBytes, asyncResult);
+        }
+
+		public Socket EndAccept(IAsyncResult result)
+        {
+            int lBytes;
+            byte [] lBuffer;
+
+            return EndAccept(out lBuffer, out lBytes, result);
+        }
 		        
         public void Bind(EndPoint local_end)       
         {
@@ -314,12 +227,11 @@
             var lAddress = java.net.InetAddress.getByAddress(lEndPoint.Address.GetAddressBytes());
             fSocketAddress = new java.net.InetSocketAddress(lAddress, lEndPoint.Port);
             fIsServer = true;
-            fServerHandle = new java.net.ServerSocket();
-            
+            fServerHandle = new java.net.ServerSocket();            
             #else
             void *lPointer;
             int lSize;
-            #if posix || macos || ios
+            #if posix || toffee
             rtl.__struct_sockaddr_in lIPv4;
             rtl.__struct_sockaddr_in6 lIPv6;
             #if posix
@@ -333,17 +245,18 @@
             IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
             #if posix
             lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
-            rtl.__Global.bind(fHandle, lSockAddr, lSize);
-            #elif macos || ios
+            lSockAddr.__sockaddr_in__ = (rtl.__struct_sockaddr_in *) lPointer;
+            if (rtl.__Global.bind(fHandle, lSockAddr, lSize) != 0)
+            #elif toffee
             if (rtl.bind(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
-            #else
+            #elif island && windows
             if (rtl.bind(fHandle, lPointer, lSize) != 0)
             #endif
                 throw new Exception("Error calling bind function");
             #endif
         }
 
-        #if macos || ios
+        #if toffee
         private int htons(int port)
         {
             return (__uint16_t)((((__uint16_t)(port) & 0xff00) >> 8) | (((__uint16_t)(port) & 0x00ff) << 8));
@@ -351,7 +264,7 @@
         #endif
         
         #if !cooper
-        #if posix || macos || ios
+        #if posix || toffee
         private void IPEndPointToNative(IPEndPoint endPoint, out rtl.__struct_sockaddr_in lIPv4, out rtl.__struct_sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
         #else
         private void IPEndPointToNative(IPEndPoint endPoint, out rtl.SOCKADDR_IN lIPv4, out sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
@@ -361,7 +274,7 @@
             {
                 case AddressFamily.InterNetworkV6:                    
                     lIPv6.sin6_family = AddressFamily.InterNetworkV6;
-                    #if macos || ios
+                    #if toffee
                     lIPv6.sin6_port = htons(endPoint.Port);
                     #else
                     lIPv6.sin6_port = rtl.htons(endPoint.Port);
@@ -369,7 +282,7 @@
                     lIPv6.sin6_scope_id = endPoint.Address.ScopeId;
                     var lBytes = endPoint.Address.GetAddressBytes();                    
                     for (int i = 0; i < 16; i++)
-                        #if macos || ios
+                        #if toffee
                         lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
                         #elif posix
                         lIPv6.sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
@@ -377,7 +290,7 @@
                         lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
                         #endif
                     ipPointer = &lIPv6;
-                    #if posix || macos || ios
+                    #if posix || toffee
                     ipSize = sizeof(rtl.__struct_sockaddr_in6);
                     #else
                     ipSize = sizeof(sockaddr_in6);
@@ -386,13 +299,13 @@
 
                 default:
                     lIPv4.sin_family = AddressFamily.InterNetwork;
-                    #if macos || ios
+                    #if toffee
                     lIPv4.sin_port = htons(endPoint.Port);
                     #else
                     lIPv4.sin_port = rtl.htons(endPoint.Port);
                     #endif
 
-                    #if posix || macos || ios
+                    #if posix || toffee
                     lIPv4.sin_addr.s_addr = endPoint.Address.Address;
                     ipSize = sizeof(rtl.__struct_sockaddr_in);
                     #else
@@ -416,7 +329,7 @@
             #else
             void *lPointer;
             int lSize;
-            #if posix || macos || ios
+            #if posix || toffee
             rtl.__struct_sockaddr_in lIPv4;
             rtl.__struct_sockaddr_in6 lIPv6;
             #if posix
@@ -434,7 +347,7 @@
             #if posix
             lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
             if (rtl.connect(fHandle, lSockAddr, lSize) != 0)
-            #elif macos || ios
+            #elif toffee
             if (rtl.connect(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
             #else
             if (rtl.connect(fHandle, lPointer, lSize) != 0)
@@ -482,13 +395,110 @@
             var lEndPoint = new IPEndPoint(address, port);
             Connect(lEndPoint);
         }
-		
+
+        public IAsyncResult BeginConnect(IPAddress[] addresses, Int32 port, AsyncCallback callback, Object state)
+        {
+            IPEndPoint lEndPoint;
+            var lResult = new AsyncResult(state);
+
+            var lThread = new Thread(() =>
+            {
+                lResult.AsyncWaitHandle.WaitOne();
+                foreach(IPAddress lAddress in addresses)
+                {
+                    lEndPoint = new IPEndPoint(lAddress, port);
+                    try
+                    {
+                        Connect(lEndPoint);
+                        lResult.DelayedException = null;
+                        break;
+                    }
+                    catch(Exception lCurrent)
+                    {
+                        lResult.DelayedException = lCurrent;
+                    }
+                }
+                
+                RemoveOp((Thread)lResult.Data);
+                lResult.IsCompleted = true;                      
+                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
+                callback(lResult);
+            });
+            AddAsyncOp(lThread);
+            lResult.Data = lThread;
+            lThread.Start();
+
+            return lResult;
+        }
+
+		public IAsyncResult BeginConnect(EndPoint end_point, AsyncCallback callback, Object state) 
+        {
+            var lIPEndPoint = (IPEndPoint)end_point;            
+            return BeginConnect(new IPAddress[] {lIPEndPoint.Address}, lIPEndPoint.Port, callback, state);
+        }
+
+		public IAsyncResult BeginConnect(String host, Int32 port, AsyncCallback callback, Object state)
+        {
+            var lAddress = IPAddress.Parse(host);
+            return BeginConnect(new IPEndPoint(lAddress, port), callback, state);
+        }
+
+		public IAsyncResult BeginConnect(IPAddress address, Int32 port, AsyncCallback callback, Object state)
+        {
+            var lEndPoint = new IPEndPoint(address, port);
+            return BeginConnect(lEndPoint, callback, state);
+        }
+
+        public void EndConnect(IAsyncResult result) 
+        {
+            CheckAsyncTerminate(result);
+            CheckAsyncException(result);
+        }
+
+        private void CheckAsyncException(IAsyncResult result)
+        {
+            var lAsyncResult = (AsyncResult)result;
+
+            if (lAsyncResult.DelayedException != null)
+                throw lAsyncResult.DelayedException;
+        }
+
+        private void CheckAsyncTerminate(IAsyncResult result)
+        {
+            if (!result.IsCompleted)
+            {
+                result.AsyncWaitHandle.WaitOne();
+                (result.AsyncWaitHandle as EventWaitHandle).Set();
+            }
+        }
+				
         public void Disconnect(Boolean reuseSocket)
         {
             Dispose();
         }
 
-		public Socket EndAccept(IAsyncResult result) {}
+        public IAsyncResult BeginDisconnect(Boolean reuseSocket, AsyncCallback callback, Object state) 
+        {
+            var lResult = new AsyncResult(state);
+            var lThread = new Thread(() =>
+            {
+                lResult.AsyncWaitHandle.WaitOne();
+                Disconnect(reuseSocket);
+                lResult.IsCompleted = true;
+                ClearAsyncOps();
+                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
+                callback(lResult);
+            });
+            lThread.Start();
+
+            return lResult;
+        }
+
+        public void EndDisconnect(IAsyncResult asyncResult)        
+        {
+            CheckAsyncTerminate(asyncResult);                
+            CheckAsyncException(asyncResult);
+        }
 		
         public void Listen(Int32 backlog)
         {
@@ -528,6 +538,63 @@
             return Receive(buffer, 0, length(buffer), SocketFlags.None);
         }
 
+		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, out SocketError error, AsyncCallback callback, Object state)
+        {
+            var lResult = new AsyncResult(state);
+            lResult.Error = error;
+
+            var lThread = new Thread(() =>
+            {
+                lResult.AsyncWaitHandle.WaitOne();
+                try
+                {
+                    lResult.NBytes = Receive(buffer, offset, size, flags);
+                }
+                catch(Exception lCurrent)
+                {
+                    if (lResult.Error == SocketError.NoValue)
+                        lResult.DelayedException = lCurrent;
+
+                    lResult.Error = SocketError.SocketError;
+                }
+                
+                RemoveOp((Thread)lResult.Data);
+                lResult.IsCompleted = true;                                         
+                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
+                callback(lResult);
+            });
+            AddAsyncOp(lThread);
+            lResult.Data = lThread;
+            lThread.Start();
+
+            return lResult;
+        }
+
+		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state)
+        {
+            SocketError lError = SocketError.NoValue;
+
+            return BeginReceive(buffer, offset, size, socket_flags, out lError, callback, state);
+        }
+
+   		public Int32 EndReceive(IAsyncResult asyncResult, out SocketError errorCode)        
+        {
+            AsyncResult lResult = asyncResult as AsyncResult;
+
+            CheckAsyncTerminate(asyncResult);                
+            CheckAsyncException(asyncResult);
+            errorCode = lResult.Error;
+
+            return lResult.NBytes;
+        }
+
+		public Int32 EndReceive(IAsyncResult result)
+        {
+            SocketError lError;
+
+            return EndReceive(result, out lError);
+        }
+
 		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags)
         {
             #if cooper
@@ -555,6 +622,61 @@
 		public Int32 Send(Byte[] buf)        
         {
             return Send(buf, 0, length(buf), SocketFlags.None);
+        }
+
+		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state)        
+        {
+            var lResult = new AsyncResult(state);
+            lResult.Error = errorCode;
+
+            var lThread = new Thread(() =>
+            {
+                lResult.AsyncWaitHandle.WaitOne();
+                try
+                {
+                    lResult.NBytes = Send(buffer, offset, size, socketFlags);
+                }
+                catch(Exception lCurrent)
+                {
+                    if (lResult.Error == SocketError.NoValue)
+                        lResult.DelayedException = lCurrent;
+                    
+                    lResult.Error = SocketError.SocketError;
+                }
+                
+                RemoveOp((Thread)lResult.Data);
+                lResult.IsCompleted = true;
+                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
+                callback(lResult);
+            });
+            AddAsyncOp(lThread);
+            lResult.Data = lThread;
+            lThread.Start();
+
+            return lResult;
+        }
+
+		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state)
+        {
+            SocketError lError = SocketError.NoValue;
+            return BeginSend(buffer, offset, size, socket_flags, out lError, callback, state);
+        }
+
+		public Int32 EndSend(IAsyncResult asyncResult, out SocketError errorCode) 
+        {
+            AsyncResult lResult = asyncResult as AsyncResult;
+
+            CheckAsyncTerminate(asyncResult);                
+            CheckAsyncException(asyncResult);
+            errorCode = lResult.Error;
+
+            return lResult.NBytes;
+        }
+
+		public Int32 EndSend(IAsyncResult result)
+        {
+            SocketError lError = SocketError.SocketError;
+            return EndSend(result, out lError);
         }
 
         #if cooper
@@ -665,7 +787,7 @@
             else
                 fServerHandle.close();
             #else
-            #if posix || macos || ios
+            #if posix || toffee
             if (rtl.close(fHandle) != 0)
             #else
             if (rtl.closesocket(fHandle) != 0)
@@ -704,13 +826,19 @@
                 else                    
                     return 0;
                 #else
-                rtl.u_long lData;
-                #if posix || macos  || ios
-                if (rtl.ioctl(fHandle, FIONREAD, &lData) != 0)
+                rtl.u_long lData = 0;
+                #if posix || toffee
+                if (rtl.ioctl(fHandle, FIONREAD, &lData) < 0)
                 #else
+                var lRes = 0;
                 if (rtl.ioctlsocket(fHandle, rtl.FIONREAD, &lData) != 0)
+                {
+                    lRes = rtl.WSAGetLastError();
+                }
+                if((lRes != 0) && (lRes != rtl.WSAEOPNOTSUPP))
                 #endif
-                    throw new Exception("Error calling ioctl function");
+                    lData = 0;
+                    //throw new Exception("Error calling ioctl function");
 
                 return lData;
                 #endif

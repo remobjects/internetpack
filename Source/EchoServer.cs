@@ -2,6 +2,9 @@
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
+#if toffee || cooper
+using RemObjects.Elements.RTL.Reflection;
+#endif
 
 namespace RemObjects.InternetPack.StandardServers
 {
@@ -16,7 +19,7 @@ namespace RemObjects.InternetPack.StandardServers
 			this.Port = this.DefaultPort;
 		}
 
-		public override Type GetWorkerClass()
+        public override Type GetWorkerClass()
 		{
 			return typeof(EchoWorker);
 		}

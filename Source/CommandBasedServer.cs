@@ -2,6 +2,9 @@
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
+#if toffee || cooper
+using RemObjects.Elements.RTL.Reflection;
+#endif
 
 namespace RemObjects.InternetPack.CommandBased
 {
@@ -109,10 +112,21 @@ namespace RemObjects.InternetPack.CommandBased
 
 		protected internal virtual CommandBasedSession CreateSession()
 		{
-			if (this.SessionClass != null)
-				return (CommandBasedSession)Activator.CreateInstance(this.SessionClass);
+			Type lType;
+            if (this.SessionClass != null)
+                lType = this.SessionClass;
+            else
+                lType = this.GetDefaultSessionClass();
 
-			return (CommandBasedSession)Activator.CreateInstance(this.GetDefaultSessionClass());
+            #if echoes
+            return (CommandBasedSession)Activator.CreateInstance(lType);
+            #elif cooper
+            return (CommandBasedSession)Class.getDeclaredConstructor(lType).newInstance();
+            #elif island
+            return (CommandBasedSession)lType.Instantiate();
+            #elif toffee
+            return null; // TODO
+            #endif
 		}
 
 		protected abstract void InitCommands();

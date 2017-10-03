@@ -7,7 +7,7 @@ namespace RemObjects.InternetPack
 {
 	public partial class Connection
 	{
-		#if ECHOES
+		//#if ECHOES
 		private class AsyncRequest : IAsyncResult
 		{
 			public Byte[] AsyncBuffer { get; set; }
@@ -22,13 +22,15 @@ namespace RemObjects.InternetPack
 
 			public Int32 AsyncRest { get; set; }
 
-			Object IAsyncResult.AsyncState
+			#if echoes
+            Object IAsyncResult.AsyncState
 			{
 				get
 				{
 					return AsyncState;
 				}
 			}
+            #endif
 
 			public Boolean CompletedSynchronously
 			{
@@ -252,7 +254,14 @@ namespace RemObjects.InternetPack
 			{
 				get
 				{
-					return fState >= AsyncReadLineState.Done;
+					#if echoes
+                    return fState >= AsyncReadLineState.Done;
+                    #else
+                    if (fState == AsyncReadLineState.Done || fState == AsyncReadLineState.MaxLineLengthReached || fState == AsyncReadLineState.SyncDone)
+                        return true;
+                    else
+                        return false;
+                    #endif
 				}
 			}
 
@@ -544,6 +553,6 @@ namespace RemObjects.InternetPack
 		{
 			fDataSocket.EndConnect(ar);
 		}
-		#endif
+		//#endif
 	}
 }

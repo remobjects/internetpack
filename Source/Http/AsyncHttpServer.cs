@@ -2,6 +2,9 @@
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
+#if toffee || cooper
+using RemObjects.Elements.RTL.Reflection;
+#endif
 
 namespace RemObjects.InternetPack.Http
 {
@@ -29,7 +32,7 @@ namespace RemObjects.InternetPack.Http
 		}
 #endif
 
-		public override Type GetWorkerClass()
+        public override Type GetWorkerClass()
 		{
 			return typeof(AsyncHttpWorker);
 		}
@@ -300,12 +303,15 @@ namespace RemObjects.InternetPack.Http
 				{
 					// we've got the last line. Process it
 					if (lRequireBody)
-					{
-						Int64 lContentLength;
+					{					
 #if FULLFRAMEWORK
-						if (!Int64.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
+						Int64 lContentLength;
+                        if (!Int64.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
 #else
-						if (!LongHelper.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
+						Int64? lContentLength;
+                        lContentLength = RemObjects.elements.rtl.Convert.TryToInt64(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"));
+                        if (lContentLength == null)
+                        //if (!LongHelper.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
 #endif
 							lContentLength = 0;
 

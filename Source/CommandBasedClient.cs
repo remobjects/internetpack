@@ -78,7 +78,7 @@ namespace RemObjects.InternetPack.CommandBased
 
 			try
 			{
-				this.fLastResponseNo = Int32.Parse(lResp[0]);
+				this.fLastResponseNo = Convert.ToInt32(lResp[0]);
 			}
 			catch
 			{

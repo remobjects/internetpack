@@ -28,7 +28,11 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#region ToString
+		#if echoes || island
 		public override String ToString()
+		#else
+		public String ToString()
+		#endif
 		{
 			if (this.Count == 1)
 				return String.Format("{0}: {1}", this.Name, this.fValues[0]);
@@ -94,44 +98,16 @@ namespace RemObjects.InternetPack.Http
 		}
 	}
 
-	class HttpHeaderEnumerator : IEnumerator
-	{
-		public HttpHeaderEnumerator(IEnumerator parent)
-		{
-			this.fParent = parent;
-		}
-
-		private readonly IEnumerator fParent;
-
-		#region IEnumerator Members
-		public void Reset()
-		{
-			this.fParent.Reset();
-		}
-
-		public object Current
-		{
-			get
-			{
-				return ((DictionaryEntry)(this.fParent.Current)).Value;
-			}
-		}
-
-		public Boolean MoveNext()
-		{
-			return this.fParent.MoveNext();
-		}
-		#endregion
-	}
-
-	public class HttpHeaders : IEnumerable
+	public class HttpHeaders
 	{
 		// Cannot use Dictionary<> here because non-generic Enumerator is exposed
-		private readonly Hashtable fHeaders;
+		//private readonly Hashtable fHeaders;
+		private readonly Dictionary<String, HttpHeader> fHeaders;
 
 		public HttpHeaders()
 		{
-			this.fHeaders = new Hashtable(StringComparer.OrdinalIgnoreCase);
+			//this.fHeaders = new Hashtable(StringComparer.OrdinalIgnoreCase);
+			this.fHeaders = new Dictionary<String, HttpHeader>();
 			this.HttpCode = HttpStatusCode.OK;
 			this.Initialize();
 		}
@@ -168,7 +144,8 @@ namespace RemObjects.InternetPack.Http
 				// HTTP Response
 				try
 				{
-					this.HttpCode = (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), lRequestHeaderValues[1], true);
+					//this.HttpCode = (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), lRequestHeaderValues[1], true);
+					this.HttpCode = (HttpStatusCode)Convert.ToInt32(lRequestHeaderValues[1]);
 				}
 				catch (ArgumentException)
 				{
@@ -379,11 +356,13 @@ namespace RemObjects.InternetPack.Http
 			connection.WriteLine("");
 		}
 
+		#if !cooper
 		[Obsolete("Provide HTTP code using a System.Net.HttpStatusCode value")]
 		public void SetResponseHeader(String version, Int32 code)
 		{
 			this.SetResponseHeader(version, (HttpStatusCode)code);
 		}
+		#endif
 
 		public void SetResponseHeader(String version, HttpStatusCode code)
 		{
@@ -426,7 +405,11 @@ namespace RemObjects.InternetPack.Http
 			return null;
 		}
 
+		#if echoes || island
 		public override String ToString()
+		#else
+		public String ToString()
+		#endif
 		{
 			StringBuilder lResult = new StringBuilder();
 			lResult.Append(FirstHeader);
@@ -444,11 +427,12 @@ namespace RemObjects.InternetPack.Http
 		}
 		#endregion
 
-		#region IEnumerable Members
-		public IEnumerator GetEnumerator()
+		public ISequence<HttpHeader> GetSequence()
 		{
-			return new HttpHeaderEnumerator(this.fHeaders.GetEnumerator());
+			foreach(String lPair in fHeaders.Keys)
+			{
+				yield return fHeaders[lPair];
+			}
 		}
-		#endregion
 	}
 }

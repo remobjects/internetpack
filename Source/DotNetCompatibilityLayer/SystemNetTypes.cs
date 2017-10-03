@@ -2,7 +2,7 @@
 {
 	#if !ECHOES
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
-	public enum AddressFamily
+    public enum AddressFamily
 	{
 		Unknown = -1,
 		Unspecified = 0,
@@ -79,7 +79,7 @@
 	}
 
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
-	#if !macos && !ios && !cooper
+	#if !toffee && !cooper
     [FlagsAttribute]
     #endif
 	public enum SocketFlags
@@ -290,10 +290,10 @@
             address = new IPAddress(lBytes, 0);
             return true;            
             #else
-            #if posix || macos || ios
+            #if posix || toffee
             rtl.__struct_addrinfo *lAddrInfo;
             rtl.__struct_sockaddr_in6 *lSockAddr;
-            #if macos || ios
+            #if toffee
             if (rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo) != 0)
             #else
             if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) != 0)
@@ -313,7 +313,7 @@
             for (int i = 0; i < IPv6Length; i++)
                 #if posix
                 lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
-                #elif macos || ios
+                #elif toffee
                 lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
                 #else
                 lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];
@@ -483,9 +483,132 @@
 	{
 		Object AsyncState { get; }
 		WaitHandle AsyncWaitHandle { get; }
-		Boolean CompletedSynchronously { get;}
+		Boolean CompletedSynchronously { get; }
 		Boolean IsCompleted { get; }
 	}
+
+    public class AsyncResult: IAsyncResult
+    {
+        public Object AsyncState { get; set; }
+        public WaitHandle AsyncWaitHandle { get; set; }
+		public Boolean CompletedSynchronously { get; set; }
+		public Boolean IsCompleted { get; set; }
+        public Exception DelayedException { get; set; }
+        public Object Data { get; set; }
+        public Socket AcceptSocket { get; set; }
+        public int NBytes {get; set; }
+        public byte[] Buffer { get; set; }
+        public Socket AcceptedSocket { get; set; }
+        public SocketError Error { get; set; }
+
+        public AsyncResult(Object AnAsyncState)
+        {
+            AsyncState = AnAsyncState;
+            AsyncWaitHandle = new EventWaitHandle();
+        }
+    }
+
+    public enum HttpStatusCode
+    {
+	    Continue = 100,
+	    SwitchingProtocols = 101,
+	    OK = 200,
+	    Created = 201,
+	    Accepted = 202,
+	    NonAuthoritativeInformation = 203,
+	    NoContent = 204,
+	    ResetContent = 205,
+	    PartialContent = 206,
+	    MultipleChoices = 300,
+	    Ambiguous = 300,
+	    MovedPermanently = 301,
+	    Moved = 301,
+	    Found = 302,
+	    Redirect = 302,
+	    SeeOther = 303,
+	    RedirectMethod = 303,
+	    NotModified = 304,
+	    UseProxy = 305,
+	    Unused = 306,
+	    TemporaryRedirect = 307,
+	    RedirectKeepVerb = 307,
+	    BadRequest = 400,
+	    Unauthorized = 401,
+	    PaymentRequired = 402,
+	    Forbidden = 403,
+	    NotFound = 404,
+	    MethodNotAllowed = 405,
+	    NotAcceptable = 406,
+	    ProxyAuthenticationRequired = 407,
+	    RequestTimeout = 408,
+	    Conflict = 409,
+	    Gone = 410,
+	    LengthRequired = 411,
+	    PreconditionFailed = 412,
+	    RequestEntityTooLarge = 413,
+	    RequestUriTooLong = 414,
+	    UnsupportedMediaType = 415,
+	    RequestedRangeNotSatisfiable = 416,
+	    ExpectationFailed = 417,
+	    InternalServerError = 500,
+	    NotImplemented = 501,
+	    BadGateway = 502,
+	    ServiceUnavailable = 503,
+	    GatewayTimeout = 504,
+	    HttpVersionNotSupported = 505
+    }
+
+    public enum SocketError
+    {
+	    Success = 0,
+	    SocketError = -1,
+	    Interrupted = 10004,
+	    AccessDenied = 10013,
+	    Fault = 10014,
+	    InvalidArgument = 10022,
+	    TooManyOpenSockets = 10024,
+	    WouldBlock = 10035,
+	    InProgress = 10036,
+	    AlreadyInProgress = 10037,
+	    NotSocket = 10038,
+	    DestinationAddressRequired = 10039,
+	    MessageSize = 10040,
+	    ProtocolType = 10041,
+	    ProtocolOption = 10042,
+	    ProtocolNotSupported = 10043,
+	    SocketNotSupported = 10044,
+	    OperationNotSupported = 10045,
+	    ProtocolFamilyNotSupported = 10046,
+	    AddressFamilyNotSupported = 10047,
+	    AddressAlreadyInUse = 10048,
+	    AddressNotAvailable = 10049,
+	    NetworkDown = 10050,
+	    NetworkUnreachable = 10051,
+	    NetworkReset = 10052,
+	    ConnectionAborted = 10053,
+	    ConnectionReset = 10054,
+	    NoBufferSpaceAvailable = 10055,
+	    IsConnected = 10056,
+	    NotConnected = 10057,
+	    Shutdown = 10058,
+	    TimedOut = 10060,
+	    ConnectionRefused = 10061,
+	    HostDown = 10064,
+	    HostUnreachable = 10065,
+	    ProcessLimit = 10067,
+	    SystemNotReady = 10091,
+	    VersionNotSupported = 10092,
+	    NotInitialized = 10093,
+	    Disconnecting = 10101,
+	    TypeNotFound = 10109,
+	    HostNotFound = 11001,
+	    TryAgain = 11002,
+	    NoRecovery = 11003,
+	    NoData = 11004,
+	    IOPending = 997,
+	    OperationAborted = 995,
+        NoValue = -999
+    }
 
 	#endif
 }

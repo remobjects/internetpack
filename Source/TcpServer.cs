@@ -2,7 +2,7 @@
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
-#if macos || ios
+#if toffee || cooper
 using RemObjects.Elements.RTL.Reflection;
 #endif
 
@@ -25,11 +25,7 @@ namespace RemObjects.InternetPack
 		}
 #endif
 
-	    #if cooper
-        public override Class GetWorkerClass()
-        #else
         public override Type GetWorkerClass()
-        #endif
 		{
 			return typeof(TcpWorker);
 		}

@@ -54,7 +54,7 @@
 	}
 	public class ObjectDisposedException : Exception {}
 
-    #if macos || ios || cooper
+    #if toffee || cooper
     public interface IDisposable
     {
 	    void Dispose();
@@ -75,4 +75,85 @@
 	#if ECHOES
 	public class Monitor : Object {}
 	#endif
+
+    #if island
+    public class Exception : RemObjects.Elements.System.Exception
+    {
+		public Exception() : base("Exception happened")
+		{
+		}
+
+        public Exception(String message) : base(message)
+		{
+		}
+
+		public Exception(String message, Exception innerException)
+			: base(message + ' ' + innerException.ToString())
+		{
+		}
+    }
+    #endif
+
+    #if toffee
+    public class Exception : Foundation.NSException
+    {
+		public Exception()
+		{
+            initWithName("Exception") reason("unknown") userInfo(null);
+		}
+
+        public Exception(String message)
+		{
+            initWithName("Exception") reason(message) userInfo(null);
+		}
+
+		public Exception(String message, Exception innerException)
+		{
+            initWithName("Exception") reason(message + ' ' + innerException.ToString()) userInfo(null);
+		}
+    }
+    #endif
+
+    #if !echoes
+    public class ArrayList
+    {
+        private List<Object> fList;
+
+        public ArrayList()
+        {
+            fList = new List<Object>();
+        }
+
+		public Object this[Int32 index]
+		{
+			get
+			{
+				return fList[index];
+			}
+		}
+
+        public void Add(Object item)
+        {
+            fList.Add(item);
+        }
+
+        public void Insert(Int32 pos, Object item)
+        {
+            fList.Insert(pos, item);
+        }
+
+        public void Clear()
+        {
+            fList.RemoveAll();
+        }
+
+        public Int32 Count
+        {
+            get
+            {
+                return fList.Count;
+            }
+        }
+    }
+    #endif
 }

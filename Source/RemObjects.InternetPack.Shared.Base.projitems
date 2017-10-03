@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -9,18 +9,50 @@
     <Import_RootNamespace>RemObjects.InternetPack.Shared.Base</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Asn1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BoundIncomingStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommandBasedClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\LdapException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LdapClient.cs" />
+    <Compile Include="CommandBasedServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\IConnectionTimeouts.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bindings\Binding.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bindings\BindingConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bindings\ServerBinding.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Client.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Server.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client.cs">
+      <DesignableClassName>RemObjects.InternetPack.Client</DesignableClassName>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\SslConnection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EchoServer.cs">
+      <SubType>Component</SubType>
+      <DesignableClassName>EchoServer</DesignableClassName>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\HttpRequestEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpHeaderException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\HttpRequestInvalidException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpHeader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpProxySettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpRequestResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpServer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Http\SimpleHttpServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\Base64.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sasl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Server.cs">
+      <DesignableClassName>RemObjects.InternetPack.Server</DesignableClassName>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Dns.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\ConnectionPool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\BaseClasses.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SimpleServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UrlParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Worker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorkerCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces.cs" />
@@ -34,5 +66,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ConnectionClosedException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\DnsResolveException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.Async.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Bindings\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Connection\" />
+    <Folder Include="$(MSBuildThisFileDirectory)DotNetCompatibilityLayer\" />
+    <Folder Include="$(MSBuildThisFileDirectory)EventArgs\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Exceptions\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Http" />
+    <Folder Include="$(MSBuildThisFileDirectory)Mime" />
+    <Folder Include="$(MSBuildThisFileDirectory)Mime\Decode" />
   </ItemGroup>
 </Project>
