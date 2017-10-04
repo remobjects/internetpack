@@ -1,6 +1,5 @@
 ﻿namespace RemObjects.InternetPack
 {
-	#if !ECHOES
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/mscorlib.dll
 	//[ComVisibleAttribute(true)]
 	public static abstract /*final*/ class Timeout : Object
@@ -59,7 +58,7 @@
                 fTimer.Stop();
         }
 	}
-
+	#if !ECHOES
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/4.0/mscorlib.dll
 	//[ComVisibleAttribute(true)]
 	public abstract class WaitHandle : MarshalByRefObject, IDisposable

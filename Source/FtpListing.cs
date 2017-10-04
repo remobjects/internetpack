@@ -26,7 +26,7 @@ namespace RemObjects.InternetPack.Ftp
 			this.Size = 0;
 			#if echoes
 			// TODO
-			this.FileDate = DateTime.MinValue;
+			this.FileDate = System.DateTime.MinValue;
 			#endif
 		}
 
@@ -511,7 +511,6 @@ namespace RemObjects.InternetPack.Ftp
 
 		private static String[] SplitLines(String line)
 		{
-			// TODO need test
 			var lPointer = 0;
 			var lLast = 0;
 			var lResult = new List<String>();
@@ -566,9 +565,9 @@ namespace RemObjects.InternetPack.Ftp
 				catch (IndexOutOfRangeException)
 				#else
 				catch (RTLException)
+                #endif
 				{
-				}
-				#endif
+				}				
 				catch (FormatException)
 				{
 				}
@@ -582,6 +581,16 @@ namespace RemObjects.InternetPack.Ftp
 				this.Insert(0, lUpItem);
 			}
 		}
+
+  		#if !echoes
+        public ISequence<FtpListingItem> GetSequence()
+		{
+			foreach(FtpListingItem lItem in base.fList)
+			{
+				yield return lItem;
+			}
+		}
+        #endif
 
 		#if !cooper
 		public override String ToString()
