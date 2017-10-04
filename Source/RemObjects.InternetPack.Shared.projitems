@@ -9,7 +9,6 @@
     <Import_RootNamespace>RemObjects.InternetPack.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="FtpServer.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageAddress.cs" />
     <Compile Include="MessageAttachment.cs" />
@@ -31,7 +30,6 @@
     <Compile Include="SmtpClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\FtpException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SSL\SslConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SSL\SslConnectionFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\AsyncHttpRequestEventArgs.cs" />

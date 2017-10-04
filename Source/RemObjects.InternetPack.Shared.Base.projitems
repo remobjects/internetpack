@@ -14,9 +14,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)CommandBasedClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\FtpException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\LdapException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FtpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FtpListing.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FtpServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LdapClient.cs" />
     <Compile Include="CommandBasedServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.cs" />
