@@ -69,7 +69,35 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		/// </summary>
 		/// <param name="toDecode">The String to decode.</param>
 		/// <returns>A list of decoded key value pairs.</returns>
-		public static List<KeyValuePair<String, String>> Decode(String toDecode)
+		
+        private static String NormalizeParameters(String toDecode)
+        {
+            var lPointer = 0;
+            var lPrevFound = false;
+            var lDecode = toDecode;
+            var lPos = lDecode.IndexOf('"', lPointer);
+            
+            while (lPos >= 0)
+            {
+                if (lPrevFound)
+                {
+                    if (lPos < lDecode.Length - 1)
+                    {
+                        if (String.CharacterIsWhiteSpace(lDecode[lPos + 1]))
+                        {
+                            lDecode = lDecode.Insert(lPos + 1, ';');
+                        }
+                    }
+                }
+                lPrevFound = !lPrevFound;
+                lPointer = lPos + 1;
+                if (lPointer >= lDecode.Length) break;
+                lPos = lDecode.IndexOf('"', lPointer);
+            }
+            return lDecode;
+        }
+
+        public static List<KeyValuePair<String, String>> Decode(String toDecode)
 		{
 			// Normalize the input to take account for missing semicolons after parameters.
 			// Example
@@ -78,31 +106,32 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			// text/plain; charset=\"iso-8859-1\"; name=\"somefile.txt\"
 			// Only works for parameters inside quotes
 			// \s = matches whitespace
-			toDecode = Regex.Replace(toDecode, "=\\s*\"(?<value>[^\"]*)\" ", "=\"${value}\"; ");
+			//toDecode = Regex.Replace(toDecode, "=\\s*\"(?<value>[^\"]*)\" ", "=\"${value}\"; ");
+            toDecode = NormalizeParameters(toDecode);
 
 			// Split by semicolon, but only if not inside quotes
 			List<String> splitted = Utility.SplitStringWithCharNotInsideQuotes(toDecode.Trim(), ';');
 
 			List<KeyValuePair<String, String>> collection = new List<KeyValuePair<String, String>> withCapacity(splitted.Count);
 
-			foreach (System.String part in splitted)
+			foreach (String part in splitted)
 			{
 				// Empty strings should not be processed
 				if (part.Length == 0)
 					continue;
 
-				String[] keyValue = part.Split(new char[] { '=' }, 2);
-				if (keyValue.Length == 1)
+				var keyValue = part.Split("=");
+				if (keyValue.Count == 1)
 				{
 					collection.Add(new KeyValuePair<String, String>("", keyValue[0]));
 				}
-				else if (keyValue.Length == 2)
+				else if (keyValue.Count == 2)
 				{
 					collection.Add(new KeyValuePair<String, String>(keyValue[0], keyValue[1]));
 				}
 				else
 				{
-					throw new ArgumentException("When splitting the part \"" + part + "\" by = there was " + keyValue.Length + " parts. Only 1 and 2 are supported");
+					throw new ArgumentException("When splitting the part \"" + part + "\" by = there was " + keyValue.Count + " parts. Only 1 and 2 are supported");
 				}
 			}
 
@@ -190,7 +219,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 							// This value part of the continuation is encoded
 							// the encoding is not given in the current value,
 							// but was given in the first continuation, which we remembered for use here
-							valueJKey = DecodeSingleValue(valueJKey, encoding);
+							valueJKey = DecodeSingleValueEx(valueJKey, encoding);
 							builder.Append(valueJKey);
 
 							// Remember to increment i, as we have now treated one more KeyValuePair
@@ -247,7 +276,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		{
 			encodingUsed = toDecode.Substring(0, toDecode.IndexOf('\''));
 			toDecode = toDecode.Substring(toDecode.LastIndexOf('\'') + 1);
-			return DecodeSingleValue(toDecode, encodingUsed);
+			return DecodeSingleValueEx(toDecode, encodingUsed);
 		}
 
 		/// <summary>
@@ -257,7 +286,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		/// <param name="valueToDecode">The value to decode</param>
 		/// <param name="encoding">The encoding used to decode with</param>
 		/// <returns>The decoded value that corresponds to <paramref name="valueToDecode"/></returns>
-		private static String DecodeSingleValue(String valueToDecode, String encoding)
+		private static String DecodeSingleValueEx(String valueToDecode, String encoding)
 		{
 			// The encoding used is the same as QuotedPrintable, we only
 			// need to change % to =
