@@ -107,7 +107,8 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				throw new ArgumentNullException("characterSet");
 
 			String charSetUpper = characterSet.ToUpperInvariant();
-			if (charSetUpper.Contains("WINDOWS") || charSetUpper.Contains("CP"))
+			#if echoes
+            if (charSetUpper.Contains("WINDOWS") || charSetUpper.Contains("CP"))
 			{
 				// It seems the character set contains an codepage value, which we should use to parse the encoding
 				charSetUpper = charSetUpper.Replace("CP", ""); // Remove cp
@@ -115,13 +116,14 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				charSetUpper = charSetUpper.Replace("-", ""); // Remove - which could be used as cp-1554
 
 				// Now we hope the only thing left in the characterSet is numbers.
-				Int32 codepageNumber = Int32.Parse(charSetUpper, CultureInfo.InvariantCulture);
+				Int32 codepageNumber = System.Convert.ToInt32(charSetUpper, CultureInfo.InvariantCulture);
 
 				return System.Text.Encoding.GetEncoding(codepageNumber);
 			}
+            #endif
 
 			// Some emails incorrectly specify the encoding to be utf8 - but it has to be utf-8
-			if (characterSet.Equals("utf8", StringComparison.InvariantCultureIgnoreCase))
+			if (characterSet.EqualsIgnoringCaseInvariant("utf8"))
 				characterSet = "utf-8";
 
 			// It seems there is no codepage value in the characterSet. It must be a named encoding
