@@ -29,10 +29,11 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			try
 			{
 				// Extract the date
-				String date = ExtractDate(inputDate);
+				String[] date = ExtractDate(inputDate);
 
 				// Convert the date String into a DateTime
-				DateTime dateTime = System.Convert.ToDateTime(date, CultureInfo.InvariantCulture);
+				//DateTime dateTime = System.Convert.ToDateTime(date, CultureInfo.InvariantCulture);
+                DateTime dateTime = ToDateTime(date);
 
 				// Convert the date into UTC
 				dateTime = new System.DateTime(dateTime.Ticks, DateTimeKind.Utc);
@@ -163,18 +164,26 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		/// <param name="dateInput">The date input String, from which to extract the date part</param>
 		/// <returns>The extracted date part</returns>
 		/// <exception cref="ArgumentException">If a date part could not be extracted from <paramref name="dateInput"/></exception>
-		private static String ExtractDate(String dateInput)
+		private static String[] ExtractDate(String dateInput)
 		{
 			// Matches the date and time part of a String
 			// Example: Fri, 21 Nov 1997 09:55:06 -0600
 			// Finds: 21 Nov 1997 09:55:06
 			// Seconds does not need to be specified
 			// Even though it is illigal, sometimes hours, minutes or seconds are only specified with one digit
-			Match match = Regex.Match(dateInput, @"\d\d? .+ (\d\d\d\d|\d\d) \d?\d:\d?\d(:\d?\d)?");
+			/*Match match = Regex.Match(dateInput, @"\d\d? .+ (\d\d\d\d|\d\d) \d?\d:\d?\d(:\d?\d)?");
 			if (match.Success)
 			{
 				return match.Value;
-			}
+			}*/
+            var lParts = dateInput.Split(" ");
+            if (lParts.Count >= 4)
+            {
+                String[] lReturn = new String[4];
+                for (var i = 0; i < 4; i++)
+                    lReturn[i] = lParts[i + 1];
+                return lReturn;
+            }
 
 			throw new ArgumentException("No date part found");
 		}
@@ -188,22 +197,80 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		{
 			// Strip out comments
 			// Also strips out nested comments
-			input = Regex.Replace(input, @"(\((?>\((?<C>)|\)(?<-C>)|.?)*(?(C)(?!))\))", "");
+			//input = Regex.Replace(input, @"(\((?>\((?<C>)|\)(?<-C>)|.?)*(?(C)(?!))\))", "");
+            var lInput = new StringBuilder();
+            var lNoCopy = 0;
+            for (int i = 0; i < length(input); i++)
+            {
+                var lChar = input[i];
+                if (lChar == '(')
+                    lNoCopy++;
+                else
+                    if (lChar == ')')
+                        lNoCopy--;
+                if (lNoCopy == 0)
+                    lInput.Append(lChar);
+            }
+            var lToReturn = lInput.ToString();
 
 			// Reduce any whitespace character to one space only
-			input = Regex.Replace(input, @"\s+", " ");
+			//input = Regex.Replace(input, @"\s+", " ");
+            lInput.Clear();
+            lNoCopy = 0;
+            for (int i = 0; i < length(lToReturn); i++)
+            {
+                var lChar = lToReturn[i];
+                if (lChar == " ")
+                    lNoCopy++;
+                else
+                    lNoCopy = 0;
+                
+                if (lNoCopy == 1)
+                    lInput.Append(lChar);             
+            }
+            lToReturn = lInput.ToString();
 
 			// Remove all initial whitespace
-			input = Regex.Replace(input, @"^\s+", "");
+			//input = Regex.Replace(input, @"^\s+", "");
 
 			// Remove all ending whitespace
-			input = Regex.Replace(input, @"\s+$", "");
+			//input = Regex.Replace(input, @"\s+$", "");
+            lToReturn = lToReturn.Trim();
 
 			// Remove spaces at colons
 			// Example: 22: 33 : 44 => 22:33:44
-			input = Regex.Replace(input, @" ?: ?", ":");
+			//input = Regex.Replace(input, @" ?: ?", ":");
+            lToReturn = lToReturn.Replace(" : ", ":");
+            lToReturn = lToReturn.Replace(" :", ":");
+            lToReturn = lToReturn.Replace(": ", ":");
 
-			return input;
+			return lToReturn;
 		}
+
+        private static DateTime ToDateTime(String[] inputDate)
+        {
+            // We now we have a date like: 21 Nov 1997 09:55:06, from ExtractDatetime func
+            // [0] -> day  [1] -> month  [2] -> year  [3] -> time			
+            var lMonth = 1;            
+            switch (inputDate[1].ToUpper())
+			{
+				case "Jan": lMonth = 1; break;
+				case "Feb": lMonth = 2; break;
+				case "Mar": lMonth = 3; break;
+				case "Apr": lMonth = 4; break;
+				case "May": lMonth = 5; break;
+				case "Jun": lMonth = 6; break;
+				case "Jul": lMonth = 7; break;
+				case "Aug": lMonth = 8; break;
+				case "Sep": lMonth = 9; break;
+				case "Oct": lMonth = 10; break;
+				case "Nov": lMonth = 11; break;
+				case "Dec": lMonth = 12; break;
+            }
+
+            var lTime = inputDate[3].Split(':');
+            return new DateTime(Convert.ToInt32(inputDate[0]), lMonth, Convert.ToInt32(inputDate[2]),  
+                Convert.ToInt32(lTime[0]), Convert.ToInt32(lTime[1]), Convert.ToInt32(lTime[2]));
+        }
 	}
 }
