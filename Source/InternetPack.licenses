@@ -1,19 +1,5 @@
-a780c0920055b1f916c7c4e87d866e6d4be899589d77f1e36ddb3bed7587b52fd769842e2573a25cb763aa10d9e8acadabb2a76cb03a2778829a6a7f4dcf96f1e857f4f82325762c3971c0135418f40f42590d8006da7a3570c94001dc6399377008423712760ef818d72fa06ede337e83c2d1c6e349a2010b6b4604b3bd6c78846012977fd022c3c4c2a869a16ee83e1de92a8257cccd75507017c735d077875657961ef3df9fc36b148f0fb2ba04ea9c3de18bb5259fa909bcbd1ab3f41bca00a5d04fc602f40ad10f067aeea31399526d12b058aca4e56b9d4bf49b6ffb11c27b8270d876a6d82ad244be8c94ecbc4eeff00ceb47d1261eb0532d7c65e686
-683e655be4a26fa8178edb1ee9825153520570bdaf982788ac22e345bee9f451aaf253f036e93866d443a2cca97da854f2205aee3364f4f187bbbf731e97201de02ee51edaa93d87ac1bbabc4dad40e5632739195c81b968f014f90c393098f97cc3330a5c8edfb9884a00d04af200967556a939e0844763d2db2f16471da4a9
-[License]
-LicenseType=Project
-Product=Hydrogene
-Platform=Cooper
-AllowBeta=1
-AllowFull=1
-
-DisplayName=InternetPack Contributor License, Hydrogene/Cooper
-ProjectName=RemObjects.InternetPack.Cooper
-ProjectFileName=RemObjects.InternetPack.Cooper.elements
-ProjectGuid={5cf4d43e-e14d-4ad8-9d38-82cdf2ad543d}
-ProjectAssemblyName=InternetPack
-ProjectOutputType=StaticLibrary
-
+6d49574d28a5163dfdf7be0eec4c480846fc0941eb5ade478f9375d38cc921c0554f20445edb034966aa46d6e7d434e381de005f9395d1281adb839a7bc77f8db79c93c0ba26d75f6a84894806bd41fc962838c7509e80fd655232a4dd548675d746e2c179dfd4234b1a202940080dc27699bbdb66bf645ac31d79b0a2556e41920a842c26495868b752fe1c15f7b2b53df0ea24d0a1c551f803b2329c73d4b6ee4cf17db9127184d25ab0aa7e816b5c7a62bdb389a25d8f0d3be82aed482c5e4cb8911654a1033df28bc2baa96b9df63bc5e4b3ecab398e6547f14f31ad55d32ec45ed576192815e388afca0deae9c29a2574ca7b0b1caff02b50d0a9775e89
+006dbcb97628082b17f7749488041671979df59b82630635303ab094e9f74b5fab55c37c645dd84151b6c99583f7db6cfd17ad7618c0e10a18db09ae8820d05a2e83a8f1f48a4dcf2b2a87d8d0b186ef34f3fc5724cc55a96f9cce0a547f3c62018880e2c5da5eb3ae6006bee81f553bab41833fa71d4d9b1537b1342c222c73
 [License]
 LicenseType=Project
 Product=Hydrogene
@@ -27,34 +13,6 @@ ProjectFileName=RemObjects.InternetPack.Echoes.elements
 ProjectGuid={774b9ae9-b695-4908-b24f-5482556d6175}
 ProjectAssemblyName=RemObjects.InternetPack
 ProjectOutputType=Library
-
-[License]
-LicenseType=Project
-Product=Hydrogene
-Platform=Island
-AllowBeta=1
-AllowFull=1
-
-DisplayName=InternetPack Contributor License, Hydrogene/Island
-ProjectName=RemObjects.InternetPack.Island.Android
-ProjectFileName=RemObjects.InternetPack.Island.Android.elements
-ProjectGuid={72f6a7a8-1f97-4859-9349-e835bda2d68c}
-ProjectAssemblyName=InternetPack
-ProjectOutputType=StaticLibrary
-
-[License]
-LicenseType=Project
-Product=Hydrogene
-Platform=Island
-AllowBeta=1
-AllowFull=1
-
-DisplayName=InternetPack Contributor License, Hydrogene/Island
-ProjectName=RemObjects.InternetPack.Island.Linux
-ProjectFileName=RemObjects.InternetPack.Island.Linux.elements
-ProjectGuid={67372e98-71a2-4578-8c21-841b9d849021}
-ProjectAssemblyName=InternetPack
-ProjectOutputType=StaticLibrary
 
 [License]
 LicenseType=Project
@@ -143,6 +101,20 @@ ProjectOutputType=Shared
 [License]
 LicenseType=Project
 Product=Hydrogene
+Platform=Island
+AllowBeta=1
+AllowFull=1
+
+DisplayName=InternetPack Contributor License, Hydrogene/Island
+ProjectName=RemObjects.InternetPack.Island.Linux
+ProjectFileName=RemObjects.InternetPack.Island.Linux.elements
+ProjectGuid={67372e98-71a2-4578-8c21-841b9d849021}
+ProjectAssemblyName=InternetPack
+ProjectOutputType=StaticLibrary
+
+[License]
+LicenseType=Project
+Product=Hydrogene
 Platform=Toffee
 AllowBeta=1
 AllowFull=1
@@ -162,17 +134,60 @@ AllowBeta=1
 AllowFull=1
 
 DisplayName=InternetPack Contributor License, Hydrogene/Toffee
-ProjectName=RemObjects.InternetPack.Toffee.macOS
+ProjectName=RemObjects.InternetPack.Toffee.iOS
 ProjectFileName=RemObjects.InternetPack.Toffee.iOS.elements
 ProjectGuid={4c7346ab-eb0d-454b-9b4f-93596472063f}
 ProjectAssemblyName=InternetPack
 ProjectOutputType=StaticLibrary
 
+[License]
+LicenseType=Project
+Product=Hydrogene
+Platform=Toffee
+AllowBeta=1
+AllowFull=1
+
+DisplayName=InternetPack Contributor License, Hydrogene/Toffee
+ProjectName=RemObjects.InternetPack.Toffee.tvOS
+ProjectFileName=RemObjects.InternetPack.Toffee.tvOS.elements
+ProjectGuid={889ed07e-5e86-41dc-a173-38c31493e4d9}
+ProjectAssemblyName=InternetPack
+ProjectOutputType=StaticLibrary
+
+[License]
+LicenseType=Project
+Product=Hydrogene
+Platform=Toffee
+AllowBeta=1
+AllowFull=1
+
+DisplayName=InternetPack Contributor License, Hydrogene/Toffee
+ProjectName=RemObjects.InternetPack.Toffee.watchOS
+ProjectFileName=RemObjects.InternetPack.Toffee.watchOS.elements
+ProjectGuid={332a5421-f39a-4a3a-88f6-8808f4a3f546}
+ProjectAssemblyName=InternetPack
+ProjectOutputType=StaticLibrary
+
+[License]
+LicenseType=Project
+Product=Hydrogene
+Platform=Cooper
+AllowBeta=1
+AllowFull=1
+
+DisplayName=InternetPack Contributor License, Hydrogene/Cooper
+ProjectName=RemObjects.InternetPack.Cooper
+ProjectFileName=RemObjects.InternetPack.Cooper.elements
+ProjectGuid={5cf4d43e-e14d-4ad8-9d38-82cdf2ad543d}
+ProjectAssemblyName=InternetPack
+ProjectOutputType=StaticLibrary
+
+
 [SignatureInfo]
-LicenseFileStartDate=2017-07-09
-LicenseFileEndDate=2018-07-11
-P1=15070818935293765026
-P2=17376661946381917431
-P3=3863886264
-P4=510128647
+LicenseFileStartDate=2017-10-01
+LicenseFileEndDate=2018-10-03
+P1=16738558176180002000
+P2=597657104968693733
+P3=3380562786
+P4=827752669
 
