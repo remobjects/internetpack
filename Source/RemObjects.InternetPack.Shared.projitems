@@ -14,7 +14,6 @@
     <Compile Include="MessageAttachment.cs" />
     <Compile Include="MessageEncoder.cs" />
     <Compile Include="MessageHeaderField.cs" />
-    <Compile Include="Mime\Decode\Rfc2822DateTime.cs" />
     <Compile Include="Mime\Header\HeaderExtractor.cs" />
     <Compile Include="Mime\Header\HeaderFieldParser.cs" />
     <Compile Include="Mime\Header\MessageHeader.cs" />
