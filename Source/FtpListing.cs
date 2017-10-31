@@ -24,10 +24,10 @@ namespace RemObjects.InternetPack.Ftp
 			this.User = "user";
 			this.Group = "group";
 			this.Size = 0;
-            #if echoes
-            // TODO
-            this.FileDate = DateTime.MinValue;
-            #endif
+			#if echoes
+			// TODO
+			this.FileDate = System.DateTime.MinValue;
+			#endif
 		}
 
 		public FtpListingItem(String item)
@@ -179,11 +179,11 @@ namespace RemObjects.InternetPack.Ftp
 		}
 
 		#if !cooper
-        public override String ToString()
+		public override String ToString()
 		#else
-        public String ToString()
-        #endif
-        {
+		public String ToString()
+		#endif
+		{
 			Char[] lRights = new Char[] { 'd', 'r', 'w', 'x', 'r', 'w', 'x', 'r', 'w', 'x' };
 
 			if (!this.Directory)
@@ -220,23 +220,23 @@ namespace RemObjects.InternetPack.Ftp
 				this.Group, this.Size, FtpListingItem.FtpDateToString(this.FileDate), this.FileName);
 		}
 
-        private static String[] ParseLine(String item, int maxItems)
-        {
-            var lItems = item.Split(" ");
-            var lResult = new List<String>();
-            var lCount = 0;
-            foreach (var lItem in lItems)
-            {
-                if (lItem != "")
-                {
-                    lResult.Add(lItem);
-                    lCount++;
-                    if (lCount >= maxItems) break;
-                }
-            }
+		private static String[] ParseLine(String item, int maxItems)
+		{
+			var lItems = item.Split(" ");
+			var lResult = new List<String>();
+			var lCount = 0;
+			foreach (var lItem in lItems)
+			{
+				if (lItem != "")
+				{
+					lResult.Add(lItem);
+					lCount++;
+					if (lCount >= maxItems) break;
+				}
+			}
 
-            return lResult.ToArray();
-        }
+			return lResult.ToArray();
+		}
 
 		public void Parse(String item)
 		{
@@ -266,7 +266,7 @@ namespace RemObjects.InternetPack.Ftp
 				8 - Filename
 				 */
 				//String[] lSplittedData = lRegEx.Split(item, 9);
-                String[] lSplittedData = ParseLine(item, 9);
+				String[] lSplittedData = ParseLine(item, 9);
 
 				// Copy splitted data to result
 				// Problem is that at least one FTP server doesn;t return Group segment
@@ -319,7 +319,7 @@ namespace RemObjects.InternetPack.Ftp
 				3 - Filename
 				 */
 				//String[] lSegments = lRegEx.Split(item, 4);
-                String[] lSegments = ParseLine(item, 4);
+				String[] lSegments = ParseLine(item, 4);
 				this.Directory = (lSegments[2] == "<DIR>");
 
 				this.Size = this.Directory ? 0 : Convert.ToInt64(lSegments[2]);
@@ -335,7 +335,7 @@ namespace RemObjects.InternetPack.Ftp
 		public static DateTime StringToFtpDate(String value)
 		{
 			//String[] lParts = Regex.Split(value, @"\w+");
-            String[] lParts = ParseLine(value, 3);
+			String[] lParts = ParseLine(value, 3);
 
 			return FtpListingItem.StringToFtpDate(lParts[0], lParts[1], lParts[2]);
 		}
@@ -475,7 +475,7 @@ namespace RemObjects.InternetPack.Ftp
 						lYear -= 1;
 
 					//String[] lTimes = Regex.Split(yearOrTime, ":");
-                    String[] lTimes = yearOrTime.Split(":").ToArray();
+					String[] lTimes = yearOrTime.Split(":").ToArray();
 					lHour = Convert.ToInt32(lTimes[0]);
 					lMinute = Convert.ToInt32(lTimes[1]);
 					if (lTimes.Length > 2)
@@ -509,29 +509,28 @@ namespace RemObjects.InternetPack.Ftp
 			return lResult;
 		}
 
-        private static String[] SplitLines(String line)
-        {
-            // TODO need test
-            var lPointer = 0;
-            var lLast = 0;
-            var lResult = new List<String>();
+		private static String[] SplitLines(String line)
+		{
+			var lPointer = 0;
+			var lLast = 0;
+			var lResult = new List<String>();
 
-            while (lPointer < line.Length)
-            {
-                while ((line[lPointer] != '\n') && (line[lPointer] != '\r') && (lPointer < line.Length))
-                {
-                    lPointer++;
-                }
-                lResult.Add(line.Substring(lLast, (lPointer - lLast)));
-                if ((lPointer < line.Length) && (line[lPointer] == '\r'))
-                    lPointer++;
-                if ((lPointer < line.Length) && (line[lPointer] == '\n'))
-                    lPointer++;
-                lLast = lPointer;
-            }
+			while (lPointer < line.Length)
+			{
+				while ((lPointer < line.Length) && (line[lPointer] != '\n') && (line[lPointer] != '\r'))
+				{
+					lPointer++;
+				}
+				lResult.Add(line.Substring(lLast, (lPointer - lLast)));
+				if ((lPointer < line.Length) && (line[lPointer] == '\r'))
+					lPointer++;
+				if ((lPointer < line.Length) && (line[lPointer] == '\n'))
+					lPointer++;
+				lLast = lPointer;
+			}
 
-            return lResult.ToArray();
-        }
+			return lResult.ToArray();
+		}
 
 		public void Parse(String list, Boolean includeUpDir)
 		{
@@ -540,7 +539,7 @@ namespace RemObjects.InternetPack.Ftp
 			Boolean lFoundUpDir = false;
 
 			//String[] lItems = Regex.Split(list, @"(?:\r\n|\r|\n)");
-            String[] lItems = SplitLines(list);
+			String[] lItems = SplitLines(list);
 
 			for (Int32 i = 0; i < lItems.Length; i++)
 			{
@@ -563,12 +562,12 @@ namespace RemObjects.InternetPack.Ftp
 						lFoundUpDir = true;
 				}
 				#if echoes
-                catch (IndexOutOfRangeException)
-                #else
-                catch (RTLException)
-				{
-				}
+				catch (IndexOutOfRangeException)
+				#else
+				catch (RTLException)
                 #endif
+				{
+				}				
 				catch (FormatException)
 				{
 				}
@@ -583,12 +582,22 @@ namespace RemObjects.InternetPack.Ftp
 			}
 		}
 
-		#if !cooper
-        public override String ToString()
-		#else
-        public String ToString()
+  		#if !echoes
+        public ISequence<FtpListingItem> GetSequence()
+		{
+			foreach(FtpListingItem lItem in base.fList)
+			{
+				yield return lItem;
+			}
+		}
         #endif
-        {
+
+		#if !cooper
+		public override String ToString()
+		#else
+		public String ToString()
+		#endif
+		{
 			StringBuilder lResult = new StringBuilder();
 
 			for (Int32 i = 0; i < this.Count; i++)

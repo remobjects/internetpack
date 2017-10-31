@@ -3,6 +3,9 @@
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
+#if toffee || cooper
+using RemObjects.Elements.RTL.Reflection;
+#endif
 using RemObjects.InternetPack.CommandBased;
 
 namespace RemObjects.InternetPack.Ftp
@@ -974,8 +977,11 @@ namespace RemObjects.InternetPack.Ftp
 
 				Int32 lPort = ((IPEndPoint)lSession.PassiveServer.Binding.ListeningSocket.LocalEndPoint).Port;
 				e.Connection.WriteLine("227 Entering Passive Mode ({0},{1},{2},{3},{4},{5}).", lAddress[0], lAddress[1], lAddress[2], lAddress[3],
+                #if echoes
 					unchecked((Byte)(lPort >> 8)), unchecked((Byte)lPort));
-
+                #else
+					(Byte)(lPort >> 8), (Byte)lPort);
+                #endif
 			}
 			else
 			{
@@ -1090,7 +1096,7 @@ namespace RemObjects.InternetPack.Ftp
 
 					try
 					{
-						Int64 lRestPoint = Int64.Parse(e.Parameters[0]);
+						Int64 lRestPoint = Convert.ToInt64(e.Parameters[0]);
 						lSession.RestartPoint = lRestPoint;
 						e.Connection.WriteLine(String.Format("350 Restarting at {0}. Send STORE or RETRIEVE to initiate transfer.", lRestPoint));
 					}
@@ -1131,7 +1137,7 @@ namespace RemObjects.InternetPack.Ftp
 						try
 						{
 							lNewIp = IPAddress.Parse(String.Format("{0}.{1}.{2}.{3}", lNewPort[0], lNewPort[1], lNewPort[2], lNewPort[3]));
-							lNewPortw = Byte.Parse(lNewPort[4]) << 8 | Byte.Parse(lNewPort[5]);
+							lNewPortw = Convert.ToByte(lNewPort[4]) << 8 | Convert.ToByte(lNewPort[5]);
 
 							lSession.Passive = false;
 							try
@@ -1437,7 +1443,7 @@ namespace RemObjects.InternetPack.Ftp
 		{
 			if (this.Detailed500Errors)
 			{
-				connection.WriteLine(String.Format("500 Internal Error: ({0}) {1}", exception.GetType().FullName, CleanStringForCommandResponse(exception.Message)));
+				connection.WriteLine(String.Format("500 Internal Error: ({0}) {1}", exception.ToString(), CleanStringForCommandResponse(exception.Message)));
 			}
 			else
 			{
@@ -1527,7 +1533,7 @@ namespace RemObjects.InternetPack.Ftp
 			this.fEventArgs = e;
 			this.fStore = store;
 
-			new Thread(Execute).Start();
+			new Thread(() => Execute()).Start();
 		}
 
 		public void Abort()

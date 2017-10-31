@@ -1,29 +1,25 @@
-RemObjects Internet Pack
+<img src="http://www.elementscompiler.com/images/product-logos/InternetPack-256.png" width="128" align="right" />
 
+# Elements RTL Internet Pack
 
-# BSD LICENSE
+Part of the "[Elements RTL](http://www.elementscompiler.com/elements/rtl)" (RTL2) project, this is a cross platform TCP/IP network library for the Elements compiler, including an abstraction of both low-level IP client and server classes, as well as implementations of common TCP/IP protocols such as HTTP, POP and more.
 
-Copyright (c) 2010-2015, RemObjects Software
-All rights reserved.
+## Origins
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-* Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-* Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-* Neither the name of the RemObjects Software company nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
+Internet Pack was originally written as a pure .NET library using Visual C#, for [Remoting SDK](http://www.remotingsdk.com). It is in the process of being ported/upgraded to use RTL2 and our cross-platform Hydrogene compiler, and be supported on *all* Elements platforms: .NET, Java/Android, Cocoa and Island.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
+The original .NET version is preserved in the `master-legacy` branch, but will no longer be maintained.
+
+## Requirements
+
+As of this writing, the Internet Pack library requires the latest Elements 9.2 beta compiler to be built and to be used.
+
+## See Also
+
+* [RemObjects Elements Homepage](http://www.elementscompiler.com/)
+* [RemObjects Elements Docs](http://docs.elementscompiler.com/)
+* [Internet Pack](http://docs.elementscompiler.com/API/DelphiRTL/) on docs.elementscompiler.com
+* [Elements RTL](http://www.elementscompiler.com/elements/rtl) Homepage
+* [Elements RTL](https://www.github.com/RemObjects/RTL2/) on GitHub
+
+	

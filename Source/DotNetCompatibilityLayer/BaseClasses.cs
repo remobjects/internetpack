@@ -117,7 +117,7 @@
     #if !echoes
     public class ArrayList
     {
-        private List<Object> fList;
+        protected List<Object> fList;
 
         public ArrayList()
         {
