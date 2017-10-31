@@ -3,6 +3,9 @@
 // Author of OpenPOP.NET library is Kasper Foens ( http://foens.users.sourceforge.net )
 // Full copy of OpenPOP.NET can be obtained from http://hpop.sourceforge.net
 //
+#if toffee
+using RemObjects.Elements.RTL;
+#endif
 
 namespace RemObjects.InternetPack.Messages.Mime.Decode
 {
@@ -200,7 +203,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			// Strip out comments
 			// Also strips out nested comments
 			//input = Regex.Replace(input, @"(\((?>\((?<C>)|\)(?<-C>)|.?)*(?(C)(?!))\))", "");
-            var lInput = new StringBuilder();
+            var lInput = new RemObjects.Elements.RTL.StringBuilder();
             var lNoCopy = 0;
             for (int i = 0; i < length(input); i++)
             {
@@ -213,7 +216,8 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
                 if ((lNoCopy == 0) && (lChar != ')'))
                     lInput.Append(lChar);
             }
-            var lToReturn = lInput.ToString();
+            RemObjects.Elements.RTL.String lToReturn;
+            lToReturn = lInput.ToString();
 
 			// Reduce any whitespace character to one space only
 			//input = Regex.Replace(input, @"\s+", " ");

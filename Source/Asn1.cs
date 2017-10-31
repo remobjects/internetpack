@@ -925,7 +925,7 @@ namespace RemObjects.InternetPack.Ldap
 		[ToString]
 		public override String ToString()
 		{
-			return (this.Value == null) ? "" : Convert.ToString(this.Value);
+			return (this.Value == null) ? "" : Convert.ToHexString(this.Value);
 		}
 	}
 
@@ -1127,7 +1127,7 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			get
 			{
-				#if cooper
+				#if cooper || toffee
 				return this.Value == null ? 0 : Encoding.UTF8.GetBytes(this.Value).length;
 				#else
 				return this.Value == null ? 0 : length(Encoding.UTF8.GetBytes(this.Value));
@@ -1286,7 +1286,7 @@ namespace RemObjects.InternetPack.Ldap
 		[ToString]
 		public override String ToString()
 		{
-			return (this.Value == null) ? "" : Convert.ToString(this.Value);
+			return (this.Value == null) ? "" : Convert.ToHexString(this.Value);
 		}
 	}
 }

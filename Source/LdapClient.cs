@@ -591,7 +591,7 @@ namespace RemObjects.InternetPack.Ldap
 				if (fValues.Count == 0)
 					return null;
 
-				return (Byte[])fValues[0];
+				return ((Binary)fValues[0]).ToArray();
 			}
 		}
 
@@ -637,7 +637,7 @@ namespace RemObjects.InternetPack.Ldap
 			if (!fBinary)
 				throw new ArgumentException("Values are not binary");
 
-			fValues.Add(item);
+			fValues.Add(new Binary(item));
 		}
 
 		public String GetString(Int32 index)
@@ -653,7 +653,7 @@ namespace RemObjects.InternetPack.Ldap
 			if (!fBinary)
 				throw new ArgumentException("Values are not binary");
 
-			return (Byte[])fValues[index];
+			return ((Binary)fValues[index]).ToArray();
 		}
 
 		public void SetString(Int32 index, String value)
@@ -669,7 +669,8 @@ namespace RemObjects.InternetPack.Ldap
 			if (!fBinary)
 				throw new ArgumentException("Values are not binary");
 
-			fValues[index] = value;
+			var lBinary = new Binary(value);
+            fValues[index] = lBinary;
 		}
 	}
 
@@ -708,7 +709,8 @@ namespace RemObjects.InternetPack.Ldap
 				return null;
 
 			if (lAttribute.Binary)
-				return Convert.ToString(lAttribute.SingleBinaryValue);
+				return Encoding.UTF8.GetString(lAttribute.SingleBinaryValue);
+                //return lAttribute.SingleBinaryValue.toString();
 
 			return lAttribute.SingleStringValue;
 		}
