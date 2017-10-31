@@ -15,11 +15,11 @@ namespace RemObjects.InternetPack
 		#endregion
 
 		#region Private fields
-    	#if toffee || cooper
-        private readonly Object fSyncRoot = new Object();        
-        #else
-        private readonly Monitor fSyncRoot = new Monitor();
-        #endif
+		#if toffee || cooper
+		private readonly Object fSyncRoot = new Object();
+		#else
+		private readonly Monitor fSyncRoot = new Monitor();
+		#endif
 		private Boolean fTimeoutTimerEnabled;
 		private Timer fTimeoutTimer;
 		#endregion
@@ -75,13 +75,13 @@ namespace RemObjects.InternetPack
 		}
 
 		[ToString]
-        public override String ToString()
+		public override String ToString()
 		{
-            #if toffee || cooper
-            return String.Format("{0} Local: {1} Remote {2}", this.ToString(), this.LocalEndPoint, this.RemoteEndPoint);
-            #else
-            return String.Format("{0} Local: {1} Remote {2}", this.GetType().Name, this.LocalEndPoint, this.RemoteEndPoint);
-            #endif
+			#if toffee || cooper
+			return String.Format("{0} Local: {1} Remote {2}", this.ToString(), this.LocalEndPoint, this.RemoteEndPoint);
+			#else
+			return String.Format("{0} Local: {1} Remote {2}", this.GetType().Name, this.LocalEndPoint, this.RemoteEndPoint);
+			#endif
 		}
 
 		#region Properties
@@ -114,12 +114,12 @@ namespace RemObjects.InternetPack
 		{
 			get
 			{
-                if (this.fEncoding == null)
-                    return RemObjects.Elements.RTL.Encoding.Default;
-                else
-                    return this.fEncoding;
-                //return this.fEncoding ?? (this.fEncoding = Encoding.Default);
-            }
+				if (this.fEncoding == null)
+					return RemObjects.Elements.RTL.Encoding.Default;
+				else
+					return this.fEncoding;
+				//return this.fEncoding ?? (this.fEncoding = Encoding.Default);
+			}
 			set
 			{
 				this.fEncoding = value;
@@ -493,7 +493,7 @@ namespace RemObjects.InternetPack
 
 		private Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, Boolean block)
 		{
-            // If there is no buffer allocated
+			// If there is no buffer allocated
 			if (this.fBuffer == null)
 			{
 				if (block)
@@ -507,9 +507,9 @@ namespace RemObjects.InternetPack
 
 			if (lSize > size)
 			{
-                // more bytes in buffer than we need?
+				// more bytes in buffer than we need?
 				Array.Copy(fBuffer, fBufferStart, buffer, offset, size);
-                fBufferStart += size;
+				fBufferStart += size;
 
 				return size;
 			}
@@ -517,10 +517,10 @@ namespace RemObjects.InternetPack
 			// less (or same) number of bytes in buffer then we need?
 			//fBuffer.BlockCopy(fBuffer, fBufferStart, buffer, offset, lSize);
 			#if toffee || cooper
-            Array.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
-            #else
-            fBuffer.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
-            #endif
+			Array.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
+			#else
+			fBuffer.Copy(fBuffer, fBufferStart, buffer, offset, lSize);
+			#endif
 			fBuffer = null;
 
 			// if more bytes werer requested, and bytes are available, get them
@@ -796,8 +796,8 @@ namespace RemObjects.InternetPack
 			DataSocketSend(buffer, offset, size);
 		}
 		#else if ISLAND
-		                
-        /*public override bool IsValid()
+
+		/*public override bool IsValid()
 		{
 			return Connected;
 		}
@@ -810,25 +810,25 @@ namespace RemObjects.InternetPack
 			#warning Implement for Island
 		}*/
 
-        public override Int32 Read(Byte[] buffer, Int32 offset, Int32 count)
-        {
-            return Receive(buffer, offset, count, true);
-        }
-                        
-        public override Int32 Write(Byte[] buffer, Int32 offset, Int32 count)
-        {
-             return DataSocketSend(buffer, offset, count);
-        }
+		public override Int32 Read(Byte[] buffer, Int32 offset, Int32 count)
+		{
+			return Receive(buffer, offset, count, true);
+		}
+
+		public override Int32 Write(Byte[] buffer, Int32 offset, Int32 count)
+		{
+			 return DataSocketSend(buffer, offset, count);
+		}
 
 		//#endif
 
 		public override Int64 Seek(Int64 offset, SeekOrigin origin)
 		{
-            #if toffee || cooper
-            throw new Exception(String.Format("{0} does not support seeking", this.ToString()));
-            #else
-            throw new Exception(String.Format("{0} does not support seeking", this.GetType().Name));
-            #endif
+			#if toffee || cooper
+			throw new Exception(String.Format("{0} does not support seeking", this.ToString()));
+			#else
+			throw new Exception(String.Format("{0} does not support seeking", this.GetType().Name));
+			#endif
 		}
 
 		public override Boolean CanRead
@@ -861,37 +861,37 @@ namespace RemObjects.InternetPack
 		}*/
 
 		#if !cooper
-        public override Int64 GetLength()
+		public override Int64 GetLength()
 		{
 			return Position + DataSocketAvailable;
 		}
 
 		public override Int64 GetPosition()
 		{
-		    return Position;
-        }
-        #endif
+			return Position;
+		}
+		#endif
 
-        public override Int64 Position 
-        { 
-            get
-            {
-                return base.Position;
-            }
-            set
-            {
-		        Seek(value, SeekOrigin.Begin);
-			    Position = value;
-            }
-        }
-
-        #if !toffee && !cooper
-        public override void SetPosition(Int64 value)
+		public override Int64 Position
 		{
-		    Seek(value, SeekOrigin.Begin);
+			get
+			{
+				return base.Position;
+			}
+			set
+			{
+				Seek(value, SeekOrigin.Begin);
+				Position = value;
+			}
+		}
+
+		#if !toffee && !cooper
+		public override void SetPosition(Int64 value)
+		{
+			Seek(value, SeekOrigin.Begin);
 			Position = value;
 		}
-        #endif
+		#endif
 		#endregion
 
 		// returns null if there's nothing in the buffer; returns "" if it's an empty line else the line in the buffer
@@ -938,9 +938,9 @@ namespace RemObjects.InternetPack
 					fBuffer = new Byte[READLINE_BUFFER_SIZE];
 					fBufferStart = 0;
 					fBufferEnd = DataSocketReceiveWhatsAvaiable(fBuffer, 0, fBuffer.Length);
-                    String ToWrite = "";
-                    for(int j = 0; j < fBufferEnd;j++)
-                            ToWrite = ToWrite + chr(fBuffer[j]);
+					String ToWrite = "";
+					for(int j = 0; j < fBufferEnd;j++)
+							ToWrite = ToWrite + chr(fBuffer[j]);
 
 					if (fBufferEnd == 0)
 						throw new ConnectionClosedException();
@@ -966,7 +966,7 @@ namespace RemObjects.InternetPack
 					else
 					{
 						// else just discard the 10 (LF)
-						lResult = lResult + Encoding.GetString(fBuffer, fBufferStart, i - fBufferStart - 1);                        
+						lResult = lResult + Encoding.GetString(fBuffer, fBufferStart, i - fBufferStart - 1);
 					}
 				}
 				else

@@ -45,13 +45,13 @@ namespace RemObjects.InternetPack
 			return lResult;
 		}
 
-        public override Int64 Seek(Int64 offset, SeekOrigin origin)
+		public override Int64 Seek(Int64 offset, SeekOrigin origin)
 		{
 			#if echoes
-            throw new Exception(String.Format("{0} does not support Seek", this.GetType().FullName));
-            #else
-            throw new Exception(String.Format("{0} does not support Seek", this.ToString()));
-            #endif
+			throw new Exception(String.Format("{0} does not support Seek", this.GetType().FullName));
+			#else
+			throw new Exception(String.Format("{0} does not support Seek", this.ToString()));
+			#endif
 		}
 
 		/*public override void SetLength(Int64 length)
@@ -62,10 +62,10 @@ namespace RemObjects.InternetPack
 		public override Int32 Write(Byte[] buffer, Int32 offset, Int32 count)
 		{
 			#if echoes
-            throw new Exception(String.Format("{0} is a read-only Stream", this.GetType().FullName));
-            #else
-            throw new Exception(String.Format("{0} is a read-only Stream", this.ToString()));
-            #endif
+			throw new Exception(String.Format("{0} is a read-only Stream", this.GetType().FullName));
+			#else
+			throw new Exception(String.Format("{0} is a read-only Stream", this.ToString()));
+			#endif
 		}
 
 		public override Boolean CanRead
@@ -109,10 +109,10 @@ namespace RemObjects.InternetPack
 			set
 			{
 				#if echoes
-                throw new Exception(String.Format("{0} does not support Seek", this.GetType().FullName));
-                #else
-                throw new Exception(String.Format("{0} does not support Seek", this.ToString()));
-                #endif
+				throw new Exception(String.Format("{0} does not support Seek", this.GetType().FullName));
+				#else
+				throw new Exception(String.Format("{0} does not support Seek", this.ToString()));
+				#endif
 			}
 		}
 		#endregion

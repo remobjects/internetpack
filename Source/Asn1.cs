@@ -789,11 +789,8 @@ namespace RemObjects.InternetPack.Ldap
 			// -129    02 02 FF 7F
 		}
 
-		#if !cooper
-        public override String ToString()
-        #else
-        public String ToString()
-        #endif
+		[ToString]
+		public override String ToString()
 		{
 			return Value.ToString();
 		}
@@ -875,11 +872,8 @@ namespace RemObjects.InternetPack.Ldap
 
 		public UInt32 Value { get; set; }
 
-		#if !cooper
-        public override String ToString()
-        #else
-        public String ToString()
-        #endif
+		[ToString]
+		public override String ToString()
 		{
 			return this.Value.ToString();
 		}
@@ -928,11 +922,8 @@ namespace RemObjects.InternetPack.Ldap
 
 		public Byte[] Value { get; set; }
 
-		#if !cooper
-        public override String ToString()
-        #else
-        public String ToString()
-        #endif
+		[ToString]
+		public override String ToString()
 		{
 			return (this.Value == null) ? "" : Convert.ToString(this.Value);
 		}
@@ -978,11 +969,11 @@ namespace RemObjects.InternetPack.Ldap
 		}
 
 		#if !cooper
-        public override String ToString()
-        #else
-        public String ToString()
-		#endif        
-        {
+		public override String ToString()
+		#else
+		public String ToString()
+		#endif
+		{
 			return this.Value.ToString();
 		}
 	}
@@ -1091,12 +1082,9 @@ namespace RemObjects.InternetPack.Ldap
 				this.fItems.Add(BerValue.Read(lReader));
 		}
 
-		#if !cooper
-        public override String ToString()
-        #else
-		public String ToString()
-        #endif
-        {
+		[ToString]
+		public override String ToString()
+		{
 			StringBuilder lResult = new StringBuilder();
 			lResult.Append("{");
 
@@ -1139,11 +1127,11 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			get
 			{
-                #if cooper
-                return this.Value == null ? 0 : Encoding.UTF8.GetBytes(this.Value).length;
-                #else
-                return this.Value == null ? 0 : length(Encoding.UTF8.GetBytes(this.Value));
-                #endif
+				#if cooper
+				return this.Value == null ? 0 : Encoding.UTF8.GetBytes(this.Value).length;
+				#else
+				return this.Value == null ? 0 : length(Encoding.UTF8.GetBytes(this.Value));
+				#endif
 			}
 		}
 
@@ -1172,11 +1160,8 @@ namespace RemObjects.InternetPack.Ldap
 
 		public String Value { get; set; }
 
-		#if !cooper
-        public override String ToString()
-        #else
-        public String ToString()
-        #endif
+		[ToString]
+		public override String ToString()
 		{
 			if (this.Value == null)
 				return "";
@@ -1243,11 +1228,8 @@ namespace RemObjects.InternetPack.Ldap
 		}
 		private IPAddress fValue;
 
-		#if !cooper
-        public override String ToString()        
-        #else
-        public String ToString()        
-        #endif
+		[ToString]
+		public override String ToString()
 		{
 			if (this.Value == null)
 				return "";
@@ -1301,12 +1283,9 @@ namespace RemObjects.InternetPack.Ldap
 
 		public Byte TypeCodeTag { get; set; }
 
-		#if !cooper
-        public override String ToString()
-        #else
-		public String ToString()
-        #endif
-        {
+		[ToString]
+		public override String ToString()
+		{
 			return (this.Value == null) ? "" : Convert.ToString(this.Value);
 		}
 	}

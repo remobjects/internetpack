@@ -9,11 +9,11 @@ namespace RemObjects.InternetPack
 	{
 		#region Private fields
 
-    	#if toffee || cooper
-        private readonly Object fSyncRoot = new Object();        
-        #else
-        private readonly Monitor fSyncRoot = new Monitor();
-        #endif
+		#if toffee || cooper
+		private readonly Object fSyncRoot = new Object();
+		#else
+		private readonly Monitor fSyncRoot = new Monitor();
+		#endif
 		private readonly List<IWorker> fWorkers = new List<IWorker>();
 		#endregion
 

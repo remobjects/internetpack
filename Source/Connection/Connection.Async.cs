@@ -23,14 +23,14 @@ namespace RemObjects.InternetPack
 			public Int32 AsyncRest { get; set; }
 
 			#if echoes
-            Object IAsyncResult.AsyncState
+			Object IAsyncResult.AsyncState
 			{
 				get
 				{
 					return AsyncState;
 				}
 			}
-            #endif
+			#endif
 
 			public Boolean CompletedSynchronously
 			{
@@ -255,13 +255,13 @@ namespace RemObjects.InternetPack
 				get
 				{
 					#if echoes
-                    return fState >= AsyncReadLineState.Done;
-                    #else
-                    if (fState == AsyncReadLineState.Done || fState == AsyncReadLineState.MaxLineLengthReached || fState == AsyncReadLineState.SyncDone)
-                        return true;
-                    else
-                        return false;
-                    #endif
+					return fState >= AsyncReadLineState.Done;
+					#else
+					if (fState == AsyncReadLineState.Done || fState == AsyncReadLineState.MaxLineLengthReached || fState == AsyncReadLineState.SyncDone)
+						return true;
+					else
+						return false;
+					#endif
 				}
 			}
 

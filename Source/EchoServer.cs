@@ -19,7 +19,7 @@ namespace RemObjects.InternetPack.StandardServers
 			this.Port = this.DefaultPort;
 		}
 
-        public override Type GetWorkerClass()
+		public override Type GetWorkerClass()
 		{
 			return typeof(EchoWorker);
 		}

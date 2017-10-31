@@ -108,7 +108,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 
 			String charSetUpper = characterSet.ToUpperInvariant();
 			#if echoes
-            if (charSetUpper.Contains("WINDOWS") || charSetUpper.Contains("CP"))
+			if (charSetUpper.Contains("WINDOWS") || charSetUpper.Contains("CP"))
 			{
 				// It seems the character set contains an codepage value, which we should use to parse the encoding
 				charSetUpper = charSetUpper.Replace("CP", ""); // Remove cp
@@ -120,7 +120,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 
 				return System.Text.Encoding.GetEncoding(codepageNumber);
 			}
-            #endif
+			#endif
 
 			// Some emails incorrectly specify the encoding to be utf8 - but it has to be utf-8
 			if (characterSet.EqualsIgnoringCaseInvariant("utf8"))

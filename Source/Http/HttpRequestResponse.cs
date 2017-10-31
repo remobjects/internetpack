@@ -39,44 +39,44 @@ namespace RemObjects.InternetPack.Http
 
 		public void CloneEvents(HttpRequestResponse source)
 		{
-            #if cooper || island || toffee
-            foreach(TransferStartEventHandler item in source.OnTransferStart)
-            {
-                #if cooper
-                OnTransferStart.add(item);
-                #elif island
-                OnTransferStart.Add(item);
-                #elif toffee
-                OnTransferStart.addObject(item);
-                #endif
-            }
+			#if cooper || island || toffee
+			foreach(TransferStartEventHandler item in source.OnTransferStart)
+			{
+				#if cooper
+				OnTransferStart.add(item);
+				#elif island
+				OnTransferStart.Add(item);
+				#elif toffee
+				OnTransferStart.addObject(item);
+				#endif
+			}
 
-            foreach(TransferEndEventHandler item in source.OnTransferEnd)
-            {
-                #if cooper
-                OnTransferEnd.add(item);
-                #elif island
-                OnTransferEnd.Add(item);
-                #else
-                OnTransferEnd.addObject(item);
-                #endif
-            }
+			foreach(TransferEndEventHandler item in source.OnTransferEnd)
+			{
+				#if cooper
+				OnTransferEnd.add(item);
+				#elif island
+				OnTransferEnd.Add(item);
+				#else
+				OnTransferEnd.addObject(item);
+				#endif
+			}
 
-            foreach(TransferProgressEventHandler item in source.OnTransferProgress)
-            {
-                #if cooper
-                OnTransferProgress.add(item);
-                #elif island
-                OnTransferProgress.Add(item);
-                #else                
-                OnTransferProgress.addObject(item);
-                #endif
-            }
-            #elif echoes
-            OnTransferStart = source.OnTransferStart;
+			foreach(TransferProgressEventHandler item in source.OnTransferProgress)
+			{
+				#if cooper
+				OnTransferProgress.add(item);
+				#elif island
+				OnTransferProgress.Add(item);
+				#else
+				OnTransferProgress.addObject(item);
+				#endif
+			}
+			#elif echoes
+			OnTransferStart = source.OnTransferStart;
 			OnTransferEnd = source.OnTransferEnd;
 			OnTransferProgress = source.OnTransferProgress;
-            #endif
+			#endif
 		}
 
 		protected Boolean HasOnTransferProgress
@@ -124,18 +124,18 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-                if (fContentBytes == null)
+				if (fContentBytes == null)
 				{
 					if (HasContentLength) /* Server must always have on ContentLength */
 					{
-                        fContentBytes = new Byte[ContentLength];
+						fContentBytes = new Byte[ContentLength];
 						Int32 lRead = ContentStream.Read(fContentBytes, 0, fContentBytes.Length);
 						if (lRead != fContentBytes.Length)
 							throw new Exception("Unexpected end of response");
 					}
 					else
 					{
-                        Boolean lChunked = Chunked;
+						Boolean lChunked = Chunked;
 						Boolean lKeepAlive = KeepAlive;
 						if (lKeepAlive && !lChunked)
 							throw new Exception("Content-Length or Chunked Transfer-Encoding required for Keep-Alive.");
@@ -207,10 +207,10 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-                if (fContentString == null)
+				if (fContentString == null)
 					fContentString = Encoding.GetString(ContentBytes, 0, ContentBytes.Length);
 
-                return fContentString;
+				return fContentString;
 			}
 		}
 		private String fContentString;
@@ -838,7 +838,7 @@ namespace RemObjects.InternetPack.Http
 	{
 		public HttpIncomingStream(HttpIncomingRequestResponse owner)
 		{
-            if (owner.Chunked)
+			if (owner.Chunked)
 				throw new Exception("ContentStream is currently not supported for Chunked HTTP transfer.");
 
 			this.fOwner = owner;
@@ -871,10 +871,10 @@ namespace RemObjects.InternetPack.Http
 
 		public override Int32 Read(Byte[] buffer, Int32 offset, Int32 size)
 		{
-            if (size > Length - fPosition) size = (Int32)Length - (Int32)fPosition;
+			if (size > Length - fPosition) size = (Int32)Length - (Int32)fPosition;
 
 			if (size <= 0) return 0;
-            Int32 lResult = fOwner.DataConnection.Receive(buffer, offset, size);
+			Int32 lResult = fOwner.DataConnection.Receive(buffer, offset, size);
 			fPosition += lResult;
 			return lResult;
 		}
@@ -962,19 +962,19 @@ namespace RemObjects.InternetPack.Http
 	public class QueryString
 	{
 		private readonly String fQuery;
-        private Dictionary<String, String> fData;
+		private Dictionary<String, String> fData;
 
 		public QueryString(String query)
 		{
 			fData = new Dictionary<String, String>();
-            fQuery = query;
+			fQuery = query;
 			if (String.IsNullOrEmpty(fQuery))
 			{
 				#if toffee
-                return null;
-                #else
-                return;
-                #endif
+				return null;
+				#else
+				return;
+				#endif
 			}
 
 			var lParams = fQuery.Split("&");
@@ -995,10 +995,10 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#if echoes || island
-        public override String ToString()
-        #else
-        public String ToString()
-        #endif
+		public override String ToString()
+		#else
+		public String ToString()
+		#endif
 		{
 			return this.fQuery ?? "";
 		}

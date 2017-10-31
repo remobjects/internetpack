@@ -8,8 +8,8 @@ namespace RemObjects.InternetPack.Http
 	[Serializable]
 	public class HttpRequestInvalidException : Exception
 	{
-	    #if !cooper
-    	[Obsolete("Provide error code using a System.Net.HttpStatusCode value")]
+		#if !cooper
+		[Obsolete("Provide error code using a System.Net.HttpStatusCode value")]
 		public HttpRequestInvalidException(Int32 errorCode, String errorMessage)
 			: this((HttpStatusCode)errorCode, errorMessage)
 		{
@@ -20,7 +20,7 @@ namespace RemObjects.InternetPack.Http
 			: this((HttpStatusCode)errorCode, errorMessage, innerException)
 		{
 		}
-        #endif
+		#endif
 
 		public HttpRequestInvalidException(HttpStatusCode errorCode, String errorMessage)
 			: this(errorCode, errorMessage, null)

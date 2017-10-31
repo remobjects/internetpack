@@ -105,7 +105,7 @@ namespace RemObjects.InternetPack
 
 			public void Clear()
 			{
-                fValues.RemoveAll();
+				fValues.RemoveAll();
 			}
 
 			public void Remove(String name)
@@ -291,10 +291,10 @@ namespace RemObjects.InternetPack
 			}
 
 			#if echoes
-            public override String ToString()
-            #else
-            public String ToString()
-            #endif
+			public override String ToString()
+			#else
+			public String ToString()
+			#endif
 			{
 				StringBuilder lResult = new StringBuilder();
 				Boolean lFirst = true;

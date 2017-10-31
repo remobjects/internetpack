@@ -178,11 +178,8 @@ namespace RemObjects.InternetPack.Ftp
 			return lResult;
 		}
 
-		#if !cooper
+		[ToString]
 		public override String ToString()
-		#else
-		public String ToString()
-		#endif
 		{
 			Char[] lRights = new Char[] { 'd', 'r', 'w', 'x', 'r', 'w', 'x', 'r', 'w', 'x' };
 
@@ -565,9 +562,9 @@ namespace RemObjects.InternetPack.Ftp
 				catch (IndexOutOfRangeException)
 				#else
 				catch (RTLException)
-                #endif
+				#endif
 				{
-				}				
+				}
 				catch (FormatException)
 				{
 				}
@@ -582,21 +579,18 @@ namespace RemObjects.InternetPack.Ftp
 			}
 		}
 
-  		#if !echoes
-        public ISequence<FtpListingItem> GetSequence()
+		  #if !echoes
+		public ISequence<FtpListingItem> GetSequence()
 		{
 			foreach(FtpListingItem lItem in base.fList)
 			{
 				yield return lItem;
 			}
 		}
-        #endif
-
-		#if !cooper
-		public override String ToString()
-		#else
-		public String ToString()
 		#endif
+
+		[ToString]
+		public override String ToString()
 		{
 			StringBuilder lResult = new StringBuilder();
 

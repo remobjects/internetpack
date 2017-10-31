@@ -13,50 +13,50 @@
 	//[ComVisibleAttribute(true)]
 	public /*final*/ class Timer : MarshalByRefObject, IDisposable
 	{
-        private RemObjects.Elements.RTL.Timer fTimer;
+		private RemObjects.Elements.RTL.Timer fTimer;
 
-        private void SetupTimer(Int32 dueTime, Int32 period)
-        {
-            if (dueTime != Timeout.Infinite)
-            {
-                if ((period == 0) || (period == Timeout.Infinite))
-                {
-                    fTimer.Repeat = false;
-                    fTimer.Interval = dueTime;
-                }
-                else
-                {
-                    fTimer.Repeat = true;
-                    fTimer.Interval = period;
-                }
-                fTimer.Start();
-            }
-            else
-                fTimer.Stop();
-        }
-        
-        public Timer(TimerCallback callback, Object state, Int32 dueTime, Int32 period) 
-        {
-            fTimer = new RemObjects.Elements.RTL.Timer();
-            fTimer.Data = state;
-            fTimer.Elapsed = (Data) => callback(Data);
-            SetupTimer(dueTime, period);
-        }   
-     
-		public Boolean Change(Int32 dueTime, Int32 period) 
-        {
-            if (fTimer.Enabled)
-                fTimer.Stop();
-            
-            SetupTimer(dueTime, period);
-            return true;
-        }
+		private void SetupTimer(Int32 dueTime, Int32 period)
+		{
+			if (dueTime != Timeout.Infinite)
+			{
+				if ((period == 0) || (period == Timeout.Infinite))
+				{
+					fTimer.Repeat = false;
+					fTimer.Interval = dueTime;
+				}
+				else
+				{
+					fTimer.Repeat = true;
+					fTimer.Interval = period;
+				}
+				fTimer.Start();
+			}
+			else
+				fTimer.Stop();
+		}
 
-        public void Dispose()
-        {
-            if (fTimer.Enabled)
-                fTimer.Stop();
-        }
+		public Timer(TimerCallback callback, Object state, Int32 dueTime, Int32 period)
+		{
+			fTimer = new RemObjects.Elements.RTL.Timer();
+			fTimer.Data = state;
+			fTimer.Elapsed = (Data) => callback(Data);
+			SetupTimer(dueTime, period);
+		}
+
+		public Boolean Change(Int32 dueTime, Int32 period)
+		{
+			if (fTimer.Enabled)
+				fTimer.Stop();
+
+			SetupTimer(dueTime, period);
+			return true;
+		}
+
+		public void Dispose()
+		{
+			if (fTimer.Enabled)
+				fTimer.Stop();
+		}
 	}
 	#if !ECHOES
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/4.0/mscorlib.dll
@@ -68,33 +68,33 @@
 		public abstract Boolean WaitOne();
 	}
 
-    public class EventWaitHandle: WaitHandle
-    {
-        private Monitor fHandle;
-        
-        public EventWaitHandle()
-        {
-            fHandle = new Monitor();
-        }
+	public class EventWaitHandle: WaitHandle
+	{
+		private Monitor fHandle;
 
-        public override Boolean WaitOne()
-        {
-            fHandle.Lock();
-            return true;
-        }
+		public EventWaitHandle()
+		{
+			fHandle = new Monitor();
+		}
 
-        public Boolean Set()
-        {
-            fHandle.Unlock();
-            return true;
-        }
-        
-        #if !cooper
-        public new void Dispose()
-        {
+		public override Boolean WaitOne()
+		{
+			fHandle.Lock();
+			return true;
+		}
 
-        }
-        #endif
-    }
+		public Boolean Set()
+		{
+			fHandle.Unlock();
+			return true;
+		}
+
+		#if !cooper
+		public new void Dispose()
+		{
+
+		}
+		#endif
+	}
 	#endif
 }

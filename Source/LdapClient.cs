@@ -360,10 +360,10 @@ namespace RemObjects.InternetPack.Ldap
 			try
 			{
 				#if echoes
-                return Dns.DnsLookup.ReverseResolve(lAddress);
-                #else             
-                throw new LdapException("Not implemented");
-                #endif
+				return Dns.DnsLookup.ReverseResolve(lAddress);
+				#else
+				throw new LdapException("Not implemented");
+				#endif
 			}
 			catch (Exception)
 			{
@@ -673,9 +673,9 @@ namespace RemObjects.InternetPack.Ldap
 		}
 	}
 
-	public class LdapAttributes 
+	public class LdapAttributes
 	{
-        private List<LdapAttribute> fData;
+		private List<LdapAttribute> fData;
 
 		public LdapAttribute this[Int32 index]
 		{
@@ -713,13 +713,13 @@ namespace RemObjects.InternetPack.Ldap
 			return lAttribute.SingleStringValue;
 		}
 
-        public void Add(LdapAttribute anAttribute)
-        {
-            fData.Add(anAttribute);
-        }
+		public void Add(LdapAttribute anAttribute)
+		{
+			fData.Add(anAttribute);
+		}
 
-        public ISequence<LdapAttribute> GetSequence()
-		{			
+		public ISequence<LdapAttribute> GetSequence()
+		{
 			foreach(LdapAttribute lItem in fData)
 			{
 				yield return lItem;
@@ -766,11 +766,11 @@ namespace RemObjects.InternetPack.Ldap
 	public class LdapSearchResults
 	{
 		private List<LdapObject> fData;
-        
-        public LdapSearchResults()
+
+		public LdapSearchResults()
 		{
 			this.fReferals = new List<String>();
-            fData = new List<LdapObject>();
+			fData = new List<LdapObject>();
 		}
 
 		private List<String> fReferals;
@@ -782,13 +782,13 @@ namespace RemObjects.InternetPack.Ldap
 			}
 		}
 
-        public void Add(LdapObject aObject)
-        {
-            fData.Add(aObject);
-        }
+		public void Add(LdapObject aObject)
+		{
+			fData.Add(aObject);
+		}
 
-        public ISequence<LdapObject> GetSequence()
-		{			
+		public ISequence<LdapObject> GetSequence()
+		{
 			foreach(LdapObject lItem in fData)
 			{
 				yield return lItem;
@@ -1212,18 +1212,18 @@ namespace RemObjects.InternetPack.Ldap
 		}
 
 		#if echoes
-        public event EventHandler<LdapEventArgs> BeforeConnect;
-        
+		public event EventHandler<LdapEventArgs> BeforeConnect;
+
 		public event EventHandler<LdapEventArgs> AfterConnect;
 
 		public event EventHandler<LdapEventArgs> Disconnected;
-        #else
-        public event EventHandler BeforeConnect;
-        
+		#else
+		public event EventHandler BeforeConnect;
+
 		public event EventHandler AfterConnect;
 
 		public event EventHandler Disconnected;
-        #endif
+		#endif
 	}
 
 	public class LdapEventArgs : EventArgs

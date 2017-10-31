@@ -34,21 +34,21 @@ namespace RemObjects.InternetPack.Http
 		}
 	}
 
-    public static class UrlParser
-    {
-         public Url UrlWithString(String aUrl)
-         {
-             var lUrl = Url.UrlWithString(aUrl);
-             
-             if (lUrl.Port == null || lUrl.Port == 0)
-             {
-                 var lPort = KnownProtocols.GetProtocolDefaultPort(lUrl.Scheme);
-                 return Url.UrlWithComponents(lUrl.Scheme, lUrl.Host, lPort, lUrl.Path, lUrl.QueryString, lUrl.Fragment, lUrl.User);
-             }
-             else
-                 return lUrl;
-         }
-    }
+	public static class UrlParser
+	{
+		 public Url UrlWithString(String aUrl)
+		 {
+			 var lUrl = Url.UrlWithString(aUrl);
+
+			 if (lUrl.Port == null || lUrl.Port == 0)
+			 {
+				 var lPort = KnownProtocols.GetProtocolDefaultPort(lUrl.Scheme);
+				 return Url.UrlWithComponents(lUrl.Scheme, lUrl.Host, lPort, lUrl.Path, lUrl.QueryString, lUrl.Fragment, lUrl.User);
+			 }
+			 else
+				 return lUrl;
+		 }
+	}
 
 	/*
 	#if FULLFRAMEWORK

@@ -227,57 +227,57 @@ namespace RemObjects.InternetPack.Ftp
 				this.List();
 		}
 
-        private static String[] ParsePasiveResponse(String response)
-        {
-            var lPos = response.IndexOf('(');
-            if (lPos >= 0)
-            {
-                // this is the standard: 227 Entering Passive Mode (213,229,112,130,216,4)
-                var lEndPos = response.IndexOf(')');
-                if (lEndPos >= 0)
-                {
-                    var lString = response.Substring(lPos + 1, lEndPos - lPos - 1);
-                    var lGroups = lString.Split(',');
-                    var lResult = new String[lGroups.Count];
-                    for (int i = 0; i < lGroups.Count; i++)
-                    {
-                        lResult[i] = lGroups[i].Trim();
-                    }
-                    return lResult;
-                }
-            }
-            else
-            {
-                // non standard servers, looking for x1,x2,x3,x4,p1,p2
-                lPos = response.IndexOf(',');
-                if (lPos >= 0)
-                {
-                    var lGroups = response.Split(',');
-                    var lResult = new String[lGroups.Count];
-                    if (lGroups.Count > 0)
-                    {
-                        var lItem = lGroups[0].Trim();
-                        var lPointer = lItem.Length - 1;
-                        while((lPointer > 0) && (ord(lItem[lPointer]) >= ord('0') && (ord(lItem[lPointer]) <= ord('9'))))
-                            lPointer--;
-                        lResult[0] = lItem.Substring(lPointer + 1);
+		private static String[] ParsePasiveResponse(String response)
+		{
+			var lPos = response.IndexOf('(');
+			if (lPos >= 0)
+			{
+				// this is the standard: 227 Entering Passive Mode (213,229,112,130,216,4)
+				var lEndPos = response.IndexOf(')');
+				if (lEndPos >= 0)
+				{
+					var lString = response.Substring(lPos + 1, lEndPos - lPos - 1);
+					var lGroups = lString.Split(',');
+					var lResult = new String[lGroups.Count];
+					for (int i = 0; i < lGroups.Count; i++)
+					{
+						lResult[i] = lGroups[i].Trim();
+					}
+					return lResult;
+				}
+			}
+			else
+			{
+				// non standard servers, looking for x1,x2,x3,x4,p1,p2
+				lPos = response.IndexOf(',');
+				if (lPos >= 0)
+				{
+					var lGroups = response.Split(',');
+					var lResult = new String[lGroups.Count];
+					if (lGroups.Count > 0)
+					{
+						var lItem = lGroups[0].Trim();
+						var lPointer = lItem.Length - 1;
+						while((lPointer > 0) && (ord(lItem[lPointer]) >= ord('0') && (ord(lItem[lPointer]) <= ord('9'))))
+							lPointer--;
+						lResult[0] = lItem.Substring(lPointer + 1);
 
-                        lItem = lGroups[lGroups.Count - 1];
-                        lPointer = 0;
-                        while((lPointer < lItem.Length) && (ord(lItem[lPointer]) >= ord('0') && (ord(lItem[lPointer]) <= ord('9'))))
-                            lPointer++;
-                        lResult[lResult.Count() - 1] = lItem.Substring(0, lPointer);  
+						lItem = lGroups[lGroups.Count - 1];
+						lPointer = 0;
+						while((lPointer < lItem.Length) && (ord(lItem[lPointer]) >= ord('0') && (ord(lItem[lPointer]) <= ord('9'))))
+							lPointer++;
+						lResult[lResult.Count() - 1] = lItem.Substring(0, lPointer);
 
-                        for(int i = 1; i < lGroups.Count - 1; i++)
-                            lResult[i] = lGroups[i].Trim();
+						for(int i = 1; i < lGroups.Count - 1; i++)
+							lResult[i] = lGroups[i].Trim();
 
-                        return lResult;
-                    }
-                }               
-            }
-            
-            throw new Exception("Error processing PASV command");
-        }
+						return lResult;
+					}
+				}
+			}
+
+			throw new Exception("Error processing PASV command");
+		}
 
 		public void StartPassiveConnection()
 		{
@@ -285,11 +285,11 @@ namespace RemObjects.InternetPack.Ftp
 				throw new CmdResponseException("Could not set passive mode", this.LastResponseNo, this.LastResponseText);
 
 			//Match lMatch = Regex.Match(LastResponseText, @"(?<A1>\d+),(?<A2>\d+),(?<A3>\d+),(?<A4>\d+),(?<P1>\d+),(?<P2>\d+)");
-			//GroupCollection lGroups = lMatch.Groups;            
+			//GroupCollection lGroups = lMatch.Groups;
 
 			//this.fDataAddress = IPAddress.Parse(String.Format("{0}.{1}.{2}.{3}", lGroups["A1"].Value, lGroups["A2"].Value, lGroups["A3"].Value, lGroups["A4"].Value));
-            var lGroups = ParsePasiveResponse(LastResponseText);
-            this.fDataAddress = IPAddress.Parse(String.Format("{0}.{1}.{2}.{3}", lGroups[0], lGroups[1], lGroups[2], lGroups[3]));
+			var lGroups = ParsePasiveResponse(LastResponseText);
+			this.fDataAddress = IPAddress.Parse(String.Format("{0}.{1}.{2}.{3}", lGroups[0], lGroups[1], lGroups[2], lGroups[3]));
 			this.fDataPort = (Convert.ToByte(lGroups[4]) * 256) + Convert.ToByte(lGroups[5]);
 
 			this.SendLog(TransferDirection.None, "Connecting to {0}:{1}", this.fDataAddress, this.fDataPort);
@@ -332,12 +332,12 @@ namespace RemObjects.InternetPack.Ftp
 
 			Int32 lPort = ((IPEndPoint)this.fDataServer.Binding.ListeningSocket.LocalEndPoint).Port;
 			#if echoes
-            String lPortCommand = String.Format("PORT {0},{1},{2},{3},{4},{5}", lAddress[0], lAddress[1], lAddress[2], lAddress[3], unchecked((Byte)(lPort >> 8)), unchecked((Byte)lPort));
+			String lPortCommand = String.Format("PORT {0},{1},{2},{3},{4},{5}", lAddress[0], lAddress[1], lAddress[2], lAddress[3], unchecked((Byte)(lPort >> 8)), unchecked((Byte)lPort));
 			#else
-            String lPortCommand = String.Format("PORT {0},{1},{2},{3},{4},{5}", lAddress[0], lAddress[1], lAddress[2], lAddress[3], (Byte)(lPort >> 8), (Byte)lPort);
-            #endif
+			String lPortCommand = String.Format("PORT {0},{1},{2},{3},{4},{5}", lAddress[0], lAddress[1], lAddress[2], lAddress[3], (Byte)(lPort >> 8), (Byte)lPort);
+			#endif
 
-            if (!SendAndWaitForResponse(lPortCommand, 200))
+			if (!SendAndWaitForResponse(lPortCommand, 200))
 				throw new CmdResponseException("Error in PORT command", LastResponseNo, LastResponseText);
 		}
 

@@ -25,8 +25,8 @@
 	//[ComVisibleAttribute(true)]
 	public delegate void EventHandler(Object sender, EventArgs e);
 
-    #if cooper
-	public interface SerializableAttribute : java.lang.annotation.Annotation {} 
+	#if cooper
+	public interface SerializableAttribute : java.lang.annotation.Annotation {}
 	public interface BrowsableAttribute : java.lang.annotation.Annotation {
 		bool Value();
 	}
@@ -34,9 +34,9 @@
 		string Value();
 	}
 	public interface DefaultValueAttribute : java.lang.annotation.Annotation {
-		object Value(); 
+		object Value();
 	}
-    #else
+	#else
 	public class SerializableAttribute : Attribute {}
 	public class BrowsableAttribute : Attribute {
 		public BrowsableAttribute(bool ignore) {}
@@ -47,28 +47,28 @@
 	public class DefaultValueAttribute : Attribute {
 		public DefaultValueAttribute(object ignore) {}
 	}
-    #endif
+	#endif
 
 	public class ArgumentOutOfRangeException : RTLException {
 		public ArgumentOutOfRangeException() : base("Argument out of range") {}
 	}
 	public class ObjectDisposedException : Exception {}
 
-    #if toffee || cooper
-    public interface IDisposable
-    {
-	    void Dispose();
-    }
-    
-    public static class Array : Object
-    {
-	    public static void Copy(byte[] aSource, Int32 aSourceOffset, byte[] aDest, Int32 aDestOffset, Int32 aCount)
-        {
-            for (int i = 0; i < aCount; i++)
-                aDest[aDestOffset + i] = aSource[aSourceOffset + i];
-        }
-    }
-    #endif
+	#if toffee || cooper
+	public interface IDisposable
+	{
+		void Dispose();
+	}
+
+	public static class Array : Object
+	{
+		public static void Copy(byte[] aSource, Int32 aSourceOffset, byte[] aDest, Int32 aDestOffset, Int32 aCount)
+		{
+			for (int i = 0; i < aCount; i++)
+				aDest[aDestOffset + i] = aSource[aSourceOffset + i];
+		}
+	}
+	#endif
 
 	#endif
 
@@ -76,14 +76,14 @@
 	public class Monitor : Object {}
 	#endif
 
-    #if island
-    public class Exception : RemObjects.Elements.System.Exception
-    {
+	#if island
+	public class Exception : RemObjects.Elements.System.Exception
+	{
 		public Exception() : base("Exception happened")
 		{
 		}
 
-        public Exception(String message) : base(message)
+		public Exception(String message) : base(message)
 		{
 		}
 
@@ -91,38 +91,38 @@
 			: base(message + ' ' + innerException.ToString())
 		{
 		}
-    }
-    #endif
+	}
+	#endif
 
-    #if toffee
-    public class Exception : Foundation.NSException
-    {
+	#if toffee
+	public class Exception : Foundation.NSException
+	{
 		public Exception()
 		{
-            initWithName("Exception") reason("unknown") userInfo(null);
+			initWithName("Exception") reason("unknown") userInfo(null);
 		}
 
-        public Exception(String message)
+		public Exception(String message)
 		{
-            initWithName("Exception") reason(message) userInfo(null);
+			initWithName("Exception") reason(message) userInfo(null);
 		}
 
 		public Exception(String message, Exception innerException)
 		{
-            initWithName("Exception") reason(message + ' ' + innerException.ToString()) userInfo(null);
+			initWithName("Exception") reason(message + ' ' + innerException.ToString()) userInfo(null);
 		}
-    }
-    #endif
+	}
+	#endif
 
-    #if !echoes
-    public class ArrayList
-    {
-        protected List<Object> fList;
+	#if !echoes
+	public class ArrayList
+	{
+		protected List<Object> fList;
 
-        public ArrayList()
-        {
-            fList = new List<Object>();
-        }
+		public ArrayList()
+		{
+			fList = new List<Object>();
+		}
 
 		public Object this[Int32 index]
 		{
@@ -132,28 +132,28 @@
 			}
 		}
 
-        public void Add(Object item)
-        {
-            fList.Add(item);
-        }
+		public void Add(Object item)
+		{
+			fList.Add(item);
+		}
 
-        public void Insert(Int32 pos, Object item)
-        {
-            fList.Insert(pos, item);
-        }
+		public void Insert(Int32 pos, Object item)
+		{
+			fList.Insert(pos, item);
+		}
 
-        public void Clear()
-        {
-            fList.RemoveAll();
-        }
+		public void Clear()
+		{
+			fList.RemoveAll();
+		}
 
-        public Int32 Count
-        {
-            get
-            {
-                return fList.Count;
-            }
-        }
-    }
-    #endif
+		public Int32 Count
+		{
+			get
+			{
+				return fList.Count;
+			}
+		}
+	}
+	#endif
 }

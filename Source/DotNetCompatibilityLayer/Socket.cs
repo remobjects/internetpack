@@ -1,849 +1,854 @@
 ﻿namespace RemObjects.InternetPack
 {
-    #if !ECHOES
+	#if !ECHOES
 	public class Socket : Object, IDisposable
 	{
 		#if cooper
-        private java.net.Socket fHandle;
-        private java.net.ServerSocket fServerHandle;
-        private java.net.DatagramSocket fDgramHandle;
-        private bool fIsServer = false;
-        private java.io.InputStream fSocketInput;
-        private java.io.OutputStream fSocketOutput;
-        private java.net.InetSocketAddress fSocketAddress;
-        #elif posix || toffee
-        private int fHandle; 
-        public const Int32 FIONREAD = 1074004095;       
-        #else
-        private rtl.SOCKET fHandle;
-        #endif
-                            
-        private List<Thread> fPendingAsyncOps;
-        #if cooper || toffee
-        private readonly Object fMonitor = new Object();
-        #else
-        private readonly Monitor fMonitor = new Monitor();
-        #endif
+		private java.net.Socket fHandle;
+		private java.net.ServerSocket fServerHandle;
+		private java.net.DatagramSocket fDgramHandle;
+		private bool fIsServer = false;
+		private java.io.InputStream fSocketInput;
+		private java.io.OutputStream fSocketOutput;
+		private java.net.InetSocketAddress fSocketAddress;
+		#elif posix || toffee
+		private int fHandle;
+		public const Int32 FIONREAD = 1074004095;
+		#else
+		private rtl.SOCKET fHandle;
+		#endif
 
-        private void AddAsyncOp(Thread op)
-        {
-            lock(this.fMonitor)
-            {
-                if (fPendingAsyncOps == null)
-                    fPendingAsyncOps = new List<Thread>();
+		private List<Thread> fPendingAsyncOps;
+		#if cooper || toffee
+		private readonly Object fMonitor = new Object();
+		#else
+		private readonly Monitor fMonitor = new Monitor();
+		#endif
 
-                fPendingAsyncOps.Add(op);
-            }
-        }
+		private void AddAsyncOp(Thread op)
+		{
+			lock(this.fMonitor)
+			{
+				if (fPendingAsyncOps == null)
+					fPendingAsyncOps = new List<Thread>();
 
-        private void ClearAsyncOps()
-        {
-            foreach(var lThread in fPendingAsyncOps)
-            {
-                if (lThread.IsAlive)
-                {
-                    lThread.Abort();
-                }
-            }
-            
-            lock(fMonitor);
-            {
-                fPendingAsyncOps.RemoveAll();
-            }
-        }
+				fPendingAsyncOps.Add(op);
+			}
+		}
 
-        private void RemoveOp(Thread op)
-        {
-            lock(fMonitor)
-            {
-                fPendingAsyncOps.Remove(op);
-            }
-        }
-        
-        public Boolean Connected { get; set; }
+		private void ClearAsyncOps()
+		{
+			foreach(var lThread in fPendingAsyncOps)
+			{
+				if (lThread.IsAlive)
+				{
+					lThread.Abort();
+				}
+			}
 
-		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)        
-        {
-            AddressFamily = addressFamily;
-            SocketType = socketType;
-            ProtocolType = protocolType;
-            #if cooper
-            if ((AddressFamily != AddressFamily.InterNetwork) && (AddressFamily != AddressFamily.InterNetworkV6))
-                throw new Exception("Address family not supported on current platform");
+			lock(fMonitor);
+			{
+				fPendingAsyncOps.RemoveAll();
+			}
+		}
 
-            switch(SocketType)
-            {
-                case SocketType.Stream:
-                    fHandle = new java.net.Socket();
-                    break;
+		private void RemoveOp(Thread op)
+		{
+			lock(fMonitor)
+			{
+				fPendingAsyncOps.Remove(op);
+			}
+		}
 
-                case SocketType.Dgram:
-                    fDgramHandle = new java.net.DatagramSocket();
-                    break;
+		public Boolean Connected { get; set; }
 
-                default:
-                    throw new Exception("Socket type not supported on current platform");
-            }
-            #else
-            #if posix || toffee
-            fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.Int32_t)socketType, (rtl.Int32_t)protocolType);
-            #else
-            fHandle = rtl.__Global.socket((rtl.Int)addressFamily, (rtl.Int)socketType, (rtl.Int)protocolType);
-            #endif
+		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
+		{
+			AddressFamily = addressFamily;
+			SocketType = socketType;
+			ProtocolType = protocolType;
+			#if cooper
+			if ((AddressFamily != AddressFamily.InterNetwork) && (AddressFamily != AddressFamily.InterNetworkV6))
+				throw new Exception("Address family not supported on current platform");
 
-            if (fHandle < 0)
-                throw new Exception("Error creating socket");
-            #endif
-        }
+			switch(SocketType)
+			{
+				case SocketType.Stream:
+					fHandle = new java.net.Socket();
+					break;
 
-        #if cooper
-        private Socket(java.net.Socket handle)
-        #elif posix || toffee
-        private Socket(int handle)
-        #else
-        private Socket(rtl.SOCKET handle)
-        #endif
-        {
-            fHandle = handle;
-            #if cooper
-            fSocketInput = fHandle.getInputStream();
-            fSocketOutput = fHandle.getOutputStream();
-            #endif
-        }
+				case SocketType.Dgram:
+					fDgramHandle = new java.net.DatagramSocket();
+					break;
 
-        static Socket()
-        {
-            #if windows
-            rtl.WSADATA data;
-            rtl.WSAStartup(rtl.WINSOCK_VERSION, &data);
-            #endif
-        }
-                
-        public Socket Accept()
-        {            
-            #if cooper
-            var lSocket = fServerHandle.accept();
-            #else
-            #if posix
-            rtl.__SOCKADDR_ARG lSockAddr;
-            lSockAddr.__sockaddr__ = null;
-            var lSocket = rtl.accept(fHandle, lSockAddr, null);
-            if (lSocket == -1)
-            #else
-            var lSocket = rtl.accept(fHandle, null, null);
-            if (lSocket < 0)
-            #endif
-                throw new Exception("Error calling accept function");
-            #endif
+				default:
+					throw new Exception("Socket type not supported on current platform");
+			}
+			#else
+			#if posix || toffee
+			fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.Int32_t)socketType, (rtl.Int32_t)protocolType);
+			#else
+			fHandle = rtl.__Global.socket((rtl.Int)addressFamily, (rtl.Int)socketType, (rtl.Int)protocolType);
+			#endif
 
-            var lNewSocket = new Socket(lSocket);
-            lNewSocket.Connected = true;
-            return lNewSocket;
-        }
+			if (fHandle < 0)
+				throw new Exception("Error creating socket");
+			#endif
+		}
+
+		#if cooper
+		private Socket(java.net.Socket handle)
+		#elif posix || toffee
+		private Socket(int handle)
+		#else
+		private Socket(rtl.SOCKET handle)
+		#endif
+		{
+			fHandle = handle;
+			#if cooper
+			fSocketInput = fHandle.getInputStream();
+			fSocketOutput = fHandle.getOutputStream();
+			#endif
+		}
+
+		static Socket()
+		{
+			#if windows
+			rtl.WSADATA data;
+			rtl.WSAStartup(rtl.WINSOCK_VERSION, &data);
+			#endif
+		}
+
+		public Socket Accept()
+		{
+			#if cooper
+			var lSocket = fServerHandle.accept();
+			#else
+			#if posix
+			rtl.__SOCKADDR_ARG lSockAddr;
+			lSockAddr.__sockaddr__ = null;
+			var lSocket = rtl.accept(fHandle, lSockAddr, null);
+			if (lSocket == -1)
+			#else
+			var lSocket = rtl.accept(fHandle, null, null);
+			if (lSocket < 0)
+			#endif
+				throw new Exception("Error calling accept function");
+			#endif
+
+			var lNewSocket = new Socket(lSocket);
+			lNewSocket.Connected = true;
+			return lNewSocket;
+		}
 
 		public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state)
-        {
-            var lResult = new AsyncResult(state);
-            lResult.AcceptSocket = acceptSocket;
-            lResult.NBytes = receiveSize;
+		{
+			var lResult = new AsyncResult(state);
+			lResult.AcceptSocket = acceptSocket;
+			lResult.NBytes = receiveSize;
 
-            var lThread = new Thread(() =>
-            {
-                lResult.AsyncWaitHandle.WaitOne();
-                try
-                {
-                    if (lResult.AcceptSocket != null)
-                        lResult.AcceptedSocket = acceptSocket.Accept();
-                    else
-                        lResult.AcceptedSocket = Accept();
+			var lThread = new Thread(() =>
+			{
+				lResult.AsyncWaitHandle.WaitOne();
+				try
+				{
+					if (lResult.AcceptSocket != null)
+						lResult.AcceptedSocket = acceptSocket.Accept();
+					else
+						lResult.AcceptedSocket = Accept();
 
-                    if (receiveSize < 0)
-                        throw new Exception("Bad receiveSize value:" + receiveSize.ToString() + " in BeginAccept call");
- 
-                    if (receiveSize > 0)
-                    {
-                        lResult.Buffer = new byte[receiveSize];
-                        lResult.NBytes = Receive(lResult.Buffer, receiveSize, SocketFlags.None);
-                    }                                                           
-                }
-                catch(Exception lCurrent)
-                {
-                    lResult.DelayedException = lCurrent;
-                }
-                
-                RemoveOp((Thread)lResult.Data);
-                lResult.IsCompleted = true;
-                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
-                callback(lResult);
-            });
-            AddAsyncOp(lThread);
-            lResult.Data = lThread;
-            lThread.Start();
+					if (receiveSize < 0)
+						throw new Exception("Bad receiveSize value:" + receiveSize.ToString() + " in BeginAccept call");
 
-            return lResult;
-        }
+					if (receiveSize > 0)
+					{
+						lResult.Buffer = new byte[receiveSize];
+						lResult.NBytes = Receive(lResult.Buffer, receiveSize, SocketFlags.None);
+					}
+				}
+				catch(Exception lCurrent)
+				{
+					lResult.DelayedException = lCurrent;
+				}
 
-		public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state)        
-        {
-            return BeginAccept(null, receiveSize, callback, state);
-        }
-		
-        public IAsyncResult BeginAccept(AsyncCallback callback, Object state)
-        {
-            return BeginAccept(null, 0, callback, state);
-        }
+				RemoveOp((Thread)lResult.Data);
+				lResult.IsCompleted = true;
+				(lResult.AsyncWaitHandle as EventWaitHandle).Set();
+				callback(lResult);
+			});
+			AddAsyncOp(lThread);
+			lResult.Data = lThread;
+			lThread.Start();
 
-   		public Socket EndAccept(out Byte[] buffer, out Int32 bytesTransferred, IAsyncResult asyncResult)
-        {
-            AsyncResult lResult = asyncResult as AsyncResult;
+			return lResult;
+		}
 
-            CheckAsyncTerminate(asyncResult);
-            CheckAsyncException(asyncResult);
-            
-            buffer = lResult.Buffer;
-            bytesTransferred = lResult.NBytes;
+		public IAsyncResult BeginAccept(Int32 receiveSize, AsyncCallback callback, Object state)
+		{
+			return BeginAccept(null, receiveSize, callback, state);
+		}
 
-            return lResult.AcceptedSocket;
-        }
+		public IAsyncResult BeginAccept(AsyncCallback callback, Object state)
+		{
+			return BeginAccept(null, 0, callback, state);
+		}
 
-		public Socket EndAccept(out Byte[] buffer, IAsyncResult asyncResult)        
-        {
-            int lBytes;
-            return EndAccept(out buffer, out lBytes, asyncResult);
-        }
+		   public Socket EndAccept(out Byte[] buffer, out Int32 bytesTransferred, IAsyncResult asyncResult)
+		{
+			AsyncResult lResult = asyncResult as AsyncResult;
+
+			CheckAsyncTerminate(asyncResult);
+			CheckAsyncException(asyncResult);
+
+			buffer = lResult.Buffer;
+			bytesTransferred = lResult.NBytes;
+
+			return lResult.AcceptedSocket;
+		}
+
+		public Socket EndAccept(out Byte[] buffer, IAsyncResult asyncResult)
+		{
+			int lBytes;
+			return EndAccept(out buffer, out lBytes, asyncResult);
+		}
 
 		public Socket EndAccept(IAsyncResult result)
-        {
-            int lBytes;
-            byte [] lBuffer;
+		{
+			int lBytes;
+			byte [] lBuffer;
 
-            return EndAccept(out lBuffer, out lBytes, result);
-        }
-		        
-        public void Bind(EndPoint local_end)       
-        {
-            var lEndPoint = (IPEndPoint)local_end;
-            #if cooper
-            var lAddress = java.net.InetAddress.getByAddress(lEndPoint.Address.GetAddressBytes());
-            fSocketAddress = new java.net.InetSocketAddress(lAddress, lEndPoint.Port);
-            fIsServer = true;
-            fServerHandle = new java.net.ServerSocket();            
-            #else
-            void *lPointer;
-            int lSize;
-            #if posix || toffee
-            rtl.__struct_sockaddr_in lIPv4;
-            rtl.__struct_sockaddr_in6 lIPv6;
-            #if posix
-            rtl.__CONST_SOCKADDR_ARG lSockAddr;
-            #endif
-            #else
-            rtl.SOCKADDR_IN lIPv4;
-            sockaddr_in6 lIPv6;
-            #endif
-            
-            IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
-            #if posix
-            lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
-            lSockAddr.__sockaddr_in__ = (rtl.__struct_sockaddr_in *) lPointer;
-            if (rtl.__Global.bind(fHandle, lSockAddr, lSize) != 0)
-            #elif toffee
-            if (rtl.bind(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
-            #elif island && windows
-            if (rtl.bind(fHandle, lPointer, lSize) != 0)
-            #endif
-                throw new Exception("Error calling bind function");
-            #endif
-        }
+			return EndAccept(out lBuffer, out lBytes, result);
+		}
 
-        #if toffee
-        private int htons(int port)
-        {
-            return (__uint16_t)((((__uint16_t)(port) & 0xff00) >> 8) | (((__uint16_t)(port) & 0x00ff) << 8));
-        }
-        #endif
-        
-        #if !cooper
-        #if posix || toffee
-        private void IPEndPointToNative(IPEndPoint endPoint, out rtl.__struct_sockaddr_in lIPv4, out rtl.__struct_sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
-        #else
-        private void IPEndPointToNative(IPEndPoint endPoint, out rtl.SOCKADDR_IN lIPv4, out sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
-        #endif
-        {
-            switch (endPoint.AddressFamily)
-            {
-                case AddressFamily.InterNetworkV6:                    
-                    lIPv6.sin6_family = AddressFamily.InterNetworkV6;
-                    #if toffee
-                    lIPv6.sin6_port = htons(endPoint.Port);
-                    #else
-                    lIPv6.sin6_port = rtl.htons(endPoint.Port);
-                    #endif
-                    lIPv6.sin6_scope_id = endPoint.Address.ScopeId;
-                    var lBytes = endPoint.Address.GetAddressBytes();                    
-                    for (int i = 0; i < 16; i++)
-                        #if toffee
-                        lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
-                        #elif posix
-                        lIPv6.sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
-                        #else
-                        lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
-                        #endif
-                    ipPointer = &lIPv6;
-                    #if posix || toffee
-                    ipSize = sizeof(rtl.__struct_sockaddr_in6);
-                    #else
-                    ipSize = sizeof(sockaddr_in6);
-                    #endif
-                    break;
+		public void Bind(EndPoint local_end)
+		{
+			var lEndPoint = (IPEndPoint)local_end;
+			#if cooper
+			var lAddress = java.net.InetAddress.getByAddress(lEndPoint.Address.GetAddressBytes());
+			fSocketAddress = new java.net.InetSocketAddress(lAddress, lEndPoint.Port);
+			fIsServer = true;
+			fServerHandle = new java.net.ServerSocket();
+			#else
+			void *lPointer;
+			int lSize;
+			#if posix || toffee
+			rtl.__struct_sockaddr_in lIPv4;
+			rtl.__struct_sockaddr_in6 lIPv6;
+			#if posix
+			rtl.__CONST_SOCKADDR_ARG lSockAddr;
+			#endif
+			#else
+			rtl.SOCKADDR_IN lIPv4;
+			sockaddr_in6 lIPv6;
+			#endif
 
-                default:
-                    lIPv4.sin_family = AddressFamily.InterNetwork;
-                    #if toffee
-                    lIPv4.sin_port = htons(endPoint.Port);
-                    #else
-                    lIPv4.sin_port = rtl.htons(endPoint.Port);
-                    #endif
+			IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
+			#if posix
+			lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
+			lSockAddr.__sockaddr_in__ = (rtl.__struct_sockaddr_in *) lPointer;
+			if (rtl.__Global.bind(fHandle, lSockAddr, lSize) != 0)
+				throw new Exception("Error calling bind function");
+			#elif toffee
+			if (rtl.bind(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
+				throw new Exception("Error calling bind function");
+			#elif island && windows
+			if (rtl.bind(fHandle, lPointer, lSize) != 0)
+				throw new Exception("Error calling bind function");
+			#else
+				throw new Exception("Error calling bind function");
+			#endif
+			#endif
+		}
 
-                    #if posix || toffee
-                    lIPv4.sin_addr.s_addr = endPoint.Address.Address;
-                    ipSize = sizeof(rtl.__struct_sockaddr_in);
-                    #else
-                    lIPv4.sin_addr.S_un.S_addr = endPoint.Address.Address;                    
-                    ipSize = sizeof(rtl.SOCKADDR_IN);
-                    #endif
-                    ipPointer = &lIPv4;
-                    break;
-            }            
-        }
-        #endif
+		#if toffee
+		private int htons(int port)
+		{
+			return (__uint16_t)((((__uint16_t)(port) & 0xff00) >> 8) | (((__uint16_t)(port) & 0x00ff) << 8));
+		}
+		#endif
+
+		#if !cooper
+		#if posix || toffee
+		private void IPEndPointToNative(IPEndPoint endPoint, out rtl.__struct_sockaddr_in lIPv4, out rtl.__struct_sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
+		#else
+		private void IPEndPointToNative(IPEndPoint endPoint, out rtl.SOCKADDR_IN lIPv4, out sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
+		#endif
+		{
+			switch (endPoint.AddressFamily)
+			{
+				case AddressFamily.InterNetworkV6:
+					lIPv6.sin6_family = AddressFamily.InterNetworkV6;
+					#if toffee
+					lIPv6.sin6_port = htons(endPoint.Port);
+					#else
+					lIPv6.sin6_port = rtl.htons(endPoint.Port);
+					#endif
+					lIPv6.sin6_scope_id = endPoint.Address.ScopeId;
+					var lBytes = endPoint.Address.GetAddressBytes();
+					for (int i = 0; i < 16; i++)
+						#if toffee
+						lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
+						#elif posix
+						lIPv6.sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
+						#else
+						lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
+						#endif
+					ipPointer = &lIPv6;
+					#if posix || toffee
+					ipSize = sizeof(rtl.__struct_sockaddr_in6);
+					#else
+					ipSize = sizeof(sockaddr_in6);
+					#endif
+					break;
+
+				default:
+					lIPv4.sin_family = AddressFamily.InterNetwork;
+					#if toffee
+					lIPv4.sin_port = htons(endPoint.Port);
+					#else
+					lIPv4.sin_port = rtl.htons(endPoint.Port);
+					#endif
+
+					#if posix || toffee
+					lIPv4.sin_addr.s_addr = endPoint.Address.Address;
+					ipSize = sizeof(rtl.__struct_sockaddr_in);
+					#else
+					lIPv4.sin_addr.S_un.S_addr = endPoint.Address.Address;
+					ipSize = sizeof(rtl.SOCKADDR_IN);
+					#endif
+					ipPointer = &lIPv4;
+					break;
+			}
+		}
+		#endif
 
 		public void Connect(EndPoint remoteEP)
-        {
-            var lEndPoint = (IPEndPoint)remoteEP;
-            #if cooper
-            var lAddress = java.net.InetAddress.getByAddress(lEndPoint.Address.GetAddressBytes());
-            fHandle = new java.net.Socket(lAddress, lEndPoint.Port);
-            fSocketInput = fHandle.getInputStream();
-            fSocketOutput = fHandle.getOutputStream();
-            #else
-            void *lPointer;
-            int lSize;
-            #if posix || toffee
-            rtl.__struct_sockaddr_in lIPv4;
-            rtl.__struct_sockaddr_in6 lIPv6;
-            #if posix
-            rtl.__CONST_SOCKADDR_ARG lSockAddr;
-            #else
-            rtl.__struct_sockaddr lSockAddr;
-            #endif
-            #else
-            rtl.SOCKADDR_IN lIPv4;
-            sockaddr_in6 lIPv6;
-            #endif
-            
+		{
+			var lEndPoint = (IPEndPoint)remoteEP;
+			#if cooper
+			var lAddress = java.net.InetAddress.getByAddress(lEndPoint.Address.GetAddressBytes());
+			fHandle = new java.net.Socket(lAddress, lEndPoint.Port);
+			fSocketInput = fHandle.getInputStream();
+			fSocketOutput = fHandle.getOutputStream();
+			#else
+			void *lPointer;
+			int lSize;
+			#if posix || toffee
+			rtl.__struct_sockaddr_in lIPv4;
+			rtl.__struct_sockaddr_in6 lIPv6;
+			#if posix
+			rtl.__CONST_SOCKADDR_ARG lSockAddr;
+			#else
+			rtl.__struct_sockaddr lSockAddr;
+			#endif
+			#else
+			rtl.SOCKADDR_IN lIPv4;
+			sockaddr_in6 lIPv6;
+			#endif
 
-            IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
-            #if posix
-            lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
-            if (rtl.connect(fHandle, lSockAddr, lSize) != 0)
-            #elif toffee
-            if (rtl.connect(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
-            #else
-            if (rtl.connect(fHandle, lPointer, lSize) != 0)
-            #endif
-                throw new Exception("Error connecting socket");
-            #endif
-            
-            Connected = true;
-        }
 
-		public void Connect(String host, Int32 port)        
-        {
-            var lAddress = IPAddress.Parse(host);
-            Connect(new IPEndPoint(lAddress, port));
-        }
+			IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
+			#if posix
+			lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
+			if (rtl.connect(fHandle, lSockAddr, lSize) != 0)
+			#elif toffee
+			if (rtl.connect(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
+			#else
+			if (rtl.connect(fHandle, lPointer, lSize) != 0)
+			#endif
+				throw new Exception("Error connecting socket");
+			#endif
+
+			Connected = true;
+		}
+
+		public void Connect(String host, Int32 port)
+		{
+			var lAddress = IPAddress.Parse(host);
+			Connect(new IPEndPoint(lAddress, port));
+		}
 
 		public void Connect(IPAddress[] addresses, Int32 port)
-        {
-            IPEndPoint lEndPoint;
-            Exception lEx = null;
-            foreach(IPAddress lAddress in addresses)
-            {
-                lEndPoint = new IPEndPoint(lAddress, port);
-                try
-                {
-                    Connect(lEndPoint);
-                    lEx = null;
-                    break;
-                }
-                catch(Exception lCurrent)
-                {
-                    lEx = lCurrent;
-                }
-            }
+		{
+			IPEndPoint lEndPoint;
+			Exception lEx = null;
+			foreach(IPAddress lAddress in addresses)
+			{
+				lEndPoint = new IPEndPoint(lAddress, port);
+				try
+				{
+					Connect(lEndPoint);
+					lEx = null;
+					break;
+				}
+				catch(Exception lCurrent)
+				{
+					lEx = lCurrent;
+				}
+			}
 
-            if (lEx != null)
-                throw lEx;
+			if (lEx != null)
+				throw lEx;
 
-            if (!Connected)
-                throw new Exception("Error connecting socket");
-        }
+			if (!Connected)
+				throw new Exception("Error connecting socket");
+		}
 
 		public void Connect(IPAddress address, Int32 port)
-        {
-            var lEndPoint = new IPEndPoint(address, port);
-            Connect(lEndPoint);
-        }
+		{
+			var lEndPoint = new IPEndPoint(address, port);
+			Connect(lEndPoint);
+		}
 
-        public IAsyncResult BeginConnect(IPAddress[] addresses, Int32 port, AsyncCallback callback, Object state)
-        {
-            IPEndPoint lEndPoint;
-            var lResult = new AsyncResult(state);
+		public IAsyncResult BeginConnect(IPAddress[] addresses, Int32 port, AsyncCallback callback, Object state)
+		{
+			IPEndPoint lEndPoint;
+			var lResult = new AsyncResult(state);
 
-            var lThread = new Thread(() =>
-            {
-                lResult.AsyncWaitHandle.WaitOne();
-                foreach(IPAddress lAddress in addresses)
-                {
-                    lEndPoint = new IPEndPoint(lAddress, port);
-                    try
-                    {
-                        Connect(lEndPoint);
-                        lResult.DelayedException = null;
-                        break;
-                    }
-                    catch(Exception lCurrent)
-                    {
-                        lResult.DelayedException = lCurrent;
-                    }
-                }
-                
-                RemoveOp((Thread)lResult.Data);
-                lResult.IsCompleted = true;                      
-                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
-                callback(lResult);
-            });
-            AddAsyncOp(lThread);
-            lResult.Data = lThread;
-            lThread.Start();
+			var lThread = new Thread(() =>
+			{
+				lResult.AsyncWaitHandle.WaitOne();
+				foreach(IPAddress lAddress in addresses)
+				{
+					lEndPoint = new IPEndPoint(lAddress, port);
+					try
+					{
+						Connect(lEndPoint);
+						lResult.DelayedException = null;
+						break;
+					}
+					catch(Exception lCurrent)
+					{
+						lResult.DelayedException = lCurrent;
+					}
+				}
 
-            return lResult;
-        }
+				RemoveOp((Thread)lResult.Data);
+				lResult.IsCompleted = true;
+				(lResult.AsyncWaitHandle as EventWaitHandle).Set();
+				callback(lResult);
+			});
+			AddAsyncOp(lThread);
+			lResult.Data = lThread;
+			lThread.Start();
 
-		public IAsyncResult BeginConnect(EndPoint end_point, AsyncCallback callback, Object state) 
-        {
-            var lIPEndPoint = (IPEndPoint)end_point;            
-            return BeginConnect(new IPAddress[] {lIPEndPoint.Address}, lIPEndPoint.Port, callback, state);
-        }
+			return lResult;
+		}
+
+		public IAsyncResult BeginConnect(EndPoint end_point, AsyncCallback callback, Object state)
+		{
+			var lIPEndPoint = (IPEndPoint)end_point;
+			return BeginConnect(new IPAddress[] {lIPEndPoint.Address}, lIPEndPoint.Port, callback, state);
+		}
 
 		public IAsyncResult BeginConnect(String host, Int32 port, AsyncCallback callback, Object state)
-        {
-            var lAddress = IPAddress.Parse(host);
-            return BeginConnect(new IPEndPoint(lAddress, port), callback, state);
-        }
+		{
+			var lAddress = IPAddress.Parse(host);
+			return BeginConnect(new IPEndPoint(lAddress, port), callback, state);
+		}
 
 		public IAsyncResult BeginConnect(IPAddress address, Int32 port, AsyncCallback callback, Object state)
-        {
-            var lEndPoint = new IPEndPoint(address, port);
-            return BeginConnect(lEndPoint, callback, state);
-        }
+		{
+			var lEndPoint = new IPEndPoint(address, port);
+			return BeginConnect(lEndPoint, callback, state);
+		}
 
-        public void EndConnect(IAsyncResult result) 
-        {
-            CheckAsyncTerminate(result);
-            CheckAsyncException(result);
-        }
+		public void EndConnect(IAsyncResult result)
+		{
+			CheckAsyncTerminate(result);
+			CheckAsyncException(result);
+		}
 
-        private void CheckAsyncException(IAsyncResult result)
-        {
-            var lAsyncResult = (AsyncResult)result;
+		private void CheckAsyncException(IAsyncResult result)
+		{
+			var lAsyncResult = (AsyncResult)result;
 
-            if (lAsyncResult.DelayedException != null)
-                throw lAsyncResult.DelayedException;
-        }
+			if (lAsyncResult.DelayedException != null)
+				throw lAsyncResult.DelayedException;
+		}
 
-        private void CheckAsyncTerminate(IAsyncResult result)
-        {
-            if (!result.IsCompleted)
-            {
-                result.AsyncWaitHandle.WaitOne();
-                (result.AsyncWaitHandle as EventWaitHandle).Set();
-            }
-        }
-				
-        public void Disconnect(Boolean reuseSocket)
-        {
-            Dispose();
-        }
+		private void CheckAsyncTerminate(IAsyncResult result)
+		{
+			if (!result.IsCompleted)
+			{
+				result.AsyncWaitHandle.WaitOne();
+				(result.AsyncWaitHandle as EventWaitHandle).Set();
+			}
+		}
 
-        public IAsyncResult BeginDisconnect(Boolean reuseSocket, AsyncCallback callback, Object state) 
-        {
-            var lResult = new AsyncResult(state);
-            var lThread = new Thread(() =>
-            {
-                lResult.AsyncWaitHandle.WaitOne();
-                Disconnect(reuseSocket);
-                lResult.IsCompleted = true;
-                ClearAsyncOps();
-                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
-                callback(lResult);
-            });
-            lThread.Start();
+		public void Disconnect(Boolean reuseSocket)
+		{
+			Dispose();
+		}
 
-            return lResult;
-        }
+		public IAsyncResult BeginDisconnect(Boolean reuseSocket, AsyncCallback callback, Object state)
+		{
+			var lResult = new AsyncResult(state);
+			var lThread = new Thread(() =>
+			{
+				lResult.AsyncWaitHandle.WaitOne();
+				Disconnect(reuseSocket);
+				lResult.IsCompleted = true;
+				ClearAsyncOps();
+				(lResult.AsyncWaitHandle as EventWaitHandle).Set();
+				callback(lResult);
+			});
+			lThread.Start();
 
-        public void EndDisconnect(IAsyncResult asyncResult)        
-        {
-            CheckAsyncTerminate(asyncResult);                
-            CheckAsyncException(asyncResult);
-        }
-		
-        public void Listen(Int32 backlog)
-        {
-            #if cooper
-            fServerHandle.bind(fSocketAddress, backlog);
-            #else
-            if (rtl.listen(fHandle, backlog) != 0)
-                throw new Exception("Error calling to listen function");
-            #endif
-        }
+			return lResult;
+		}
 
-		public Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags) 
-        {
-            #if cooper
-            if (fSocketInput == null)
-                throw new Exception("Socket is not connected");
-            return fSocketInput.read(buffer, offset, size);
-            #else
-            void *lPointer;
-            lPointer = &buffer[0];
-            return rtl.recv(fHandle, (AnsiChar *)lPointer, size, (int)flags);
-            #endif
-        }
+		public void EndDisconnect(IAsyncResult asyncResult)
+		{
+			CheckAsyncTerminate(asyncResult);
+			CheckAsyncException(asyncResult);
+		}
+
+		public void Listen(Int32 backlog)
+		{
+			#if cooper
+			fServerHandle.bind(fSocketAddress, backlog);
+			#else
+			if (rtl.listen(fHandle, backlog) != 0)
+				throw new Exception("Error calling to listen function");
+			#endif
+		}
+
+		public Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags)
+		{
+			#if cooper
+			if (fSocketInput == null)
+				throw new Exception("Socket is not connected");
+			return fSocketInput.read(buffer, offset, size);
+			#else
+			void *lPointer;
+			lPointer = &buffer[0];
+			return rtl.recv(fHandle, (AnsiChar *)lPointer, size, (int)flags);
+			#endif
+		}
 
 		public Int32 Receive(Byte[] buffer, Int32 size, SocketFlags flags)
-        {
-            return Receive(buffer, 0, size, flags);
-        }
+		{
+			return Receive(buffer, 0, size, flags);
+		}
 
-		public Int32 Receive(Byte[] buffer, SocketFlags flags) 
-        {
-            return Receive(buffer, 0, length(buffer), flags);
-        }
+		public Int32 Receive(Byte[] buffer, SocketFlags flags)
+		{
+			return Receive(buffer, 0, length(buffer), flags);
+		}
 
 		public Int32 Receive(Byte[] buffer)
-        {
-            return Receive(buffer, 0, length(buffer), SocketFlags.None);
-        }
+		{
+			return Receive(buffer, 0, length(buffer), SocketFlags.None);
+		}
 
 		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, out SocketError error, AsyncCallback callback, Object state)
-        {
-            var lResult = new AsyncResult(state);
-            lResult.Error = error;
+		{
+			var lResult = new AsyncResult(state);
+			lResult.Error = error;
 
-            var lThread = new Thread(() =>
-            {
-                lResult.AsyncWaitHandle.WaitOne();
-                try
-                {
-                    lResult.NBytes = Receive(buffer, offset, size, flags);
-                }
-                catch(Exception lCurrent)
-                {
-                    if (lResult.Error == SocketError.NoValue)
-                        lResult.DelayedException = lCurrent;
+			var lThread = new Thread(() =>
+			{
+				lResult.AsyncWaitHandle.WaitOne();
+				try
+				{
+					lResult.NBytes = Receive(buffer, offset, size, flags);
+				}
+				catch(Exception lCurrent)
+				{
+					if (lResult.Error == SocketError.NoValue)
+						lResult.DelayedException = lCurrent;
 
-                    lResult.Error = SocketError.SocketError;
-                }
-                
-                RemoveOp((Thread)lResult.Data);
-                lResult.IsCompleted = true;                                         
-                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
-                callback(lResult);
-            });
-            AddAsyncOp(lThread);
-            lResult.Data = lThread;
-            lThread.Start();
+					lResult.Error = SocketError.SocketError;
+				}
 
-            return lResult;
-        }
+				RemoveOp((Thread)lResult.Data);
+				lResult.IsCompleted = true;
+				(lResult.AsyncWaitHandle as EventWaitHandle).Set();
+				callback(lResult);
+			});
+			AddAsyncOp(lThread);
+			lResult.Data = lThread;
+			lThread.Start();
+
+			return lResult;
+		}
 
 		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state)
-        {
-            SocketError lError = SocketError.NoValue;
+		{
+			SocketError lError = SocketError.NoValue;
 
-            return BeginReceive(buffer, offset, size, socket_flags, out lError, callback, state);
-        }
+			return BeginReceive(buffer, offset, size, socket_flags, out lError, callback, state);
+		}
 
-   		public Int32 EndReceive(IAsyncResult asyncResult, out SocketError errorCode)        
-        {
-            AsyncResult lResult = asyncResult as AsyncResult;
+		   public Int32 EndReceive(IAsyncResult asyncResult, out SocketError errorCode)
+		{
+			AsyncResult lResult = asyncResult as AsyncResult;
 
-            CheckAsyncTerminate(asyncResult);                
-            CheckAsyncException(asyncResult);
-            errorCode = lResult.Error;
+			CheckAsyncTerminate(asyncResult);
+			CheckAsyncException(asyncResult);
+			errorCode = lResult.Error;
 
-            return lResult.NBytes;
-        }
+			return lResult.NBytes;
+		}
 
 		public Int32 EndReceive(IAsyncResult result)
-        {
-            SocketError lError;
+		{
+			SocketError lError;
 
-            return EndReceive(result, out lError);
-        }
+			return EndReceive(result, out lError);
+		}
 
 		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags)
-        {
-            #if cooper
-            if (fSocketOutput == null)
-                throw new Exception("Socket is not connected");
-            fSocketOutput.write(buf, offset, size);
-            return size;
-            #else
-            void *lPointer;
-            lPointer = &buf[offset];
-            return rtl.send(fHandle, (AnsiChar *)lPointer, size, (int)flags);
-            #endif
-        }
+		{
+			#if cooper
+			if (fSocketOutput == null)
+				throw new Exception("Socket is not connected");
+			fSocketOutput.write(buf, offset, size);
+			return size;
+			#else
+			void *lPointer;
+			lPointer = &buf[offset];
+			return rtl.send(fHandle, (AnsiChar *)lPointer, size, (int)flags);
+			#endif
+		}
 
 		public Int32 Send(Byte[] buf, Int32 size, SocketFlags flags)
-        {
-            return Send(buf, 0, size, flags);
-        }
+		{
+			return Send(buf, 0, size, flags);
+		}
 
 		public Int32 Send(Byte[] buf, SocketFlags flags)
-        {
-            return Send(buf, 0, length(buf), flags);
-        }
+		{
+			return Send(buf, 0, length(buf), flags);
+		}
 
-		public Int32 Send(Byte[] buf)        
-        {
-            return Send(buf, 0, length(buf), SocketFlags.None);
-        }
+		public Int32 Send(Byte[] buf)
+		{
+			return Send(buf, 0, length(buf), SocketFlags.None);
+		}
 
-		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state)        
-        {
-            var lResult = new AsyncResult(state);
-            lResult.Error = errorCode;
+		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state)
+		{
+			var lResult = new AsyncResult(state);
+			lResult.Error = errorCode;
 
-            var lThread = new Thread(() =>
-            {
-                lResult.AsyncWaitHandle.WaitOne();
-                try
-                {
-                    lResult.NBytes = Send(buffer, offset, size, socketFlags);
-                }
-                catch(Exception lCurrent)
-                {
-                    if (lResult.Error == SocketError.NoValue)
-                        lResult.DelayedException = lCurrent;
-                    
-                    lResult.Error = SocketError.SocketError;
-                }
-                
-                RemoveOp((Thread)lResult.Data);
-                lResult.IsCompleted = true;
-                (lResult.AsyncWaitHandle as EventWaitHandle).Set();
-                callback(lResult);
-            });
-            AddAsyncOp(lThread);
-            lResult.Data = lThread;
-            lThread.Start();
+			var lThread = new Thread(() =>
+			{
+				lResult.AsyncWaitHandle.WaitOne();
+				try
+				{
+					lResult.NBytes = Send(buffer, offset, size, socketFlags);
+				}
+				catch(Exception lCurrent)
+				{
+					if (lResult.Error == SocketError.NoValue)
+						lResult.DelayedException = lCurrent;
 
-            return lResult;
-        }
+					lResult.Error = SocketError.SocketError;
+				}
+
+				RemoveOp((Thread)lResult.Data);
+				lResult.IsCompleted = true;
+				(lResult.AsyncWaitHandle as EventWaitHandle).Set();
+				callback(lResult);
+			});
+			AddAsyncOp(lThread);
+			lResult.Data = lThread;
+			lThread.Start();
+
+			return lResult;
+		}
 
 		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socket_flags, AsyncCallback callback, Object state)
-        {
-            SocketError lError = SocketError.NoValue;
-            return BeginSend(buffer, offset, size, socket_flags, out lError, callback, state);
-        }
+		{
+			SocketError lError = SocketError.NoValue;
+			return BeginSend(buffer, offset, size, socket_flags, out lError, callback, state);
+		}
 
-		public Int32 EndSend(IAsyncResult asyncResult, out SocketError errorCode) 
-        {
-            AsyncResult lResult = asyncResult as AsyncResult;
+		public Int32 EndSend(IAsyncResult asyncResult, out SocketError errorCode)
+		{
+			AsyncResult lResult = asyncResult as AsyncResult;
 
-            CheckAsyncTerminate(asyncResult);                
-            CheckAsyncException(asyncResult);
-            errorCode = lResult.Error;
+			CheckAsyncTerminate(asyncResult);
+			CheckAsyncException(asyncResult);
+			errorCode = lResult.Error;
 
-            return lResult.NBytes;
-        }
+			return lResult.NBytes;
+		}
 
 		public Int32 EndSend(IAsyncResult result)
-        {
-            SocketError lError = SocketError.SocketError;
-            return EndSend(result, out lError);
-        }
+		{
+			SocketError lError = SocketError.SocketError;
+			return EndSend(result, out lError);
+		}
 
-        #if cooper
-        private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
-        {
-            switch(optionName)
-            {
-                case SocketOptionName.ReuseAddress:
-                    if (fIsServer)
-                        fServerHandle.setReuseAddress((bool)optionValue);
-                    else
-                        fHandle.setReuseAddress((bool)optionValue);
-                    break;
-                    
-                case SocketOptionName.KeepAlive:
-                    fHandle.setKeepAlive((bool)optionValue);
-                    break;
+		#if cooper
+		private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
+		{
+			switch(optionName)
+			{
+				case SocketOptionName.ReuseAddress:
+					if (fIsServer)
+						fServerHandle.setReuseAddress((bool)optionValue);
+					else
+						fHandle.setReuseAddress((bool)optionValue);
+					break;
 
-                case SocketOptionName.DontLinger:
-                    fHandle.setSoLinger(false, 0);
-                    break;
+				case SocketOptionName.KeepAlive:
+					fHandle.setKeepAlive((bool)optionValue);
+					break;
 
-            	case SocketOptionName.OutOfBandInline:
-                    fHandle.setOOBInline((bool)optionValue);
-                    break;
+				case SocketOptionName.DontLinger:
+					fHandle.setSoLinger(false, 0);
+					break;
 
-                case SocketOptionName.SendBuffer:
-                    fHandle.setSendBufferSize(optionValue);
-                    break;
+				case SocketOptionName.OutOfBandInline:
+					fHandle.setOOBInline((bool)optionValue);
+					break;
 
-                case SocketOptionName.ReceiveBuffer:
-                    if (fIsServer)
-                        fServerHandle.setReceiveBufferSize(optionValue);
-                    else
-                        fHandle.setReceiveBufferSize(optionValue);
-                    break;
+				case SocketOptionName.SendBuffer:
+					fHandle.setSendBufferSize(optionValue);
+					break;
 
-                case SocketOptionName.NoDelay:
-                    fHandle.setTcpNoDelay((bool)optionValue);
-                    break;
+				case SocketOptionName.ReceiveBuffer:
+					if (fIsServer)
+						fServerHandle.setReceiveBufferSize(optionValue);
+					else
+						fHandle.setReceiveBufferSize(optionValue);
+					break;
 
-                case SocketOptionName.SendTimeout:
-                case SocketOptionName.ReceiveTimeout:
-                    if (fIsServer)
-                        fServerHandle.setSoTimeout(optionValue);
-                    else
-                        fHandle.setSoTimeout(optionValue);
-                    break;
-            }
-        }
-        #else
-        private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, void *optionValue, Int32 optionValueLength)
-        {
-            if (rtl.setsockopt(fHandle, (int)optionLevel, (int)optionName, (AnsiChar *)optionValue, optionValueLength) != 0)
-                throw new Exception("Can not change socket option");
-        }
-        #endif
+				case SocketOptionName.NoDelay:
+					fHandle.setTcpNoDelay((bool)optionValue);
+					break;
+
+				case SocketOptionName.SendTimeout:
+				case SocketOptionName.ReceiveTimeout:
+					if (fIsServer)
+						fServerHandle.setSoTimeout(optionValue);
+					else
+						fHandle.setSoTimeout(optionValue);
+					break;
+			}
+		}
+		#else
+		private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, void *optionValue, Int32 optionValueLength)
+		{
+			if (rtl.setsockopt(fHandle, (int)optionLevel, (int)optionName, (AnsiChar *)optionValue, optionValueLength) != 0)
+				throw new Exception("Can not change socket option");
+		}
+		#endif
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
-        {
-            #if cooper
-            InternalSetSocketOption(optionLevel, optionName, optionValue);            
-            #else
-            void *lValue = &optionValue;
-            InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Int32));
-            #endif
-        }
+		{
+			#if cooper
+			InternalSetSocketOption(optionLevel, optionName, optionValue);
+			#else
+			void *lValue = &optionValue;
+			InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Int32));
+			#endif
+		}
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue)
-        {
-            #if cooper
-            InternalSetSocketOption(optionLevel, optionName, (Int32)optionValue);
-            #else
-            void *lValue = &optionValue;
-            InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Boolean));
-            #endif
-        }
+		{
+			#if cooper
+			InternalSetSocketOption(optionLevel, optionName, (Int32)optionValue);
+			#else
+			void *lValue = &optionValue;
+			InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Boolean));
+			#endif
+		}
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue)
-        {
-            #if cooper
-            if (optionName == SocketOptionName.Linger  && optionName == SocketOptionName.DontLinger)
-            {
-                var lValue = (LingerOption)optionValue;
-                fHandle.setSoLinger(lValue.Enabled, lValue.LingerTime);
-            }
-            #else
-            void *lValue = &optionValue;
-            InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Object));
-            #endif
-        }
+		{
+			#if cooper
+			if (optionName == SocketOptionName.Linger  && optionName == SocketOptionName.DontLinger)
+			{
+				var lValue = (LingerOption)optionValue;
+				fHandle.setSoLinger(lValue.Enabled, lValue.LingerTime);
+			}
+			#else
+			void *lValue = &optionValue;
+			InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Object));
+			#endif
+		}
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue)
-        {
-            #if cooper
-            InternalSetSocketOption(optionLevel, optionName, optionValue[0]);
-            #else
-            void *lValue = &optionValue[0];
-            InternalSetSocketOption(optionLevel, optionName, lValue, length(optionValue));
-            #endif
-        }
-		
-        private new void Dispose() 
-        {
-            #if cooper
-            if (!fIsServer)
-                fHandle.close();
-            else
-                fServerHandle.close();
-            #else
-            #if posix || toffee
-            if (rtl.close(fHandle) != 0)
-            #else
-            if (rtl.closesocket(fHandle) != 0)
-            #endif
-                throw new Exception("Error closing socket");
-            #endif
-            
-            Connected = false;
-        }
-		
-        public void Close() 
-        {
-            Dispose();
-        }
-		
-        public void Shutdown(SocketShutdown how) 
-        {
-            #if cooper
-            if (fIsServer)
-                fServerHandle.close();
-            else
-                fHandle.close();
-            #else
-            if (rtl.shutdown(fHandle, (int)how) != 0)
-                throw new Exception("Error closing socket");
-            #endif
-        }
+		{
+			#if cooper
+			InternalSetSocketOption(optionLevel, optionName, optionValue[0]);
+			#else
+			void *lValue = &optionValue[0];
+			InternalSetSocketOption(optionLevel, optionName, lValue, length(optionValue));
+			#endif
+		}
+
+		private new void Dispose()
+		{
+			#if cooper
+			if (!fIsServer)
+				fHandle.close();
+			else
+				fServerHandle.close();
+			#else
+			#if posix || toffee
+			if (rtl.close(fHandle) != 0)
+				throw new Exception("Error closing socket");
+			#else
+			if (rtl.closesocket(fHandle) != 0)
+				throw new Exception("Error closing socket");
+			#endif
+			#endif
+
+			Connected = false;
+		}
+
+		public void Close()
+		{
+			Dispose();
+		}
+
+		public void Shutdown(SocketShutdown how)
+		{
+			#if cooper
+			if (fIsServer)
+				fServerHandle.close();
+			else
+				fHandle.close();
+			#else
+			if (rtl.shutdown(fHandle, (int)how) != 0)
+				throw new Exception("Error closing socket");
+			#endif
+		}
 
 		public Int32 Available
-        {
-            get
-            {
-                #if cooper
-                if (fSocketInput != null)
-                    return fSocketInput.available();
-                else                    
-                    return 0;
-                #else
-                rtl.u_long lData = 0;
-                #if posix || toffee
-                if (rtl.ioctl(fHandle, FIONREAD, &lData) < 0)
-                #else
-                var lRes = 0;
-                if (rtl.ioctlsocket(fHandle, rtl.FIONREAD, &lData) != 0)
-                {
-                    lRes = rtl.WSAGetLastError();
-                }
-                if((lRes != 0) && (lRes != rtl.WSAEOPNOTSUPP))
-                #endif
-                    lData = 0;
-                    //throw new Exception("Error calling ioctl function");
+		{
+			get
+			{
+				#if cooper
+				if (fSocketInput != null)
+					return fSocketInput.available();
+				else
+					return 0;
+				#else
+				rtl.u_long lData = 0;
+				#if posix || toffee
+				if (rtl.ioctl(fHandle, FIONREAD, &lData) < 0)
+				#else
+				var lRes = 0;
+				if (rtl.ioctlsocket(fHandle, rtl.FIONREAD, &lData) != 0)
+				{
+					lRes = rtl.WSAGetLastError();
+				}
+				if((lRes != 0) && (lRes != rtl.WSAEOPNOTSUPP))
+				#endif
+					lData = 0;
+					//throw new Exception("Error calling ioctl function");
 
-                return lData;
-                #endif
-            }
-        }
+				return lData;
+				#endif
+			}
+		}
 
 		public EndPoint LocalEndPoint { get; set; }
 		public SocketType SocketType { get; set; }

@@ -11,7 +11,7 @@ namespace RemObjects.InternetPack.Dns
 		{
 			IPAddress[] lAddresses = DnsLookup.ResolveAll(hostname);
 
-            if (lAddresses.Length == 0)
+			if (lAddresses.Length == 0)
 			{
 				throw new DnsResolveException("Could not resolve HostName {0}", hostname);
 			}
@@ -25,7 +25,7 @@ namespace RemObjects.InternetPack.Dns
 				}
 			}
 
-            return lAddresses[0];
+			return lAddresses[0];
 		}
 
 		#if !NEEDS_PORTING
@@ -51,104 +51,104 @@ namespace RemObjects.InternetPack.Dns
 				return new IPAddress[] { lAddress };
 			}
 
-            #if echoes
-            IPHostEntry lEntry = System.Net.Dns.GetHostEntry(hostname);
+			#if echoes
+			IPHostEntry lEntry = System.Net.Dns.GetHostEntry(hostname);
 			return lEntry.AddressList;
 			#elif cooper
-            var lTemp = java.net.InetAddress.getAllByName(hostname);
-            var lAddresses = new IPAddress[lTemp.length];
-            for (int i = 0; i < lTemp.length; i++)
-            {
-                lAddresses[i] = new IPAddress(lTemp[i].Address);
-            }            
-            return lAddresses;
-            #else            
-            var lString = (RemObjects.Elements.System.String)hostname;
-            Byte[] lBytes = new Byte[16];
-            Byte[] lBytesIPv4 = new Byte[4];
-            var lAll = new List<IPAddress>();
+			var lTemp = java.net.InetAddress.getAllByName(hostname);
+			var lAddresses = new IPAddress[lTemp.length];
+			for (int i = 0; i < lTemp.length; i++)
+			{
+				lAddresses[i] = new IPAddress(lTemp[i].Address);
+			}
+			return lAddresses;
+			#else
+			var lString = (RemObjects.Elements.System.String)hostname;
+			Byte[] lBytes = new Byte[16];
+			Byte[] lBytesIPv4 = new Byte[4];
+			var lAll = new List<IPAddress>();
 
-            #if island && windows
-            rtl.ADDRINFOW *lAddrInfo;
-            rtl.ADDRINFOW *lPtr;
-            rtl.ADDRINFOW lJenson;
-            rtl.SOCKADDR_IN *lSockAddrIPv4;
-            sockaddr_in6 *lSockAddr;
-            #elif posix || toffee            
-            rtl.__struct_addrinfo *lAddrInfo;
-            rtl.__struct_addrinfo *lPtr;
-            rtl.__struct_sockaddr_in *lSockAddrIPv4;
-            rtl.__struct_sockaddr_in6 *lSockAddr;
-            #endif
-            #if toffee
-            if (rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo) == 0)
-            #elif posix
-            AnsiChar[] lHost = lString.ToAnsiChars(true);
-            if (rtl.getaddrinfo(&lHost[0], null, null, &lAddrInfo) == 0)
-            //if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) == 0)
-            #elif island
-            char[] lHost = lString.ToCharArray(true);
-            ExternalCalls.memset(&lJenson, 0, sizeof(rtl.ADDRINFOW));
-            lJenson.ai_family = AddressFamily.Unspecified;
-            lJenson.ai_socktype = rtl.SOCK_STREAM;
-            lJenson.ai_protocol = ProtocolType.Tcp;
-            rtl.WSADATA data;
-            rtl.WSAStartup(rtl.WINSOCK_VERSION, &data);
+			#if island && windows
+			rtl.ADDRINFOW *lAddrInfo;
+			rtl.ADDRINFOW *lPtr;
+			rtl.ADDRINFOW lJenson;
+			rtl.SOCKADDR_IN *lSockAddrIPv4;
+			sockaddr_in6 *lSockAddr;
+			#elif posix || toffee
+			rtl.__struct_addrinfo *lAddrInfo;
+			rtl.__struct_addrinfo *lPtr;
+			rtl.__struct_sockaddr_in *lSockAddrIPv4;
+			rtl.__struct_sockaddr_in6 *lSockAddr;
+			#endif
+			#if toffee
+			if (rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo) == 0)
+			#elif posix
+			AnsiChar[] lHost = lString.ToAnsiChars(true);
+			if (rtl.getaddrinfo(&lHost[0], null, null, &lAddrInfo) == 0)
+			//if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) == 0)
+			#elif island
+			char[] lHost = lString.ToCharArray(true);
+			ExternalCalls.memset(&lJenson, 0, sizeof(rtl.ADDRINFOW));
+			lJenson.ai_family = AddressFamily.Unspecified;
+			lJenson.ai_socktype = rtl.SOCK_STREAM;
+			lJenson.ai_protocol = ProtocolType.Tcp;
+			rtl.WSADATA data;
+			rtl.WSAStartup(rtl.WINSOCK_VERSION, &data);
 
-            if (rtl.GetAddrInfoW(&lHost[0], null, null, &lAddrInfo) == 0)
-            #endif
-            {
-                #if posix || toffee
-                for(lPtr = lAddrInfo; lPtr != null; lPtr = (rtl.__struct_addrinfo *)lPtr->ai_next)
-                #else
-                for(lPtr = lAddrInfo; lPtr != null; lPtr = (rtl.ADDRINFOW*)lPtr->ai_next) 
-                #endif
-                {                    
-                    switch(lPtr->ai_family)
-                    {
-                        case AddressFamily.InterNetwork:
-                            #if posix || toffee
-                            lSockAddrIPv4 = (rtl.__struct_sockaddr_in *)(*lPtr).ai_addr;                            
-                            lBytesIPv4[0] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr);                                                    
-                            lBytesIPv4[1] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr >> 8);
-                            lBytesIPv4[2] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr >> 16);
-                            lBytesIPv4[3] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr >> 24);
-                            #elif island && windows
-                            lSockAddrIPv4 = (rtl.sockaddr_in *)(*lPtr).ai_addr;                                                                                                     
-                            lBytesIPv4[0] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b1;
-                            lBytesIPv4[1] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b2;
-                            lBytesIPv4[2] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b3;
-                            lBytesIPv4[3] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b4;
-                            #endif
-                            lAll.Add(new IPAddress(lBytesIPv4));
-                            break;
+			if (rtl.GetAddrInfoW(&lHost[0], null, null, &lAddrInfo) == 0)
+			#endif
+			{
+				#if posix || toffee
+				for(lPtr = lAddrInfo; lPtr != null; lPtr = (rtl.__struct_addrinfo *)lPtr->ai_next)
+				#else
+				for(lPtr = lAddrInfo; lPtr != null; lPtr = (rtl.ADDRINFOW*)lPtr->ai_next)
+				#endif
+				{
+					switch(lPtr->ai_family)
+					{
+						case AddressFamily.InterNetwork:
+							#if posix || toffee
+							lSockAddrIPv4 = (rtl.__struct_sockaddr_in *)(*lPtr).ai_addr;
+							lBytesIPv4[0] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr);
+							lBytesIPv4[1] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr >> 8);
+							lBytesIPv4[2] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr >> 16);
+							lBytesIPv4[3] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr >> 24);
+							#elif island && windows
+							lSockAddrIPv4 = (rtl.sockaddr_in *)(*lPtr).ai_addr;
+							lBytesIPv4[0] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b1;
+							lBytesIPv4[1] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b2;
+							lBytesIPv4[2] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b3;
+							lBytesIPv4[3] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b4;
+							#endif
+							lAll.Add(new IPAddress(lBytesIPv4));
+							break;
 
-                        case AddressFamily.InterNetworkV6:
-                            #if posix || toffee
-                            lSockAddr = (rtl.__struct_sockaddr_in6 *)(*lPtr).ai_addr;
-                            #elif island && windows
-                            lSockAddr = (sockaddr_in6 *)(*lPtr).ai_addr;
-                            #endif
-                            for (int i = 0; i < 16 /*IPv6Length*/; i++)
-                                #if posix
-                                lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i];
-                                #elif toffee
-                                lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
-                                #else
-                                lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];
-                                #endif
+						case AddressFamily.InterNetworkV6:
+							#if posix || toffee
+							lSockAddr = (rtl.__struct_sockaddr_in6 *)(*lPtr).ai_addr;
+							#elif island && windows
+							lSockAddr = (sockaddr_in6 *)(*lPtr).ai_addr;
+							#endif
+							for (int i = 0; i < 16 /*IPv6Length*/; i++)
+								#if posix
+								lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i];
+								#elif toffee
+								lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
+								#else
+								lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];
+								#endif
 
-                            var lNewAddress = new IPAddress(lBytes, (*lSockAddr).sin6_scope_id);
-                            lAll.Add(lNewAddress);
-                            break;
-                    }
+							var lNewAddress = new IPAddress(lBytes, (*lSockAddr).sin6_scope_id);
+							lAll.Add(lNewAddress);
+							break;
+					}
 
-                }
-                return lAll.ToArray();                 
-            }
-            else
-                return null;
-            #endif
+				}
+				return lAll.ToArray();
+			}
+			else
+				return null;
+			#endif
 		}
 
 		public static IPAddress TryStringAsIPAddress(String hostname)

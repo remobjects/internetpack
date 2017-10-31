@@ -12,10 +12,10 @@ namespace RemObjects.InternetPack
 	{
 		private List<IAsyncWorker> fWorkers;
 		#if toffee || cooper
-        private readonly Object fSyncRoot = new Object();        
-        #else
-        private readonly Monitor fSyncRoot = new Monitor();
-        #endif
+		private readonly Object fSyncRoot = new Object();
+		#else
+		private readonly Monitor fSyncRoot = new Monitor();
+		#endif
 
 		public override void Open()
 		{

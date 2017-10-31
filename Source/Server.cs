@@ -394,7 +394,7 @@ namespace RemObjects.InternetPack
 				fBindingV6.Unbind(true);
 		}
 
-        public virtual Type GetWorkerClass()
+		public virtual Type GetWorkerClass()
 		{
 			return typeof(Worker);
 		}
@@ -403,7 +403,7 @@ namespace RemObjects.InternetPack
 
 	public class Listener : IListener
 	{
-        public Listener(Server owner, Type workerClass)
+		public Listener(Server owner, Type workerClass)
 		{
 			fOwner = owner;
 			fWorkerClass = workerClass;
@@ -423,14 +423,14 @@ namespace RemObjects.InternetPack
 		}
 		private Socket fListeningSocket;
 
-        public Type WorkerClass
+		public Type WorkerClass
 		{
 			get
 			{
 				return fWorkerClass;
 			}
 		}
-        private readonly Type fWorkerClass;
+		private readonly Type fWorkerClass;
 
 		public Server Owner
 		{
@@ -477,10 +477,10 @@ namespace RemObjects.InternetPack
 						Object lObject = Activator.CreateInstance(WorkerClass);
 						#elif cooper
 						Object lObject = Class.getDeclaredConstructor(WorkerClass).newInstance();
-                        #elif island
-                        Object lObject = WorkerClass.Instantiate();
-                        #elif toffee
-                        Object lObject = WorkerClass.init();
+						#elif island
+						Object lObject = WorkerClass.Instantiate();
+						#elif toffee
+						Object lObject = WorkerClass.init();
 						#endif
 						IWorker lWorker = lObject as IWorker;
 						lWorker.Owner = Owner;
@@ -530,8 +530,8 @@ namespace RemObjects.InternetPack
 							lWorker.DataConnection.Dispose();
 							continue;
 						}
-                        
-                        lWorker.Thread = new Thread( () => { lWorker.Work(); });
+
+						lWorker.Thread = new Thread( () => { lWorker.Work(); });
 						try
 						{
 							#if FULLFRAMEWORK
@@ -547,7 +547,7 @@ namespace RemObjects.InternetPack
 							lWorkers.Add(lWorker);
 
 						lWorker.Thread.Start();
-                    }
+					}
 				}
 				while (lSocket != null);
 			}

@@ -159,17 +159,17 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			// \x0A = \n
 			// \x0D = \r
 			// \x09 = \t)
-			
-            //return Regex.Replace(input, "[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]", "");
 
-            var lBuilder = new StringBuilder(input);
-            for (int i = lBuilder.Length - 1; i >= 0; i--)
-            {
-                var lNumber = ord(lBuilder[i]);
-                if ((lNumber >= 0 && lNumber <= 8) || (lNumber == 0x0B) || (lNumber == 0x0C) || ((lNumber >= 0x0E) && (lNumber <= 0x1F)) || (lNumber == 0x7F))
-                    lBuilder.Delete(i, 1);                                            
-            }
-            return lBuilder.ToString();
+			//return Regex.Replace(input, "[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]", "");
+
+			var lBuilder = new StringBuilder(input);
+			for (int i = lBuilder.Length - 1; i >= 0; i--)
+			{
+				var lNumber = ord(lBuilder[i]);
+				if ((lNumber >= 0 && lNumber <= 8) || (lNumber == 0x0B) || (lNumber == 0x0C) || ((lNumber >= 0x0E) && (lNumber <= 0x1F)) || (lNumber == 0x7F))
+					lBuilder.Delete(i, 1);
+			}
+			return lBuilder.ToString();
 		}
 
 		/// <summary>

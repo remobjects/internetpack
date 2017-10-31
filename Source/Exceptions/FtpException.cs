@@ -52,11 +52,8 @@ namespace RemObjects.InternetPack.Ftp
 		}
 		private readonly Int32 fCode;
 
-		#if !cooper
-        public override String ToString()
-        #else
-        public String ToString()
-        #endif
+		[ToString]
+		public override String ToString()
 		{
 			return String.Format("{0} {1}", this.fCode, this.Message);
 		}

@@ -69,35 +69,35 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		/// </summary>
 		/// <param name="toDecode">The String to decode.</param>
 		/// <returns>A list of decoded key value pairs.</returns>
-		
-        private static String NormalizeParameters(String toDecode)
-        {
-            var lPointer = 0;
-            var lPrevFound = false;
-            var lDecode = toDecode;
-            var lPos = lDecode.IndexOf('"', lPointer);
-            
-            while (lPos >= 0)
-            {
-                if (lPrevFound)
-                {
-                    if (lPos < lDecode.Length - 1)
-                    {
-                        if (String.CharacterIsWhiteSpace(lDecode[lPos + 1]))
-                        {
-                            lDecode = lDecode.Insert(lPos + 1, ';');
-                        }
-                    }
-                }
-                lPrevFound = !lPrevFound;
-                lPointer = lPos + 1;
-                if (lPointer >= lDecode.Length) break;
-                lPos = lDecode.IndexOf('"', lPointer);
-            }
-            return lDecode;
-        }
 
-        public static List<KeyValuePair<String, String>> Decode(String toDecode)
+		private static String NormalizeParameters(String toDecode)
+		{
+			var lPointer = 0;
+			var lPrevFound = false;
+			var lDecode = toDecode;
+			var lPos = lDecode.IndexOf('"', lPointer);
+
+			while (lPos >= 0)
+			{
+				if (lPrevFound)
+				{
+					if (lPos < lDecode.Length - 1)
+					{
+						if (String.CharacterIsWhiteSpace(lDecode[lPos + 1]))
+						{
+							lDecode = lDecode.Insert(lPos + 1, ';');
+						}
+					}
+				}
+				lPrevFound = !lPrevFound;
+				lPointer = lPos + 1;
+				if (lPointer >= lDecode.Length) break;
+				lPos = lDecode.IndexOf('"', lPointer);
+			}
+			return lDecode;
+		}
+
+		public static List<KeyValuePair<String, String>> Decode(String toDecode)
 		{
 			// Normalize the input to take account for missing semicolons after parameters.
 			// Example
@@ -107,7 +107,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			// Only works for parameters inside quotes
 			// \s = matches whitespace
 			//toDecode = Regex.Replace(toDecode, "=\\s*\"(?<value>[^\"]*)\" ", "=\"${value}\"; ");
-            toDecode = NormalizeParameters(toDecode);
+			toDecode = NormalizeParameters(toDecode);
 
 			// Split by semicolon, but only if not inside quotes
 			List<String> splitted = Utility.SplitStringWithCharNotInsideQuotes(toDecode.Trim(), ';');

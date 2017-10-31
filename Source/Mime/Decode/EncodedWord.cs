@@ -47,62 +47,62 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		/// <param name="encodedWords">Source text. May be content which is not encoded.</param>
 		/// <returns>Decoded text</returns>
 		/// <exception cref="ArgumentNullException">If <paramref name="encodedWords"/> is <see langword="null"/></exception>
-		
-        private class EncodedTextInfo
-        {             
-             public String Charset;
-             public String Encoding;
-             public String Content;
-             public String FullText;
 
-             public EncodedTextInfo(String aCharset, String aEncoding, String aContent, String aFullText)
-             {
-                 Charset = aCharset;
-                 Encoding = aEncoding;
-                 Content = aContent;
-                 FullText = aFullText;
-             }
-        }
+		private class EncodedTextInfo
+		{
+			 public String Charset;
+			 public String Encoding;
+			 public String Content;
+			 public String FullText;
 
-        private static List<EncodedTextInfo> ParseEncodedText(String encodedWords)
-        {
-            var lPointer = 0;            
-            var lReturn = new List<EncodedTextInfo>();
-            var lPos = encodedWords.IndexOf("=?", lPointer);
-            var lLastOrigin = lPos;
-            
-            while(lPos >= 0)
-            {              
-                var lEndPos = encodedWords.IndexOf('?', lPointer + 2);
-                if (lEndPos >= 0)
-                {
-                    var lCharset = encodedWords.Substring(lPos + 2, lEndPos - (lPointer + 2));
-                    lPointer = lEndPos + 1;
-                    lPos = encodedWords.IndexOf('?', lPointer);
-                    if (lPos - lPointer == 1)
-                    {
-                        var lEncoding = encodedWords[lPos - 1];
-                        lPointer = lPos + 1;
-                        lPos = encodedWords.IndexOf("?=", lPointer);
-                        if (lPos >= 0)
-                        {
-                            var lContent = encodedWords.Substring(lPointer, lPos - lPointer);
-                            var lFullText = encodedWords.Substring(lLastOrigin, lPos + 2 - lLastOrigin);
-                            lPointer = lPos + 2;
-                            lReturn.Add(new EncodedTextInfo(lCharset, lEncoding, lContent, lFullText));
-                        }
-                        else break;
-                    }
-                }
-                else break;
-                lPos = encodedWords.IndexOf("=?", lPointer);
-                lLastOrigin = lPos;
-            }
+			 public EncodedTextInfo(String aCharset, String aEncoding, String aContent, String aFullText)
+			 {
+				 Charset = aCharset;
+				 Encoding = aEncoding;
+				 Content = aContent;
+				 FullText = aFullText;
+			 }
+		}
 
-            return lReturn;
-        }
-        
-        public static String Decode(String encodedWords)
+		private static List<EncodedTextInfo> ParseEncodedText(String encodedWords)
+		{
+			var lPointer = 0;
+			var lReturn = new List<EncodedTextInfo>();
+			var lPos = encodedWords.IndexOf("=?", lPointer);
+			var lLastOrigin = lPos;
+
+			while(lPos >= 0)
+			{
+				var lEndPos = encodedWords.IndexOf('?', lPointer + 2);
+				if (lEndPos >= 0)
+				{
+					var lCharset = encodedWords.Substring(lPos + 2, lEndPos - (lPointer + 2));
+					lPointer = lEndPos + 1;
+					lPos = encodedWords.IndexOf('?', lPointer);
+					if (lPos - lPointer == 1)
+					{
+						var lEncoding = encodedWords[lPos - 1];
+						lPointer = lPos + 1;
+						lPos = encodedWords.IndexOf("?=", lPointer);
+						if (lPos >= 0)
+						{
+							var lContent = encodedWords.Substring(lPointer, lPos - lPointer);
+							var lFullText = encodedWords.Substring(lLastOrigin, lPos + 2 - lLastOrigin);
+							lPointer = lPos + 2;
+							lReturn.Add(new EncodedTextInfo(lCharset, lEncoding, lContent, lFullText));
+						}
+						else break;
+					}
+				}
+				else break;
+				lPos = encodedWords.IndexOf("=?", lPointer);
+				lLastOrigin = lPos;
+			}
+
+			return lReturn;
+		}
+
+		public static String Decode(String encodedWords)
 		{
 			if (encodedWords == null)
 				throw new ArgumentNullException("encodedWords");
@@ -135,15 +135,15 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				String encoding = match.Groups["Encoding"].Value;
 				String charset = match.Groups["Charset"].Value;*/
 
-		    var lTextInfo = ParseEncodedText(encodedWords);
-            foreach(EncodedTextInfo lInfo in lTextInfo)
-            {
+			var lTextInfo = ParseEncodedText(encodedWords);
+			foreach(EncodedTextInfo lInfo in lTextInfo)
+			{
 				String fullMatchValue = lInfo.FullText;
-                String encodedText = lInfo.Content;
+				String encodedText = lInfo.Content;
 				String encoding = lInfo.Encoding;
 				String charset = lInfo.Charset;
-		                
-                // Get the encoding which corrosponds to the character set
+
+				// Get the encoding which corrosponds to the character set
 				Encoding charsetEncoding = Utility.ParseCharsetToEncoding(charset);
 
 				// Store decoded text here when done

@@ -8,10 +8,10 @@ namespace RemObjects.InternetPack
 	public class ConnectionPool : IDisposable
 	{
 		#if toffee || cooper
-        private readonly Object fSyncRoot = new Object();        
-        #else
-        private readonly Monitor fSyncRoot = new Monitor();
-        #endif
+		private readonly Object fSyncRoot = new Object();
+		#else
+		private readonly Monitor fSyncRoot = new Monitor();
+		#endif
 		private Timer fCleanupTimer;
 		private readonly Dictionary<string,ConnectionQueue> fCache;
 		private readonly Binding fBindingV4;

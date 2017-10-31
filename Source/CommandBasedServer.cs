@@ -113,20 +113,20 @@ namespace RemObjects.InternetPack.CommandBased
 		protected internal virtual CommandBasedSession CreateSession()
 		{
 			Type lType;
-            if (this.SessionClass != null)
-                lType = this.SessionClass;
-            else
-                lType = this.GetDefaultSessionClass();
+			if (this.SessionClass != null)
+				lType = this.SessionClass;
+			else
+				lType = this.GetDefaultSessionClass();
 
-            #if echoes
-            return (CommandBasedSession)Activator.CreateInstance(lType);
-            #elif cooper
-            return (CommandBasedSession)Class.getDeclaredConstructor(lType).newInstance();
-            #elif island
-            return (CommandBasedSession)lType.Instantiate();
-            #elif toffee
-            return null; // TODO
-            #endif
+			#if echoes
+			return (CommandBasedSession)Activator.CreateInstance(lType);
+			#elif cooper
+			return (CommandBasedSession)Class.getDeclaredConstructor(lType).newInstance();
+			#elif island
+			return (CommandBasedSession)lType.Instantiate();
+			#elif toffee
+			return null; // TODO
+			#endif
 		}
 
 		protected abstract void InitCommands();

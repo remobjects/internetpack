@@ -13,18 +13,18 @@ namespace RemObjects.InternetPack.Ldap
 	public class LdapException : Exception
 	{
 		public LdapException(String message)
-        : base(message)
+		: base(message)
 		{
 		}
 
 		public LdapException(String message, Int32 code)
-        : base(message)
+		: base(message)
 		{
 			this.fCode = code;
 		}
 
 		public LdapException(Int32 code)
-        : base(ErrorToString(code))
+		: base(ErrorToString(code))
 		{
 			this.fCode = code;
 		}

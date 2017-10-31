@@ -25,7 +25,7 @@ namespace RemObjects.InternetPack
 		}
 #endif
 
-        public override Type GetWorkerClass()
+		public override Type GetWorkerClass()
 		{
 			return typeof(TcpWorker);
 		}
