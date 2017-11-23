@@ -103,19 +103,15 @@ namespace RemObjects.InternetPack
 				{
 					lWorker.DataConnection = ConnectionFactory.CreateServerConnection(lSocket);
 				}
-				#if ECHOES
-				else if (this.ConnectionClass != null)
+				else if (defined("ECHOES") && (this.ConnectionClass != null))
 				{
 					lWorker.DataConnection = (Connection)Activator.CreateInstance(ConnectionClass);
 					lWorker.DataConnection.Init(lSocket);
 				}
-				#endif
-				#if FULLFRAMEWORK
-				else if (this.SslOptions.Enabled)
+				else if (defined("FULLFRAMEWORK") && (this.SslOptions.Enabled))
 				{
 					lWorker.DataConnection = this.SslOptions.CreateServerConnection(lSocket);
 				}
-				#endif
 				else
 				{
 					lWorker.DataConnection = new Connection(lSocket);

@@ -152,10 +152,8 @@ namespace RemObjects.InternetPack
 			Connection lConnection;
 			if (this.ConnectionFactory != null)
 				lConnection = this.ConnectionFactory.CreateClientConnection(lBinding);
-			#if ECHOES
-			else if (fConnectionClass != null)
+			else if (defined("ECHOES") && (fConnectionClass != null))
 				lConnection = (Connection)Activator.CreateInstance(this.fConnectionClass);
-			#endif
 			else
 				lConnection = new Connection(lBinding);
 
