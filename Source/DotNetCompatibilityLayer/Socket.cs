@@ -98,18 +98,22 @@
 
 		#if cooper
 		private Socket(java.net.Socket handle)
-		#elif posix || toffee
-		private Socket(int handle)
-		#else
-		private Socket(rtl.SOCKET handle)
-		#endif
-		{
+        {
 			fHandle = handle;
-			#if cooper
 			fSocketInput = fHandle.getInputStream();
 			fSocketOutput = fHandle.getOutputStream();
-			#endif
-		}
+        }
+		#elif posix || toffee
+		private Socket(int handle)
+        {
+            fHandle = handle;
+        }
+		#else
+		private Socket(rtl.SOCKET handle)
+        {
+            fHandle = handle;
+        }
+		#endif
 
 		static Socket()
 		{
@@ -129,12 +133,13 @@
 			lSockAddr.__sockaddr__ = null;
 			var lSocket = rtl.accept(fHandle, lSockAddr, null);
 			if (lSocket == -1)
+                throw new Exception("Error calling accept function");
 			#else
 			var lSocket = rtl.accept(fHandle, null, null);
 			if (lSocket < 0)
-			#endif
 				throw new Exception("Error calling accept function");
 			#endif
+            #endif
 
 			var lNewSocket = new Socket(lSocket);
 			lNewSocket.Connected = true;
@@ -270,10 +275,7 @@
 		#if !cooper
 		#if posix || toffee
 		private void IPEndPointToNative(IPEndPoint endPoint, out rtl.__struct_sockaddr_in lIPv4, out rtl.__struct_sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
-		#else
-		private void IPEndPointToNative(IPEndPoint endPoint, out rtl.SOCKADDR_IN lIPv4, out sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
-		#endif
-		{
+        {
 			switch (endPoint.AddressFamily)
 			{
 				case AddressFamily.InterNetworkV6:
@@ -290,15 +292,9 @@
 						lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
 						#elif posix
 						lIPv6.sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
-						#else
-						lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
 						#endif
 					ipPointer = &lIPv6;
-					#if posix || toffee
 					ipSize = sizeof(rtl.__struct_sockaddr_in6);
-					#else
-					ipSize = sizeof(sockaddr_in6);
-					#endif
 					break;
 
 				default:
@@ -309,18 +305,41 @@
 					lIPv4.sin_port = rtl.htons(endPoint.Port);
 					#endif
 
-					#if posix || toffee
 					lIPv4.sin_addr.s_addr = endPoint.Address.Address;
 					ipSize = sizeof(rtl.__struct_sockaddr_in);
-					#else
-					lIPv4.sin_addr.S_un.S_addr = endPoint.Address.Address;
-					ipSize = sizeof(rtl.SOCKADDR_IN);
-					#endif
 					ipPointer = &lIPv4;
 					break;
 			}
-		}
-		#endif
+
+        }
+        #else
+        private void IPEndPointToNative(IPEndPoint endPoint, out rtl.SOCKADDR_IN lIPv4, out sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
+        {
+			switch (endPoint.AddressFamily)
+			{
+				case AddressFamily.InterNetworkV6:
+					lIPv6.sin6_family = AddressFamily.InterNetworkV6;
+					lIPv6.sin6_port = rtl.htons(endPoint.Port);
+					lIPv6.sin6_scope_id = endPoint.Address.ScopeId;
+					var lBytes = endPoint.Address.GetAddressBytes();
+					for (int i = 0; i < 16; i++)
+						lIPv6.sin6_addr.u.Byte[i] = lBytes[i];
+					ipPointer = &lIPv6;
+					ipSize = sizeof(sockaddr_in6);
+					break;
+
+				default:
+					lIPv4.sin_family = AddressFamily.InterNetwork;
+					lIPv4.sin_port = rtl.htons(endPoint.Port);
+					lIPv4.sin_addr.S_un.S_addr = endPoint.Address.Address;
+					ipSize = sizeof(rtl.SOCKADDR_IN);
+					ipPointer = &lIPv4;
+					break;
+			}
+        
+        }
+        #endif
+        #endif
 
 		public void Connect(EndPoint remoteEP)
 		{
@@ -348,14 +367,16 @@
 
 
 			IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
-			#if posix
+			var lRes = 0;
+            #if posix
 			lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
-			if (rtl.connect(fHandle, lSockAddr, lSize) != 0)
+			lRes = rtl.connect(fHandle, lSockAddr, lSize);
 			#elif toffee
-			if (rtl.connect(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
+			lRes = rtl.connect(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize);
 			#else
-			if (rtl.connect(fHandle, lPointer, lSize) != 0)
+			lRes = rtl.connect(fHandle, lPointer, lSize);
 			#endif
+            if (lRes != 0)
 				throw new Exception("Error connecting socket");
 			#endif
 
@@ -832,16 +853,18 @@
 					return 0;
 				#else
 				rtl.u_long lData = 0;
+                var lError = false;
 				#if posix || toffee
-				if (rtl.ioctl(fHandle, FIONREAD, &lData) < 0)
+				lError = rtl.ioctl(fHandle, FIONREAD, &lData) < 0;
 				#else
 				var lRes = 0;
 				if (rtl.ioctlsocket(fHandle, rtl.FIONREAD, &lData) != 0)
 				{
 					lRes = rtl.WSAGetLastError();
 				}
-				if((lRes != 0) && (lRes != rtl.WSAEOPNOTSUPP))
+				lError = (lRes != 0) && (lRes != rtl.WSAEOPNOTSUPP);
 				#endif
+                if (lError)
 					lData = 0;
 					//throw new Exception("Error calling ioctl function");
 

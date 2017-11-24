@@ -968,11 +968,8 @@ namespace RemObjects.InternetPack.Ldap
 			}
 		}
 
-		#if !cooper
+		[ToString]
 		public override String ToString()
-		#else
-		public String ToString()
-		#endif
 		{
 			return this.Value.ToString();
 		}

@@ -977,11 +977,11 @@ namespace RemObjects.InternetPack.Ftp
 
 				Int32 lPort = ((IPEndPoint)lSession.PassiveServer.Binding.ListeningSocket.LocalEndPoint).Port;
 				e.Connection.WriteLine("227 Entering Passive Mode ({0},{1},{2},{3},{4},{5}).", lAddress[0], lAddress[1], lAddress[2], lAddress[3],
-				#if echoes
-					unchecked((Byte)(lPort >> 8)), unchecked((Byte)lPort));
-				#else
+				//#if echoes
+					//unchecked((Byte)(lPort >> 8)), unchecked((Byte)lPort));
+				//#else
 					(Byte)(lPort >> 8), (Byte)lPort);
-				#endif
+				//#endif
 			}
 			else
 			{

@@ -290,11 +290,8 @@ namespace RemObjects.InternetPack
 				}
 			}
 
-			#if echoes
+			[ToString]
 			public override String ToString()
-			#else
-			public String ToString()
-			#endif
 			{
 				StringBuilder lResult = new StringBuilder();
 				Boolean lFirst = true;

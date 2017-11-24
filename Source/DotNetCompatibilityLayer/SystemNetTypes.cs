@@ -293,11 +293,13 @@
 			#if posix || toffee
 			rtl.__struct_addrinfo *lAddrInfo;
 			rtl.__struct_sockaddr_in6 *lSockAddr;
-			#if toffee
-			if (rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo) != 0)
+			var lRes = 0;
+            #if toffee
+			lRes = rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo);
 			#else
-			if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) != 0)
+			lRes = rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo);
 			#endif
+            if (lRes != 0)
 				return false;
 			lSockAddr = (rtl.__struct_sockaddr_in6 *)(*lAddrInfo).ai_addr;
 			#else

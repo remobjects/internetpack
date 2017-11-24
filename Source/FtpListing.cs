@@ -560,11 +560,11 @@ namespace RemObjects.InternetPack.Ftp
 				}
                 catch(Exception ex)
                 {
-                    if (ex.GetType() != typeof(FormatException))
+                    if (!(ex is FormatException))
                     {
-                        if (defined("ECHOES") && (ex.GetType() != typeof(IndexOutOfRangeException)))
+                        if (defined("ECHOES") && (!(ex is IndexOutOfRangeException)))
                             throw ex;
-                        else if (!defined("ECHOES") && (ex.GetType() != typeof(RTLException)))
+                        else if (!defined("ECHOES") && (!(ex is RTLException)))
                             throw ex;
                     }
                 }

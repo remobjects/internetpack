@@ -42,6 +42,18 @@ namespace RemObjects.InternetPack.Dns
 		}
 		#endif
 
+        #if posix || toffee
+        private rtl.__struct_addrinfo *GetNext(rtl.__struct_addrinfo *Addr)
+        {
+            return (rtl.__struct_addrinfo *)Addr->ai_next;
+        }
+        #elif island
+        private rtl.ADDRINFOW *GetNext(rtl.ADDRINFOW *Addr)
+        {
+            return  (rtl.ADDRINFOW*)Addr->ai_next;
+        }
+        #endif
+
 		public static IPAddress[] ResolveAll(String hostname)
 		{
 			IPAddress lAddress = TryStringAsIPAddress(hostname);
@@ -71,7 +83,6 @@ namespace RemObjects.InternetPack.Dns
 			#if island && windows
 			rtl.ADDRINFOW *lAddrInfo;
 			rtl.ADDRINFOW *lPtr;
-			rtl.ADDRINFOW lJenson;
 			rtl.SOCKADDR_IN *lSockAddrIPv4;
 			sockaddr_in6 *lSockAddr;
 			#elif posix || toffee
@@ -80,29 +91,22 @@ namespace RemObjects.InternetPack.Dns
 			rtl.__struct_sockaddr_in *lSockAddrIPv4;
 			rtl.__struct_sockaddr_in6 *lSockAddr;
 			#endif
-			#if toffee
-			if (rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo) == 0)
-			#elif posix
+			            
+            var lRes = 0;
+            #if toffee
+            lRes = rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo);
+            #elif posix
 			AnsiChar[] lHost = lString.ToAnsiChars(true);
-			if (rtl.getaddrinfo(&lHost[0], null, null, &lAddrInfo) == 0)
-			//if (rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo) == 0)
-			#elif island
+			lRes = rtl.getaddrinfo(&lHost[0], null, null, &lAddrInfo);
+            #elif island
 			char[] lHost = lString.ToCharArray(true);
-			ExternalCalls.memset(&lJenson, 0, sizeof(rtl.ADDRINFOW));
-			lJenson.ai_family = AddressFamily.Unspecified;
-			lJenson.ai_socktype = rtl.SOCK_STREAM;
-			lJenson.ai_protocol = ProtocolType.Tcp;
 			rtl.WSADATA data;
 			rtl.WSAStartup(rtl.WINSOCK_VERSION, &data);
-
-			if (rtl.GetAddrInfoW(&lHost[0], null, null, &lAddrInfo) == 0)
-			#endif
+			lRes = rtl.GetAddrInfoW(&lHost[0], null, null, &lAddrInfo);
+            #endif
+            if (lRes == 0)            
 			{
-				#if posix || toffee
-				for(lPtr = lAddrInfo; lPtr != null; lPtr = (rtl.__struct_addrinfo *)lPtr->ai_next)
-				#else
-				for(lPtr = lAddrInfo; lPtr != null; lPtr = (rtl.ADDRINFOW*)lPtr->ai_next)
-				#endif
+				for(lPtr = lAddrInfo; lPtr != null; lPtr = GetNext(lPtr))
 				{
 					switch(lPtr->ai_family)
 					{

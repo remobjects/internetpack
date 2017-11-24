@@ -489,19 +489,15 @@ namespace RemObjects.InternetPack
 						{
 							lWorker.DataConnection = Owner.ConnectionFactory.CreateServerConnection(lSocket);
 						}
-						#if ECHOES
-						else if (Owner.ConnectionClass != null)
+						else if (defined("ECHOES") && (Owner.ConnectionClass != null))
 						{
 							lWorker.DataConnection = (Connection)Activator.CreateInstance(Owner.ConnectionClass);
 							lWorker.DataConnection.Init(lSocket);
 						}
-						#endif
-						#if FULLFRAMEWORK
-						else if (Owner.SslOptions.Enabled)
+						else if (defined("FULLFRAMEWORK") && (Owner.SslOptions.Enabled))
 						{
 							lWorker.DataConnection = Owner.SslOptions.CreateServerConnection(lSocket);
 						}
-						#endif
 						else
 						{
 							lWorker.DataConnection = new Connection(lSocket);

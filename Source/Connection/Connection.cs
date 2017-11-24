@@ -161,7 +161,7 @@ namespace RemObjects.InternetPack
 				if (this.fTimeoutTimer != null)
 				{
 					this.fTimedOut = false;
-					//this.fTimeoutTimer.Change(this.Timeout * 1000, this.Timeout * 1000);
+					this.fTimeoutTimer.Change(this.Timeout * 1000, this.Timeout * 1000);
 				}
 			}
 		}
@@ -1060,12 +1060,23 @@ namespace RemObjects.InternetPack
 		#endregion
 
 		#region IDisposable Members
-#if FULLFRAMEWORK
+        #if FULLFRAMEWORK
 		public new void Dispose()
-#else
+        {
+   			if (this.Connected)
+			{
+				this.Disconnect();
+			}
+
+			if (this.fTimeoutTimer != null)
+			{
+				this.fTimeoutTimer.Dispose();
+				this.fTimeoutTimer = null;
+			}
+        }
+        #else
 		public void Dispose()
-#endif
-		{
+        {
 			if (this.Connected)
 			{
 				this.Disconnect();
@@ -1076,7 +1087,8 @@ namespace RemObjects.InternetPack
 				this.fTimeoutTimer.Dispose();
 				this.fTimeoutTimer = null;
 			}
-		}
+        }
+        #endif
 		#endregion
 
 		#region Statistics

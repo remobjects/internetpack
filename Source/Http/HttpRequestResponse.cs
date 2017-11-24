@@ -994,11 +994,8 @@ namespace RemObjects.InternetPack.Http
 			}
 		}
 
-		#if echoes || island
+        [ToString]
 		public override String ToString()
-		#else
-		public String ToString()
-		#endif
 		{
 			return this.fQuery ?? "";
 		}

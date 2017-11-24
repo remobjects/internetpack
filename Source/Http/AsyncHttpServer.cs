@@ -304,15 +304,10 @@ namespace RemObjects.InternetPack.Http
 					// we've got the last line. Process it
 					if (lRequireBody)
 					{
-#if FULLFRAMEWORK
-						Int64 lContentLength;
-						if (!Int64.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
-#else
 						Int64? lContentLength;
 						lContentLength = RemObjects.elements.rtl.Convert.TryToInt64(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"));
 						if (lContentLength == null)
 						//if (!LongHelper.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
-#endif
 							lContentLength = 0;
 
 						if (lContentLength > ((AsyncHttpServer)this.Owner).MaxPostSize)

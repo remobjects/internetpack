@@ -28,11 +28,8 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#region ToString
-		#if echoes || island
-		public override String ToString()
-		#else
-		public String ToString()
-		#endif
+		[ToString]
+        public override String ToString()
 		{
 			if (this.Count == 1)
 				return String.Format("{0}: {1}", this.Name, this.fValues[0]);
@@ -405,11 +402,8 @@ namespace RemObjects.InternetPack.Http
 			return null;
 		}
 
-		#if echoes || island
-		public override String ToString()
-		#else
-		public String ToString()
-		#endif
+		[ToString]
+        public override String ToString()
 		{
 			StringBuilder lResult = new StringBuilder();
 			lResult.Append(FirstHeader);
