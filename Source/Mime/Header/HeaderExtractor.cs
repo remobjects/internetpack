@@ -5,6 +5,7 @@
 //
 
 using RemObjects.InternetPack.Messages.Mime.Decode;
+using RemObjects.InternetPack.Shared.Base;
 
 namespace RemObjects.InternetPack.Messages.Mime.Header
 {

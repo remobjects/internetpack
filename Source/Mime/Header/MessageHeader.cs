@@ -780,7 +780,8 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 			}
 		}
 
-		public override String ToString()
+		[ToString]
+        public override String ToString()
 		{
 			StringBuilder lResult = new StringBuilder();
 			Store(lResult);

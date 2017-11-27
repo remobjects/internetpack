@@ -612,5 +612,45 @@
 		NoValue = -999
 	}
 
+    public class ContentDisposition
+    {
+	    private String fDisposition;
+        public ContentDisposition(String disposition)
+        {
+            fDisposition = disposition;
+        }
+
+	    [ToString]
+        public override String ToString() { return ""; }
+	    public String DispositionType { get; set; }
+	    public Dictionary<String, String> Parameters { get; set; }
+	    public String FileName { get; set; }
+	    public DateTime CreationDate { get; set; }
+	    public DateTime ModificationDate { get; set; }
+	    public bool Inline { get; set; }
+	    public DateTime ReadDate { get; set; }
+	    public long Size { get; set; }
+    }
+
+    public enum MailPriority
+    {
+        Low = 1,
+        Normal = 3,
+        High = 5
+    }
+
+    public class ContentType
+    {
+	    public ContentType(String contentType) { }
+	    public ContentType() { }
+	    [ToString]
+        public override String ToString() { }
+	    public String Boundary { get; set; }
+	    public String CharSet { get; set; }
+	    public String MediaType { get; set; }
+	    public String Name { get; set; }
+	    public Dictionary<String, String> Parameters { get; set; }
+    }
+
 	#endif
 }

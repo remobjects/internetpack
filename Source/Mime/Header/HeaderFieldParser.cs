@@ -5,6 +5,7 @@
 //
 
 using RemObjects.InternetPack.Messages.Mime.Decode;
+using RemObjects.InternetPack.Messages.Mime;
 
 namespace RemObjects.InternetPack.Messages.Mime.Header
 {
@@ -201,7 +202,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 						break;
 
 					case "SIZE":
-						contentDisposition.Size = Int32.Parse(Utility.RemoveQuotesIfAny(value), CultureInfo.InvariantCulture);
+						contentDisposition.Size = Convert.ToInt32(Utility.RemoveQuotesIfAny(value));
 						break;
 
 					default:
@@ -241,7 +242,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 			// Split the String by >
 			// We cannot use ' ' (space) here since this is a possible value:
 			// <test@test.com><test2@test.com>
-			String[] ids = (headerValue.Trim() as System.String).Split(new char[] { '>' }, StringSplitOptions.RemoveEmptyEntries);
+			String[] ids = (headerValue.Trim() as String).Split(new char[] { '>' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (String id in ids)
 			{
 				returner.Add(ParseId(id));

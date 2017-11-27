@@ -225,7 +225,7 @@ namespace RemObjects.InternetPack.Messages.Mime
 		{
 			get
 			{
-				return ContentType.MediaType.StartsWith("multipart/", StringComparison.OrdinalIgnoreCase);
+				return ContentType.MediaType.StartsWith("multipart/", true);
 			}
 		}
 
@@ -540,10 +540,10 @@ namespace RemObjects.InternetPack.Messages.Mime
 
 				// The MultiPart boundary is the MultiPartBoundary with "--" in front of it
 				// which is to be at the very start of a line
-				if ((line as System.String).StartsWith("--" + multiPartBoundary, StringComparison.Ordinal))
+				if ((line as String).StartsWith("--" + multiPartBoundary, false))
 				{
 					// Check if the found boundary was also the last one
-					lastMultipartBoundaryFound = (line as System.String).StartsWith("--" + multiPartBoundary + "--", StringComparison.OrdinalIgnoreCase);
+					lastMultipartBoundaryFound = (line as String).StartsWith("--" + multiPartBoundary + "--", true);
 					return currentPos;
 				}
 			}

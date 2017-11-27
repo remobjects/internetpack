@@ -25,6 +25,10 @@ namespace RemObjects.InternetPack.Shared.Base
 		{
 
 		}
+
+        public abstract int Peek();
+
+        public abstract String ReadLine();
 	}
 
 	public class StreamReader : TextReader
@@ -45,6 +49,20 @@ namespace RemObjects.InternetPack.Shared.Base
 
 			return fEncoding.GetString(lBuffer, 0, lBytes);
 		}
+
+        public override int Peek()
+        {
+            var lOldPos = fStream.Position;
+            var lByte = fStream.ReadByte();
+            fStream.Position = lOldPos;
+
+            return lByte;
+        }
+
+        public override string ReadLine()
+        {
+
+        }
 	}
 
 	public class StreamWriter : StreamReader
@@ -131,6 +149,18 @@ namespace RemObjects.InternetPack.Shared.Base
 
 		 }
 	}
+
+    public class StringReader: TextReader
+    {
+        public StringReader(String s) {}
+	    public override void Close() {}
+	    protected override void Dispose(bool disposing) {}
+	    public override int Peek() {}
+	    public override int Read(Char[] buffer, int index, int count) {}
+	    public override int Read() {}
+	    public override String ReadToEnd() {}
+	    public override String ReadLine() {}
+    }
 
 	#if echoes
 	public class WrappedStream: System.IO.Stream

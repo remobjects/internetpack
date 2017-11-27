@@ -28,7 +28,8 @@ namespace RemObjects.InternetPack.Messages
 			return (this.Name.Length != 0) || (this.Address.Length != 0);
 		}
 
-		public override String ToString()
+		[ToString]
+        public override String ToString()
 		{
 			return String.Format("{0} <{1}>", this.Name, this.Address);
 		}
@@ -63,7 +64,7 @@ namespace RemObjects.InternetPack.Messages
 		}
 	}
 
-	public class MessageAddresses : System.Collections.Generic.List<MessageAddress>
+	public class MessageAddresses : List<MessageAddress>
 	{
 		public MessageAddress Add(String name, String address)
 		{
@@ -86,6 +87,7 @@ namespace RemObjects.InternetPack.Messages
 			return item;
 		}
 
+        [ToString]
 		public override String ToString()
 		{
 			StringBuilder lResult = new StringBuilder();
@@ -108,7 +110,7 @@ namespace RemObjects.InternetPack.Messages
 			return lResult.ToString();
 		}
 
-		public static MessageAddresses ParseAddresses(IEnumerable<String> addresses)
+		public static MessageAddresses ParseAddresses(ISequence<String> addresses)
 		{
 			MessageAddresses lAddresses = new MessageAddresses();
 
