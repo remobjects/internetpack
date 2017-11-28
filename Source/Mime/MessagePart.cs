@@ -225,7 +225,11 @@ namespace RemObjects.InternetPack.Messages.Mime
 		{
 			get
 			{
-				return ContentType.MediaType.StartsWith("multipart/", true);
+				#if echoes
+                return ContentType.MediaType.StartsWith("multipart/", StringComparison.InvariantCultureIgnoreCase);
+                #else
+                return ContentType.MediaType.StartsWith("multipart/", true);
+                #endif
 			}
 		}
 
@@ -613,7 +617,7 @@ namespace RemObjects.InternetPack.Messages.Mime
 				lInnerBuilder.AppendFormat("--{0}--\r\n", this.Header.ContentType.Boundary);
 
 				String lInnerPart = lInnerBuilder.ToString();
-				this.Header["Content-Length"] = System.Text.Encoding.UTF8.GetByteCount(lInnerPart).ToString();
+				this.Header["Content-Length"] = length(Encoding.UTF8.GetBytes(lInnerPart)).ToString();
 
 				this.Header.Store(builder);
 				builder.Append("\r\n");

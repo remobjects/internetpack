@@ -242,10 +242,11 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 			// Split the String by >
 			// We cannot use ' ' (space) here since this is a possible value:
 			// <test@test.com><test2@test.com>
-			String[] ids = (headerValue.Trim() as String).Split(new char[] { '>' }, StringSplitOptions.RemoveEmptyEntries);
+			var ids = (headerValue.Trim() as String).Split('>');
 			foreach (String id in ids)
 			{
-				returner.Add(ParseId(id));
+				if (id != "")
+                    returner.Add(ParseId(id));
 			}
 
 			return returner;

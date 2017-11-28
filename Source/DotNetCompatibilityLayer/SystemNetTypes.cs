@@ -1,6 +1,7 @@
 ﻿namespace RemObjects.InternetPack
 {
 	#if !ECHOES
+
 	// Generated from /Users/mh/Xcode/DerivedData/Fire-beiaefoboptwvtbxtvecylpnprxy/Build/Products/Debug/Fire.app/Contents/Resources/Mono/lib/mono/2.0/System.dll
 	public enum AddressFamily
 	{
@@ -614,7 +615,8 @@
 
     public class ContentDisposition
     {
-	    private String fDisposition;
+	    // TODO
+        private String fDisposition;
         public ContentDisposition(String disposition)
         {
             fDisposition = disposition;
@@ -641,7 +643,8 @@
 
     public class ContentType
     {
-	    public ContentType(String contentType) { }
+	    // TODO
+        public ContentType(String contentType) { }
 	    public ContentType() { }
 	    [ToString]
         public override String ToString() { }

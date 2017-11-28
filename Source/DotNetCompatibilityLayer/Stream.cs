@@ -6,7 +6,7 @@ namespace RemObjects.InternetPack.Shared.Base
 	{
 		protected Encoding fEncoding;
 
-		virtual void Dispose()
+		public virtual void Dispose()
 		{
 
 		}
@@ -21,8 +21,6 @@ namespace RemObjects.InternetPack.Shared.Base
 			return "";
 		}
 
-		public abstract void Write(string Value);
-
         public abstract int Peek();
 
         public abstract String ReadLine();
@@ -33,6 +31,17 @@ namespace RemObjects.InternetPack.Shared.Base
 	    
         public abstract int Read();
 	}
+
+    public abstract class TextWriter: MarshalByRefObject, IDisposable
+    {
+        protected Encoding fEncoding;
+	    public abstract void Close();
+	    public new void Dispose();
+	    protected virtual void Dispose(bool disposing);
+	    public abstract void Flush();
+	    public abstract void Write(String value);
+	    public abstract void WriteLine(String value);
+    }
 
 	public class StreamReader : TextReader
 	{
@@ -64,7 +73,7 @@ namespace RemObjects.InternetPack.Shared.Base
 
         public override string ReadLine()
         {
-
+            // TODO
         }
 
         public override void Close()
@@ -74,6 +83,7 @@ namespace RemObjects.InternetPack.Shared.Base
 
         public override int Read(Char[] buffer, int index, int count) 
         {
+            // TODO
             return -1;
         }
 	    
@@ -83,9 +93,22 @@ namespace RemObjects.InternetPack.Shared.Base
         } 
 	}
 
-	public class StreamWriter : StreamReader
+	public class StreamWriter : TextWriter
 	{
-		public override void Flush()
+		protected Stream fStream;
+
+		public StreamWriter(Stream stream)
+		{
+			fStream = stream;
+			fEncoding = Encoding.UTF8;
+		}
+        
+        public override void Close()
+        {
+            fStream.Close();
+        }
+        
+        public override void Flush()
 		{
 			fStream.Flush();
 		}
@@ -95,7 +118,7 @@ namespace RemObjects.InternetPack.Shared.Base
 			WriteLine("");
 		}
 
-		public virtual void WriteLine(string Value)
+		public override void WriteLine(string Value)
 		{
 			var lBuffer = fEncoding.GetBytes(Value + Environment.LineBreak);
 			fStream.Write(lBuffer, lBuffer.Length);
@@ -164,7 +187,7 @@ namespace RemObjects.InternetPack.Shared.Base
 
 		 public void Flush()
 		 {
-            
+
 		 }
 	}
 
@@ -193,16 +216,17 @@ namespace RemObjects.InternetPack.Shared.Base
 
 	    public override int Peek()        
         {
-
+            // TODO
         }
 
 	    public override int Read(Char[] buffer, int index, int count)
         {
+            // TODO
         }
 
 	    public override int Read()
         {
-
+            // TODO
         }
 
 	    public override String ReadToEnd()
@@ -212,7 +236,7 @@ namespace RemObjects.InternetPack.Shared.Base
 
 	    public override String ReadLine()
         {
-
+            // TODO
         }
     }
 
