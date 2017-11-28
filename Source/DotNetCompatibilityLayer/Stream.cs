@@ -6,7 +6,7 @@ namespace RemObjects.InternetPack.Shared.Base
 	{
 		protected Encoding fEncoding;
 
-		void Dispose()
+		virtual void Dispose()
 		{
 
 		}
@@ -21,14 +21,17 @@ namespace RemObjects.InternetPack.Shared.Base
 			return "";
 		}
 
-		public virtual void Write(string Value)
-		{
-
-		}
+		public abstract void Write(string Value);
 
         public abstract int Peek();
 
         public abstract String ReadLine();
+
+        public abstract void Close();
+
+        public abstract int Read(Char[] buffer, int index, int count);
+	    
+        public abstract int Read();
 	}
 
 	public class StreamReader : TextReader
@@ -63,6 +66,21 @@ namespace RemObjects.InternetPack.Shared.Base
         {
 
         }
+
+        public override void Close()
+        {
+            fStream.Close();
+        }
+
+        public override int Read(Char[] buffer, int index, int count) 
+        {
+            return -1;
+        }
+	    
+        public override int Read() 
+        { 
+            return fStream.ReadByte();
+        } 
 	}
 
 	public class StreamWriter : StreamReader
@@ -146,20 +164,56 @@ namespace RemObjects.InternetPack.Shared.Base
 
 		 public void Flush()
 		 {
-
+            
 		 }
 	}
 
     public class StringReader: TextReader
     {
-        public StringReader(String s) {}
-	    public override void Close() {}
-	    protected override void Dispose(bool disposing) {}
-	    public override int Peek() {}
-	    public override int Read(Char[] buffer, int index, int count) {}
-	    public override int Read() {}
-	    public override String ReadToEnd() {}
-	    public override String ReadLine() {}
+        private String fData;
+        private int fPos = 0;
+        private int fLength;
+
+        public StringReader(String s)        
+        {
+            fData = s;
+            fLength = s.Length;
+        }
+
+	    public override void Dispose()
+        {
+            fData = null;
+            base.Dispose();
+        }
+
+        public override void Close()        
+        {
+            Dispose();
+        }
+
+	    public override int Peek()        
+        {
+
+        }
+
+	    public override int Read(Char[] buffer, int index, int count)
+        {
+        }
+
+	    public override int Read()
+        {
+
+        }
+
+	    public override String ReadToEnd()
+        {
+
+        }
+
+	    public override String ReadLine()
+        {
+
+        }
     }
 
 	#if echoes
