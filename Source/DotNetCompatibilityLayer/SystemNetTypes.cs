@@ -622,6 +622,11 @@
             fDisposition = disposition;
         }
 
+        public ContentDisposition()
+        {
+            fDisposition = "";
+        }
+
 	    [ToString]
         public override String ToString() { return ""; }
 	    public String DispositionType { get; set; }

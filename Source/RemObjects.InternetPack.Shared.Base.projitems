@@ -20,11 +20,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)FtpListing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FtpServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LdapClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageAddress.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\EncodedWord.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\QuotedPrintable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\Rfc2231Decoder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\Rfc2822DateTime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\Utility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mime\Header\HeaderExtractor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mime\Header\HeaderFieldParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mime\Header\MessageHeader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mime\MessagePart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mime\MimeMessage.cs" />
     <Compile Include="CommandBasedServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\IConnectionTimeouts.cs" />
@@ -84,5 +90,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Http" />
     <Folder Include="$(MSBuildThisFileDirectory)Mime" />
     <Folder Include="$(MSBuildThisFileDirectory)Mime\Decode" />
+    <Folder Include="Mime\Header" />
   </ItemGroup>
 </Project>

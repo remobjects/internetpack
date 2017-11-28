@@ -10,15 +10,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Message.cs" />
-    <Compile Include="MessageAddress.cs" />
     <Compile Include="MessageAttachment.cs" />
     <Compile Include="MessageEncoder.cs" />
     <Compile Include="MessageHeaderField.cs" />
-    <Compile Include="Mime\Header\HeaderExtractor.cs" />
-    <Compile Include="Mime\Header\HeaderFieldParser.cs" />
-    <Compile Include="Mime\Header\MessageHeader.cs" />
-    <Compile Include="Mime\MimeMessage.cs" />
-    <Compile Include="Mime\MessagePart.cs" />
     <Compile Include="Pop3Client.cs">
       <SubType>Component</SubType>
     </Compile>

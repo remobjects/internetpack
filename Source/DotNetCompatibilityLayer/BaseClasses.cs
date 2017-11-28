@@ -51,6 +51,8 @@
 
 	public class ArgumentOutOfRangeException : RTLException {
 		public ArgumentOutOfRangeException() : base("Argument out of range") {}
+        
+        public ArgumentOutOfRangeException(string message) : base(message) {}
 	}
 	public class ObjectDisposedException : Exception {}
 
