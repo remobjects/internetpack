@@ -66,7 +66,7 @@ namespace RemObjects.InternetPack.Messages
 
 	public class MessageAddresses
 	{
-		private List<MessageAddress> fData;
+		private List<MessageAddress> fData = new List<MessageAddress>();
         
         public MessageAddress Add(String name, String address)
 		{
