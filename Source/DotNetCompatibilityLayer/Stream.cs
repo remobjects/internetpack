@@ -206,6 +206,7 @@ namespace RemObjects.InternetPack.Shared.Base
 	    public override void Dispose()
         {
             fData = null;
+            fPos = 0;
             base.Dispose();
         }
 
@@ -216,27 +217,46 @@ namespace RemObjects.InternetPack.Shared.Base
 
 	    public override int Peek()        
         {
-            // TODO
+            return fData[fPos];
         }
 
 	    public override int Read(Char[] buffer, int index, int count)
         {
-            // TODO
+            var lTotal = count;
+            if (fLength - fPos <= count)
+               lTotal = fLength - fPos;
+
+            for (int i = 0; i < lTotal; i++)
+                buffer[index + i] = fData[fPos + i];
+
+            fPos+= lTotal;
+            return lTotal;
         }
 
 	    public override int Read()
         {
-            // TODO
+            return fData[fPos++];
         }
 
 	    public override String ReadToEnd()
         {
-
+            var lString = fData.Substring(fPos);
+            fPos = fLength;
+            return lString;
         }
 
 	    public override String ReadLine()
-        {
-            // TODO
+        {            
+            var lString = string.Empty;
+            var lPos = fData.IndexOfAny(new Char[] {'\r', '\n'});
+            if (lPos >= 0)
+                lString = fData.Substring(fPos, fPos - lPos);
+            lPos++;
+            if (fData[lPos - 1] == '\r' && (lPos < fLength) && (fData[lPos] == '\n'))
+                lPos++;
+            fPos = lPos;
+
+            return lString;
         }
     }
 
