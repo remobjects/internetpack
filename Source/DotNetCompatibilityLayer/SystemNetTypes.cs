@@ -615,22 +615,38 @@
 
     public class ContentDisposition
     {
-	    // TODO
         private String fDisposition;
+        private Dictionary<String, String> fParameters;
+
+        }
         public ContentDisposition(String disposition)
         {
-            fDisposition = disposition;
+            if (disposition.IndexOf(';') < 0)
+                fDisposition = disposition.Trim();
+            else
+            {
+                var lParts = disposition.Split(';');
+				fDispositionType = lParts[0].Trim();
+				for (int i = 1; i < lParts.Count; i++)
+				{
+                    var lValues = lParts[i].Split('=');
+			        if (lValues.Count == 2)
+				        fParameters.Add(lValues[0].Trim(), lValues[1].Trim());
+			        else
+				        throw new Exception("Wrong format");
+                }
+            }
         }
 
-        public ContentDisposition()
+        public ContentDisposition(): this("attachment")
         {
-            fDisposition = "";
+            
         }
 
 	    [ToString]
         public override String ToString() { return ""; }
 	    public String DispositionType { get; set; }
-	    public Dictionary<String, String> Parameters { get; set; }
+	    public Dictionary<String, String> Parameters { get { return fParameters; } }
 	    public String FileName { get; set; }
 	    public DateTime CreationDate { get; set; }
 	    public DateTime ModificationDate { get; set; }
