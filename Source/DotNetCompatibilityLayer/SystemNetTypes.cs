@@ -1,4 +1,6 @@
-﻿namespace RemObjects.InternetPack
+﻿using RemObjects.InternetPack.Messages.Mime.Decode;
+
+namespace RemObjects.InternetPack
 {
 	#if !ECHOES
 
@@ -670,11 +672,6 @@
 	    public Dictionary<String, String> Parameters { get { return fParameters; } }
 
 	    public String FileName { get { return fParameters["filename"]; } set { fParameters["filename"] = value; } }
-
-	    private DateTime ParseRFC822Date(String aValue)
-        {
-            return MinDate; 
-        }
                                 
         public DateTime CreationDate             
         {
@@ -682,7 +679,7 @@
             {
 				var lDate = fParameters["creation-date"];
                 if (lDate != "")
-					return ParseRFC822Date(lDate);
+					return Rfc2822DateTime.StringToDate(lDate);
 				else
 					return MinDate;
 			}
@@ -702,7 +699,7 @@
             {
 				var lDate = fParameters["modification-date"];
                 if (lDate != "")
-					return ParseRFC822Date(lDate);
+					return Rfc2822DateTime.StringToDate(lDate);
 				else
 					return MinDate;
 			}
@@ -738,7 +735,7 @@
             {
                 var lDate = fParameters["read-date"];
                 if (lDate != "")
-					return ParseRFC822Date(lDate);
+					return Rfc2822DateTime.StringToDate(lDate);
                 else
                     return MinDate;
 			}
@@ -782,16 +779,72 @@
 
     public class ContentType
     {
-	    // TODO
-        public ContentType(String contentType) { }
-	    public ContentType() { }
+        private String fMediaType;
+        private Dictionary<String, String> fParameters = new Dictionary<String, String>();
+        private readonly char [] ToEncode = {'(', ')', '<', '>', '@', ',', ';', ':', '<', '>', '/', '[', ']', '?', '.', '='};
+
+        public ContentType(String contentType)
+        {            
+			var lValues = contentType.Split(';');
+			fMediaType = lValues[0].Trim();
+			for (int i = 1; i < lValues.Count; i++)
+            {
+				var lParts = lValues[i].Split('=');
+                var lKey = lParts[0].Trim();
+                var lValue = "";
+                if (lParts.Count > 1)
+                {
+                    lValue = lParts[1].Trim();
+                    if (lValue.Length > 0)
+                    {
+                        if (lValue[0] == "\"" && lValue[lValue.Length - 1] == "\"")
+                            lValue = lValue.Substring(1, lValue.Length - 2);
+                    }
+                }
+                fParameters[lKey] = lValue;
+            }
+        }
+
+	    public ContentType()
+        {
+            fMediaType = "application/octet-stream";
+        }
+
+		private string EncodeValue(String s)
+		{
+			var lStr = s.Replace ("\"", "\\\"");
+			if (lStr.IndexOfAny(ToEncode) >= 0)
+				return '"' + lStr + '"';
+			else
+				return lStr;
+		}
+
 	    [ToString]
-        public override String ToString() { }
-	    public String Boundary { get; set; }
-	    public String CharSet { get; set; }
-	    public String MediaType { get; set; }
-	    public String Name { get; set; }
-	    public Dictionary<String, String> Parameters { get; set; }
+        public override string ToString()
+		{
+			StringBuilder lSb = new StringBuilder();
+			
+			lSb.Append(fMediaType);
+			foreach(var lPair in fParameters)
+			{
+			    if (lPair.Value != "")
+                {	
+				    lSb.Append("; " + lPair.Key + "=");
+					lSb.Append(EncodeValue(lPair.Value));
+				}
+			}
+			return lSb.ToString();
+		}
+
+	    public String Boundary { get { return fParameters["boundary"]; } set { fParameters["boundary"] = value; } }
+
+	    public String CharSet { get { return fParameters["charset"]; } set { fParameters["charset"] = value; } }
+
+	    public String MediaType { get { return fMediaType; } set { fMediaType = value; } }
+
+	    public String Name { get { return fParameters["name"]; } set { fParameters["name"] = value; } }
+
+	    public Dictionary<String, String> Parameters { get { return fParameters; } }
     }
 
 	#endif
