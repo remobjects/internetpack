@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)FtpServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LdapClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageAddress.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageAttachment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\EncodedWord.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\QuotedPrintable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\Rfc2231Decoder.cs" />
