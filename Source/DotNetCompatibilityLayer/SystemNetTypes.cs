@@ -616,9 +616,10 @@
     public class ContentDisposition
     {
         private String fDisposition;
-        private Dictionary<String, String> fParameters;
+        private Dictionary<String, String> fParameters = new Dictionary<String, String>();
+        private readonly DateTime MinDate = new DateTime(1, 1, 1, 0, 0, 1);
+        private const string RFC822Format = "dd MMM yyyy HH':'mm':'ss zz00";
 
-        }
         public ContentDisposition(String disposition)
         {
             if (disposition.IndexOf(';') < 0)
@@ -626,7 +627,7 @@
             else
             {
                 var lParts = disposition.Split(';');
-				fDispositionType = lParts[0].Trim();
+				fDisposition = lParts[0].Trim();
 				for (int i = 1; i < lParts.Count; i++)
 				{
                     var lValues = lParts[i].Split('=');
@@ -644,15 +645,132 @@
         }
 
 	    [ToString]
-        public override String ToString() { return ""; }
-	    public String DispositionType { get; set; }
+        public override String ToString() 
+        {
+            StringBuilder lSb = new StringBuilder();
+			lSb.Append(DispositionType.ToLower());
+			
+			foreach(var lItem in fParameters)
+                {
+                    if (lItem.Value.Length > 0)
+                    {
+                        lSb.Append ("; " + lItem.Key + "=");
+
+                        if ((lItem.Key == "filename" && lItem.Value.IndexOf(' ') >= 0) || lItem.Key.EndsWith("date"))
+                            lSb.Append("\"" + lItem.Value + "\"");
+                        else
+                            lSb.Append(lItem.Value);
+                    }
+		    }
+			return lSb.ToString();
+		}        
+
+	    public String DispositionType { get { return fDisposition; } set { fDisposition = value; }  }
+
 	    public Dictionary<String, String> Parameters { get { return fParameters; } }
-	    public String FileName { get; set; }
-	    public DateTime CreationDate { get; set; }
-	    public DateTime ModificationDate { get; set; }
-	    public bool Inline { get; set; }
-	    public DateTime ReadDate { get; set; }
-	    public long Size { get; set; }
+
+	    public String FileName { get { return fParameters["filename"]; } set { fParameters["filename"] = value; } }
+
+	    private DateTime ParseRFC822Date(String aValue)
+        {
+            return MinDate; 
+        }
+                                
+        public DateTime CreationDate             
+        {
+            get
+            {
+				var lDate = fParameters["creation-date"];
+                if (lDate != "")
+					return ParseRFC822Date(lDate);
+				else
+					return MinDate;
+			}
+			
+            set
+            {
+				if (value > MinDate)
+					fParameters["creation-date"] = value.ToString(RFC822Format);
+				else
+					fParameters.Remove("modification-date");
+			}
+        }
+
+	    public DateTime ModificationDate
+        {
+            get
+            {
+				var lDate = fParameters["modification-date"];
+                if (lDate != "")
+					return ParseRFC822Date(lDate);
+				else
+					return MinDate;
+			}
+
+			set
+            {
+				if (value > MinDate)
+					fParameters["modification-date"] = value.ToString(RFC822Format);
+				else
+					fParameters.Remove ("modification-date");
+			}            
+        }
+
+	    public bool Inline
+        {
+            get
+            {
+                return fDisposition.CompareToIgnoreCase("inline") == 0;
+            }
+
+			set
+            {
+				if (value)
+					fDisposition = "inline";
+				else
+					fDisposition = "attachment";
+			}
+        }
+
+	    public DateTime ReadDate
+        {
+            get
+            {
+                var lDate = fParameters["read-date"];
+                if (lDate != "")
+					return ParseRFC822Date(lDate);
+                else
+                    return MinDate;
+			}
+			
+            set
+            {
+				if (value > MinDate)
+					fParameters["read-date"] = value.ToString(RFC822Format);
+				else
+					fParameters.Remove("read-date");
+			}
+        }
+
+	    public long Size
+        {
+            get
+            {
+				var lSize = fParameters["size"];
+                if (lSize != "")
+					return Convert.ToInt64(lSize);
+				else
+					return -1;
+			}
+			
+            set
+            {
+				if (value > -1)
+					fParameters["size"] = value.ToString();
+				else
+					fParameters.Remove("size");
+			}
+        }
     }
 
     public enum MailPriority
