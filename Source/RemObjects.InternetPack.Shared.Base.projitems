@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -20,8 +20,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)FtpListing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FtpServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LdapClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Message.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageAddress.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageAttachment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageEncoder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageHeaderField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\EncodedWord.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\QuotedPrintable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Decode\Rfc2231Decoder.cs" />
@@ -32,6 +35,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mime\Header\MessageHeader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\MessagePart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mime\MimeMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Pop3Client.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)SmtpClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CommandBasedServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\IConnectionTimeouts.cs" />

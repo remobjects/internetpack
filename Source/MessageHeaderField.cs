@@ -5,11 +5,13 @@
 
 namespace RemObjects.InternetPack.Messages
 {
-	public class HeaderField : Hashtable
+	public class HeaderField
 	{
 		#region Private fields
 		private String fUnnamedValue;
 		#endregion
+
+        private Dictionary<String, String> fData = new Dictionary<String, String>();
 
 		public HeaderField(String value)
 		{
@@ -89,10 +91,10 @@ namespace RemObjects.InternetPack.Messages
 					this.fUnnamedValue = lPropertyValue;
 				else
 				{
-					if (this.ContainsKey(lProperty))
-						this[lProperty] = this[lProperty] + lPropertyValue;
+					if (this.fData.ContainsKey(lProperty))
+						this.fData[lProperty] = this.fData[lProperty] + lPropertyValue;
 					else
-						this.Add(lProperty, lPropertyValue);
+						this.fData.Add(lProperty, lPropertyValue);
 				}
 
 				lRemainder = lRemainder.Trim();
@@ -111,14 +113,14 @@ namespace RemObjects.InternetPack.Messages
 			StringBuilder lResult = new StringBuilder("");
 			Boolean lFirst = true;
 
-			foreach (String key in Keys)
+			foreach (String key in fData.Keys)
 			{
 				if (lFirst)
 					lFirst = false;
 				else
 					lResult.Append("; ");
 
-				lResult.AppendFormat(System.Globalization.CultureInfo.InvariantCulture.ToString(), "{0}={1}", key, this[key]);
+				lResult.AppendFormat(ToString(), "{0}={1}", key, this.fData[key]);
 			}
 
 			if (fUnnamedValue != "")
@@ -133,36 +135,49 @@ namespace RemObjects.InternetPack.Messages
 		}
 	}
 
-	public class HeaderFields : NameObjectCollectionBase
+	public class HeaderFields
 	{
-		public HeaderFields()
+		private List<KeyValuePair<String, HeaderField>> fData = new List<KeyValuePair<String, HeaderField>>();
+        
+        public HeaderFields()
 		{
 		}
 
-		public void Add(String name, HeaderField field)
+		private int IndexOf(String aName)
+        {
+            for(var i = 0; i < fData.Count; i++)
+                if (aName.Equals(fData[i].Key))
+                    return i;
+
+            return -1;
+        }
+        
+        public void Add(String name, HeaderField field)
 		{
-			BaseAdd(name, field);
+			fData.Add(new KeyValuePair<String, HeaderField>(name, field));
 		}
 
 		public void Remove(String name)
 		{
-			BaseRemove(name);
+			var lIndex = IndexOf(name);
+            if (lIndex >= 0)
+                fData.RemoveAt(lIndex);
 		}
 
 		public void Clear()
 		{
-			BaseClear();
+			fData.RemoveAll();
 		}
 
 		public HeaderField this[Int32 index]
 		{
 			get
 			{
-				return BaseGet(index) as HeaderField;
+				return fData[index].Value;
 			}
 			set
 			{
-				BaseSet(index, value);
+				fData[index] = new KeyValuePair<String, HeaderField>(fData[index].Key, value);
 			}
 		}
 
@@ -170,18 +185,39 @@ namespace RemObjects.InternetPack.Messages
 		{
 			get
 			{
-				HeaderField lResult = BaseGet(index) as HeaderField;
-				if (lResult == null)
+				var lIndex = IndexOf(index);
+                HeaderField lResult;
+				if (lIndex == -1)
 				{
 					lResult = new HeaderField("");
-					BaseSet(index, lResult);
+					Add(index, lResult);
 				}
+                else
+                    lResult = fData[lIndex].Value;
+
 				return lResult;
 			}
 			set
 			{
-				BaseSet(index, value);
+				var lIndex = IndexOf(index);
+                if (lIndex == -1)
+                    fData.Add(new KeyValuePair<String, HeaderField>(index, value));
+                else
+                    fData[lIndex] = new KeyValuePair<String, HeaderField>(index, value);
 			}
 		}
+
+        public int Count
+        {
+            get
+            {
+                return fData.Count;
+            }
+        }
+                
+        public String GetKey(int index)
+        {
+            return fData[index].Key;          
+        }
 	}
 }

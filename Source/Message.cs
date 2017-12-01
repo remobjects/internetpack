@@ -4,6 +4,7 @@
 ---------------------------------------------------------------------------*/
 
 using RemObjects.InternetPack.Shared.Base;
+using RemObjects.InternetPack.Messages.Mime.Decode;
 
 namespace RemObjects.InternetPack.Messages
 {
@@ -159,14 +160,16 @@ namespace RemObjects.InternetPack.Messages
 			if (lIndex >= 0)
 				lDate = lDate.Substring(0, lIndex).Trim();
 
-			try
+			Rfc2822DateTime.StringToDate(lDate);
+            // TODO review
+            /*try
 			{
 				return System.DateTime.Parse(lDate, new System.Globalization.DateTimeFormatInfo(), System.Globalization.DateTimeStyles.AllowWhiteSpaces);
 			}
 			catch
 			{
 				return System.DateTime.ParseExact(lDate, "ddd, d MMM yyyy HH':'mm':'ss zzz", new System.Globalization.DateTimeFormatInfo(), System.Globalization.DateTimeStyles.AllowWhiteSpaces);
-			}
+			}*/
 		}
 
 		public void ValidateEncoder()
@@ -233,7 +236,7 @@ namespace RemObjects.InternetPack.Messages
 
 			for (Int32 i = 0; i < source.Fields.Count; i++)
 			{
-				String lKey = source.Fields.Keys[i];
+				String lKey = source.Fields.GetKey(i);
 				HeaderField lValue = source.Fields[lKey];
 
 				if (lKey.Equals("Subject"))
@@ -395,7 +398,9 @@ namespace RemObjects.InternetPack.Messages
 					lResult.Append(value.Substring(0, i));
 
 				lResult.Append(lStartTag);
-				lResult.Append(System.Convert.ToBase64String(Encoding.UTF8.GetBytes(value.Substring(i))));
+				// TODO review
+                var lBytes = Encoding.UTF8.GetBytes(value.Substring(i));
+                lResult.Append(Convert.ToBase64String(lBytes, 0, length(lBytes)));
 				lResult.Append(lEndTag);
 
 				return lResult.ToString();

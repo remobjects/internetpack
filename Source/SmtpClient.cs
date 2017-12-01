@@ -48,13 +48,13 @@ namespace RemObjects.InternetPack.Email
 				if (!this.SendAndWaitForResponse("AUTH LOGIN", 334))
 					throw new Exception(String.Format("Invalid AUTH reply: {0} {1}", this.LastResponseNo, this.LastResponseText));
 
-				Byte[] lBytes = System.Text.Encoding.ASCII.GetBytes(this.AuthUser);
-				String lEncodedString = System.Convert.ToBase64String(lBytes, 0, lBytes.Length);
+				Byte[] lBytes = Encoding.ASCII.GetBytes(this.AuthUser);
+				String lEncodedString = Convert.ToBase64String(lBytes, 0, lBytes.Length);
 				if (!SendAndWaitForResponse(lEncodedString, 334))
 					throw new Exception(String.Format("Invalid AUTH username reply: {0} {1}", this.LastResponseNo, this.LastResponseText));
 
-				lBytes = System.Text.Encoding.ASCII.GetBytes(this.AuthPassword);
-				lEncodedString = System.Convert.ToBase64String(lBytes, 0, lBytes.Length);
+				lBytes = Encoding.ASCII.GetBytes(this.AuthPassword);
+				lEncodedString = Convert.ToBase64String(lBytes, 0, lBytes.Length);
 				if (!this.SendAndWaitForResponse(lEncodedString, 235))
 					throw new Exception(String.Format("Invalid AUTH password reply: {0} {1}", this.LastResponseNo, this.LastResponseText));
 			}
@@ -101,7 +101,7 @@ namespace RemObjects.InternetPack.Email
 				throw new Exception(String.Format("Invalid data reply: {0} {1}", this.LastResponseNo, this.LastResponseText));
 		}
 
-		private static void EnlistMailAddresses(IList<String> destination, MessageAddresses addresses)
+		private static void EnlistMailAddresses(List<String> destination, MessageAddresses addresses)
 		{
 			for (Int32 i = 0; i < addresses.Count; i++)
 			{

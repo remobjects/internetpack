@@ -9,15 +9,6 @@
     <Import_RootNamespace>RemObjects.InternetPack.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Message.cs" />
-    <Compile Include="MessageEncoder.cs" />
-    <Compile Include="MessageHeaderField.cs" />
-    <Compile Include="Pop3Client.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="SmtpClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)SSL\SslConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SSL\SslConnectionFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventArgs\AsyncHttpRequestEventArgs.cs" />
