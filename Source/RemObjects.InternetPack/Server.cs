@@ -502,7 +502,7 @@ namespace RemObjects.InternetPack
 						{
 							lWorker.DataConnection = new Connection(lSocket);
 						}
-#if FULLFRAMEWORK
+#if FULLFRAMEWORK || COMPACTFRAMEWORK
 						if (Owner.TimeoutEnabled)
 						{
 							lWorker.DataConnection.TimeoutEnabled = true;
