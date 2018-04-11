@@ -49,8 +49,12 @@ namespace RemObjects.InternetPack.Messages
 			{
 				return fFrom;
 			}
+			set
+			{
+				fFrom = value;
+			}
 		}
-		private readonly MessageAddress fFrom = new MessageAddress();
+		private MessageAddress fFrom = new MessageAddress();
 
 		public MessageAddress Sender
 		{
