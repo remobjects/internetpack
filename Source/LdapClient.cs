@@ -670,7 +670,7 @@ namespace RemObjects.InternetPack.Ldap
 				throw new ArgumentException("Values are not binary");
 
 			var lBinary = new Binary(value);
-            fValues[index] = lBinary;
+			fValues[index] = lBinary;
 		}
 	}
 
@@ -678,10 +678,10 @@ namespace RemObjects.InternetPack.Ldap
 	{
 		private List<LdapAttribute> fData;
 
-        public LdapAttributes()
-        {
-            fData = new List<LdapAttribute>();
-        }
+		public LdapAttributes()
+		{
+			fData = new List<LdapAttribute>();
+		}
 
 		public LdapAttribute this[Int32 index]
 		{
@@ -715,7 +715,7 @@ namespace RemObjects.InternetPack.Ldap
 
 			if (lAttribute.Binary)
 				return Encoding.UTF8.GetString(lAttribute.SingleBinaryValue);
-                //return lAttribute.SingleBinaryValue.toString();
+				//return lAttribute.SingleBinaryValue.toString();
 
 			return lAttribute.SingleStringValue;
 		}

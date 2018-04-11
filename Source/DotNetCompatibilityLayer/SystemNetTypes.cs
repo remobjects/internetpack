@@ -297,12 +297,12 @@ namespace RemObjects.InternetPack
 			rtl.__struct_addrinfo *lAddrInfo;
 			rtl.__struct_sockaddr_in6 *lSockAddr;
 			var lRes = 0;
-            #if toffee
+			#if toffee
 			lRes = rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo);
 			#else
 			lRes = rtl.getaddrinfo((AnsiChar *)lString.FirstChar, null, null, &lAddrInfo);
 			#endif
-            if (lRes != 0)
+			if (lRes != 0)
 				return false;
 			lSockAddr = (rtl.__struct_sockaddr_in6 *)(*lAddrInfo).ai_addr;
 			#else
@@ -615,200 +615,200 @@ namespace RemObjects.InternetPack
 		NoValue = -999
 	}
 
-    public class ContentDisposition
-    {
-        private String fDisposition;
-        private Dictionary<String, String> fParameters = new Dictionary<String, String>();
-        private readonly DateTime MinDate = new DateTime(1, 1, 1, 0, 0, 1);
-        private const string RFC822Format = "dd MMM yyyy HH':'mm':'ss zz00";
+	public class ContentDisposition
+	{
+		private String fDisposition;
+		private Dictionary<String, String> fParameters = new Dictionary<String, String>();
+		private readonly DateTime MinDate = new DateTime(1, 1, 1, 0, 0, 1);
+		private const string RFC822Format = "dd MMM yyyy HH':'mm':'ss zz00";
 
-        public ContentDisposition(String disposition)
-        {
-            if (disposition.IndexOf(';') < 0)
-                fDisposition = disposition.Trim();
-            else
-            {
-                var lParts = disposition.Split(';');
+		public ContentDisposition(String disposition)
+		{
+			if (disposition.IndexOf(';') < 0)
+				fDisposition = disposition.Trim();
+			else
+			{
+				var lParts = disposition.Split(';');
 				fDisposition = lParts[0].Trim();
 				for (int i = 1; i < lParts.Count; i++)
 				{
-                    var lValues = lParts[i].Split('=');
-			        if (lValues.Count == 2)
-				        fParameters.Add(lValues[0].Trim(), lValues[1].Trim());
-			        else
-				        throw new Exception("Wrong format");
-                }
-            }
-        }
+					var lValues = lParts[i].Split('=');
+					if (lValues.Count == 2)
+						fParameters.Add(lValues[0].Trim(), lValues[1].Trim());
+					else
+						throw new Exception("Wrong format");
+				}
+			}
+		}
 
-        public ContentDisposition(): this("attachment")
-        {
-            
-        }
+		public ContentDisposition(): this("attachment")
+		{
 
-	    [ToString]
-        public override String ToString() 
-        {
-            StringBuilder lSb = new StringBuilder();
+		}
+
+		[ToString]
+		public override String ToString()
+		{
+			StringBuilder lSb = new StringBuilder();
 			lSb.Append(DispositionType.ToLower());
-			
+
 			foreach(var lItem in fParameters)
-                {
-                    if (lItem.Value.Length > 0)
-                    {
-                        lSb.Append ("; " + lItem.Key + "=");
+				{
+					if (lItem.Value.Length > 0)
+					{
+						lSb.Append ("; " + lItem.Key + "=");
 
-                        if ((lItem.Key == "filename" && lItem.Value.IndexOf(' ') >= 0) || lItem.Key.EndsWith("date"))
-                            lSb.Append("\"" + lItem.Value + "\"");
-                        else
-                            lSb.Append(lItem.Value);
-                    }
-		    }
+						if ((lItem.Key == "filename" && lItem.Value.IndexOf(' ') >= 0) || lItem.Key.EndsWith("date"))
+							lSb.Append("\"" + lItem.Value + "\"");
+						else
+							lSb.Append(lItem.Value);
+					}
+			}
 			return lSb.ToString();
-		}        
+		}
 
-	    public String DispositionType { get { return fDisposition; } set { fDisposition = value; }  }
+		public String DispositionType { get { return fDisposition; } set { fDisposition = value; }  }
 
-	    public Dictionary<String, String> Parameters { get { return fParameters; } }
+		public Dictionary<String, String> Parameters { get { return fParameters; } }
 
-	    public String FileName { get { return fParameters["filename"]; } set { fParameters["filename"] = value; } }
-                                
-        public DateTime CreationDate             
-        {
-            get
-            {
+		public String FileName { get { return fParameters["filename"]; } set { fParameters["filename"] = value; } }
+
+		public DateTime CreationDate
+		{
+			get
+			{
 				var lDate = fParameters["creation-date"];
-                if (lDate != "")
+				if (lDate != "")
 					return Rfc2822DateTime.StringToDate(lDate);
 				else
 					return MinDate;
 			}
-			
-            set
-            {
+
+			set
+			{
 				if (value > MinDate)
 					fParameters["creation-date"] = value.ToString(RFC822Format);
 				else
 					fParameters.Remove("modification-date");
 			}
-        }
+		}
 
-	    public DateTime ModificationDate
-        {
-            get
-            {
+		public DateTime ModificationDate
+		{
+			get
+			{
 				var lDate = fParameters["modification-date"];
-                if (lDate != "")
+				if (lDate != "")
 					return Rfc2822DateTime.StringToDate(lDate);
 				else
 					return MinDate;
 			}
 
 			set
-            {
+			{
 				if (value > MinDate)
 					fParameters["modification-date"] = value.ToString(RFC822Format);
 				else
 					fParameters.Remove ("modification-date");
-			}            
-        }
+			}
+		}
 
-	    public bool Inline
-        {
-            get
-            {
-                return fDisposition.CompareToIgnoreCase("inline") == 0;
-            }
+		public bool Inline
+		{
+			get
+			{
+				return fDisposition.CompareToIgnoreCase("inline") == 0;
+			}
 
 			set
-            {
+			{
 				if (value)
 					fDisposition = "inline";
 				else
 					fDisposition = "attachment";
 			}
-        }
+		}
 
-	    public DateTime ReadDate
-        {
-            get
-            {
-                var lDate = fParameters["read-date"];
-                if (lDate != "")
+		public DateTime ReadDate
+		{
+			get
+			{
+				var lDate = fParameters["read-date"];
+				if (lDate != "")
 					return Rfc2822DateTime.StringToDate(lDate);
-                else
-                    return MinDate;
+				else
+					return MinDate;
 			}
-			
-            set
-            {
+
+			set
+			{
 				if (value > MinDate)
 					fParameters["read-date"] = value.ToString(RFC822Format);
 				else
 					fParameters.Remove("read-date");
 			}
-        }
+		}
 
-	    public long Size
-        {
-            get
-            {
+		public long Size
+		{
+			get
+			{
 				var lSize = fParameters["size"];
-                if (lSize != "")
+				if (lSize != "")
 					return Convert.ToInt64(lSize);
 				else
 					return -1;
 			}
-			
-            set
-            {
+
+			set
+			{
 				if (value > -1)
 					fParameters["size"] = value.ToString();
 				else
 					fParameters.Remove("size");
 			}
-        }
-    }
+		}
+	}
 
-    public enum MailPriority
-    {
-        Low = 1,
-        Normal = 3,
-        High = 5
-    }
+	public enum MailPriority
+	{
+		Low = 1,
+		Normal = 3,
+		High = 5
+	}
 
-    public class ContentType
-    {
-        private String fMediaType;
-        private Dictionary<String, String> fParameters = new Dictionary<String, String>();
-        private readonly char [] ToEncode = {'(', ')', '<', '>', '@', ',', ';', ':', '<', '>', '/', '[', ']', '?', '.', '='};
+	public class ContentType
+	{
+		private String fMediaType;
+		private Dictionary<String, String> fParameters = new Dictionary<String, String>();
+		private readonly char [] ToEncode = {'(', ')', '<', '>', '@', ',', ';', ':', '<', '>', '/', '[', ']', '?', '.', '='};
 
-        public ContentType(String contentType)
-        {            
+		public ContentType(String contentType)
+		{
 			var lValues = contentType.Split(';');
 			fMediaType = lValues[0].Trim();
 			for (int i = 1; i < lValues.Count; i++)
-            {
+			{
 				var lParts = lValues[i].Split('=');
-                var lKey = lParts[0].Trim();
-                var lValue = "";
-                if (lParts.Count > 1)
-                {
-                    lValue = lParts[1].Trim();
-                    if (lValue.Length > 0)
-                    {
-                        if (lValue[0] == "\"" && lValue[lValue.Length - 1] == "\"")
-                            lValue = lValue.Substring(1, lValue.Length - 2);
-                    }
-                }
-                fParameters[lKey] = lValue;
-            }
-        }
+				var lKey = lParts[0].Trim();
+				var lValue = "";
+				if (lParts.Count > 1)
+				{
+					lValue = lParts[1].Trim();
+					if (lValue.Length > 0)
+					{
+						if (lValue[0] == "\"" && lValue[lValue.Length - 1] == "\"")
+							lValue = lValue.Substring(1, lValue.Length - 2);
+					}
+				}
+				fParameters[lKey] = lValue;
+			}
+		}
 
-	    public ContentType()
-        {
-            fMediaType = "application/octet-stream";
-        }
+		public ContentType()
+		{
+			fMediaType = "application/octet-stream";
+		}
 
 		private string EncodeValue(String s)
 		{
@@ -819,33 +819,33 @@ namespace RemObjects.InternetPack
 				return lStr;
 		}
 
-	    [ToString]
-        public override string ToString()
+		[ToString]
+		public override string ToString()
 		{
 			StringBuilder lSb = new StringBuilder();
-			
+
 			lSb.Append(fMediaType);
 			foreach(var lPair in fParameters)
 			{
-			    if (lPair.Value != "")
-                {	
-				    lSb.Append("; " + lPair.Key + "=");
+				if (lPair.Value != "")
+				{
+					lSb.Append("; " + lPair.Key + "=");
 					lSb.Append(EncodeValue(lPair.Value));
 				}
 			}
 			return lSb.ToString();
 		}
 
-	    public String Boundary { get { return fParameters["boundary"]; } set { fParameters["boundary"] = value; } }
+		public String Boundary { get { return fParameters["boundary"]; } set { fParameters["boundary"] = value; } }
 
-	    public String CharSet { get { return fParameters["charset"]; } set { fParameters["charset"] = value; } }
+		public String CharSet { get { return fParameters["charset"]; } set { fParameters["charset"] = value; } }
 
-	    public String MediaType { get { return fMediaType; } set { fMediaType = value; } }
+		public String MediaType { get { return fMediaType; } set { fMediaType = value; } }
 
-	    public String Name { get { return fParameters["name"]; } set { fParameters["name"] = value; } }
+		public String Name { get { return fParameters["name"]; } set { fParameters["name"] = value; } }
 
-	    public Dictionary<String, String> Parameters { get { return fParameters; } }
-    }
+		public Dictionary<String, String> Parameters { get { return fParameters; } }
+	}
 
 	#endif
 }

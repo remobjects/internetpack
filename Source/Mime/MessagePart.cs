@@ -226,10 +226,10 @@ namespace RemObjects.InternetPack.Messages.Mime
 			get
 			{
 				#if echoes
-                return ContentType.MediaType.StartsWith("multipart/", StringComparison.InvariantCultureIgnoreCase);
-                #else
-                return ContentType.MediaType.StartsWith("multipart/", true);
-                #endif
+				return ContentType.MediaType.StartsWith("multipart/", StringComparison.InvariantCultureIgnoreCase);
+				#else
+				return ContentType.MediaType.StartsWith("multipart/", true);
+				#endif
 			}
 		}
 

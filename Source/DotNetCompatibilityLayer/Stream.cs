@@ -21,27 +21,27 @@ namespace RemObjects.InternetPack.Shared.Base
 			return "";
 		}
 
-        public abstract int Peek();
+		public abstract int Peek();
 
-        public abstract String ReadLine();
+		public abstract String ReadLine();
 
-        public abstract void Close();
+		public abstract void Close();
 
-        public abstract int Read(Char[] buffer, int index, int count);
-	    
-        public abstract int Read();
+		public abstract int Read(Char[] buffer, int index, int count);
+
+		public abstract int Read();
 	}
 
-    public abstract class TextWriter: MarshalByRefObject, IDisposable
-    {
-        protected Encoding fEncoding;
-	    public abstract void Close();
-	    public new void Dispose();
-	    protected virtual void Dispose(bool disposing);
-	    public abstract void Flush();
-	    public abstract void Write(String value);
-	    public abstract void WriteLine(String value);
-    }
+	public abstract class TextWriter: MarshalByRefObject, IDisposable
+	{
+		protected Encoding fEncoding;
+		public abstract void Close();
+		public new void Dispose();
+		protected virtual void Dispose(bool disposing);
+		public abstract void Flush();
+		public abstract void Write(String value);
+		public abstract void WriteLine(String value);
+	}
 
 	public class StreamReader : TextReader
 	{
@@ -62,35 +62,35 @@ namespace RemObjects.InternetPack.Shared.Base
 			return fEncoding.GetString(lBuffer, 0, lBytes);
 		}
 
-        public override int Peek()
-        {
-            var lOldPos = fStream.Position;
-            var lByte = fStream.ReadByte();
-            fStream.Position = lOldPos;
+		public override int Peek()
+		{
+			var lOldPos = fStream.Position;
+			var lByte = fStream.ReadByte();
+			fStream.Position = lOldPos;
 
-            return lByte;
-        }
+			return lByte;
+		}
 
-        public override string ReadLine()
-        {
-            // TODO
-        }
+		public override string ReadLine()
+		{
+			// TODO
+		}
 
-        public override void Close()
-        {
-            fStream.Close();
-        }
+		public override void Close()
+		{
+			fStream.Close();
+		}
 
-        public override int Read(Char[] buffer, int index, int count) 
-        {
-            // TODO
-            return -1;
-        }
-	    
-        public override int Read() 
-        { 
-            return fStream.ReadByte();
-        } 
+		public override int Read(Char[] buffer, int index, int count)
+		{
+			// TODO
+			return -1;
+		}
+
+		public override int Read()
+		{
+			return fStream.ReadByte();
+		}
 	}
 
 	public class StreamWriter : TextWriter
@@ -102,13 +102,13 @@ namespace RemObjects.InternetPack.Shared.Base
 			fStream = stream;
 			fEncoding = Encoding.UTF8;
 		}
-        
-        public override void Close()
-        {
-            fStream.Close();
-        }
-        
-        public override void Flush()
+
+		public override void Close()
+		{
+			fStream.Close();
+		}
+
+		public override void Flush()
 		{
 			fStream.Flush();
 		}
@@ -191,74 +191,74 @@ namespace RemObjects.InternetPack.Shared.Base
 		 }
 	}
 
-    public class StringReader: TextReader
-    {
-        private String fData;
-        private int fPos = 0;
-        private int fLength;
+	public class StringReader: TextReader
+	{
+		private String fData;
+		private int fPos = 0;
+		private int fLength;
 
-        public StringReader(String s)        
-        {
-            fData = s;
-            fLength = s.Length;
-        }
+		public StringReader(String s)
+		{
+			fData = s;
+			fLength = s.Length;
+		}
 
-	    public override void Dispose()
-        {
-            fData = null;
-            fPos = 0;
-            base.Dispose();
-        }
+		public override void Dispose()
+		{
+			fData = null;
+			fPos = 0;
+			base.Dispose();
+		}
 
-        public override void Close()        
-        {
-            Dispose();
-        }
+		public override void Close()
+		{
+			Dispose();
+		}
 
-	    public override int Peek()        
-        {
-            return fData[fPos];
-        }
+		public override int Peek()
+		{
+			return fData[fPos];
+		}
 
-	    public override int Read(Char[] buffer, int index, int count)
-        {
-            var lTotal = count;
-            if (fLength - fPos <= count)
-               lTotal = fLength - fPos;
+		public override int Read(Char[] buffer, int index, int count)
+		{
+			var lTotal = count;
+			if (fLength - fPos <= count)
+			   lTotal = fLength - fPos;
 
-            for (int i = 0; i < lTotal; i++)
-                buffer[index + i] = fData[fPos + i];
+			for (int i = 0; i < lTotal; i++)
+				buffer[index + i] = fData[fPos + i];
 
-            fPos+= lTotal;
-            return lTotal;
-        }
+			fPos+= lTotal;
+			return lTotal;
+		}
 
-	    public override int Read()
-        {
-            return fData[fPos++];
-        }
+		public override int Read()
+		{
+			return fData[fPos++];
+		}
 
-	    public override String ReadToEnd()
-        {
-            var lString = fData.Substring(fPos);
-            fPos = fLength;
-            return lString;
-        }
+		public override String ReadToEnd()
+		{
+			var lString = fData.Substring(fPos);
+			fPos = fLength;
+			return lString;
+		}
 
-	    public override String ReadLine()
-        {            
-            var lString = string.Empty;
-            var lPos = fData.IndexOfAny(new Char[] {'\r', '\n'});
-            if (lPos >= 0)
-                lString = fData.Substring(fPos, fPos - lPos);
-            lPos++;
-            if (fData[lPos - 1] == '\r' && (lPos < fLength) && (fData[lPos] == '\n'))
-                lPos++;
-            fPos = lPos;
+		public override String ReadLine()
+		{
+			var lString = string.Empty;
+			var lPos = fData.IndexOfAny(new Char[] {'\r', '\n'});
+			if (lPos >= 0)
+				lString = fData.Substring(fPos, fPos - lPos);
+			lPos++;
+			if (fData[lPos - 1] == '\r' && (lPos < fLength) && (fData[lPos] == '\n'))
+				lPos++;
+			fPos = lPos;
 
-            return lString;
-        }
-    }
+			return lString;
+		}
+	}
 
 	#if echoes
 	public class WrappedStream: System.IO.Stream

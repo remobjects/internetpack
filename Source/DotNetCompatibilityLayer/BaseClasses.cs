@@ -51,8 +51,8 @@
 
 	public class ArgumentOutOfRangeException : RTLException {
 		public ArgumentOutOfRangeException() : base("Argument out of range") {}
-        
-        public ArgumentOutOfRangeException(string message) : base(message) {}
+
+		public ArgumentOutOfRangeException(string message) : base(message) {}
 	}
 	public class ObjectDisposedException : Exception {}
 
@@ -158,31 +158,31 @@
 		}
 	}
 
-    public class NameValueCollection
-    {
-	    public NameValueCollection(int capacity, NameValueCollection col) { }
-	    public NameValueCollection(int capacity) { }
-	    public NameValueCollection(NameValueCollection col) { }
-	    public NameValueCollection() { }
-	    protected void InvalidateCachedArrays() { }
-	    public virtual void Add(String name, String value) { }
-	    public void Add(NameValueCollection c) { }
-	    public virtual void Clear() { }
-	    public void CopyTo(Array dest, int index) { }
-	    public bool HasKeys() { }
-	    public virtual String Get(int index) { }
-	    public virtual String Get(String name) { }
-	    public virtual String[] GetValues(int index) { }
-	    public virtual String[] GetValues(String name) { }
-	    public virtual void Set(String name, String @value) { }
-	    public virtual void Remove(String name) { }
-	    public virtual String GetKey(int index) { }
-	    //public String this[int index] { get; set; }
-	    public String this[String name] { get; set; }
-	    public virtual String[] AllKeys { get; set; }
-        protected ISequence<string> GetKeys() { }
-        public ISequence<string> Keys {get { GetKeys(); } }
-    }
+	public class NameValueCollection
+	{
+		public NameValueCollection(int capacity, NameValueCollection col) { }
+		public NameValueCollection(int capacity) { }
+		public NameValueCollection(NameValueCollection col) { }
+		public NameValueCollection() { }
+		protected void InvalidateCachedArrays() { }
+		public virtual void Add(String name, String value) { }
+		public void Add(NameValueCollection c) { }
+		public virtual void Clear() { }
+		public void CopyTo(Array dest, int index) { }
+		public bool HasKeys() { }
+		public virtual String Get(int index) { }
+		public virtual String Get(String name) { }
+		public virtual String[] GetValues(int index) { }
+		public virtual String[] GetValues(String name) { }
+		public virtual void Set(String name, String @value) { }
+		public virtual void Remove(String name) { }
+		public virtual String GetKey(int index) { }
+		//public String this[int index] { get; set; }
+		public String this[String name] { get; set; }
+		public virtual String[] AllKeys { get; set; }
+		protected ISequence<string> GetKeys() { }
+		public ISequence<string> Keys {get { GetKeys(); } }
+	}
 
 	#endif
 }

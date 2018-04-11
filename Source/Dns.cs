@@ -42,17 +42,17 @@ namespace RemObjects.InternetPack.Dns
 		}
 		#endif
 
-        #if posix || toffee
-        private rtl.__struct_addrinfo *GetNext(rtl.__struct_addrinfo *Addr)
-        {
-            return (rtl.__struct_addrinfo *)Addr->ai_next;
-        }
-        #elif island
-        private rtl.ADDRINFOW *GetNext(rtl.ADDRINFOW *Addr)
-        {
-            return  (rtl.ADDRINFOW*)Addr->ai_next;
-        }
-        #endif
+		#if posix || toffee
+		private rtl.__struct_addrinfo *GetNext(rtl.__struct_addrinfo *Addr)
+		{
+			return (rtl.__struct_addrinfo *)Addr->ai_next;
+		}
+		#elif island
+		private rtl.ADDRINFOW *GetNext(rtl.ADDRINFOW *Addr)
+		{
+			return  (rtl.ADDRINFOW*)Addr->ai_next;
+		}
+		#endif
 
 		public static IPAddress[] ResolveAll(String hostname)
 		{
@@ -91,20 +91,20 @@ namespace RemObjects.InternetPack.Dns
 			rtl.__struct_sockaddr_in *lSockAddrIPv4;
 			rtl.__struct_sockaddr_in6 *lSockAddr;
 			#endif
-			            
-            var lRes = 0;
-            #if toffee
-            lRes = rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo);
-            #elif posix
+
+			var lRes = 0;
+			#if toffee
+			lRes = rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo);
+			#elif posix
 			AnsiChar[] lHost = lString.ToAnsiChars(true);
 			lRes = rtl.getaddrinfo(&lHost[0], null, null, &lAddrInfo);
-            #elif island
+			#elif island
 			char[] lHost = lString.ToCharArray(true);
 			rtl.WSADATA data;
 			rtl.WSAStartup(rtl.WINSOCK_VERSION, &data);
 			lRes = rtl.GetAddrInfoW(&lHost[0], null, null, &lAddrInfo);
-            #endif
-            if (lRes == 0)            
+			#endif
+			if (lRes == 0)
 			{
 				for(lPtr = lAddrInfo; lPtr != null; lPtr = GetNext(lPtr))
 				{

@@ -994,7 +994,7 @@ namespace RemObjects.InternetPack.Http
 			}
 		}
 
-        [ToString]
+		[ToString]
 		public override String ToString()
 		{
 			return this.fQuery ?? "";

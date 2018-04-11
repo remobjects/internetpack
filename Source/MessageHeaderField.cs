@@ -11,7 +11,7 @@ namespace RemObjects.InternetPack.Messages
 		private String fUnnamedValue;
 		#endregion
 
-        private Dictionary<String, String> fData = new Dictionary<String, String>();
+		private Dictionary<String, String> fData = new Dictionary<String, String>();
 
 		public HeaderField(String value)
 		{
@@ -138,21 +138,21 @@ namespace RemObjects.InternetPack.Messages
 	public class HeaderFields
 	{
 		private List<KeyValuePair<String, HeaderField>> fData = new List<KeyValuePair<String, HeaderField>>();
-        
-        public HeaderFields()
+
+		public HeaderFields()
 		{
 		}
 
 		private int IndexOf(String aName)
-        {
-            for(var i = 0; i < fData.Count; i++)
-                if (aName.Equals(fData[i].Key))
-                    return i;
+		{
+			for(var i = 0; i < fData.Count; i++)
+				if (aName.Equals(fData[i].Key))
+					return i;
 
-            return -1;
-        }
-        
-        public void Add(String name, HeaderField field)
+			return -1;
+		}
+
+		public void Add(String name, HeaderField field)
 		{
 			fData.Add(new KeyValuePair<String, HeaderField>(name, field));
 		}
@@ -160,8 +160,8 @@ namespace RemObjects.InternetPack.Messages
 		public void Remove(String name)
 		{
 			var lIndex = IndexOf(name);
-            if (lIndex >= 0)
-                fData.RemoveAt(lIndex);
+			if (lIndex >= 0)
+				fData.RemoveAt(lIndex);
 		}
 
 		public void Clear()
@@ -186,38 +186,38 @@ namespace RemObjects.InternetPack.Messages
 			get
 			{
 				var lIndex = IndexOf(index);
-                HeaderField lResult;
+				HeaderField lResult;
 				if (lIndex == -1)
 				{
 					lResult = new HeaderField("");
 					Add(index, lResult);
 				}
-                else
-                    lResult = fData[lIndex].Value;
+				else
+					lResult = fData[lIndex].Value;
 
 				return lResult;
 			}
 			set
 			{
 				var lIndex = IndexOf(index);
-                if (lIndex == -1)
-                    fData.Add(new KeyValuePair<String, HeaderField>(index, value));
-                else
-                    fData[lIndex] = new KeyValuePair<String, HeaderField>(index, value);
+				if (lIndex == -1)
+					fData.Add(new KeyValuePair<String, HeaderField>(index, value));
+				else
+					fData[lIndex] = new KeyValuePair<String, HeaderField>(index, value);
 			}
 		}
 
-        public int Count
-        {
-            get
-            {
-                return fData.Count;
-            }
-        }
-                
-        public String GetKey(int index)
-        {
-            return fData[index].Key;          
-        }
+		public int Count
+		{
+			get
+			{
+				return fData.Count;
+			}
+		}
+
+		public String GetKey(int index)
+		{
+			return fData[index].Key;
+		}
 	}
 }

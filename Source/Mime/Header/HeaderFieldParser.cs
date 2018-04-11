@@ -246,7 +246,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Header
 			foreach (String id in ids)
 			{
 				if (id != "")
-                    returner.Add(ParseId(id));
+					returner.Add(ParseId(id));
 			}
 
 			return returner;

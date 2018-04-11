@@ -36,12 +36,12 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 
 				// Convert the date String into a DateTime
 				//DateTime dateTime = System.Convert.ToDateTime(date, CultureInfo.InvariantCulture);
-                DateTime dateTime = ToDateTime(date);
+				DateTime dateTime = ToDateTime(date);
 
 				// Convert the date into UTC
 				//dateTime = new System.DateTime(dateTime.Ticks, DateTimeKind.Utc);
-                var lOffset = TimeZone.Local.OffsetToUTC;
-                dateTime = dateTime + lOffset;
+				var lOffset = TimeZone.Local.OffsetToUTC;
+				dateTime = dateTime + lOffset;
 
 				// Adjust according to the time zone
 				dateTime = AdjustTimezone(dateTime, inputDate);
@@ -70,24 +70,24 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 
 			// Convert timezones in older formats to [+-]dddd format.
 			//lastPart = Regex.Replace(lastPart, @"UT|GMT|EST|EDT|CST|CDT|MST|MDT|PST|PDT|[A-I]|[K-Y]|Z", MatchEvaluator);
-            lastPart = ReplaceOldTimezone(lastPart);
+			lastPart = ReplaceOldTimezone(lastPart);
 
 			// Find the timezone specification
 			// Example: Fri, 21 Nov 1997 09:55:06 -0600
 			// finds -0600
 			//Match match = Regex.Match(lastPart, @"[\+-](?<hours>\d\d)(?<minutes>\d\d)");
 			//if (match.Success)
-            if (length(lastPart) == 5)
+			if (length(lastPart) == 5)
 			{
 				// We have found that the timezone is in +dddd or -dddd format
 				// Add the number of hours and minutes to our found date
 				//Int32 hours = Int32.Parse(match.Groups["hours"].Value);
 				//Int32 minutes = Int32.Parse(match.Groups["minutes"].Value);
-                Int32 hours = Convert.ToInt32(lastPart.Substring(1, 2));
-                Int32 minutes = Convert.ToInt32(lastPart.Substring(3, 2));
+				Int32 hours = Convert.ToInt32(lastPart.Substring(1, 2));
+				Int32 minutes = Convert.ToInt32(lastPart.Substring(3, 2));
 
 				//Int32 factor = match.Value[0] == '+' ? -1 : 1;
-                Int32 factor = lastPart[0] == '+' ? -1 : 1;
+				Int32 factor = lastPart[0] == '+' ? -1 : 1;
 
 				dateTime = dateTime.AddHours(factor * hours);
 				dateTime = dateTime.AddMinutes(factor * minutes);
@@ -181,14 +181,14 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			{
 				return match.Value;
 			}*/
-            var lParts = dateInput.Split(" ");
-            if (lParts.Count >= 4)
-            {
-                String[] lReturn = new String[4];
-                for (var i = 0; i < 4; i++)
-                    lReturn[i] = lParts[i + 1];
-                return lReturn;
-            }
+			var lParts = dateInput.Split(" ");
+			if (lParts.Count >= 4)
+			{
+				String[] lReturn = new String[4];
+				for (var i = 0; i < 4; i++)
+					lReturn[i] = lParts[i + 1];
+				return lReturn;
+			}
 
 			throw new ArgumentException("No date part found");
 		}
@@ -203,62 +203,62 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			// Strip out comments
 			// Also strips out nested comments
 			//input = Regex.Replace(input, @"(\((?>\((?<C>)|\)(?<-C>)|.?)*(?(C)(?!))\))", "");
-            var lInput = new RemObjects.Elements.RTL.StringBuilder();
-            var lNoCopy = 0;
-            for (int i = 0; i < length(input); i++)
-            {
-                var lChar = input[i];
-                if (lChar == '(')
-                    lNoCopy++;
-                else
-                    if (lChar == ')')
-                        lNoCopy--;
-                if ((lNoCopy == 0) && (lChar != ')'))
-                    lInput.Append(lChar);
-            }
-            RemObjects.Elements.RTL.String lToReturn;
-            lToReturn = lInput.ToString();
+			var lInput = new RemObjects.Elements.RTL.StringBuilder();
+			var lNoCopy = 0;
+			for (int i = 0; i < length(input); i++)
+			{
+				var lChar = input[i];
+				if (lChar == '(')
+					lNoCopy++;
+				else
+					if (lChar == ')')
+						lNoCopy--;
+				if ((lNoCopy == 0) && (lChar != ')'))
+					lInput.Append(lChar);
+			}
+			RemObjects.Elements.RTL.String lToReturn;
+			lToReturn = lInput.ToString();
 
 			// Reduce any whitespace character to one space only
 			//input = Regex.Replace(input, @"\s+", " ");
-            lInput.Clear();
-            lNoCopy = 0;
-            for (int i = 0; i < length(lToReturn); i++)
-            {
-                var lChar = lToReturn[i];
-                if (lChar == " ")
-                    lNoCopy++;
-                else
-                    lNoCopy = 0;
-                
-                if (lNoCopy <= 1)
-                    lInput.Append(lChar);             
-            }
-            lToReturn = lInput.ToString();
+			lInput.Clear();
+			lNoCopy = 0;
+			for (int i = 0; i < length(lToReturn); i++)
+			{
+				var lChar = lToReturn[i];
+				if (lChar == " ")
+					lNoCopy++;
+				else
+					lNoCopy = 0;
+
+				if (lNoCopy <= 1)
+					lInput.Append(lChar);
+			}
+			lToReturn = lInput.ToString();
 
 			// Remove all initial whitespace
 			//input = Regex.Replace(input, @"^\s+", "");
 
 			// Remove all ending whitespace
 			//input = Regex.Replace(input, @"\s+$", "");
-            lToReturn = lToReturn.Trim();
+			lToReturn = lToReturn.Trim();
 
 			// Remove spaces at colons
 			// Example: 22: 33 : 44 => 22:33:44
 			//input = Regex.Replace(input, @" ?: ?", ":");
-            lToReturn = lToReturn.Replace(" : ", ":");
-            lToReturn = lToReturn.Replace(" :", ":");
-            lToReturn = lToReturn.Replace(": ", ":");
+			lToReturn = lToReturn.Replace(" : ", ":");
+			lToReturn = lToReturn.Replace(" :", ":");
+			lToReturn = lToReturn.Replace(": ", ":");
 
 			return lToReturn;
 		}
 
-        private static DateTime ToDateTime(String[] inputDate)
-        {
-            // We now we have a date like: 21 Nov 1997 09:55:06, from ExtractDatetime func
-            // [0] -> day  [1] -> month  [2] -> year  [3] -> time			
-            var lMonth = 1;            
-            switch (inputDate[1].ToLower())
+		private static DateTime ToDateTime(String[] inputDate)
+		{
+			// We now we have a date like: 21 Nov 1997 09:55:06, from ExtractDatetime func
+			// [0] -> day  [1] -> month  [2] -> year  [3] -> time
+			var lMonth = 1;
+			switch (inputDate[1].ToLower())
 			{
 				case "jan": lMonth = 1; break;
 				case "feb": lMonth = 2; break;
@@ -272,11 +272,11 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				case "oct": lMonth = 10; break;
 				case "nov": lMonth = 11; break;
 				case "dec": lMonth = 12; break;
-            }
+			}
 
-            var lTime = inputDate[3].Split(':');
-            return new DateTime(Convert.ToInt32(inputDate[2]), lMonth, Convert.ToInt32(inputDate[0]),  
-                Convert.ToInt32(lTime[0]), Convert.ToInt32(lTime[1]), Convert.ToInt32(lTime[2]));
-        }
+			var lTime = inputDate[3].Split(':');
+			return new DateTime(Convert.ToInt32(inputDate[2]), lMonth, Convert.ToInt32(inputDate[0]),
+				Convert.ToInt32(lTime[0]), Convert.ToInt32(lTime[1]), Convert.ToInt32(lTime[2]));
+		}
 	}
 }
