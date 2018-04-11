@@ -317,7 +317,7 @@ namespace RemObjects.InternetPack.Http
 				lLine = lLine.Substring(0, lPos);
 			lLine = lLine.Trim();
 
-			return Convert.HexStringToInt32(lLine);
+			return Convert.HexStringToUInt32(lLine);
 		}
 
 	}

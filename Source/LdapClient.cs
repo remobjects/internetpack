@@ -678,6 +678,11 @@ namespace RemObjects.InternetPack.Ldap
 	{
 		private List<LdapAttribute> fData;
 
+        public LdapAttributes()
+        {
+            fData = new List<LdapAttribute>();
+        }
+
 		public LdapAttribute this[Int32 index]
 		{
 			get
