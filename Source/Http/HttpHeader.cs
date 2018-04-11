@@ -29,7 +29,7 @@ namespace RemObjects.InternetPack.Http
 
 		#region ToString
 		[ToString]
-        public override String ToString()
+		public override String ToString()
 		{
 			if (this.Count == 1)
 				return String.Format("{0}: {1}", this.Name, this.fValues[0]);
@@ -403,7 +403,7 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		[ToString]
-        public override String ToString()
+		public override String ToString()
 		{
 			StringBuilder lResult = new StringBuilder();
 			lResult.Append(FirstHeader);

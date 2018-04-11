@@ -1060,10 +1060,10 @@ namespace RemObjects.InternetPack
 		#endregion
 
 		#region IDisposable Members
-        #if FULLFRAMEWORK
+		#if FULLFRAMEWORK
 		public new void Dispose()
-        {
-   			if (this.Connected)
+		{
+			   if (this.Connected)
 			{
 				this.Disconnect();
 			}
@@ -1073,10 +1073,10 @@ namespace RemObjects.InternetPack
 				this.fTimeoutTimer.Dispose();
 				this.fTimeoutTimer = null;
 			}
-        }
-        #else
+		}
+		#else
 		public void Dispose()
-        {
+		{
 			if (this.Connected)
 			{
 				this.Disconnect();
@@ -1087,8 +1087,8 @@ namespace RemObjects.InternetPack
 				this.fTimeoutTimer.Dispose();
 				this.fTimeoutTimer = null;
 			}
-        }
-        #endif
+		}
+		#endif
 		#endregion
 
 		#region Statistics

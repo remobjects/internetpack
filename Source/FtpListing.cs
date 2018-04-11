@@ -548,7 +548,7 @@ namespace RemObjects.InternetPack.Ftp
 				if (lItem.ToLower().StartsWith("total"))
 					continue;
 
-                try
+				try
 				{
 					FtpListingItem lNewItem = new FtpListingItem();
 					lNewItem.Parse(lItem);
@@ -558,16 +558,16 @@ namespace RemObjects.InternetPack.Ftp
 					if (lNewItem.Directory && lNewItem.FileName == "..")
 						lFoundUpDir = true;
 				}
-                catch(Exception ex)
-                {
-                    if (!(ex is FormatException))
-                    {
-                        if (defined("ECHOES") && (!(ex is IndexOutOfRangeException)))
-                            throw ex;
-                        else if (!defined("ECHOES") && (!(ex is RTLException)))
-                            throw ex;
-                    }
-                }
+				catch(Exception ex)
+				{
+					if (!(ex is FormatException))
+					{
+						if (defined("ECHOES") && (!(ex is IndexOutOfRangeException)))
+							throw ex;
+						else if (!defined("ECHOES") && (!(ex is RTLException)))
+							throw ex;
+					}
+				}
 			}
 
 			if (includeUpDir && !lFoundUpDir)

@@ -161,8 +161,8 @@ namespace RemObjects.InternetPack.Messages
 				lDate = lDate.Substring(0, lIndex).Trim();
 
 			Rfc2822DateTime.StringToDate(lDate);
-            // TODO review
-            /*try
+			// TODO review
+			/*try
 			{
 				return System.DateTime.Parse(lDate, new System.Globalization.DateTimeFormatInfo(), System.Globalization.DateTimeStyles.AllowWhiteSpaces);
 			}
@@ -399,8 +399,8 @@ namespace RemObjects.InternetPack.Messages
 
 				lResult.Append(lStartTag);
 				// TODO review
-                var lBytes = Encoding.UTF8.GetBytes(value.Substring(i));
-                lResult.Append(Convert.ToBase64String(lBytes, 0, length(lBytes)));
+				var lBytes = Encoding.UTF8.GetBytes(value.Substring(i));
+				lResult.Append(Convert.ToBase64String(lBytes, 0, length(lBytes)));
 				lResult.Append(lEndTag);
 
 				return lResult.ToString();

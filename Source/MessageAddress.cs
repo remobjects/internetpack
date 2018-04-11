@@ -29,7 +29,7 @@ namespace RemObjects.InternetPack.Messages
 		}
 
 		[ToString]
-        public override String ToString()
+		public override String ToString()
 		{
 			return String.Format("{0} <{1}>", this.Name, this.Address);
 		}
@@ -67,8 +67,8 @@ namespace RemObjects.InternetPack.Messages
 	public class MessageAddresses
 	{
 		private List<MessageAddress> fData = new List<MessageAddress>();
-        
-        public MessageAddress Add(String name, String address)
+
+		public MessageAddress Add(String name, String address)
 		{
 			MessageAddress item = new MessageAddress();
 			item.Name = name;
@@ -89,14 +89,14 @@ namespace RemObjects.InternetPack.Messages
 			return item;
 		}
 
-        public MessageAddress Add(MessageAddress address)
-        {
-            fData.Add(address);
+		public MessageAddress Add(MessageAddress address)
+		{
+			fData.Add(address);
 
-            return address;
-        }
+			return address;
+		}
 
-        [ToString]
+		[ToString]
 		public override String ToString()
 		{
 			StringBuilder lResult = new StringBuilder();
@@ -131,24 +131,24 @@ namespace RemObjects.InternetPack.Messages
 			return lAddresses;
 		}
 
-        public MessageAddress this[Int32 Index]
-        {
-            get
-            {
-                return fData[Index];
-            }
-            set
-            {
-                fData[Index] = value;
-            }
-        }
+		public MessageAddress this[Int32 Index]
+		{
+			get
+			{
+				return fData[Index];
+			}
+			set
+			{
+				fData[Index] = value;
+			}
+		}
 
-        public int Count
-        {
-            get
-            {
-                return fData.Count;
-            }
-        }
+		public int Count
+		{
+			get
+			{
+				return fData.Count;
+			}
+		}
 	}
 }
