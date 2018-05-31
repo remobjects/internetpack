@@ -9,28 +9,28 @@ namespace RemObjects.InternetPack.Http
 	{
 		static KnownProtocols()
 		{
-			fProtocols = new Dictionary<String, Int32>(8);
-			fProtocols.Add("ftp", 21);
-			fProtocols.Add("ssh", 22);
-			fProtocols.Add("telnet", 23);
-			fProtocols.Add("smtp", 25);
-			fProtocols.Add("http", 80);
-			fProtocols.Add("pop3", 110);
-			fProtocols.Add("https", 443);
+			fProtocols = new Dictionary<String, String>(8);
+			fProtocols.Add("ftp", "21");
+			fProtocols.Add("ssh", "22");
+			fProtocols.Add("telnet", "23");
+			fProtocols.Add("smtp", "25");
+			fProtocols.Add("http", "80");
+			fProtocols.Add("pop3", "110");
+			fProtocols.Add("https", "443");
 		}
 
-		private static readonly Dictionary<String, Int32> fProtocols;
+		private static readonly Dictionary<String, String> fProtocols;
 
 		public static void RegisterProtocol(String name, Int32 port)
 		{
 			if (fProtocols.ContainsKey(name))
 				throw new Exception(String.Format("Protocol '{0}' already registered.", name));
-			fProtocols.Add(name, port);
+			fProtocols.Add(name, Convert.ToString(port));
 		}
 
 		public static Int32 GetProtocolDefaultPort(String protocol)
 		{
-			return fProtocols.ContainsKey(protocol) ? (Int32)fProtocols[protocol] : -1;
+			return coalesce(Convert.TryToInt32(fProtocols[protocol]), -1);
 		}
 	}
 
