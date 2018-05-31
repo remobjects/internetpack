@@ -18,7 +18,7 @@ As of this writing, the Internet Pack library requires the latest Elements 9.2 b
 
 * [RemObjects Elements Homepage](http://www.elementscompiler.com/)
 * [RemObjects Elements Docs](http://docs.elementscompiler.com/)
-* [Internet Pack](http://docs.elementscompiler.com/API/DelphiRTL/) on docs.elementscompiler.com
+<!--* [Internet Pack](http://docs.elementscompiler.com/API/InternetPack/) on docs.elementscompiler.com-->
 * [Elements RTL](http://www.elementscompiler.com/elements/rtl) Homepage
 * [Elements RTL](https://www.github.com/RemObjects/RTL2/) on GitHub
 
