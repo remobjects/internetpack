@@ -9,7 +9,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 	/// <summary>
 	/// Utility class for dealing with Base64 encoded strings
 	/// </summary>
-	static class Base64
+	public static class Base64
 	{
 		/// <summary>
 		/// Decodes a base64 encoded String into the bytes it describes

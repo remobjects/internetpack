@@ -195,7 +195,7 @@ namespace RemObjects.InternetPack.Email
 				throw new Exception(String.Format("Could not retrieve mailbox status: {0}", lResponse));
 
 			var lResponses = lResponse.Split(" ");
-			Int32 lCount = Int32.Parse(lResponses[1]);
+			Int32 lCount = Convert.ToInt32(lResponses[1]);
 
 			for (Int32 i = 0; i < lCount; i++)
 				this.fMessages.Add(new MailStatus());

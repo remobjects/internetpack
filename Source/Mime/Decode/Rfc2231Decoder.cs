@@ -49,7 +49,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 	/// </list>
 	/// More information and the specification is available in <see href="http://tools.ietf.org/html/rfc2231">RFC 2231</see>.
 	/// </summary>
-	static class Rfc2231Decoder
+	public static class Rfc2231Decoder
 	{
 		/// <summary>
 		/// Decodes a String of the form:<br/>

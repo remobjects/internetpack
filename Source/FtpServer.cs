@@ -361,6 +361,35 @@ namespace RemObjects.InternetPack.Ftp
 
 		protected override void InitCommands()
 		{
+			#if !island
+			this.Commands.Add("QUIT", Cmd_QUIT);
+			this.Commands.Add("NOOP", Cmd_NOOP);
+			this.Commands.Add("USER", Cmd_USER);
+			this.Commands.Add("ALLO", Cmd_NOOP);
+			this.Commands.Add("PASS", Cmd_PASS);
+			this.Commands.Add("ACCT", Cmd_ACCT);
+			this.Commands.Add("CWD", Cmd_CWD);
+			this.Commands.Add("CDUP", Cmd_CDUP);
+			this.Commands.Add("PWD", Cmd_PWD);
+			this.Commands.Add("SYST", Cmd_SYST);
+			this.Commands.Add("TYPE", Cmd_TYPE);
+			this.Commands.Add("PORT", Cmd_PORT);
+			this.Commands.Add("REST", Cmd_REST);
+			this.Commands.Add("LIST", Cmd_LIST);
+			this.Commands.Add("PASV", Cmd_PASV);
+			this.Commands.Add("RNFR", Cmd_RNFR);
+			this.Commands.Add("RNTO", Cmd_RNTO);
+			this.Commands.Add("DELE", Cmd_DELE);
+			this.Commands.Add("RMD", Cmd_RMD);
+			this.Commands.Add("MKD", Cmd_MKD);
+			this.Commands.Add("STOR", Cmd_STOR);
+			this.Commands.Add("APPE", Cmd_APPE);
+			this.Commands.Add("RETR", Cmd_RETR);
+			this.Commands.Add("ABOR", Cmd_ABOR);
+
+			/* Aliases */
+			this.Commands.Add("CD", Cmd_CWD);
+			#else
 			this.Commands.Add("QUIT", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_QUIT);
 			this.Commands.Add("NOOP", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_NOOP);
 			this.Commands.Add("USER", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_USER);
@@ -388,6 +417,7 @@ namespace RemObjects.InternetPack.Ftp
 
 			/* Aliases */
 			this.Commands.Add("CD", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_CWD);
+			#endif
 		}
 
 		/*

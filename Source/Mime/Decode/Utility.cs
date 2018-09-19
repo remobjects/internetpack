@@ -9,7 +9,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 	/// <summary>
 	/// Contains common operations needed while decoding.
 	/// </summary>
-	static class Utility
+	public static class Utility
 	{
 		/// <summary>
 		/// Separate header name and header value.
@@ -134,7 +134,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 	/// <summary>
 	/// Utility to help reading bytes and strings of a <see cref="Stream"/>
 	/// </summary>
-	static class StreamUtility
+	public static class StreamUtility
 	{
 		/// <summary>
 		/// Read a line from the stream.
