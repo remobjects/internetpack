@@ -178,7 +178,7 @@
 		public virtual void Remove(String name) { }
 		public virtual String GetKey(int index) { }
 		//public String this[int index] { get; set; }
-		public String this[String name] { get; set; }
+		public String this[String name] { get { } set { } }
 		public virtual String[] AllKeys { get; set; }
 		protected ISequence<string> GetKeys() { }
 		public ISequence<string> Keys {get { GetKeys(); } }

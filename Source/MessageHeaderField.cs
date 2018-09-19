@@ -108,6 +108,7 @@ namespace RemObjects.InternetPack.Messages
 			}
 		}
 
+		[ToString]
 		public override String ToString()
 		{
 			StringBuilder lResult = new StringBuilder("");

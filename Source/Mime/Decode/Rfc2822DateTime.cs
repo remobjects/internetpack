@@ -12,7 +12,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 	/// <summary>
 	/// Class used to decode RFC 2822 Date header fields.
 	/// </summary>
-	static class Rfc2822DateTime
+	public static class Rfc2822DateTime
 	{
 		/// <summary>
 		/// Converts a String in RFC 2822 format into a <see cref="DateTime"/> object

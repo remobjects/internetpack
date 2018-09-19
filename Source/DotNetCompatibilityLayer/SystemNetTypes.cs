@@ -652,7 +652,7 @@ namespace RemObjects.InternetPack
 			StringBuilder lSb = new StringBuilder();
 			lSb.Append(DispositionType.ToLower());
 
-			foreach(var lItem in fParameters)
+			foreach(var lItem in fParameters.GetSequence())
 				{
 					if (lItem.Value.Length > 0)
 					{
@@ -825,7 +825,7 @@ namespace RemObjects.InternetPack
 			StringBuilder lSb = new StringBuilder();
 
 			lSb.Append(fMediaType);
-			foreach(var lPair in fParameters)
+			foreach(var lPair in fParameters.GetSequence())
 			{
 				if (lPair.Value != "")
 				{
