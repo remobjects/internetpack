@@ -118,7 +118,7 @@ namespace RemObjects.InternetPack.Dns
 							lBytesIPv4[2] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr >> 16);
 							lBytesIPv4[3] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr >> 24);
 							#elif island && windows
-							lSockAddrIPv4 = (rtl.sockaddr_in *)(*lPtr).ai_addr;
+							lSockAddrIPv4 = (rtl.SOCKADDR_IN *)(*lPtr).ai_addr;
 							lBytesIPv4[0] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b1;
 							lBytesIPv4[1] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b2;
 							lBytesIPv4[2] = (*lSockAddrIPv4).sin_addr.S_un.S_un_b.s_b3;

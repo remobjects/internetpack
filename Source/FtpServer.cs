@@ -361,33 +361,33 @@ namespace RemObjects.InternetPack.Ftp
 
 		protected override void InitCommands()
 		{
-			this.Commands.Add("QUIT", Cmd_QUIT);
-			this.Commands.Add("NOOP", Cmd_NOOP);
-			this.Commands.Add("USER", Cmd_USER);
-			this.Commands.Add("ALLO", Cmd_NOOP);
-			this.Commands.Add("PASS", Cmd_PASS);
-			this.Commands.Add("ACCT", Cmd_ACCT);
-			this.Commands.Add("CWD", Cmd_CWD);
-			this.Commands.Add("CDUP", Cmd_CDUP);
-			this.Commands.Add("PWD", Cmd_PWD);
-			this.Commands.Add("SYST", Cmd_SYST);
-			this.Commands.Add("TYPE", Cmd_TYPE);
-			this.Commands.Add("PORT", Cmd_PORT);
-			this.Commands.Add("REST", Cmd_REST);
-			this.Commands.Add("LIST", Cmd_LIST);
-			this.Commands.Add("PASV", Cmd_PASV);
-			this.Commands.Add("RNFR", Cmd_RNFR);
-			this.Commands.Add("RNTO", Cmd_RNTO);
-			this.Commands.Add("DELE", Cmd_DELE);
-			this.Commands.Add("RMD", Cmd_RMD);
-			this.Commands.Add("MKD", Cmd_MKD);
-			this.Commands.Add("STOR", Cmd_STOR);
-			this.Commands.Add("APPE", Cmd_APPE);
-			this.Commands.Add("RETR", Cmd_RETR);
-			this.Commands.Add("ABOR", Cmd_ABOR);
+			this.Commands.Add("QUIT", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_QUIT);
+			this.Commands.Add("NOOP", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_NOOP);
+			this.Commands.Add("USER", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_USER);
+			this.Commands.Add("ALLO", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_NOOP);
+			this.Commands.Add("PASS", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_PASS);
+			this.Commands.Add("ACCT", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_ACCT);
+			this.Commands.Add("CWD", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_CWD);
+			this.Commands.Add("CDUP", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_CDUP);
+			this.Commands.Add("PWD", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_PWD);
+			this.Commands.Add("SYST", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_SYST);
+			this.Commands.Add("TYPE", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_TYPE);
+			this.Commands.Add("PORT", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_PORT);
+			this.Commands.Add("REST", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_REST);
+			this.Commands.Add("LIST", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_LIST);
+			this.Commands.Add("PASV", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_PASV);
+			this.Commands.Add("RNFR", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_RNFR);
+			this.Commands.Add("RNTO", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_RNTO);
+			this.Commands.Add("DELE", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_DELE);
+			this.Commands.Add("RMD", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_RMD);
+			this.Commands.Add("MKD", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_MKD);
+			this.Commands.Add("STOR", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_STOR);
+			this.Commands.Add("APPE", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_APPE);
+			this.Commands.Add("RETR", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_RETR);
+			this.Commands.Add("ABOR", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_ABOR);
 
 			/* Aliases */
-			this.Commands.Add("CD", Cmd_CWD);
+			this.Commands.Add("CD", (RemObjects.InternetPack.CommandBased.OnCommandHandler)Cmd_CWD);
 		}
 
 		/*

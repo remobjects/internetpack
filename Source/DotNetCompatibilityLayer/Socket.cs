@@ -86,9 +86,9 @@
 			}
 			#else
 			#if posix || toffee
-			fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.Int32_t)socketType, (rtl.Int32_t)protocolType);
+			fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.int32_t)socketType, (rtl.int32_t)protocolType);
 			#else
-			fHandle = rtl.__Global.socket((rtl.Int)addressFamily, (rtl.Int)socketType, (rtl.Int)protocolType);
+			fHandle = rtl.__Global.socket((rtl.INT)addressFamily, (rtl.INT)socketType, (rtl.INT)protocolType);
 			#endif
 
 			if (fHandle < 0)

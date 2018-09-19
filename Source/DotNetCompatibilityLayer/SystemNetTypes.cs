@@ -180,7 +180,7 @@ namespace RemObjects.InternetPack
 		public rtl.USHORT sin6_family;
 		public rtl.USHORT sin6_port;
 		public rtl.ULONG sin6_flowinfo;
-		public rtl.in6_addr sin6_addr;
+		public rtl.IN6_ADDR sin6_addr;
 		public rtl.ULONG sin6_scope_id;
 	}
 	#endif
