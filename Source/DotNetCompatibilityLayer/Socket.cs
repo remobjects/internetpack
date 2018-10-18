@@ -228,6 +228,8 @@
 		public void Bind(EndPoint local_end)
 		{
 			var lEndPoint = (IPEndPoint)local_end;
+			if (lEndPoint.Address == null)
+				lEndPoint = new IPEndPoint(IPAddress.Parse("0.0.0.0"), lEndPoint.Port);
 			#if cooper
 			var lAddress = java.net.InetAddress.getByAddress(lEndPoint.Address.GetAddressBytes());
 			fSocketAddress = new java.net.InetSocketAddress(lAddress, lEndPoint.Port);
@@ -263,6 +265,7 @@
 				throw new Exception("Error calling bind function");
 			#endif
 			#endif
+			LocalEndPoint = lEndPoint;
 		}
 
 		#if toffee
