@@ -305,7 +305,7 @@ namespace RemObjects.InternetPack.Http
 					if (lRequireBody)
 					{
 						Int64? lContentLength;
-						lContentLength = RemObjects.elements.rtl.Convert.TryToInt64(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"));
+						lContentLength = RemObjects.Elements.RTL.Convert.TryToInt64(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"));
 						if (lContentLength == null)
 						//if (!LongHelper.TryParse(fContext.CurrentRequest.Header.GetHeaderValue("Content-Length"), out lContentLength))
 							lContentLength = 0;

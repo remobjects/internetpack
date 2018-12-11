@@ -772,6 +772,19 @@ namespace RemObjects.InternetPack
 		{
 		}
 
+		#if cooper
+		public void Close()
+		{
+			this.DataSocketClose(true);
+			base.close();
+
+			if (fTimeoutTimer != null)
+			{
+				this.fTimeoutTimer.Dispose();
+				this.fTimeoutTimer = null;
+			}
+		}
+		#else
 		public override void Close()
 		{
 			this.DataSocketClose(true);
@@ -783,6 +796,7 @@ namespace RemObjects.InternetPack
 				this.fTimeoutTimer = null;
 			}
 		}
+		#endif
 
 /*
 		#if ECHOES

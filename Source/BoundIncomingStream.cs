@@ -26,10 +26,17 @@ namespace RemObjects.InternetPack
 				this.fDataLeft -= this.Read(lBuffer, 0, lBuffer.Length);
 		}
 
+		#if cooper
+		public void Close()
+		{
+			this.Flush();
+		}
+		#else
 		public override void Close()
 		{
 			this.Flush();
 		}
+		#endif
 
 		public override Int32 Read(Byte[] buffer, Int32 offset, Int32 count)
 		{

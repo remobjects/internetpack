@@ -864,10 +864,17 @@ namespace RemObjects.InternetPack.Http
 			/* no-op? */
 		}
 
+		#if cooper
+		public void Close()
+		{
+
+		}
+		#else
 		public override void Close()
 		{
 			/* no-op? */
 		}
+		#endif
 
 		public override Int32 Read(Byte[] buffer, Int32 offset, Int32 size)
 		{

@@ -192,7 +192,7 @@
 		RemoteCertificateChainErrors = 4
 	}
 
-	public abstract class AuthenticatedStream : Stream
+	public abstract class AuthenticatedStream : RemObjects.Elements.RTL.Stream
 	{
 		protected AuthenticatedStream(Stream innerStream, Boolean leaveInnerStreamOpen) {}
 		//protected override void Dispose(Boolean disposing) {}
@@ -303,7 +303,11 @@
 		//public override void SetLength(Int64 @value) {}
 		public override Int64 Seek(Int64 offset, SeekOrigin origin) {}
 		public override void Flush() {}
+		#if cooper
+		public void Close() {}
+		#else
 		public override void Close() {}
+		#endif
 		//protected override void Dispose(Boolean disposing) {}
 		public override Int32 Read(Byte[] buffer, Int32 offset, Int32 count) {}
 		public override Int32 Write(Byte[] buffer, Int32 offset, Int32 count) {}

@@ -282,7 +282,7 @@ namespace RemObjects.InternetPack
 			return lResult;
 		}
 
-		   private static Boolean TryParseIPV6(String ipString, out IPAddress address)
+		private static Boolean TryParseIPV6(String ipString, out IPAddress address)
 		{
 			var lString = (RemObjects.Elements.System.String)ipString;
 			Byte[] lBytes = new Byte[16];
@@ -317,9 +317,9 @@ namespace RemObjects.InternetPack
 
 			for (int i = 0; i < IPv6Length; i++)
 				#if posix
-				lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
+				lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i];
 				#elif toffee
-				lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
+				lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
 				#else
 				lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];
 				#endif
