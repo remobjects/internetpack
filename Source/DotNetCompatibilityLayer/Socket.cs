@@ -390,8 +390,8 @@
 
 		public void Connect(String host, Int32 port)
 		{
-			var lAddress = IPAddress.Parse(host);
-			Connect(new IPEndPoint(lAddress, port));
+			var lHost = Dns.DnsLookup.ResolveAll(host);
+			Connect(lHost, port);
 		}
 
 		public void Connect(IPAddress[] addresses, Int32 port)
@@ -469,8 +469,11 @@
 
 		public IAsyncResult BeginConnect(String host, Int32 port, AsyncCallback callback, Object state)
 		{
-			var lAddress = IPAddress.Parse(host);
-			return BeginConnect(new IPEndPoint(lAddress, port), callback, state);
+			var lHost = Dns.DnsLookup.ResolveAll(host);
+			return BeginConnect(lHost, port, callback, state);
+
+			//var lAddress = IPAddress.Parse(host);
+			//return BeginConnect(new IPEndPoint(lAddress, port), callback, state);
 		}
 
 		public IAsyncResult BeginConnect(IPAddress address, Int32 port, AsyncCallback callback, Object state)
