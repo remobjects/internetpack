@@ -15,7 +15,11 @@ namespace RemObjects.InternetPack.Messages
 
 		public HeaderField(String value)
 		{
+			#if darwin
+			this.fUnnamedValue = "";
+			#else
 			this.fUnnamedValue = String.Empty;
+			#endif
 			this.Value = value;
 		}
 

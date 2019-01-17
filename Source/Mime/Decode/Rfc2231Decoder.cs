@@ -83,10 +83,17 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				{
 					if (lPos < lDecode.Length - 1)
 					{
+						#if darwin
+						if (lDecode[lPos + 1] == ' ')
+						{
+							lDecode = lDecode.Insert(lPos + 1, ';');
+						}
+						#else
 						if (String.CharacterIsWhiteSpace(lDecode[lPos + 1]))
 						{
 							lDecode = lDecode.Insert(lPos + 1, ';');
 						}
+						#endif
 					}
 				}
 				lPrevFound = !lPrevFound;
@@ -121,17 +128,17 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 					continue;
 
 				var keyValue = part.Split("=");
-				if (keyValue.Count == 1)
+				if (keyValue.Count() == 1)
 				{
 					collection.Add(new KeyValuePair<String, String>("", keyValue[0]));
 				}
-				else if (keyValue.Count == 2)
+				else if (keyValue.Count() == 2)
 				{
 					collection.Add(new KeyValuePair<String, String>(keyValue[0], keyValue[1]));
 				}
 				else
 				{
-					throw new ArgumentException("When splitting the part \"" + part + "\" by = there was " + keyValue.Count + " parts. Only 1 and 2 are supported");
+					throw new ArgumentException("When splitting the part \"" + part + "\" by = there was " + keyValue.Count() + " parts. Only 1 and 2 are supported");
 				}
 			}
 

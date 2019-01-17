@@ -177,6 +177,16 @@ namespace RemObjects.InternetPack.Http
 			/*if (System.String.Equals(lCharsetName, "utf-7", StringComparison.Ordinal))
 				return System.Text.Encoding.UTF7;*/
 
+			#if darwin
+			if (lCharsetName.Equals("utf-8"))
+				return Encoding.UTF8;
+
+			if (lCharsetName.Equals("unicode"))
+				return Encoding.UTF16LE;
+
+			if (lCharsetName.Equals("unicodeFFFE"))
+				return Encoding.UTF16BE;
+			#else
 			if (String.Equals(lCharsetName, "utf-8"))
 				return Encoding.UTF8;
 
@@ -185,6 +195,7 @@ namespace RemObjects.InternetPack.Http
 
 			if (String.Equals(lCharsetName, "unicodeFFFE"))
 				return Encoding.UTF16BE;
+			#endif
 
 			return Encoding.ASCII;
 		}

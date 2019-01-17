@@ -18,8 +18,13 @@ namespace RemObjects.InternetPack.Http
 			this.UseProxy = false;
 			this.ProxyHost = HttpProxySettings.DEFAULT_HOSTNAME;
 			this.ProxyPort = HttpProxySettings.DEFAULT_PORT;
+			#if darwin
+			this.UserName = "";
+			this.Password = "";
+			#else
 			this.UserName = String.Empty;
 			this.Password = String.Empty;
+			#endif
 		}
 
 		[DefaultValue(false)]

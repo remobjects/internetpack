@@ -57,13 +57,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Foundation" />
-    <Reference Include="libElements">
-      <HintPath>..\..\RTL2\Source\bin\Debug\macOS\libElements.fx</HintPath>
-    </Reference>
     <Reference Include="libToffee">
       <HintPath>C:\Program Files (x86)\RemObjects Software\Elements\Toffee\Reference Libraries\macOS\libToffee.fx</HintPath>
     </Reference>
     <Reference Include="rtl" />
+    <Reference Include="libElements" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

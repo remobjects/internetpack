@@ -100,7 +100,11 @@ namespace RemObjects.InternetPack
 				if (endIndex > (startIndex + 1))
 					return source.Substring(startIndex, (endIndex - startIndex) - 1).Replace("\"\"", "\"");
 
+				#if darwin
+				return "";
+				#else
 				return String.Empty;
+				#endif
 			}
 
 			public void Clear()
@@ -126,7 +130,11 @@ namespace RemObjects.InternetPack
 				ParserState lParserState = ParserState.EntryStart;
 				Int32 lParserPosition = 0;
 				Int32 lLoginStringLength = lLoginString.Length;
+				#if darwin
+				String lKey = "";
+				#else
 				String lKey = String.Empty;
+				#endif
 
 				Int32 lTokenStart = 0;
 				while (true)
@@ -179,7 +187,11 @@ namespace RemObjects.InternetPack
 							{
 								lParserState = ParserState.Key;
 								lTokenStart = lParserPosition;
+								#if darwin
+								lKey = "";
+								#else
 								lKey = String.Empty;
+								#endif
 							}
 							break;
 
@@ -199,7 +211,11 @@ namespace RemObjects.InternetPack
 						case ParserState.KeyQuotedStart:
 							lParserState = (lChar != '"') ? ParserState.KeyQuoted : ParserState.KeyQuotedEnd;
 							lTokenStart = lParserPosition;
+							#if darwin
+							lKey = "";
+							#else
 							lKey = String.Empty;
+							#endif
 							break;
 
 						case ParserState.KeyQuoted:
@@ -232,7 +248,11 @@ namespace RemObjects.InternetPack
 									break;
 								case ',':
 									lParserState = ParserState.EntryStart;
+									#if darwin
+									AddKeyValuePair(lKey, "");
+									#else
 									AddKeyValuePair(lKey, String.Empty);
+									#endif
 									break;
 								case '"':
 									lParserState = ParserState.ValueQuotedStart;

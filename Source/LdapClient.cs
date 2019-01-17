@@ -700,8 +700,13 @@ namespace RemObjects.InternetPack.Ldap
 			get
 			{
 				for (Int32 i = 0; i < fData.Count; i++)
+					#if darwin && !toffee
+					if (key.EqualsIgnoreCaseInvariant(fData[i].Key))
+						return fData[i];
+					#else
 					if (String.EqualsIgnoringCaseInvariant(key, fData[i].Key))
 						return fData[i];
+					#endif
 
 				return null;
 			}
@@ -1188,24 +1193,29 @@ namespace RemObjects.InternetPack.Ldap
 
 		private String StripGroupBase(String dn)
 		{
+			#if darwin && !toffee
+			var lItems = dn.Trim().Split(',');
+			var lGroupDN = fGroupSearchBase.Trim().Split(',');
+			#else
 			var lItems = dn.Trim().Split(',').MutableVersion();
 			var lGroupDN = fGroupSearchBase.Trim().Split(',').MutableVersion();
+			#endif
 
-			for (Int32 i = 0; i < lItems.Count; i++)
+			for (Int32 i = 0; i < lItems.Count(); i++)
 				lItems[i] = lItems[i].Trim();
 
-			for (Int32 i = 0; i < lGroupDN.Count; i++)
+			for (Int32 i = 0; i < lGroupDN.Count(); i++)
 				lGroupDN[i] = lGroupDN[i].Trim();
 
-			if (lGroupDN.Count >= lItems.Count)
+			if (lGroupDN.Count() >= lItems.Count())
 				return dn; // makes no sense
 
-			for (Int32 i = lGroupDN.Count - 1; i >= 0; i--)
-				if (0 != String.Compare(lItems[lItems.Count - lGroupDN.Count + i], lGroupDN[i]))
+			for (Int32 i = lGroupDN.Count() - 1; i >= 0; i--)
+				if (0 != String.Compare(lItems[lItems.Count() - lGroupDN.Count() + i], lGroupDN[i]))
 					return dn; // shouldn't happen
 
 			String lResult = null;
-			for (Int32 i = lItems.Count - lGroupDN.Count - 1; i >= 0; i--)
+			for (Int32 i = lItems.Count() - lGroupDN.Count() - 1; i >= 0; i--)
 			{
 				String lValue = lItems[i];
 

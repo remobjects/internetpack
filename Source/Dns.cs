@@ -42,7 +42,7 @@ namespace RemObjects.InternetPack.Dns
 		}
 		#endif
 
-		#if posix || toffee
+		#if posix || toffee || darwin
 		private rtl.__struct_addrinfo *GetNext(rtl.__struct_addrinfo *Addr)
 		{
 			return (rtl.__struct_addrinfo *)Addr->ai_next;
@@ -85,7 +85,7 @@ namespace RemObjects.InternetPack.Dns
 			rtl.ADDRINFOW *lPtr;
 			rtl.SOCKADDR_IN *lSockAddrIPv4;
 			sockaddr_in6 *lSockAddr;
-			#elif posix || toffee
+			#elif posix || toffee || darwin
 			rtl.__struct_addrinfo *lAddrInfo;
 			rtl.__struct_addrinfo *lPtr;
 			rtl.__struct_sockaddr_in *lSockAddrIPv4;
@@ -95,7 +95,7 @@ namespace RemObjects.InternetPack.Dns
 			var lRes = 0;
 			#if toffee
 			lRes = rtl.getaddrinfo(lString.UTF8String, null, null, &lAddrInfo);
-			#elif posix
+			#elif posix || darwin
 			AnsiChar[] lHost = lString.ToAnsiChars(true);
 			lRes = rtl.getaddrinfo(&lHost[0], null, null, &lAddrInfo);
 			#elif island
@@ -111,7 +111,7 @@ namespace RemObjects.InternetPack.Dns
 					switch(lPtr->ai_family)
 					{
 						case AddressFamily.InterNetwork:
-							#if posix || toffee
+							#if posix || toffee || darwin
 							lSockAddrIPv4 = (rtl.__struct_sockaddr_in *)(*lPtr).ai_addr;
 							lBytesIPv4[0] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr);
 							lBytesIPv4[1] = (Byte)((*lSockAddrIPv4).sin_addr.s_addr >> 8);
@@ -136,7 +136,9 @@ namespace RemObjects.InternetPack.Dns
 							for (int i = 0; i < 16 /*IPv6Length*/; i++)
 								#if posix
 								lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i];
-								#elif toffee
+								#elif toffee && !darwin
+								//lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
+								#elif darwin
 								lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
 								#else
 								lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];
@@ -170,7 +172,7 @@ namespace RemObjects.InternetPack.Dns
 			}
 
 			var lFields = hostname.Split('.');
-			if (lFields.Count != 4)
+			if (lFields.Count() != 4)
 			{
 				return null;
 			}

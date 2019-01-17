@@ -66,7 +66,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 		{
 			// We know that the timezones are always in the last part of the date input
 			var parts = dateInput.Split(" ");
-			String lastPart = parts[parts.Count - 1];
+			String lastPart = parts[parts.Count() - 1];
 
 			// Convert timezones in older formats to [+-]dddd format.
 			//lastPart = Regex.Replace(lastPart, @"UT|GMT|EST|EDT|CST|CDT|MST|MDT|PST|PDT|[A-I]|[K-Y]|Z", MatchEvaluator);
@@ -182,7 +182,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				return match.Value;
 			}*/
 			var lParts = dateInput.Split(" ");
-			if (lParts.Count >= 4)
+			if (lParts.Count() >= 4)
 			{
 				String[] lReturn = new String[4];
 				for (var i = 0; i < 4; i++)

@@ -11,7 +11,7 @@
 		private java.io.InputStream fSocketInput;
 		private java.io.OutputStream fSocketOutput;
 		private java.net.InetSocketAddress fSocketAddress;
-		#elif posix || toffee
+		#elif posix || toffee || darwin
 		private int fHandle;
 		public const Int32 FIONREAD = 1074004095;
 		#else
@@ -85,7 +85,7 @@
 					throw new Exception("Socket type not supported on current platform");
 			}
 			#else
-			#if posix || toffee
+			#if posix || toffee || darwin
 			fHandle = rtl.socket((rtl.int32_t)addressFamily, (rtl.int32_t)socketType, (rtl.int32_t)protocolType);
 			#else
 			fHandle = rtl.__Global.socket((rtl.INT)addressFamily, (rtl.INT)socketType, (rtl.INT)protocolType);
@@ -103,7 +103,7 @@
 			fSocketInput = fHandle.getInputStream();
 			fSocketOutput = fHandle.getOutputStream();
 		}
-		#elif posix || toffee
+		#elif posix || toffee || darwin
 		private Socket(int handle)
 		{
 			fHandle = handle;
@@ -238,7 +238,7 @@
 			#else
 			void *lPointer;
 			int lSize;
-			#if posix || toffee
+			#if posix || toffee || darwin
 			rtl.__struct_sockaddr_in lIPv4;
 			rtl.__struct_sockaddr_in6 lIPv6;
 			#if posix
@@ -255,7 +255,7 @@
 			lSockAddr.__sockaddr_in__ = (rtl.__struct_sockaddr_in *) lPointer;
 			if (rtl.__Global.bind(fHandle, lSockAddr, lSize) != 0)
 				throw new Exception("Error calling bind function");
-			#elif toffee
+			#elif toffee || darwin
 			if (rtl.bind(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
 				throw new Exception("Error calling bind function");
 			#elif island && windows
@@ -268,22 +268,22 @@
 			LocalEndPoint = lEndPoint;
 		}
 
-		#if toffee
+		#if toffee || darwin
 		private int htons(int port)
 		{
-			return (__uint16_t)((((__uint16_t)(port) & 0xff00) >> 8) | (((__uint16_t)(port) & 0x00ff) << 8));
+			return (rtl.__uint16_t)((((rtl.__uint16_t)(port) & 0xff00) >> 8) | (((rtl.__uint16_t)(port) & 0x00ff) << 8));
 		}
 		#endif
 
 		#if !cooper
-		#if posix || toffee
+		#if posix || toffee || darwin
 		private void IPEndPointToNative(IPEndPoint endPoint, out rtl.__struct_sockaddr_in lIPv4, out rtl.__struct_sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
 		{
 			switch (endPoint.AddressFamily)
 			{
 				case AddressFamily.InterNetworkV6:
 					lIPv6.sin6_family = AddressFamily.InterNetworkV6;
-					#if toffee
+					#if toffee || darwin
 					lIPv6.sin6_port = htons(endPoint.Port);
 					#else
 					lIPv6.sin6_port = rtl.htons(endPoint.Port);
@@ -291,7 +291,9 @@
 					lIPv6.sin6_scope_id = endPoint.Address.ScopeId;
 					var lBytes = endPoint.Address.GetAddressBytes();
 					for (int i = 0; i < 16; i++)
-						#if toffee
+						#if toffee && !darwin
+						//lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i]; //TODO
+						#elif darwin
 						lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
 						#elif posix
 						lIPv6.sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
@@ -302,7 +304,7 @@
 
 				default:
 					lIPv4.sin_family = AddressFamily.InterNetwork;
-					#if toffee
+					#if toffee || darwin
 					lIPv4.sin_port = htons(endPoint.Port);
 					#else
 					lIPv4.sin_port = rtl.htons(endPoint.Port);
@@ -355,7 +357,7 @@
 			#else
 			void *lPointer;
 			int lSize;
-			#if posix || toffee
+			#if posix || toffee || darwin
 			rtl.__struct_sockaddr_in lIPv4;
 			rtl.__struct_sockaddr_in6 lIPv6;
 			#if posix
@@ -374,7 +376,7 @@
 			#if posix
 			lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
 			lRes = rtl.connect(fHandle, lSockAddr, lSize);
-			#elif toffee
+			#elif toffee || darwin
 			lRes = rtl.connect(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize);
 			#else
 			lRes = rtl.connect(fHandle, lPointer, lSize);
@@ -815,7 +817,7 @@
 			else
 				fServerHandle.close();
 			#else
-			#if posix || toffee
+			#if posix || toffee || darwin
 			if (rtl.close(fHandle) != 0)
 				throw new Exception("Error closing socket");
 			#else
@@ -857,7 +859,7 @@
 				#else
 				rtl.u_long lData = 0;
 				var lError = false;
-				#if posix || toffee
+				#if posix || toffee || darwin
 				lError = rtl.ioctl(fHandle, FIONREAD, &lData) < 0;
 				#else
 				var lRes = 0;

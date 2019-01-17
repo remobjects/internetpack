@@ -49,14 +49,16 @@
     <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Elements">
-      <HintPath>..\..\RTL2\Source\bin\Debug\Windows\i386\Elements.fx</HintPath>
+    <Reference Include="gc">
+      <HintPath>C:\Program Files (x86)\RemObjects Software\Elements\Island\Reference Libraries\Windows\i386\gc.fx</HintPath>
     </Reference>
-    <Reference Include="gc" />
-    <Reference Include="rtl" />
+    <Reference Include="rtl">
+      <HintPath>C:\Program Files (x86)\RemObjects Software\Elements\Island\Reference Libraries\Windows\i386\rtl.fx</HintPath>
+    </Reference>
     <Reference Include="Island">
-      <HintPath>..\..\..\..\IslandRTL\Source\Bin\Debug\Windows\i386\Island.fx</HintPath>
+      <HintPath>C:\Program Files (x86)\RemObjects Software\Elements\Island\Reference Libraries\Windows\i386\Island.fx</HintPath>
     </Reference>
+    <Reference Include="Elements" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

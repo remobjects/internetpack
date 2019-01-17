@@ -311,8 +311,12 @@ namespace RemObjects.InternetPack.Ftp
 			StringBuilder lResult = new StringBuilder();
 			lResult.Append('/');
 
+			#if darwin && !toffee
+			var lTemp = value.Split("/");
+			#else
 			var lTemp = value.Split("/").MutableVersion();
-			for (Int32 i = lTemp.Count - 1; i >= 0; i--)
+			#endif
+			for (Int32 i = lTemp.Count() - 1; i >= 0; i--)
 			{
 				if (lTemp[i] == ".")
 				{
@@ -338,7 +342,7 @@ namespace RemObjects.InternetPack.Ftp
 				}
 			}
 
-			for (Int32 i = 0; i < lTemp.Count; i++)
+			for (Int32 i = 0; i < lTemp.Count(); i++)
 			{
 				if (lTemp[i].Length == 0)
 					continue;
@@ -1156,7 +1160,7 @@ namespace RemObjects.InternetPack.Ftp
 				{
 					var lNewPort = e.Parameters[0].Split(",");
 
-					if (lNewPort.Count != 6)
+					if (lNewPort.Count() != 6)
 					{
 						e.Connection.WriteLine("501 Syntax error in parameters or arguments.");
 					}

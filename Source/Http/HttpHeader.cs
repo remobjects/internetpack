@@ -133,7 +133,7 @@ namespace RemObjects.InternetPack.Http
 			String lHeaderLine = this.FirstHeader;
 			var lRequestHeaderValues = lHeaderLine.Split(" ");
 
-			if (lRequestHeaderValues.Count < 3)
+			if (lRequestHeaderValues.Count() < 3)
 				throw new HttpHeaderException("Invalid HTTP Header Line \"" + lHeaderLine + "\"");
 
 			if (lHeaderLine.StartsWith("HTTP/"))
@@ -245,7 +245,11 @@ namespace RemObjects.InternetPack.Http
 			{
 				connection.Read(lBuffer, 0, 1);
 				if (lBuffer[0] != (Byte)'E')
+					#if darwin
+					return "";
+					#else
 					return String.Empty;
+					#endif
 
 				return "MERGE";
 			}
@@ -254,7 +258,11 @@ namespace RemObjects.InternetPack.Http
 			{
 				connection.Read(lBuffer, 0, 2);
 				if (lBuffer[0] != (Byte)'T' || lBuffer[1] != (Byte)'E')
+					#if darwin
+					return "";
+					#else
 					return String.Empty;
+					#endif
 
 				return "DELETE";
 			}
@@ -263,17 +271,29 @@ namespace RemObjects.InternetPack.Http
 			{
 				connection.Read(lBuffer, 0, 3);
 				if (lBuffer[0] != (Byte)'O' || lBuffer[1] != (Byte)'N' || lBuffer[2] != (Byte)'S')
+					#if darwin
+					return "";
+					#else
 					return String.Empty;
+					#endif
 
 				return "OPTIONS";
 			}
 
+			#if darwin
+			return "";
+			#else
 			return String.Empty;
+			#endif
 		}
 
 		public Boolean ReadHeader(Connection connection)
 		{
+			#if darwin
+			this.FirstHeader = "";
+			#else
 			this.FirstHeader = String.Empty;
+			#endif
 
 			String lStart = HttpHeaders.ReadHttpMethodName(connection);
 

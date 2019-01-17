@@ -55,9 +55,7 @@
   <ItemGroup>
     <Reference Include="CoreGraphics" />
     <Reference Include="Foundation" />
-    <Reference Include="libElements">
-      <HintPath>..\..\RTL2\Source\bin\Debug\iOS\libElements.fx</HintPath>
-    </Reference>
+    <Reference Include="libElements"></Reference>
     <Reference Include="UIKit" />
     <Reference Include="rtl" />
     <Reference Include="libToffee" />

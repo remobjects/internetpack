@@ -1,4 +1,4 @@
-/*---------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
@@ -311,7 +311,11 @@ namespace RemObjects.InternetPack.Messages
 					if ((lPosition + 2) < lLine.Length)
 						lValue = lLine.Substring(lPosition + 2);
 					else
+						#if darwin
+						lValue = "";
+						#else
 						lValue = String.Empty;
+						#endif
 
 					lField = new HeaderField(RemoveQuotes(lValue));
 					message.Fields.Add(lName, lField);

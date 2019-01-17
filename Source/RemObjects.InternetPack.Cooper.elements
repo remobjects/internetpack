@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
   <PropertyGroup>
     <ProductVersion>3.5</ProductVersion>
@@ -54,14 +54,16 @@
     <CrossPlatform>True</CrossPlatform>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="elements">
-      <HintPath>..\..\RTL2\Source\bin\Debug\elements.jar</HintPath>
+    <Reference Include="rt">
       <Private>True</Private>
     </Reference>
-    <Reference Include="rt" />
     <Reference Include="cooper">
       <Private>True</Private>
     </Reference>
+    <Reference Include="elements">
+      <Private>True</Private>
+      <HintPath>C:\dev\ro\RTL2\Source\bin\Debug\elements.jar</HintPath>
+    </Reference>    
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

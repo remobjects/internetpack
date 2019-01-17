@@ -263,7 +263,7 @@ namespace RemObjects.InternetPack
 			int? lNumber;
 			byte[] lBytes = new byte[IPv4Length];
 
-			if (lNumbers.Count == IPv4Length)
+			if (lNumbers.Count() == IPv4Length)
 			{
 				for (int i = 0; i < IPv4Length; i++)
 				{
@@ -293,7 +293,7 @@ namespace RemObjects.InternetPack
 			address = new IPAddress(lBytes, 0);
 			return true;
 			#else
-			#if posix || toffee
+			#if posix || toffee || darwin
 			rtl.__struct_addrinfo *lAddrInfo;
 			rtl.__struct_sockaddr_in6 *lSockAddr;
 			var lRes = 0;
@@ -318,7 +318,9 @@ namespace RemObjects.InternetPack
 			for (int i = 0; i < IPv6Length; i++)
 				#if posix
 				lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i];
-				#elif toffee
+				#elif toffee && !darwin
+				//lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i]; //TODO
+				#elif darwin
 				lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
 				#else
 				lBytes[i] = (*lSockAddr).sin6_addr.u.Byte[i];
@@ -630,10 +632,10 @@ namespace RemObjects.InternetPack
 			{
 				var lParts = disposition.Split(';');
 				fDisposition = lParts[0].Trim();
-				for (int i = 1; i < lParts.Count; i++)
+				for (int i = 1; i < lParts.Count(); i++)
 				{
 					var lValues = lParts[i].Split('=');
-					if (lValues.Count == 2)
+					if (lValues.Count() == 2)
 						fParameters.Add(lValues[0].Trim(), lValues[1].Trim());
 					else
 						throw new Exception("Wrong format");
@@ -787,12 +789,12 @@ namespace RemObjects.InternetPack
 		{
 			var lValues = contentType.Split(';');
 			fMediaType = lValues[0].Trim();
-			for (int i = 1; i < lValues.Count; i++)
+			for (int i = 1; i < lValues.Count(); i++)
 			{
 				var lParts = lValues[i].Split('=');
 				var lKey = lParts[0].Trim();
 				var lValue = "";
-				if (lParts.Count > 1)
+				if (lParts.Count() > 1)
 				{
 					lValue = lParts[1].Trim();
 					if (lValue.Length > 0)
