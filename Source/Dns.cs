@@ -2,6 +2,7 @@
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
+using RemObjects.Elements.RTL;
 
 namespace RemObjects.InternetPack.Dns
 {
@@ -172,7 +173,7 @@ namespace RemObjects.InternetPack.Dns
 			}
 
 			var lFields = hostname.Split('.');
-			if (lFields.Count() != 4)
+			if (lFields.Count != 4)
 			{
 				return null;
 			}

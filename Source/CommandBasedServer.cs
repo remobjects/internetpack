@@ -2,6 +2,7 @@
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
+using RemObjects.Elements.RTL;
 #if toffee || cooper
 using RemObjects.Elements.RTL.Reflection;
 #endif

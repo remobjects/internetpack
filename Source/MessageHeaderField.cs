@@ -3,6 +3,8 @@
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
 
+using RemObjects.Elements.RTL;
+
 namespace RemObjects.InternetPack.Messages
 {
 	public class HeaderField
@@ -15,11 +17,7 @@ namespace RemObjects.InternetPack.Messages
 
 		public HeaderField(String value)
 		{
-			#if darwin
-			this.fUnnamedValue = "";
-			#else
 			this.fUnnamedValue = String.Empty;
-			#endif
 			this.Value = value;
 		}
 

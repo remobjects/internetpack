@@ -5,6 +5,7 @@
 
 using RemObjects.InternetPack.Shared.Base;
 using RemObjects.InternetPack.Messages.Mime.Decode;
+using RemObjects.Elements.RTL;
 
 namespace RemObjects.InternetPack.Messages
 {
@@ -311,11 +312,7 @@ namespace RemObjects.InternetPack.Messages
 					if ((lPosition + 2) < lLine.Length)
 						lValue = lLine.Substring(lPosition + 2);
 					else
-						#if darwin
-						lValue = "";
-						#else
 						lValue = String.Empty;
-						#endif
 
 					lField = new HeaderField(RemoveQuotes(lValue));
 					message.Fields.Add(lName, lField);

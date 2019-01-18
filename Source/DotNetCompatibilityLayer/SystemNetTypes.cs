@@ -1,4 +1,5 @@
 ﻿using RemObjects.InternetPack.Messages.Mime.Decode;
+using RemObjects.Elements.RTL;
 
 namespace RemObjects.InternetPack
 {
@@ -263,7 +264,7 @@ namespace RemObjects.InternetPack
 			int? lNumber;
 			byte[] lBytes = new byte[IPv4Length];
 
-			if (lNumbers.Count() == IPv4Length)
+			if (lNumbers.Count == IPv4Length)
 			{
 				for (int i = 0; i < IPv4Length; i++)
 				{
@@ -632,10 +633,10 @@ namespace RemObjects.InternetPack
 			{
 				var lParts = disposition.Split(';');
 				fDisposition = lParts[0].Trim();
-				for (int i = 1; i < lParts.Count(); i++)
+				for (int i = 1; i < lParts.Count; i++)
 				{
 					var lValues = lParts[i].Split('=');
-					if (lValues.Count() == 2)
+					if (lValues.Count == 2)
 						fParameters.Add(lValues[0].Trim(), lValues[1].Trim());
 					else
 						throw new Exception("Wrong format");
@@ -789,12 +790,12 @@ namespace RemObjects.InternetPack
 		{
 			var lValues = contentType.Split(';');
 			fMediaType = lValues[0].Trim();
-			for (int i = 1; i < lValues.Count(); i++)
+			for (int i = 1; i < lValues.Count; i++)
 			{
 				var lParts = lValues[i].Split('=');
 				var lKey = lParts[0].Trim();
 				var lValue = "";
-				if (lParts.Count() > 1)
+				if (lParts.Count > 1)
 				{
 					lValue = lParts[1].Trim();
 					if (lValue.Length > 0)

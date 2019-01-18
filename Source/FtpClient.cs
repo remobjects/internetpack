@@ -5,6 +5,7 @@
 
 using RemObjects.InternetPack.CommandBased;
 using RemObjects.InternetPack.Events;
+using RemObjects.Elements.RTL;
 
 namespace RemObjects.InternetPack.Ftp
 {
@@ -26,11 +27,7 @@ namespace RemObjects.InternetPack.Ftp
 		{
 			this.Passive = false;
 			this.AutoRetrieveListing = true;
-			#if darwin
-			this.fCurrentDirectory = "";
-			#else
 			this.fCurrentDirectory = String.Empty;
-			#endif
 			this.fCurrentDirectoryContents = new FtpListing();
 		}
 
@@ -242,8 +239,8 @@ namespace RemObjects.InternetPack.Ftp
 				{
 					var lString = response.Substring(lPos + 1, lEndPos - lPos - 1);
 					var lGroups = lString.Split(',');
-					var lResult = new String[lGroups.Count()];
-					for (int i = 0; i < lGroups.Count(); i++)
+					var lResult = new String[lGroups.Count];
+					for (int i = 0; i < lGroups.Count; i++)
 					{
 						lResult[i] = lGroups[i].Trim();
 					}
@@ -257,8 +254,8 @@ namespace RemObjects.InternetPack.Ftp
 				if (lPos >= 0)
 				{
 					var lGroups = response.Split(',');
-					var lResult = new String[lGroups.Count()];
-					if (lGroups.Count() > 0)
+					var lResult = new String[lGroups.Count];
+					if (lGroups.Count > 0)
 					{
 						var lItem = lGroups[0].Trim();
 						var lPointer = lItem.Length - 1;
@@ -266,13 +263,13 @@ namespace RemObjects.InternetPack.Ftp
 							lPointer--;
 						lResult[0] = lItem.Substring(lPointer + 1);
 
-						lItem = lGroups[lGroups.Count() - 1];
+						lItem = lGroups[lGroups.Count - 1];
 						lPointer = 0;
 						while((lPointer < lItem.Length) && (ord(lItem[lPointer]) >= ord('0') && (ord(lItem[lPointer]) <= ord('9'))))
 							lPointer++;
 						lResult[lResult.Count() - 1] = lItem.Substring(0, lPointer);
 
-						for(int i = 1; i < lGroups.Count() - 1; i++)
+						for(int i = 1; i < lGroups.Count - 1; i++)
 							lResult[i] = lGroups[i].Trim();
 
 						return lResult;

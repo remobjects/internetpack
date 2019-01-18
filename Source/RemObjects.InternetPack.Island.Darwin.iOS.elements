@@ -18,7 +18,7 @@
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <DefaultUses>RemObjects.Elements.RTL</DefaultUses>
     <KnownConditionalDefines>DEBUG;NEEDS_PORTING;TRACE</KnownConditionalDefines>
-    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <DefineConstants>NEEDS_PORTING;POSIX;DARWIN;MACOS;x86_64</DefineConstants>
     <SDK>iOS</SDK>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">

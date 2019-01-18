@@ -4,6 +4,8 @@
 // Full copy of OpenPOP.NET can be obtained from http://hpop.sourceforge.net
 //
 
+using RemObjects.Elements.RTL;
+
 namespace RemObjects.InternetPack.Messages.Mime.Decode
 {
 	/// <summary>
@@ -20,11 +22,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			if (rawHeader == null)
 				throw new ArgumentNullException("rawHeader");
 
-			#if darwin
-			String[] array = new String[] { "", "" };
-			#else
 			String[] array = new String[] { String.Empty, String.Empty };
-			#endif
 			Int32 indexOfColon = rawHeader.IndexOf(':');
 
 			// Check if it is allowed to make substring calls
@@ -127,13 +125,8 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 			#endif
 
 			// Some emails incorrectly specify the encoding to be utf8 - but it has to be utf-8
-			#if darwin && !toffee
-			if (characterSet.EqualsIgnoreCaseInvariant("utf8"))
-				characterSet = "utf-8";
-			#else
 			if (characterSet.EqualsIgnoringCaseInvariant("utf8"))
 				characterSet = "utf-8";
-			#endif
 
 			// It seems there is no codepage value in the characterSet. It must be a named encoding
 			return Encoding.GetEncoding(characterSet);

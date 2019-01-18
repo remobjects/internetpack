@@ -2,6 +2,7 @@
   RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
 ---------------------------------------------------------------------------*/
+using RemObjects.Elements.RTL;
 
 namespace RemObjects.InternetPack.Ftp
 {
@@ -213,13 +214,8 @@ namespace RemObjects.InternetPack.Ftp
 			if (!this.OtherExec)
 				lRights[9] = '-';
 
-			#if darwin && !toffee
-			return String.Format("{0} {1,3} {2,8} {3,8} {4,7} {5} {6}", String.FromCharArray(lRights), this.SubItemCount, this.User,
-								 this.Group, this.Size, FtpListingItem.FtpDateToString(this.FileDate), this.FileName);
-			#else
 			return String.Format("{0} {1,3} {2,8} {3,8} {4,7} {5} {6}", new String(lRights), this.SubItemCount, this.User,
 				this.Group, this.Size, FtpListingItem.FtpDateToString(this.FileDate), this.FileName);
-			#endif
 		}
 
 		private static String[] ParseLine(String item, int maxItems)
@@ -355,7 +351,7 @@ namespace RemObjects.InternetPack.Ftp
 			{
 				#region Parsing Date (Should be MM-DD-YY)
 				var lDate = dateString.Split("-");
-				if (lDate.Count() == 3)
+				if (lDate.Count == 3)
 				{
 					lMonth = Convert.ToInt32(lDate[0]);
 					lDay = Convert.ToInt32(lDate[1]);
@@ -372,12 +368,8 @@ namespace RemObjects.InternetPack.Ftp
 				#endregion
 
 				#region Parsing Time (Should be HH:MMAM/PM)
-				#if darwin && !toffee
-				var lTime = timeString.Split(":");
-				#else
 				var lTime = timeString.Split(":").MutableVersion();
-				#endif
-				if (lTime.Count() == 2)
+				if (lTime.Count == 2)
 				{
 					lHour = Convert.ToInt32(lTime[0]);
 					if (lTime[1].Length == 4)

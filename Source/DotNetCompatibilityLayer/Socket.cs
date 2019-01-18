@@ -291,9 +291,7 @@
 					lIPv6.sin6_scope_id = endPoint.Address.ScopeId;
 					var lBytes = endPoint.Address.GetAddressBytes();
 					for (int i = 0; i < 16; i++)
-						#if toffee && !darwin
-						//lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i]; //TODO
-						#elif darwin
+						#if toffee || darwin
 						lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
 						#elif posix
 						lIPv6.sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
