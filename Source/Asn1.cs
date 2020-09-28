@@ -1124,11 +1124,7 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			get
 			{
-				#if cooper || toffee
-				return this.Value == null ? 0 : Encoding.UTF8.GetBytes(this.Value).length;
-				#else
-				return this.Value == null ? 0 : length(Encoding.UTF8.GetBytes(this.Value));
-				#endif
+				return this.Value == null ? 0 : RemObjects.Elements.System.length(Encoding.UTF8.GetBytes(this.Value));
 			}
 		}
 

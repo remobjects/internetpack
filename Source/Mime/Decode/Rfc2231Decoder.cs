@@ -85,7 +85,7 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 				{
 					if (lPos < lDecode.Length - 1)
 					{
-						if (String.CharacterIsWhiteSpace(lDecode[lPos + 1]))
+						if (lDecode[lPos + 1].IsWhitespace)
 						{
 							lDecode = lDecode.Insert(lPos + 1, ';');
 						}

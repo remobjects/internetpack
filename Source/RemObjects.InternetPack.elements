@@ -23,6 +23,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <DefaultUses>System.Linq;System.Net;System.Xml.Linq</DefaultUses>
     <OutputType>Library</OutputType>
+    <DefaultUses>System;System.Collections;System.Collections.Generic;System.Collections.Specialized;System.ComponentModel;System.Globalization;System.IO;System.Net;System.Net.Mail;System.Net.Mime;System.Net.Security;System.Net.Sockets;System.Security;System.Security.Cryptography;System.Security.Cryptography.X509Certificates;System.Text;System.Text.RegularExpressions;System.Threading;RemObjects.Elements.RTL;</DefaultUses>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Echoes.Standard' ">
     <Mode>Echoes</Mode>
@@ -30,6 +31,7 @@
     <DefaultUses>System.Linq;System.Net;System.Xml.Linq</DefaultUses>
     <ConditionalDefines>NETSTANDARD</ConditionalDefines>
     <OutputType>Library</OutputType>
+    <DefaultUses>System;System.Collections;System.Collections.Generic;System.Collections.Specialized;System.ComponentModel;System.Globalization;System.IO;System.Net;System.Net.Mail;System.Net.Mime;System.Net.Security;System.Net.Sockets;System.Security;System.Security.Cryptography;System.Security.Cryptography.X509Certificates;System.Text;System.Text.RegularExpressions;System.Threading;RemObjects.Elements.RTL;</DefaultUses>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Cooper' ">
     <Mode>Cooper</Mode>
@@ -101,6 +103,9 @@
     <Reference Include="Elements">
       <Private>True</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Target)' == 'Echoes.Full'">
+    <Reference Include="System.Data" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.targets" />
   <Import Project="RemObjects.InternetPack.Shared.Base.projitems" Label="Shared" />
