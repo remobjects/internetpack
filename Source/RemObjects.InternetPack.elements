@@ -7,6 +7,8 @@
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <DefaultUses>RemObjects.Elements.RTL</DefaultUses>
     <CrossPlatform>True</CrossPlatform>
+    <OutputPathUsesSubModes>True</OutputPathUsesSubModes>
+    <OutputPathUsesModes>True</OutputPathUsesModes>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>.\Bin\Debug</OutputPath>
@@ -22,6 +24,14 @@
     <Mode>Echoes</Mode>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <DefaultUses>System.Linq;System.Net;System.Xml.Linq</DefaultUses>
+    <OutputType>Library</OutputType>
+    <DefaultUses>System;System.Collections;System.Collections.Generic;System.Collections.Specialized;System.ComponentModel;System.Globalization;System.IO;System.Net;System.Net.Mail;System.Net.Mime;System.Net.Security;System.Net.Sockets;System.Security;System.Security.Cryptography;System.Security.Cryptography.X509Certificates;System.Text;System.Text.RegularExpressions;System.Threading;RemObjects.Elements.RTL;</DefaultUses>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Target)' == 'Echoes.Core' ">
+    <Mode>Echoes</Mode>
+    <TargetFramework>.NET5.0</TargetFramework>
+    <DefaultUses>System.Linq;System.Net;System.Xml.Linq</DefaultUses>
+    <ConditionalDefines>NETCORE</ConditionalDefines>
     <OutputType>Library</OutputType>
     <DefaultUses>System;System.Collections;System.Collections.Generic;System.Collections.Specialized;System.ComponentModel;System.Globalization;System.IO;System.Net;System.Net.Mail;System.Net.Mime;System.Net.Security;System.Net.Sockets;System.Security;System.Security.Cryptography;System.Security.Cryptography.X509Certificates;System.Text;System.Text.RegularExpressions;System.Threading;RemObjects.Elements.RTL;</DefaultUses>
   </PropertyGroup>
