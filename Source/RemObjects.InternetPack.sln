@@ -1,0 +1,22 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# RemObjects Fire
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack", "RemObjects.InternetPack.elements", "{63D153DA-55B4-49BC-8BDB-E6BDB2DCF7CA}"
+EndProject
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Shared", "RemObjects.InternetPack.Shared.elements", "{2123E0BC-AD64-4083-B40F-994E170E5917}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AnyCPU = Debug|AnyCPU
+		Release|AnyCPU = Release|AnyCPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63D153DA-55B4-49BC-8BDB-E6BDB2DCF7CA}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{63D153DA-55B4-49BC-8BDB-E6BDB2DCF7CA}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{63D153DA-55B4-49BC-8BDB-E6BDB2DCF7CA}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{63D153DA-55B4-49BC-8BDB-E6BDB2DCF7CA}.Release|AnyCPU.Build.0 = Release|AnyCPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
