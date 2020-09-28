@@ -14,6 +14,8 @@
 	public /*final*/ class Timer : MarshalByRefObject, IDisposable
 	{
 		private RemObjects.Elements.RTL.Timer fTimer;
+		private TimerCallback fCallback;
+		private object fState;
 
 		private void SetupTimer(Int32 dueTime, Int32 period)
 		{
@@ -21,31 +23,32 @@
 			{
 				if ((period == 0) || (period == Timeout.Infinite))
 				{
-					fTimer.Repeat = false;
-					fTimer.Interval = dueTime;
+					fTimer = new RemObjects.Elements.RTL.Timer(dueTime, false, timer => fCallback(fState));
+					fTimer.Start();
 				}
 				else
 				{
-					fTimer.Repeat = true;
-					fTimer.Interval = period;
+					fTimer = new RemObjects.Elements.RTL.Timer(period, false, timer => fCallback(fState));
+					fTimer.Start();
 				}
-				fTimer.Start();
 			}
 			else
-				fTimer.Stop();
+			{
+				fTimer?.Stop();
+				fTimer = null;
+			}
 		}
 
 		public Timer(TimerCallback callback, Object state, Int32 dueTime, Int32 period)
 		{
-			fTimer = new RemObjects.Elements.RTL.Timer();
-			fTimer.Data = state;
-			fTimer.Elapsed = (Data) => callback(Data);
+			fCallback = callback;
+			fState = state;
 			SetupTimer(dueTime, period);
 		}
 
 		public Boolean Change(Int32 dueTime, Int32 period)
 		{
-			if (fTimer.Enabled)
+			if (fTimer?.Enabled)
 				fTimer.Stop();
 
 			SetupTimer(dueTime, period);
@@ -54,7 +57,7 @@
 
 		public void Dispose()
 		{
-			if (fTimer.Enabled)
+			if (fTimer?.Enabled)
 				fTimer.Stop();
 		}
 	}
