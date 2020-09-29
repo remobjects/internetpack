@@ -277,7 +277,11 @@
 		#if toffee || darwin
 		private int htons(int port)
 		{
+			#if darwin
 			return (rtl.__uint16_t)((((rtl.__uint16_t)(port) & 0xff00) >> 8) | (((rtl.__uint16_t)(port) & 0x00ff) << 8));
+			#else
+			return (rtl.uint16_t)((((rtl.uint16_t)(port) & 0xff00) >> 8) | (((rtl.uint16_t)(port) & 0x00ff) << 8));
+			#endif
 		}
 		#endif
 

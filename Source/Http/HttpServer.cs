@@ -33,7 +33,11 @@ namespace RemObjects.InternetPack.Http
 
 		public override Type GetWorkerClass()
 		{
+			#if toffee
+			return new Type withClass(typeof(HttpWorker));
+			#else
 			return typeof(HttpWorker);
+			#endif
 		}
 
 		#region Properties

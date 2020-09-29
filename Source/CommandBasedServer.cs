@@ -139,12 +139,20 @@ namespace RemObjects.InternetPack.CommandBased
 
 		public override Type GetWorkerClass()
 		{
+			#if toffee
+			return new Type withClass(typeof(CommandBasedWorker));
+			#else
 			return typeof(CommandBasedWorker);
+			#endif
 		}
 
 		protected virtual Type GetDefaultSessionClass()
 		{
+			#if toffee
+			return new Type withClass(typeof(CommandBasedSession));
+			#else
 			return typeof(CommandBasedSession);
+			#endif
 		}
 
 		protected static String CleanStringForCommandResponse(String rawValue)

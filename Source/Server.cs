@@ -396,7 +396,11 @@ namespace RemObjects.InternetPack
 
 		public virtual Type GetWorkerClass()
 		{
+			#if toffee
+			return new Type withClass(typeof(Worker));
+			#else
 			return typeof(Worker);
+			#endif
 		}
 		#endregion
 	}
