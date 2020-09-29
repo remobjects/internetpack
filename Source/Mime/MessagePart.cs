@@ -515,7 +515,7 @@ namespace RemObjects.InternetPack.Messages.Mime
 					// We want to advance to the next message parts start.
 					// We can find this by jumping forward the MultiPart boundary from the last
 					// message parts end position
-					startLocation = stopLocation + ("\r\n" + "--" + multipPartBoundary + "\r\n").Length;
+					startLocation = stopLocation + ((RemObjects.Elements.RTL.String)("\r\n" + "--" + multipPartBoundary + "\r\n")).Length;
 				}
 			}
 

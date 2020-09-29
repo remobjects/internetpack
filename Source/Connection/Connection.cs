@@ -773,7 +773,7 @@ namespace RemObjects.InternetPack
 		}
 
 		#if cooper
-		public void Close()
+		public override void close()
 		{
 			this.DataSocketClose(true);
 			base.close();

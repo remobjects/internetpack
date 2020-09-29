@@ -865,7 +865,7 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		#if cooper
-		public void Close()
+		public override void close()
 		{
 
 		}
