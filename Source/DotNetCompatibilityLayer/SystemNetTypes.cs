@@ -317,10 +317,10 @@ namespace RemObjects.InternetPack
 			#endif
 
 			for (int i = 0; i < IPv6Length; i++)
-				#if posix
+				#if posix && !darwin
 				lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i];
 				#elif toffee && !darwin
-				//lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i]; //TODO
+				lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i]; //TODO
 				#elif darwin
 				lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
 				#else

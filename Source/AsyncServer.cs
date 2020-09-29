@@ -90,9 +90,12 @@ namespace RemObjects.InternetPack
 					return;
 				}
 
-				#if !NEEDS_PORTING
+				#if ECHOES
 				Object lObject = Activator.CreateInstance(this.GetWorkerClass());
+				#elseif ISLAND
+				Object lObject = this.GetWorkerClass().Instantiate();
 				#else
+				// TODO!!!
 				Object lObject = null;
 				#endif
 

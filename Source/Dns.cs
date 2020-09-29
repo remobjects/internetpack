@@ -135,7 +135,7 @@ namespace RemObjects.InternetPack.Dns
 							lSockAddr = (sockaddr_in6 *)(*lPtr).ai_addr;
 							#endif
 							for (int i = 0; i < 16 /*IPv6Length*/; i++)
-								#if posix
+								#if posix && !darwin
 								lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i];
 								#elif toffee && !darwin
 								//lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
@@ -203,7 +203,7 @@ namespace RemObjects.InternetPack.Dns
 			}
 		}
 
-		#if !NEEDS_PORTING
+		#if ECHOES
 		public static String ReverseResolve(IPAddress address)
 		{
 			IPHostEntry lEntry = System.Net.Dns.GetHostEntry(address);

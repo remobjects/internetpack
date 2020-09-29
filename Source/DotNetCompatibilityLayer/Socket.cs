@@ -127,8 +127,15 @@
 		{
 			#if cooper
 			var lSocket = fServerHandle.accept();
-			#else
-			#if posix
+			#elseif darwin
+			rtl.__struct_sockaddr* lSockAddr = null;
+			//rtl.__SOCKADDR_ARG lSockAddr;
+			//lSockAddr.__sockaddr__ = null;
+			var lSocket = rtl.accept(fHandle, lSockAddr, null);
+			if (lSocket == -1)
+				throw new Exception("Error calling accept function");
+
+			#elseif posix
 			rtl.__SOCKADDR_ARG lSockAddr;
 			lSockAddr.__sockaddr__ = null;
 			var lSocket = rtl.accept(fHandle, lSockAddr, null);
@@ -138,7 +145,6 @@
 			var lSocket = rtl.accept(fHandle, null, null);
 			if (lSocket < 0)
 				throw new Exception("Error calling accept function");
-			#endif
 			#endif
 
 			var lNewSocket = new Socket(lSocket);
@@ -241,7 +247,7 @@
 			#if posix || toffee || darwin
 			rtl.__struct_sockaddr_in lIPv4;
 			rtl.__struct_sockaddr_in6 lIPv6;
-			#if posix
+			#if posix && !darwin
 			rtl.__CONST_SOCKADDR_ARG lSockAddr;
 			#endif
 			#else
@@ -250,7 +256,7 @@
 			#endif
 
 			IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
-			#if posix
+			#if posix && !darwin
 			lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
 			lSockAddr.__sockaddr_in__ = (rtl.__struct_sockaddr_in *) lPointer;
 			if (rtl.__Global.bind(fHandle, lSockAddr, lSize) != 0)
@@ -358,7 +364,7 @@
 			#if posix || toffee || darwin
 			rtl.__struct_sockaddr_in lIPv4;
 			rtl.__struct_sockaddr_in6 lIPv6;
-			#if posix
+			#if posix && !darwin
 			rtl.__CONST_SOCKADDR_ARG lSockAddr;
 			#else
 			rtl.__struct_sockaddr lSockAddr;
@@ -371,7 +377,7 @@
 
 			IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
 			var lRes = 0;
-			#if posix
+			#if posix && !darwin
 			lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
 			lRes = rtl.connect(fHandle, lSockAddr, lSize);
 			#elif toffee || darwin

@@ -504,7 +504,13 @@ namespace RemObjects.InternetPack.Messages.Mime
 					Int32 length = stopLocation - startLocation;
 					Byte[] messageBody = new Byte[length];
 					Array.Copy(rawBody, startLocation, messageBody, 0, length);
+					#if ECHOES
 					messageBodies.Add(messageBody);
+					#else
+					// T84992: Hydrogene: Can not use List<Byte[]>.Add
+					// TODO!!!
+					messageBodies.Insert(0, messageBody);
+					#endif
 
 					// We want to advance to the next message parts start.
 					// We can find this by jumping forward the MultiPart boundary from the last
