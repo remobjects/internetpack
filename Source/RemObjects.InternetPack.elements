@@ -9,6 +9,7 @@
     <CrossPlatform>True</CrossPlatform>
     <OutputPathUsesSubModes>True</OutputPathUsesSubModes>
     <OutputPathUsesModes>True</OutputPathUsesModes>
+    <SuppressWarnings>CPW8</SuppressWarnings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>.\Bin\Debug</OutputPath>
@@ -46,67 +47,73 @@
   <PropertyGroup Condition=" '$(Target)' == 'Cooper' ">
     <Mode>Cooper</Mode>
     <SubMode>Java</SubMode>
-    <DefaultUses>com.remobjects.elements.linq</DefaultUses>
-    <BinaryName>mercury</BinaryName>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
     <OutputType>Library</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Island.Windows' ">
     <Mode>Island</Mode>
     <SubMode>Windows</SubMode>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Island.Linux' ">
     <Mode>Island</Mode>
     <SubMode>Linux</SubMode>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Island.Darwin.macOS' ">
     <Mode>Island</Mode>
     <SubMode>Darwin</SubMode>
     <SDK>macOS</SDK>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Island.Darwin.iOS' ">
     <Mode>Island</Mode>
     <SubMode>Darwin</SubMode>
     <SDK>iOS</SDK>
     <SupportMacCatalyst>True</SupportMacCatalyst>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Island.Darwin.tvOS' ">
     <Mode>Island</Mode>
     <SubMode>Darwin</SubMode>
     <SDK>tvOS</SDK>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Island.Darwin.watchOS' ">
     <Mode>Island</Mode>
     <SubMode>Darwin</SubMode>
     <SDK>watchOS</SDK>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Island.Android' ">
     <Mode>Island</Mode>
     <SubMode>Android</SubMode>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Target)' == 'Island.WebAssembly' ">
-    <Mode>Island</Mode>
-    <SubMode>WebAssembly</SubMode>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Toffee.iOS' ">
     <Mode>Toffee</Mode>
     <SDK>iOS</SDK>
     <SupportMacCatalyst>True</SupportMacCatalyst>
-    <DefaultUses>Foundation;RemObjects.Elements.Linq</DefaultUses>
+    <DefaultUses>Foundation;RemObjects.Elements.RTL;</DefaultUses>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Toffee.macOS' ">
     <Mode>Toffee</Mode>
     <SDK>macOS</SDK>
-    <DefaultUses>Foundation;RemObjects.Elements.Linq</DefaultUses>
+    <DefaultUses>Foundation;RemObjects.Elements.RTL;</DefaultUses>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Toffee.tvOS' ">
     <Mode>Toffee</Mode>
     <SDK>tvOS</SDK>
-    <DefaultUses>Foundation;RemObjects.Elements.Linq</DefaultUses>
+    <DefaultUses>Foundation;RemObjects.Elements.RTL;</DefaultUses>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Toffee.watchOS' ">
     <Mode>Toffee</Mode>
     <SDK>watchOS</SDK>
-    <DefaultUses>Foundation;RemObjects.Elements.Linq</DefaultUses>
+    <DefaultUses>Foundation;RemObjects.Elements.RTL;</DefaultUses>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="#" />
