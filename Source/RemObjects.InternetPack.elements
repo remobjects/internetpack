@@ -10,6 +10,7 @@
     <OutputPathUsesSubModes>True</OutputPathUsesSubModes>
     <OutputPathUsesModes>True</OutputPathUsesModes>
     <SuppressWarnings>CPW8</SuppressWarnings>
+    <MangleTypeNames>True</MangleTypeNames>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>.\Bin\Debug</OutputPath>

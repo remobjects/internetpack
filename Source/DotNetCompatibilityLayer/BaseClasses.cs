@@ -74,10 +74,6 @@
 
 	#endif
 
-	#if ECHOES
-	public class Monitor : Object {}
-	#endif
-
 	#if island
 	public class Exception : RemObjects.Elements.System.Exception
 	{
