@@ -127,7 +127,7 @@
 		{
 			#if cooper
 			var lSocket = fServerHandle.accept();
-			#elseif darwin
+			#elseif darwin || android
 			rtl.__struct_sockaddr* lSockAddr = null;
 			//rtl.__SOCKADDR_ARG lSockAddr;
 			//lSockAddr.__sockaddr__ = null;
@@ -247,7 +247,7 @@
 			#if posix || toffee || darwin
 			rtl.__struct_sockaddr_in lIPv4;
 			rtl.__struct_sockaddr_in6 lIPv6;
-			#if posix && !darwin
+			#if posix && !darwin && !android
 			rtl.__CONST_SOCKADDR_ARG lSockAddr;
 			#endif
 			#else
@@ -256,12 +256,12 @@
 			#endif
 
 			IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
-			#if posix && !darwin
+			#if posix && !darwin && !android
 			lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
 			lSockAddr.__sockaddr_in__ = (rtl.__struct_sockaddr_in *) lPointer;
 			if (rtl.__Global.bind(fHandle, lSockAddr, lSize) != 0)
 				throw new Exception("Error calling bind function");
-			#elif toffee || darwin
+			#elif toffee || darwin || android
 			if (rtl.bind(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize) != 0)
 				throw new Exception("Error calling bind function");
 			#elif island && windows
@@ -303,8 +303,10 @@
 					for (int i = 0; i < 16; i++)
 						#if toffee || darwin
 						lIPv6.sin6_addr.__u6_addr.__u6_addr8[i] = lBytes[i];
-						#elif posix
+						#elif posix && !android
 						lIPv6.sin6_addr.__in6_u.__u6_addr8[i] = lBytes[i];
+						#elif android
+						lIPv6.sin6_addr.in6_u.u6_addr8[i] = lBytes[i];
 						#endif
 					ipPointer = &lIPv6;
 					ipSize = sizeof(rtl.__struct_sockaddr_in6);
@@ -365,10 +367,10 @@
 			#else
 			void *lPointer;
 			int lSize;
-			#if posix || toffee || darwin
+			#if posix || toffee || darwin || android
 			rtl.__struct_sockaddr_in lIPv4;
 			rtl.__struct_sockaddr_in6 lIPv6;
-			#if posix && !darwin
+			#if posix && !darwin && !android
 			rtl.__CONST_SOCKADDR_ARG lSockAddr;
 			#else
 			rtl.__struct_sockaddr lSockAddr;
@@ -381,10 +383,10 @@
 
 			IPEndPointToNative(lEndPoint, out lIPv4, out lIPv6, out lPointer, out lSize);
 			var lRes = 0;
-			#if posix && !darwin
+			#if posix && !darwin && !android
 			lSockAddr.__sockaddr__ = (rtl.__struct_sockaddr *) lPointer;
 			lRes = rtl.connect(fHandle, lSockAddr, lSize);
-			#elif toffee || darwin
+			#elif toffee || darwin || android
 			lRes = rtl.connect(fHandle, (rtl.__struct_sockaddr *)lPointer, lSize);
 			#else
 			lRes = rtl.connect(fHandle, lPointer, lSize);

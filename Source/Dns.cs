@@ -135,10 +135,12 @@ namespace RemObjects.InternetPack.Dns
 							lSockAddr = (sockaddr_in6 *)(*lPtr).ai_addr;
 							#endif
 							for (int i = 0; i < 16 /*IPv6Length*/; i++)
-								#if posix && !darwin
+								#if posix && !darwin && !android
 								lBytes[i] = (*lSockAddr).sin6_addr.__in6_u.__u6_addr8[i];
+								#elif android
+								lBytes[i] = (*lSockAddr).sin6_addr.in6_u.u6_addr8[i];
 								#elif toffee && !darwin
-								//lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
+								lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
 								#elif darwin
 								lBytes[i] = (*lSockAddr).sin6_addr.__u6_addr.__u6_addr8[i];
 								#else
