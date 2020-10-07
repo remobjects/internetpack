@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <RootNamespace>SampleServer</RootNamespace>
@@ -9,10 +9,7 @@
     <ApplicationIcon>Properties\App.ico</ApplicationIcon>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <ProjectGuid>{90E5FBCE-0445-40DB-BEC8-933B393487FE}</ProjectGuid>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <DefaultUses />
-    <StartupClass />
-    <InternalAssemblyName />
+    <TargetFramework>.NETFramework4.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DefineConstants>DEBUG;TRACE;</DefineConstants>
@@ -25,19 +22,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="RemObjects.InternetPack">
-      <HintPath>$(ProgramFiles)\RemObjects Software\Internet Pack for .NET\Bin\RemObjects.InternetPack.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <ProjectReference Include="RemObjects.InternetPack.Echoes">
+      <Project>{774B9AE9-B695-4908-B24F-5482556D6175}</Project>
+      <ProjectFile>..\..\..\Source\RemObjects.InternetPack.Echoes.elements</ProjectFile>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.pas">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Properties\AssemblyInfo.pas" />
     <Compile Include="MainForm.pas">
       <SubType>Form</SubType>
       <DesignableClassName>SampleServer.MainForm</DesignableClassName>

@@ -1,18 +1,24 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 13.00
-# Visual Studio 2013
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# RemObjects Fire
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Echoes", "..\..\..\Source\RemObjects.InternetPack.Echoes.elements", "{774B9AE9-B695-4908-B24F-5482556D6175}"
+EndProject
 Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "SampleServer", "SampleServer.oxygene", "{90E5FBCE-0445-40DB-BEC8-933B393487FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Default = Debug|Default
-		Release|Default = Release|Default
+		Debug|AnyCPU = Debug|AnyCPU
+		Release|AnyCPU = Release|AnyCPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Debug|Default.ActiveCfg = Debug
-		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Debug|Default.Build.0 = Debug
-		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Release|Default.ActiveCfg = Release
-		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Release|Default.Build.0 = Release
+		{774B9AE9-B695-4908-B24F-5482556D6175}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{774B9AE9-B695-4908-B24F-5482556D6175}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{774B9AE9-B695-4908-B24F-5482556D6175}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{774B9AE9-B695-4908-B24F-5482556D6175}.Release|AnyCPU.Build.0 = Release|AnyCPU
+		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Release|AnyCPU.Build.0 = Release|AnyCPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
