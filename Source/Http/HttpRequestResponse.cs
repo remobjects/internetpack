@@ -1015,5 +1015,14 @@ namespace RemObjects.InternetPack.Http
 			}
 		}
 
+		public ISequence<String> Keys
+		{
+			get { return fData.Keys; }
+		}
+
+		public int Count
+		{
+			get { return fData.Count; }
+		}
 	}
 }
