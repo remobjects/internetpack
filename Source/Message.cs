@@ -175,6 +175,7 @@ namespace RemObjects.InternetPack.Messages
 			{
 				return System.DateTime.ParseExact(lDate, "ddd, d MMM yyyy HH':'mm':'ss zzz", new System.Globalization.DateTimeFormatInfo(), System.Globalization.DateTimeStyles.AllowWhiteSpaces);
 			}*/
+			throw new NotImplementedException("GetDateHome has to be reviewed");
 		}
 
 		public void ValidateEncoder()

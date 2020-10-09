@@ -73,7 +73,8 @@ namespace RemObjects.InternetPack.Shared.Base
 
 		public override string ReadLine()
 		{
-			// TODO
+			// TODO: not implemented yet
+			throw new NotImplementedException("ReadLine is not implemented yet");
 		}
 
 		public override void Close()
