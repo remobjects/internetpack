@@ -125,6 +125,32 @@ namespace RemObjects.InternetPack
 			}
 		}
 
+		[Category("Server")]
+		public IPAddress BindAddressV4
+		{
+			get
+			{
+				return this.fBindingV4?.Address;
+			}
+			set
+			{
+				this.fBindingV4?.Address = value;
+			}
+		}
+
+		[Category("Server")]
+		public IPAddress BindAddressV6
+		{
+			get
+			{
+				return this.fBindingV6?.Address;
+			}
+			set
+			{
+				this.fBindingV6?.Address = value;
+			}
+		}
+
 		[Category("Server"), DefaultValue(true)]
 		public Boolean CloseConnectionsOnShutdown { get; set; }
 
