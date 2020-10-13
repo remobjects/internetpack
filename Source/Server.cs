@@ -1,6 +1,6 @@
 ﻿/*---------------------------------------------------------------------------
   RemObjects Internet Pack for .NET
-  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
+  (c)opyright RemObjects Software, LLC. 2003-2020. All rights reserved.
 ---------------------------------------------------------------------------*/
 #if toffee || cooper
 using RemObjects.Elements.RTL.Reflection;
@@ -17,7 +17,7 @@ namespace RemObjects.InternetPack
 #endif
 
 #if FULLFRAMEWORK
-			if (Socket.SupportsIPv4)
+			if (Socket.OSSupportsIPv4)
 			{
 				fBindingV4 = new ServerBinding();
 				fBindingV4.Address = IPAddress.Any;
@@ -55,6 +55,10 @@ namespace RemObjects.InternetPack
 			TimeoutEnabled = true;
 			MaxLineLength = Connection.DEFAULT_MAX_LINE_LENGTH;
 			MaxLineLengthEnabled = true;
+
+			CloseConnectionsOnShutdown = true;
+			BindV4 = true;
+			BindV6 = true;
 		}
 
 		protected override void Dispose(Boolean disposing)
@@ -71,10 +75,7 @@ namespace RemObjects.InternetPack
 		{
 			get
 			{
-				if (fBindingV4 != null)
-					return fBindingV4;
-
-				return fBindingV6;
+				return fBindingV4 ?? fBindingV6;
 			}
 		}
 
@@ -99,32 +100,10 @@ namespace RemObjects.InternetPack
 		private readonly ServerBinding fBindingV6;
 
 		[Category("Server"), Browsable(true), DefaultValue(true)]
-		public Boolean BindV6
-		{
-			get
-			{
-				return fBindV6;
-			}
-			set
-			{
-				fBindV6 = value;
-			}
-		}
-		private Boolean fBindV6 = true;
+		public Boolean BindV4 { get; set; }
 
 		[Category("Server"), Browsable(true), DefaultValue(true)]
-		public Boolean BindV4
-		{
-			get
-			{
-				return fBindV4;
-			}
-			set
-			{
-				fBindV4 = value;
-			}
-		}
-		private Boolean fBindV4 = true;
+		public Boolean BindV6 { get; set; }
 
 		[Category("Server")]
 		public Int32 Port
@@ -147,32 +126,11 @@ namespace RemObjects.InternetPack
 		}
 
 		[Category("Server"), DefaultValue(true)]
-		public Boolean CloseConnectionsOnShutdown
-		{
-			get
-			{
-				return fCloseConnectionsOnShutdown;
-			}
-			set
-			{
-				fCloseConnectionsOnShutdown = value;
-			}
-		}
-		private Boolean fCloseConnectionsOnShutdown = true;
+		public Boolean CloseConnectionsOnShutdown { get; set; }
+
 
 		[Category("Server"), DefaultValue(false)]
-		public Boolean EnableNagle
-		{
-			get
-			{
-				return fEnableNagle;
-			}
-			set
-			{
-				fEnableNagle = value;
-			}
-		}
-		private Boolean fEnableNagle;
+		public Boolean EnableNagle { get; set; }
 
 		protected Int32 DefaultPort
 		{
@@ -224,18 +182,7 @@ namespace RemObjects.InternetPack
 		#endif
 
 		[Browsable(false), DefaultValue(null)]
-		public IConnectionFactory ConnectionFactory
-		{
-			get
-			{
-				return fConnectionFactory;
-			}
-			set
-			{
-				fConnectionFactory = value;
-			}
-		}
-		private IConnectionFactory fConnectionFactory;
+		public IConnectionFactory ConnectionFactory { get; set; }
 
 #if FULLFRAMEWORK
 		[Category("Server")]
@@ -288,46 +235,13 @@ namespace RemObjects.InternetPack
 		private Boolean fTimeoutEnabled;
 
 		[Category("Security"), DefaultValue(Connection.DEFAULT_TIMEOUT)]
-		public Int32 Timeout
-		{
-			get
-			{
-				return fTimeout;
-			}
-			set
-			{
-				fTimeout = value;
-			}
-		}
-		private Int32 fTimeout;
+		public Int32 Timeout { get; set; }
 
 		[Category("Security"), DefaultValue(true)]
-		public Boolean MaxLineLengthEnabled
-		{
-			get
-			{
-				return fMaxLineLengthEnabled;
-			}
-			set
-			{
-				fMaxLineLengthEnabled = value;
-			}
-		}
-		private Boolean fMaxLineLengthEnabled;
+		public Boolean MaxLineLengthEnabled { get; set; }
 
 		[Category("Security"), DefaultValue(Connection.DEFAULT_MAX_LINE_LENGTH)]
-		public Int32 MaxLineLength
-		{
-			get
-			{
-				return fMaxLineLength;
-			}
-			set
-			{
-				fMaxLineLength = value;
-			}
-		}
-		private Int32 fMaxLineLength;
+		public Int32 MaxLineLength { get; set; }
 		#endregion
 
 		#region Methods
@@ -344,7 +258,7 @@ namespace RemObjects.InternetPack
 
 				Int32 lActualPort = this.Port;
 
-				Boolean lBindV6 = (this.fBindingV6 != null) && this.fBindV6;
+				Boolean lBindV6 = (this.fBindingV6 != null) && this.BindV6;
 				if (lBindV6)
 				{
 					this.fBindingV6.EnableNagle = EnableNagle;
@@ -355,7 +269,7 @@ namespace RemObjects.InternetPack
 				// There is a chance that this will fail on Mono
 				// Unfortunately this code shouldn't fail on Mac while it WILL fail on Linux
 				// And no one can warrant that suddenly this Mono/Linux issue won't be fixed
-				if (this.fBindV4 && (this.fBindingV4 != null))
+				if (this.BindV4 && (this.fBindingV4 != null))
 				{
 					try
 					{
@@ -387,10 +301,10 @@ namespace RemObjects.InternetPack
 		public virtual void Close()
 		{
 			fActive = false;
-			if (fBindingV4 != null && fBindV4)
+			if (fBindingV4 != null && this.BindV4)
 				fBindingV4.Unbind(true);
 
-			if (fBindingV6 != null && fBindV6)
+			if (fBindingV6 != null && this.BindV6)
 				fBindingV6.Unbind(true);
 		}
 
