@@ -356,11 +356,7 @@ namespace RemObjects.InternetPack.Ftp
 
 		protected override Type GetDefaultSessionClass()
 		{
-			#if toffee
-			return new Type withClass(typeof(FtpSession));
-			#else
 			return typeof(FtpSession);
-			#endif
 		}
 
 		protected override void InitCommands()

@@ -27,11 +27,7 @@ namespace RemObjects.InternetPack
 
 		public override Type GetWorkerClass()
 		{
-			#if toffee
-			return new Type withClass(typeof(TcpWorker));
-			#else
 			return typeof(TcpWorker);
-			#endif
 		}
 
 		#region Events

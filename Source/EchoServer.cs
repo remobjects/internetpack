@@ -21,11 +21,7 @@ namespace RemObjects.InternetPack.StandardServers
 
 		public override Type GetWorkerClass()
 		{
-			#if toffee
-			return new Type withClass(typeof(EchoWorker));
-			#else
 			return typeof(EchoWorker);
-			#endif
 		}
 	}
 

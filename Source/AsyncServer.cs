@@ -212,11 +212,7 @@ namespace RemObjects.InternetPack
 
 		public override Type GetWorkerClass()
 		{
-			#if toffee
-			return new Type withClass(typeof(AsyncWorker));
-			#else
 			return typeof(AsyncWorker);
-			#endif
 		}
 
 		public void ClientClosed(IAsyncWorker worker)
