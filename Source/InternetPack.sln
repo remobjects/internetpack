@@ -1,9 +1,11 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
-# RemObjects Water
+# RemObjects Fire
 Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Cooper", "RemObjects.InternetPack.Cooper.elements", "{5CF4D43E-E14D-4AD8-9D38-82CDF2AD543D}"
 EndProject
 Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Echoes", "RemObjects.InternetPack.Echoes.elements", "{774B9AE9-B695-4908-B24F-5482556D6175}"
+EndProject
+Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Echoes.Standard", "RemObjects.InternetPack.Echoes.Standard.elements", "{033E0E51-E302-49DC-BABF-49A7B48642BC}"
 EndProject
 Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Island.Darwin.iOS", "RemObjects.InternetPack.Island.Darwin.iOS.elements", "{0723254E-06EA-46F9-B67F-4D143810A08E}"
 EndProject
@@ -43,6 +45,10 @@ Global
 		{774B9AE9-B695-4908-B24F-5482556D6175}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
 		{774B9AE9-B695-4908-B24F-5482556D6175}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
 		{774B9AE9-B695-4908-B24F-5482556D6175}.Release|AnyCPU.Build.0 = Release|AnyCPU
+		{033E0E51-E302-49DC-BABF-49A7B48642BC}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{033E0E51-E302-49DC-BABF-49A7B48642BC}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{033E0E51-E302-49DC-BABF-49A7B48642BC}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{033E0E51-E302-49DC-BABF-49A7B48642BC}.Release|AnyCPU.Build.0 = Release|AnyCPU
 		{0723254E-06EA-46F9-B67F-4D143810A08E}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
 		{0723254E-06EA-46F9-B67F-4D143810A08E}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
 		{0723254E-06EA-46F9-B67F-4D143810A08E}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
