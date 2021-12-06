@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ProductVersion>3.5</ProductVersion>
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
-    <ProjectGuid>{5cf4d43e-e14d-4ad8-9d38-82cdf2ad543d}</ProjectGuid>
+    <ProjectGuid>{5CF4D43E-E14D-4AD8-9D38-82CDF2AD543D}</ProjectGuid>
     <OutputType>StaticLibrary</OutputType>
     <AssemblyName>InternetPack</AssemblyName>
     <AllowGlobals>False</AllowGlobals>
@@ -24,7 +24,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>False</Optimize>
-    <OutputPath>..\..\bin\</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <DefineConstants>NEEDS_PORTING</DefineConstants>
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <CaptureConsoleOutput>False</CaptureConsoleOutput>
@@ -38,7 +38,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <GenerateDebugInfo>False</GenerateDebugInfo>
     <EnableAsserts>False</EnableAsserts>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>

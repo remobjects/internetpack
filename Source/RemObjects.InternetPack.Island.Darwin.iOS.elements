@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
   <PropertyGroup>
     <ProductVersion>3.5</ProductVersion>
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
-    <ProjectGuid>0723254e-06ea-46f9-b67f-4d143810a08e</ProjectGuid>
+    <ProjectGuid>{0723254E-06EA-46F9-B67F-4D143810A08E}</ProjectGuid>
     <OutputType>StaticLibrary</OutputType>
     <AssemblyName>InternetPack</AssemblyName>
     <AllowGlobals>False</AllowGlobals>
@@ -23,7 +23,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>false</Optimize>
-    <OutputPath>.\bin\Debug</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <DefineConstants>NEEDS_PORTING;DEBUG;TRACE</DefineConstants>
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <EnableAsserts>True</EnableAsserts>
@@ -40,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <Optimize>true</Optimize>
-    <OutputPath>.\bin\Release</OutputPath>
+    <OutputPath>..\Bin\</OutputPath>
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <EnableAsserts>False</EnableAsserts>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
