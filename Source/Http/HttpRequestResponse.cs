@@ -575,8 +575,6 @@ namespace RemObjects.InternetPack.Http
 
 	public class HttpServerResponse : HttpOutgoingRequestResponse
 	{
-		private const String DEFAULT_SERVER_NAME = "RemObjects Internet Pack for .NET HTTP Server";
-
 		public HttpServerResponse()
 			: base(new HttpHeaders())
 		{
@@ -660,7 +658,7 @@ namespace RemObjects.InternetPack.Http
 		{
 			this.HttpCode = responseCode;
 
-			String lMessageHtml = String.Format("<h1>Error {0} {1}</h1><p>{2}</p><hr /><p>{3}</p>", this.HttpCode, this.ResponseText, message, DEFAULT_SERVER_NAME);
+			String lMessageHtml = String.Format("<h1>Error {0} {1}</h1><p>{2}</p><hr /><p>{3}</p>", this.HttpCode, this.ResponseText, message, HttpServer.DEFAULT_SERVER_NAME);
 			this.ContentBytes = Encoding.ASCII.GetBytes(lMessageHtml);
 
 			this.Header.ContentType = "text/html";
@@ -675,7 +673,7 @@ namespace RemObjects.InternetPack.Http
 													responseCode, ex.GetType().Name, ex.GetType().FullName, ex.Message, ex.StackTrace);
 #else
 			String lMessageHtml = String.Format("<h1>Error {0} {1}</h1><p>{2}: {3}</p><p>{4}</p><hr />",
-				responseCode, ex.ToString(), ex.ToString(), ex.Message, DEFAULT_SERVER_NAME);
+				responseCode, ex.ToString(), ex.ToString(), ex.Message, HttpServer.DEFAULT_SERVER_NAME);
 #endif
 			this.ContentBytes = Encoding.ASCII.GetBytes(lMessageHtml);
 			this.Header.ContentType = "text/html";

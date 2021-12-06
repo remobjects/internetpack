@@ -13,7 +13,7 @@ namespace RemObjects.InternetPack.Http
 #endif
 	public class HttpServer : Server
 	{
-		private const String DEFAULT_SERVER_NAME = "Internet Pack HTTP Server";
+		internal const String DEFAULT_SERVER_NAME = "Internet Pack HTTP Server";
 
 		public HttpServer()
 		{
