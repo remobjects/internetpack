@@ -1124,7 +1124,7 @@ namespace RemObjects.InternetPack.Ldap
 		{
 			get
 			{
-				return this.Value == null ? 0 : RemObjects.Elements.System.length(Encoding.UTF8.GetBytes(this.Value));
+				return this.Value == null ? 0 : Encoding.UTF8.GetBytes(this.Value).Length;
 			}
 		}
 
