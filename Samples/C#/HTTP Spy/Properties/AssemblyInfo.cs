@@ -8,7 +8,7 @@ using System.Reflection;
 [assembly: AssemblyCopyright("Copyright RemObjects Software, LLC. 2002-2016 All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyVersion("1.0.0.1")]
 #if REMOBJECTS_SIGN_ASSEMBLY
 [assembly: AssemblyKeyName("RemObjectsSoftware")]
 #endif

@@ -15,7 +15,7 @@ uses
 [assembly: AssemblyCopyright('Copyright RemObjects Software, LLC. 2002-2016 All Rights Reserved.')]
 [assembly: AssemblyTrademark('')]
 [assembly: AssemblyCulture('')]
-[assembly: AssemblyVersion('2.0.0.0')]
+[assembly: AssemblyVersion('1.0.0.1')]
 [assembly: NeutralResourcesLanguage('')]
 [assembly: ComVisible(false)]
 [assembly: AssemblyDelaySign(false)]

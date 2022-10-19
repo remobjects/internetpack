@@ -15,7 +15,7 @@ using System.Resources;
 [assembly: AssemblyCopyright("Copyright RemObjects Software, LLC 2003-2016. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyVersion("1.0.0.1")]
 
 [assembly: NeutralResourcesLanguage("")]
 [assembly: CLSCompliant(true)]
