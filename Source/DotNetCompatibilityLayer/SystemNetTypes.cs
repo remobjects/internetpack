@@ -803,7 +803,10 @@ namespace RemObjects.InternetPack
 	}
 
 	#endif
+}
 
+namespace RemObjects.InternetPack.Http
+{
 	public enum HttpStatusCode
 	{
 		Continue = 100,
@@ -853,5 +856,4 @@ namespace RemObjects.InternetPack
 		GatewayTimeout = 504,
 		HttpVersionNotSupported = 505
 	}
-
 }
