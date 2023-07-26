@@ -293,7 +293,7 @@ namespace RemObjects.InternetPack.Http
 
 			// HTTP Request Type is already known
 			String lHttpMethod = this.fContext.CurrentRequest.Header.RequestType;
-			Boolean lRequireBody = (lHttpMethod == "POST") || (lHttpMethod == "PUT") || (lHttpMethod == "MERGE");
+			Boolean lRequireBody = (lHttpMethod == "POST") || (lHttpMethod == "PUT") || (lHttpMethod == "MERGE") || (lHttpMethod == "PATCH");
 
 			Boolean lHaveData = true;
 			while (lHaveData)

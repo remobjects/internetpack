@@ -207,6 +207,7 @@ namespace RemObjects.InternetPack.Http
 		private const String CONTENT_TYPE = "Content-Type";
 
 		public String FirstHeader { get; set; }
+		public HttpRequestMode? Mode { get; set; }
 
 		public Int32 Count
 		{
@@ -230,71 +231,53 @@ namespace RemObjects.InternetPack.Http
 		// 1. NULL if incoming datastream doesn't contain at least 4 bytes
 		// 2. Empty String is HTTP method is unknown
 		// 3. HTTP method name
-		private static String ReadHttpMethodName(Connection connection)
+		private static (HttpRequestMode?, string) ReadHttpMethodName(Connection connection)
 		{
 			Byte[] lBuffer = new Byte[4];
 
 			if (connection.Receive(lBuffer, 0, 4) < 4)
-				return null;
+				throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Invalid HTTP Request Mode (GET/OUT/HEAD/POST/DELETE/OPTIONS/PATCH/TRACE/MERGE/HTTP header expected).");
 
-			String lHttpMethodName = Encoding.ASCII.GetString(lBuffer, 0, 4);
-
-			if ((lHttpMethodName == "POST") || (lHttpMethodName == "GET ") || (lHttpMethodName == "HTTP") ||
-					(lHttpMethodName == "HEAD") || (lHttpMethodName == "PUT "))
-				return lHttpMethodName;
-
-			if (lHttpMethodName == "MERG")
+			void ReadToSpace()
 			{
-				connection.Read(lBuffer, 0, 1);
-				if (lBuffer[0] != (Byte)'E')
-					return String.Empty;
-
-				return "MERGE";
+				int i = 0;
+				var c = chr(connection.ReadByte());
+				while (c != ' ' && i++ < 5)
+					c = chr(connection.ReadByte());
 			}
 
-			if (lHttpMethodName == "DELE")
+			string lHttpMethodName = Encoding.ASCII.GetString(lBuffer, 0, 4);
+			switch (lHttpMethodName)
 			{
-				connection.Read(lBuffer, 0, 2);
-				if (lBuffer[0] != (Byte)'T' || lBuffer[1] != (Byte)'E')
-					return String.Empty;
-
-				return "DELETE";
+				case "GET ": return (HttpRequestMode.Get, "GET");
+				case "PUT ": return (HttpRequestMode.Put, "PUT");
+				case "HEAD": ReadToSpace(); return (HttpRequestMode.Head, "HEAD");
+				case "POST": ReadToSpace(); return (HttpRequestMode.Post, "POST");
+				case "DELE": ReadToSpace(); return (HttpRequestMode.Delete, "DELETE");
+				case "OPTI": ReadToSpace(); return (HttpRequestMode.Options, "OPTIONS");
+				case "PATC": ReadToSpace(); return (HttpRequestMode.Patch, "PATCH");
+				case "TRAC": ReadToSpace(); return (HttpRequestMode.Trace, "TRACE");
+				//case "HTTP": return (HttpRequestMode.Http, "HTTP");
+				//case "MERG": return (HttpRequestMode.Merge, "MERGE");
 			}
-
-			if (lHttpMethodName == "OPTI")
-			{
-				connection.Read(lBuffer, 0, 3);
-				if (lBuffer[0] != (Byte)'O' || lBuffer[1] != (Byte)'N' || lBuffer[2] != (Byte)'S')
-					return String.Empty;
-
-				return "OPTIONS";
-			}
-
-			return String.Empty;
+			throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Invalid HTTP Request Mode (GET/OUT/HEAD/POST/DELETE/OPTIONS/PATCH/TRACE/MERGE/HTTP header expected).");
 		}
 
 		public Boolean ReadHeader(Connection connection)
 		{
 			this.FirstHeader = String.Empty;
 
-			String lStart = HttpHeaders.ReadHttpMethodName(connection);
-
-			if (lStart == null)
-				return false;
-
-			if (length(lStart) == 0)
-				throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Invalid HTTP Request, 'POST', 'MERGE', 'GET', 'DELETE', 'PUT' or 'HEAD' header expected.");
-
+			string lStart;
+			(this.Mode, lStart) = HttpHeaders.ReadHttpMethodName(connection);
 			String lHeaderLine;
 			do
 			{
 				lHeaderLine = connection.ReadLine();
-
 				if (!String.IsNullOrEmpty(lHeaderLine))
 				{
 					if (this.FirstHeader.Length == 0)
 					{
-						this.FirstHeader = lStart + lHeaderLine;
+						this.FirstHeader = lStart+" "+lHeaderLine;
 					}
 					else
 					{
