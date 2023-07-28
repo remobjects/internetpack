@@ -236,7 +236,7 @@ namespace RemObjects.InternetPack.Http
 			Byte[] lBuffer = new Byte[4];
 
 			if (connection.Receive(lBuffer, 0, 4) < 4)
-				throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Invalid HTTP Request Mode (GET/OUT/HEAD/POST/DELETE/OPTIONS/PATCH/TRACE/MERGE/HTTP header expected).");
+				throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Invalid HTTP Request Mode (no header verb received).");
 
 			void ReadToSpace()
 			{
@@ -260,7 +260,7 @@ namespace RemObjects.InternetPack.Http
 				//case "HTTP": return (HttpRequestMode.Http, "HTTP");
 				//case "MERG": return (HttpRequestMode.Merge, "MERGE");
 			}
-			throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Invalid HTTP Request Mode (GET/OUT/HEAD/POST/DELETE/OPTIONS/PATCH/TRACE/MERGE/HTTP header expected).");
+			throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, $"Invalid HTTP Request Mode (GET/OUT/HEAD/POST/DELETE/OPTIONS/PATCH/TRACE/MERGE/HTTP header expected, got '{lHttpMethodName}').");
 		}
 
 		public Boolean ReadHeader(Connection connection)
