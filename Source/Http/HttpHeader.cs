@@ -217,12 +217,22 @@ namespace RemObjects.InternetPack.Http
 			}
 		}
 
-		public HttpHeader this[String key]
+		public HttpHeader? this[String key]
 		{
 			get
 			{
-				return this.fHeaders.ContainsKey(key) ? (HttpHeader)this.fHeaders[key] : null;
+				return this.fHeaders[key];
 			}
+		}
+
+		public ImmutableList<string>! Keys
+		{
+			get { return fHeaders.Keys; }
+		}
+
+		public ImmutableList<HttpHeader>! Headers
+		{
+			get { return fHeaders.Values.ToList()!; }
 		}
 		#endregion
 
