@@ -13,13 +13,13 @@ namespace RemObjects.InternetPack.Http
 		protected HttpRequestResponse()
 		{
 			this.Header = new HttpHeaders();
-			this.Encoding = Encoding.ASCII;
+			this.Encoding = Encoding.UTF8;
 		}
 
 		protected HttpRequestResponse(HttpHeaders header)
 		{
 			this.Header = header;
-			this.Encoding = Encoding.ASCII;
+			this.Encoding = Encoding.UTF8;
 		}
 
 		public HttpHeaders Header { get; set; }
