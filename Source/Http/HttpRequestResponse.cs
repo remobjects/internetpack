@@ -988,8 +988,8 @@ namespace RemObjects.InternetPack.Http
 				Int32 lEqual = lParam.IndexOf('=');
 				if (lEqual > -1)
 				{
-					String lName = lParam.Substring(0, lEqual).Trim().ToLower();
-					String lValue = lParam.Substring(lEqual + 1);
+					String lName = lParam.Substring(0, lEqual).Trim();
+					String lValue = lParam.Substring(lEqual + 1).Trim();
 					fData[lName] = fData.ContainsKey(lName) ? fData[lName] + "," + lValue : lValue;
 				}
 				else
