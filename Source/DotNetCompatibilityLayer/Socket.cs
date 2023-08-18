@@ -832,10 +832,10 @@
 			#else
 			#if posix || toffee || darwin
 			if (rtl.close(fHandle) != 0)
-				throw new Exception("Error closing socket");
+				;//throw new Exception("Error closing socket");
 			#else
 			if (rtl.closesocket(fHandle) != 0)
-				throw new Exception("Error closing socket");
+				;//throw new Exception("Error closing socket");
 			#endif
 			#endif
 
