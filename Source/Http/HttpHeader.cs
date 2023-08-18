@@ -245,8 +245,13 @@ namespace RemObjects.InternetPack.Http
 		{
 			Byte[] lBuffer = new Byte[4];
 
-			if (connection.Receive(lBuffer, 0, 4) < 4)
-				throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Invalid HTTP Request Mode (no header verb received).");
+			switch (connection.Receive(lBuffer, 0, 4))
+			{
+				case 0: return (HttpRequestMode.Get /*irrelevant*/, null);
+				case 1:
+				case 2:
+				case 3: throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Invalid HTTP Request Mode (incomplete header verb received).");
+			}
 
 			void ReadToSpace()
 			{
@@ -279,6 +284,11 @@ namespace RemObjects.InternetPack.Http
 
 			string lStart;
 			(this.Mode, lStart) = HttpHeaders.ReadHttpMethodName(connection);
+			if (length(lStart) == 0)
+			{
+				writeLn("disconnect");
+				return false;
+			}
 			String lHeaderLine;
 			do
 			{
