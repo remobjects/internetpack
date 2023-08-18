@@ -86,7 +86,7 @@
 		}
 
 		public Exception(String message, Exception innerException)
-			: base(message + ' ' + innerException.ToString())
+			: base(message + coalesce(innerException?.ToString(), ""))
 		{
 		}
 	}
