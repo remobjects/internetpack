@@ -10,7 +10,7 @@ namespace RemObjects.InternetPack.Http
 #endif
 	public class SimpleHttpServer : HttpServer
 	{
-		#region Propeties
+		#region Properties
 		[Category("Server")]
 		public String RootPath { get; set; }
 		#endregion

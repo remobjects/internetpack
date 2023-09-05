@@ -5,7 +5,7 @@
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
     <ProjectGuid>{ED1E0095-4562-4F43-84D5-65626AD59592}</ProjectGuid>
     <OutputType>StaticLibrary</OutputType>
-    <AssemblyName>InternetPack</AssemblyName>
+    <BinaryName>InternetPack</BinaryName>
     <AllowGlobals>False</AllowGlobals>
     <AllowLegacyWith>False</AllowLegacyWith>
     <AllowLegacyOutParams>False</AllowLegacyOutParams>
@@ -18,13 +18,13 @@
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <DefaultUses>RemObjects.Elements.RTL</DefaultUses>
     <KnownConditionalDefines>DEBUG;NEEDS_PORTING;TRACE</KnownConditionalDefines>
-    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING</ConditionalDefines>
     <SDK>tvOS</SDK>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>false</Optimize>
     <OutputPath>..\Bin\</OutputPath>
-    <DefineConstants>NEEDS_PORTING;DEBUG;TRACE</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING;DEBUG;TRACE</ConditionalDefines>
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <EnableAsserts>True</EnableAsserts>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -48,7 +48,7 @@
     <StartMode>Project</StartMode>
     <RegisterForComInterop>False</RegisterForComInterop>
     <CpuType>anycpu</CpuType>
-    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING</ConditionalDefines>
     <RuntimeVersion>v25</RuntimeVersion>
     <XmlDoc>False</XmlDoc>
     <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>

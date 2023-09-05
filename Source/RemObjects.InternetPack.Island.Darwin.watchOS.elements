@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
   <PropertyGroup>
     <ProductVersion>3.5</ProductVersion>
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
-    <ProjectGuid>5718284f-13a4-4b9f-b8ef-32596c3dc66a</ProjectGuid>
+    <ProjectGuid>{5718284F-13A4-4B9F-B8EF-32596C3DC66A}</ProjectGuid>
     <OutputType>StaticLibrary</OutputType>
-    <AssemblyName>InternetPack</AssemblyName>
+    <BinaryName>InternetPack</BinaryName>
     <AllowGlobals>False</AllowGlobals>
     <AllowLegacyWith>False</AllowLegacyWith>
     <AllowLegacyOutParams>False</AllowLegacyOutParams>
@@ -18,13 +18,13 @@
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <DefaultUses>RemObjects.Elements.RTL</DefaultUses>
     <KnownConditionalDefines>DEBUG;NEEDS_PORTING;TRACE</KnownConditionalDefines>
-    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING</ConditionalDefines>
     <SDK>watchOS</SDK>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>false</Optimize>
     <OutputPath>.\bin\Debug</OutputPath>
-    <DefineConstants>NEEDS_PORTING;DEBUG;TRACE</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING;DEBUG;TRACE</ConditionalDefines>
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <EnableAsserts>True</EnableAsserts>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -48,7 +48,7 @@
     <StartMode>Project</StartMode>
     <RegisterForComInterop>False</RegisterForComInterop>
     <CpuType>anycpu</CpuType>
-    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING</ConditionalDefines>
     <RuntimeVersion>v25</RuntimeVersion>
     <XmlDoc>False</XmlDoc>
     <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>

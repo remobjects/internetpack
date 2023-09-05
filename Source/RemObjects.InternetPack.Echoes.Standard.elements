@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{033E0E51-E302-49DC-BABF-49A7B48642BC}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <AssemblyName>RemObjects.InternetPack</AssemblyName>
+    <BinaryName>RemObjects.InternetPack</BinaryName>
     <OutputType>Library</OutputType>
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
     <AllowGlobals>False</AllowGlobals>
@@ -62,7 +62,6 @@
     <Folder Include="Glyphs\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Echoes.targets" />
-  <PropertyGroup />
   <Import Project="RemObjects.InternetPack.Shared.projitems" Label="Shared" />
   <Import Project="RemObjects.InternetPack.Shared.Base.projitems" Label="Shared" />
   <PropertyGroup>

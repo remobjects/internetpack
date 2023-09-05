@@ -5,7 +5,7 @@
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
     <ProjectGuid>{0723254E-06EA-46F9-B67F-4D143810A08E}</ProjectGuid>
     <OutputType>StaticLibrary</OutputType>
-    <AssemblyName>InternetPack</AssemblyName>
+    <BinaryName>InternetPack</BinaryName>
     <AllowGlobals>False</AllowGlobals>
     <AllowLegacyWith>False</AllowLegacyWith>
     <AllowLegacyOutParams>False</AllowLegacyOutParams>
@@ -18,14 +18,14 @@
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <DefaultUses>RemObjects.Elements.RTL</DefaultUses>
     <KnownConditionalDefines>DEBUG;NEEDS_PORTING;TRACE</KnownConditionalDefines>
-    <DefineConstants>NEEDS_PORTING;POSIX;DARWIN;MACOS;x86_64</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING;POSIX;DARWIN;MACOS;x86_64</ConditionalDefines>
     <SDK>iOS</SDK>
     <SupportMacCatalyst>True</SupportMacCatalyst>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>false</Optimize>
     <OutputPath>..\Bin\</OutputPath>
-    <DefineConstants>NEEDS_PORTING;DEBUG;TRACE</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING;DEBUG;TRACE</ConditionalDefines>
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <EnableAsserts>True</EnableAsserts>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -49,7 +49,7 @@
     <StartMode>Project</StartMode>
     <RegisterForComInterop>False</RegisterForComInterop>
     <CpuType>anycpu</CpuType>
-    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING</ConditionalDefines>
     <RuntimeVersion>v25</RuntimeVersion>
     <XmlDoc>False</XmlDoc>
     <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>

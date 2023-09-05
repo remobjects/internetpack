@@ -5,7 +5,7 @@
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
     <ProjectGuid>{D95A0330-C681-4114-8EE2-A7DCBB7D0972}</ProjectGuid>
     <OutputType>StaticLibrary</OutputType>
-    <AssemblyName>InternetPack</AssemblyName>
+    <BinaryName>InternetPack</BinaryName>
     <AllowGlobals>False</AllowGlobals>
     <AllowLegacyWith>False</AllowLegacyWith>
     <AllowLegacyOutParams>False</AllowLegacyOutParams>
@@ -16,12 +16,12 @@
     <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
     <DefaultUses>RemObjects.Elements.RTL</DefaultUses>
     <KnownConditionalDefines>DEBUG;NEEDS_PORTING;TRACE</KnownConditionalDefines>
-    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING</ConditionalDefines>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>False</Optimize>
     <OutputPath>..\Bin\</OutputPath>
-    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING</ConditionalDefines>
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <CaptureConsoleOutput>False</CaptureConsoleOutput>
     <StartMode>Project</StartMode>
@@ -45,7 +45,7 @@
     <XmlDoc>False</XmlDoc>
     <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>
     <EnableUnmanagedDebugging>False</EnableUnmanagedDebugging>
-    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <ConditionalDefines>NEEDS_PORTING</ConditionalDefines>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="gc">

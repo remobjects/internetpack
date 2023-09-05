@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{774B9AE9-B695-4908-B24F-5482556D6175}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <AssemblyName>RemObjects.InternetPack</AssemblyName>
+    <BinaryName>RemObjects.InternetPack</BinaryName>
     <OutputType>Library</OutputType>
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
     <AllowGlobals>False</AllowGlobals>
@@ -18,7 +18,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <OutputPath>..\Bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</DefineConstants>
+    <ConditionalDefines>TRACE;DEBUG;FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</ConditionalDefines>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -27,7 +27,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <OutputPath>..\Bin\</OutputPath>
-    <DefineConstants>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</DefineConstants>
+    <ConditionalDefines>FULLFRAMEWORK;REMOBJECTS_SIGN_ASSEMBLY;DESIGN</ConditionalDefines>
     <RegisterForComInterop>false</RegisterForComInterop>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <GenerateMDB>True</GenerateMDB>
