@@ -831,10 +831,10 @@ namespace RemObjects.InternetPack
 
 		public override Int32 Write(Byte[] buffer, Int32 offset, Int32 count)
 		{
-			 return DataSocketSend(buffer, offset, count);
+			return DataSocketSend(buffer, offset, count);
 		}
 
-		//#endif
+		//
 
 		public override Int64 Seek(Int64 offset, SeekOrigin origin)
 		{
@@ -954,7 +954,7 @@ namespace RemObjects.InternetPack
 					fBufferEnd = DataSocketReceiveWhatsAvaiable(fBuffer, 0, fBuffer.Length);
 					String ToWrite = "";
 					for(int j = 0; j < fBufferEnd;j++)
-							ToWrite = ToWrite + chr(fBuffer[j]);
+						ToWrite = ToWrite + chr(fBuffer[j]);
 
 					if (fBufferEnd == 0)
 						throw new ConnectionClosedException();
@@ -1077,7 +1077,7 @@ namespace RemObjects.InternetPack
 		#if FULLFRAMEWORK
 		public new void Dispose()
 		{
-			   if (this.Connected)
+			if (this.Connected)
 			{
 				this.Disconnect();
 			}
