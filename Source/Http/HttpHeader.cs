@@ -1,7 +1,7 @@
 ﻿/*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET
+RemObjects Internet Pack for .NET
   (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
----------------------------------------------------------------------------*/
+  ---------------------------------------------------------------------------*/
 
 using RemObjects.Elements.RTL;
 
@@ -101,7 +101,7 @@ namespace RemObjects.InternetPack.Http
 	{
 		// Cannot use Dictionary<> here because non-generic Enumerator is exposed
 		//private readonly Hashtable fHeaders;
-		private readonly Dictionary<String, HttpHeader> fHeaders;
+		private readonly Dictionary<String, HttpHeader>! fHeaders;
 
 		public HttpHeaders()
 		{
@@ -221,19 +221,20 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				return this.fHeaders[key];
+				return this.fHeaders[key?.ToLowerInvariant()];
 			}
 		}
 
-		public ImmutableList<string>! Keys
+		public ISequence<string>! Keys
 		{
-			get { return fHeaders.Keys; }
+			get { return fHeaders.Values.Select(v => v.Name); }
 		}
 
-		public ImmutableList<HttpHeader>! Headers
+		public ISequence<HttpHeader>! Headers
 		{
 			get { return fHeaders.Values.ToList()!; }
 		}
+
 		#endregion
 
 		#region Methods
@@ -325,7 +326,7 @@ namespace RemObjects.InternetPack.Http
 						if (lHeader == null)
 						{
 							lHeader = new HttpHeader(lName, lValue);
-							fHeaders.Add(lName, lHeader);
+							fHeaders.Add(lName?.ToLowerInvariant(), lHeader);
 						}
 						else
 						{
@@ -379,7 +380,7 @@ namespace RemObjects.InternetPack.Http
 
 		public Boolean ContainsHeaderValue(String key)
 		{
-			return this.fHeaders.ContainsKey(key);
+			return this.fHeaders.ContainsKey(key?.ToLowerInvariant());
 		}
 
 		public void SetHeaderValue(String name, String value)
@@ -389,7 +390,7 @@ namespace RemObjects.InternetPack.Http
 			if (lHeader == null)
 			{
 				lHeader = new HttpHeader(name, value);
-				fHeaders[name] = lHeader;
+				fHeaders[name?.ToLowerInvariant()] = lHeader;
 			}
 			else
 			{
@@ -426,12 +427,11 @@ namespace RemObjects.InternetPack.Http
 		}
 		#endregion
 
-		public ISequence<HttpHeader> GetSequence()
+		[Sequence]
+		public ISequence<HttpHeader>! GetSequence()
 		{
-			foreach(String lPair in fHeaders.Keys)
-			{
-				yield return fHeaders[lPair];
-			}
+			foreach (var k in fHeaders.Keys)
+				yield return fHeaders[k];
 		}
 	}
 }
