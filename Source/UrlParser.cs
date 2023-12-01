@@ -9,7 +9,7 @@ namespace RemObjects.InternetPack.Http
 	{
 		static KnownProtocols()
 		{
-			fProtocols = new Dictionary<String, String>(8);
+			fProtocols = new Dictionary<String, String> withCapacity(8);
 			fProtocols.Add("ftp", "21");
 			fProtocols.Add("ssh", "22");
 			fProtocols.Add("telnet", "23");
