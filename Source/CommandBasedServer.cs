@@ -72,7 +72,7 @@ namespace RemObjects.InternetPack.CommandBased
 		{
 			this.UnknownCommand = "500 {0}: Command not understood";
 			this.Greeting = "GREETING";
-			this.fCommands = new Dictionary<String, OnCommandHandler>(16);
+			this.fCommands = new Dictionary<String, OnCommandHandler> withCapacity(16);
 			this.InitCommands();
 		}
 
