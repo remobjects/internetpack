@@ -4,9 +4,9 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
     <SharedGUID>{2123E0BC-AD64-4083-B40F-994E170E5917}</SharedGUID>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration">
     <Import_RootNamespace>RemObjects.InternetPack.Shared</Import_RootNamespace>
+    <ProjectGuid>{2123E0BC-AD64-4083-B40F-994E170E5917}</ProjectGuid>
+    <RootNamespace>RemObjects.InternetPack</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)SSL\SslConnection.cs" />

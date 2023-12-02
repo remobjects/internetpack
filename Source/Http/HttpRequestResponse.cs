@@ -1,7 +1,7 @@
 ﻿/*---------------------------------------------------------------------------
-  RemObjects Internet Pack for .NET
-  (c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
----------------------------------------------------------------------------*/
+RemObjects Internet Pack for .NET
+(c)opyright RemObjects Software, LLC. 2003-2016. All rights reserved.
+  ---------------------------------------------------------------------------*/
 
 using RemObjects.InternetPack.Events;
 
@@ -116,6 +116,9 @@ namespace RemObjects.InternetPack.Http
 		}
 
 		public Connection DataConnection { get; private set; }
+
+		[Lazy]
+		public ImmutableHttpCookieCollection Cookies { get; } = new ImmutableHttpCookieCollection(Header["Cookie"]?.Value);
 
 		const Int32 BUFFER_SIZE = 64 * 1024;
 
@@ -340,6 +343,21 @@ namespace RemObjects.InternetPack.Http
 		#region Properties: Content
 		public ContentSource ContentSource { get; private set; }
 
+		private HttpCookieCollection cookies;
+		public HttpCookieCollection Cookies
+		{
+			get
+			{
+				if (cookies == null)
+					cookies = new HttpCookieCollection();
+				return cookies;
+			}
+			set
+			{
+				cookies = value;
+			}
+		}
+
 		public Byte[] ContentBytes
 		{
 			get
@@ -413,6 +431,9 @@ namespace RemObjects.InternetPack.Http
 
 		public virtual void FinalizeHeader()
 		{
+			foreach (var c in cookies)
+				Header.SetHeaderValue("Set-Cookie", c.GetCookieHeaderString());
+
 			if (ContentSource == ContentSource.ContentString)
 				ContentBytes = Encoding.GetBytes(ContentString);
 

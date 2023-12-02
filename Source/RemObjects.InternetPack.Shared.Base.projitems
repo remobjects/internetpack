@@ -4,9 +4,10 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
     <SharedGUID>{2435289C-B662-4110-8C83-8BF70878094F}</SharedGUID>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration">
     <Import_RootNamespace>RemObjects.InternetPack.Shared.Base</Import_RootNamespace>
+    <ProjectGuid>{2435289C-B662-4110-8C83-8BF70878094F}</ProjectGuid>
+    <RootNamespace>RemObjects.InternetPack</RootNamespace>
+    <DefaultLanguage>Hydrogene</DefaultLanguage>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Asn1.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ConnectionClosedException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\DnsResolveException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection\Connection.Async.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Http\HttpCookies.pas" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Bindings\" />
