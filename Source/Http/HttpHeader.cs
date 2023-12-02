@@ -190,21 +190,31 @@ namespace RemObjects.InternetPack.Http
 
 		public Boolean MaxHeaderLinesEnabled { get; set; }
 
-		public String ContentType
+		public String? ContentType
 		{
 			get
 			{
-				if (ContainsHeaderValue(CONTENT_TYPE))
-					return GetHeaderValue(CONTENT_TYPE);
-
-				return "";
+				if (ContainsHeaderValue(HEADER_CONTENT_TYPE))
+					return GetHeaderValue(HEADER_CONTENT_TYPE);
+				return null;
 			}
 			set
 			{
-				SetHeaderValue(CONTENT_TYPE, value);
+				SetHeaderValue(HEADER_CONTENT_TYPE, value);
 			}
 		}
-		private const String CONTENT_TYPE = "Content-Type";
+		private const String HEADER_CONTENT_TYPE = "Content-Type";
+
+		public String? Host
+		{
+			get
+			{
+				if (ContainsHeaderValue(HEADER_HOST))
+					return GetHeaderValue(HEADER_HOST);
+				return null;
+			}
+		}
+		private const String HEADER_HOST = "Host";
 
 		public String FirstHeader { get; set; }
 		public HttpRequestMode? Mode { get; set; }
