@@ -431,8 +431,12 @@ namespace RemObjects.InternetPack.Http
 
 		public virtual void FinalizeHeader()
 		{
-			foreach (var c in cookies)
-				Header.SetHeaderValue("Set-Cookie", c.GetCookieHeaderString());
+			foreach (var k in cookies.Keys)
+			{
+				var cookie = cookies[k];
+				if (cookie.HasValues)
+					Header.SetHeaderValue("Set-Cookie", cookie.GetCookieHeaderString(k));
+			}
 
 			if (ContentSource == ContentSource.ContentString)
 				ContentBytes = Encoding.GetBytes(ContentString);
