@@ -431,7 +431,7 @@ namespace RemObjects.InternetPack.Http
 
 		public virtual void FinalizeHeader()
 		{
-			foreach (var k in cookies.Keys)
+			foreach (var k in cookies?.Keys)
 			{
 				var cookie = cookies[k];
 				if (cookie.HasValues)
