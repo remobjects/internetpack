@@ -21,7 +21,7 @@ namespace RemObjects.InternetPack.Ldap
 
 		private Int32 fSequenceNumber; // sending requests to ldap uses a sequence id
 		private MemoryStream fMemoryStream;
-		private BinaryWriter fWriter;
+		private RemObjects.InternetPack.Shared.Base.BinaryWriter fWriter;
 
 		public LdapClient()
 		{
@@ -143,7 +143,7 @@ namespace RemObjects.InternetPack.Ldap
 			if (fMemoryStream == null)
 			{
 				fMemoryStream = new MemoryStream();
-				fWriter = new BinaryWriter(fMemoryStream);
+				fWriter = new RemObjects.InternetPack.Shared.Base.BinaryWriter(fMemoryStream);
 			}
 
 			fSequenceNumber++;
