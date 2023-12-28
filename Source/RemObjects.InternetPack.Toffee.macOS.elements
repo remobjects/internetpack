@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ProductVersion>3.5</ProductVersion>
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
-    <ProjectGuid>{d09979c9-4077-44a9-a055-610c86e53fc7}</ProjectGuid>
+    <ProjectGuid>{D09979C9-4077-44A9-A055-610C86E53FC7}</ProjectGuid>
     <OutputType>StaticLibrary</OutputType>
     <AssemblyName>InternetPack</AssemblyName>
     <AllowGlobals>False</AllowGlobals>
@@ -22,17 +22,16 @@
     <CreateHeaderFile>True</CreateHeaderFile>
     <Name>RemObjects.InternetPack.Toffee.macOS</Name>
     <CrossPlatform>True</CrossPlatform>
+    <OutputPath>..\Bin</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>False</Optimize>
-    <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>NEEDS_PORTING</DefineConstants>
     <GenerateDebugInfo>True</GenerateDebugInfo>
     <CaptureConsoleOutput>False</CaptureConsoleOutput>
     <StartMode>Project</StartMode>
     <CpuType>x86</CpuType>
     <RuntimeVersion>v25</RuntimeVersion>
-    <Architecture>x86_64</Architecture>
     <XmlDoc>False</XmlDoc>
     <XmlDocWarningLevel>WarningOnPublicMembers</XmlDocWarningLevel>
     <EnableUnmanagedDebugging>False</EnableUnmanagedDebugging>
@@ -40,7 +39,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\</OutputPath>
     <GenerateDebugInfo>False</GenerateDebugInfo>
     <EnableAsserts>False</EnableAsserts>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>

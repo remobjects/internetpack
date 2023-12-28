@@ -17,9 +17,10 @@
     <TargetFramework>.NETStandard2.0</TargetFramework>
     <KnownConditionalDefines>DEBUG;REMOBJECTS_SIGN_ASSEMBLY;TRACE</KnownConditionalDefines>
     <OutputPathUsesSDKNames>True</OutputPathUsesSDKNames>
+    <AssemblyKeyName>RemObjectsSoftware</AssemblyKeyName>
+    <OutputPath>..\Bin</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <OutputPath>..\Bin\</OutputPath>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -28,7 +29,6 @@
     <ConditionalDefines>DEBUG;REMOBJECTS_SIGN_ASSEMBLY;TRACE</ConditionalDefines>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <OutputPath>..\Bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <GenerateMDB>True</GenerateMDB>
@@ -62,7 +62,6 @@
     <Folder Include="Glyphs\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Echoes.targets" />
-  <PropertyGroup />
   <Import Project="RemObjects.InternetPack.Shared.projitems" Label="Shared" />
   <Import Project="RemObjects.InternetPack.Shared.Base.projitems" Label="Shared" />
   <PropertyGroup>
