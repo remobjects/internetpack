@@ -295,7 +295,7 @@ namespace RemObjects.InternetPack
 			{
 				Int32 lReadBytes = DataSocket.Receive(buffer, offset, size, SocketFlags.None);
 
-				if (lReadBytes == 0)
+				if (lReadBytes <= 0)
 					this.DataSocket.Close();
 
 				this.TriggerOnBytesReceived(lReadBytes);
