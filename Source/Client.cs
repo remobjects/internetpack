@@ -189,7 +189,6 @@ namespace RemObjects.InternetPack
 		public virtual Connection Connect()
 		{
 			this.ResolveHostNameIfNeeded();
-
 			return this.Connect(this.HostAddress, this.Port);
 		}
 
@@ -203,10 +202,15 @@ namespace RemObjects.InternetPack
 			return this.GetConnection(host, port);
 		}
 
+		public virtual Connection ConnectNew()
+		{
+			this.ResolveHostNameIfNeeded();
+			return this.ConnectNew(this.HostAddress, this.Port);
+		}
+
 		public virtual Connection ConnectNew(String hostname, Int32 port)
 		{
 			IPAddress lHostAddress = Dns.DnsLookup.ResolveFirst(hostname);
-
 			return GetNewConnection(lHostAddress, port);
 		}
 
