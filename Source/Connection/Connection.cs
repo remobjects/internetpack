@@ -426,10 +426,8 @@ namespace RemObjects.InternetPack
 			do
 			{
 				Int32 lReadBytes = this.DataSocketReceiveWhatsAvaiable(buffer, offset, size);
-				if (lReadBytes == 0)
-				{
+				if (lReadBytes <= 0)
 					return lTotalReadBytes;
-				}
 
 				size -= lReadBytes;
 				offset += lReadBytes;
