@@ -620,7 +620,7 @@
 			return BeginReceive(buffer, offset, size, socket_flags, out lError, callback, state);
 		}
 
-		   public Int32 EndReceive(IAsyncResult asyncResult, out SocketError errorCode)
+		public Int32 EndReceive(IAsyncResult asyncResult, out SocketError errorCode)
 		{
 			AsyncResult lResult = asyncResult as AsyncResult;
 
