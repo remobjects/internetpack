@@ -249,11 +249,11 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 
 			// We can only decode wrong length equal signs
 			if (decode.Length >= 3)
-				throw new ArgumentException("decode must have length lower than 3", "decode");
+				throw new ArgumentException("decode must have length lower than 3");
 
 			// First char must be =
 			if (decode[0] != '=')
-				throw new ArgumentException("First part of decode must be an equal sign", "decode");
+				throw new ArgumentException("First part of decode must be an equal sign");
 
 			// We will now believe that the String sent to us, was actually not encoded
 			// Therefore it must be in US-ASCII and we will return the bytes it corrosponds to
@@ -275,11 +275,11 @@ namespace RemObjects.InternetPack.Messages.Mime.Decode
 
 			// We can only decode the String if it has length 3 - other calls to this function is invalid
 			if (decode.Length != 3)
-				throw new ArgumentException("decode must have length 3", "decode");
+				throw new ArgumentException("decode must have length 3");
 
 			// First char must be =
 			if (decode[0] != '=')
-				throw new ArgumentException("decode must start with an equal sign", "decode");
+				throw new ArgumentException("decode must start with an equal sign");
 
 			// There are two cases where an equal sign might appear
 			// It might be a

@@ -77,10 +77,10 @@ namespace RemObjects.InternetPack.Email
 		public void SendMessage(MailMessage message, String origin, String[] destination)
 		{
 			if (origin.Length == 0) throw
-				new ArgumentException("No origin provided", "origin");
+				new ArgumentException("No origin provided");
 
 			if (destination.Length == 0)
-				throw new ArgumentException("No destination provided", "destination");
+				throw new ArgumentException("No destination provided");
 
 			if (!this.SendAndWaitForResponse(String.Format("MAIL FROM: <{0}>", origin), 250))
 				throw new Exception(String.Format("Invalid mail from reply: {0} {1}", this.LastResponseNo, this.LastResponseText));
