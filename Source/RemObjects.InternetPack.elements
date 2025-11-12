@@ -120,6 +120,7 @@
     <Reference Include="#" />
     <Reference Include="Elements">
       <Private>True</Private>
+      <HintPath>\Users\mh\Code\RTL2\Source\bin\Debug\NETStandard\Elements.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Target)' == 'Echoes.Full'">

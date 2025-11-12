@@ -5,7 +5,6 @@
     <RootNamespace>RemObjects.InternetPack</RootNamespace>
     <ProjectGuid>{4C7346AB-EB0D-454B-9B4F-93596472063F}</ProjectGuid>
     <OutputType>StaticLibrary</OutputType>
-    <AssemblyName>InternetPack</AssemblyName>
     <AllowGlobals>False</AllowGlobals>
     <AllowLegacyWith>False</AllowLegacyWith>
     <AllowLegacyOutParams>False</AllowLegacyOutParams>
@@ -23,6 +22,7 @@
     <Name>RemObjects.InternetPack.Toffee.iOS</Name>
     <CrossPlatform>True</CrossPlatform>
     <OutputPath>..\Bin</OutputPath>
+    <BinaryName>InternetPack</BinaryName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>False</Optimize>
