@@ -438,7 +438,7 @@ namespace RemObjects.InternetPack.Http
 					Header.SetHeaderValue("Set-Cookie", cookie.GetCookieHeaderString(k));
 			}
 
-			if (ContentSource == ContentSource.ContentString)
+			if (ContentSource == ContentSource.ContentString && length(ContentString) > 0)
 				ContentBytes = Encoding.GetBytes(ContentString);
 
 			switch (ContentSource)
