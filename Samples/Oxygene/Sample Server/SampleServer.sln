@@ -1,9 +1,13 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # RemObjects Fire
-Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "RemObjects.InternetPack.Echoes", "..\..\..\Source\RemObjects.InternetPack.Echoes.elements", "{774B9AE9-B695-4908-B24F-5482556D6175}"
+Project("{656346d9-4656-40da-a068-22d5425d4639}") = "RemObjects.InternetPack.Echoes", "..\..\..\Source\RemObjects.InternetPack.Echoes.elements", "{774b9ae9-b695-4908-b24f-5482556d6175}"
 EndProject
-Project("{656346D9-4656-40DA-A068-22D5425D4639}") = "SampleServer", "SampleServer.oxygene", "{90E5FBCE-0445-40DB-BEC8-933B393487FE}"
+Project("{656346d9-4656-40da-a068-22d5425d4639}") = "RemObjects.InternetPack.Shared", "..\..\..\Source\RemObjects.InternetPack.Shared.elements", "{2123e0bc-ad64-4083-b40f-994e170e5917}"
+EndProject
+Project("{656346d9-4656-40da-a068-22d5425d4639}") = "RemObjects.InternetPack.Shared.Base", "..\..\..\Source\RemObjects.InternetPack.Shared.Base.elements", "{2435289c-b662-4110-8c83-8bf70878094f}"
+EndProject
+Project("{656346d9-4656-40da-a068-22d5425d4639}") = "SampleServer", "SampleServer.oxygene", "{90e5fbce-0445-40db-bec8-933b393487fe}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +15,14 @@ Global
 		Release|AnyCPU = Release|AnyCPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{774B9AE9-B695-4908-B24F-5482556D6175}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
-		{774B9AE9-B695-4908-B24F-5482556D6175}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
-		{774B9AE9-B695-4908-B24F-5482556D6175}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
-		{774B9AE9-B695-4908-B24F-5482556D6175}.Release|AnyCPU.Build.0 = Release|AnyCPU
-		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
-		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
-		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
-		{90E5FBCE-0445-40DB-BEC8-933B393487FE}.Release|AnyCPU.Build.0 = Release|AnyCPU
+		{774b9ae9-b695-4908-b24f-5482556d6175}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{774b9ae9-b695-4908-b24f-5482556d6175}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{774b9ae9-b695-4908-b24f-5482556d6175}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{774b9ae9-b695-4908-b24f-5482556d6175}.Release|AnyCPU.Build.0 = Release|AnyCPU
+		{90e5fbce-0445-40db-bec8-933b393487fe}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{90e5fbce-0445-40db-bec8-933b393487fe}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{90e5fbce-0445-40db-bec8-933b393487fe}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{90e5fbce-0445-40db-bec8-933b393487fe}.Release|AnyCPU.Build.0 = Release|AnyCPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

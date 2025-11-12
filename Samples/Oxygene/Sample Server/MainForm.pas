@@ -1,4 +1,4 @@
-namespace SampleServer;
+﻿namespace SampleServer;
 
 interface
 
@@ -109,10 +109,10 @@ begin
   (self.nudPort as System.ComponentModel.ISupportInitialize).BeginInit();
   (self.pictureBox1 as System.ComponentModel.ISupportInitialize).BeginInit();
   self.SuspendLayout();
-  // 
+  //
   // GroupBox1
-  // 
-  self.GroupBox1.Anchor := (((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Left) 
+  //
+  self.GroupBox1.Anchor := (((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Left)
         or System.Windows.Forms.AnchorStyles.Right) as System.Windows.Forms.AnchorStyles);
   self.GroupBox1.Controls.Add(self.lblUrl);
   self.GroupBox1.Controls.Add(self.nudCount);
@@ -131,9 +131,9 @@ begin
   self.GroupBox1.TabIndex := 0;
   self.GroupBox1.TabStop := false;
   self.GroupBox1.Text := 'HttpServer';
-  // 
+  //
   // lblUrl
-  // 
+  //
   self.lblUrl.AutoSize := true;
   self.lblUrl.Enabled := false;
   self.lblUrl.Location := new System.Drawing.Point(98, 120);
@@ -141,9 +141,9 @@ begin
   self.lblUrl.Size := new System.Drawing.Size(32, 13);
   self.lblUrl.TabIndex := 8;
   self.lblUrl.Text := 'URL:';
-  // 
+  //
   // nudCount
-  // 
+  //
   self.nudCount.Location := new System.Drawing.Point(139, 88);
   self.nudCount.Name := 'nudCount';
   self.nudCount.Size := new System.Drawing.Size(48, 20);
@@ -152,56 +152,56 @@ begin
       0,
       0,
       0]));
-  // 
+  //
   // lblCount
-  // 
+  //
   self.lblCount.AutoSize := true;
   self.lblCount.Location := new System.Drawing.Point(15, 90);
   self.lblCount.Name := 'lblCount';
   self.lblCount.Size := new System.Drawing.Size(115, 13);
   self.lblCount.TabIndex := 6;
   self.lblCount.Text := 'Listener Thread Count:';
-  // 
+  //
   // lblServerName
-  // 
+  //
   self.lblServerName.AutoSize := true;
   self.lblServerName.Location := new System.Drawing.Point(58, 67);
   self.lblServerName.Name := 'lblServerName';
   self.lblServerName.Size := new System.Drawing.Size(72, 13);
   self.lblServerName.TabIndex := 4;
   self.lblServerName.Text := '&Server Name:';
-  // 
+  //
   // txtServerName
-  // 
-  self.txtServerName.Anchor := (((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Left) 
+  //
+  self.txtServerName.Anchor := (((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Left)
         or System.Windows.Forms.AnchorStyles.Right) as System.Windows.Forms.AnchorStyles);
   self.txtServerName.Location := new System.Drawing.Point(139, 64);
   self.txtServerName.Name := 'txtServerName';
   self.txtServerName.Size := new System.Drawing.Size(376, 20);
   self.txtServerName.TabIndex := 5;
   self.txtServerName.Text := 'TextBox3';
-  // 
+  //
   // txtRoot
-  // 
-  self.txtRoot.Anchor := (((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Left) 
+  //
+  self.txtRoot.Anchor := (((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Left)
         or System.Windows.Forms.AnchorStyles.Right) as System.Windows.Forms.AnchorStyles);
   self.txtRoot.Location := new System.Drawing.Point(139, 40);
   self.txtRoot.Name := 'txtRoot';
   self.txtRoot.Size := new System.Drawing.Size(376, 20);
   self.txtRoot.TabIndex := 3;
   self.txtRoot.Text := 'TextBox2';
-  // 
+  //
   // lblRoot
-  // 
+  //
   self.lblRoot.AutoSize := true;
   self.lblRoot.Location := new System.Drawing.Point(75, 43);
   self.lblRoot.Name := 'lblRoot';
   self.lblRoot.Size := new System.Drawing.Size(55, 13);
   self.lblRoot.TabIndex := 2;
   self.lblRoot.Text := '&RootPath:';
-  // 
+  //
   // nudPort
-  // 
+  //
   self.nudPort.Location := new System.Drawing.Point(139, 16);
   self.nudPort.Name := 'nudPort';
   self.nudPort.Size := new System.Drawing.Size(48, 20);
@@ -211,19 +211,19 @@ begin
       0,
       0]));
   self.nudPort.ValueChanged += new System.EventHandler(@self.nudPort_ValueChanged);
-  // 
+  //
   // lblPort
-  // 
+  //
   self.lblPort.AutoSize := true;
   self.lblPort.Location := new System.Drawing.Point(101, 18);
   self.lblPort.Name := 'lblPort';
   self.lblPort.Size := new System.Drawing.Size(29, 13);
   self.lblPort.TabIndex := 0;
   self.lblPort.Text := '&Port:';
-  // 
+  //
   // lblLink
-  // 
-  self.lblLink.Anchor := (((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Left) 
+  //
+  self.lblLink.Anchor := (((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Left)
         or System.Windows.Forms.AnchorStyles.Right) as System.Windows.Forms.AnchorStyles);
   self.lblLink.Enabled := false;
   self.lblLink.Location := new System.Drawing.Point(139, 120);
@@ -233,9 +233,9 @@ begin
   self.lblLink.TabStop := true;
   self.lblLink.Text := 'http://localhost:82/index.html';
   self.lblLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(@self.lblLink_LinkClicked);
-  // 
+  //
   // btnAction
-  // 
+  //
   self.btnAction.Anchor := ((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Right) as System.Windows.Forms.AnchorStyles);
   self.btnAction.Location := new System.Drawing.Point(403, 115);
   self.btnAction.Name := 'btnAction';
@@ -243,11 +243,11 @@ begin
   self.btnAction.TabIndex := 10;
   self.btnAction.Text := 'Activate Servers';
   self.btnAction.Click += new System.EventHandler(@self.btnAction_Click);
-  // 
+  //
   // txtLog
-  // 
-  self.txtLog.Anchor := ((((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Bottom) 
-        or System.Windows.Forms.AnchorStyles.Left) 
+  //
+  self.txtLog.Anchor := ((((System.Windows.Forms.AnchorStyles.Top or System.Windows.Forms.AnchorStyles.Bottom)
+        or System.Windows.Forms.AnchorStyles.Left)
         or System.Windows.Forms.AnchorStyles.Right) as System.Windows.Forms.AnchorStyles);
   self.txtLog.Location := new System.Drawing.Point(8, 223);
   self.txtLog.Multiline := true;
@@ -256,26 +256,26 @@ begin
   self.txtLog.Size := new System.Drawing.Size(528, 222);
   self.txtLog.TabIndex := 2;
   self.txtLog.WordWrap := false;
-  // 
+  //
   // Label2
-  // 
+  //
   self.Label2.Location := new System.Drawing.Point(8, 199);
   self.Label2.Name := 'Label2';
   self.Label2.Size := new System.Drawing.Size(32, 16);
   self.Label2.TabIndex := 1;
   self.Label2.Text := 'Log';
-  // 
+  //
   // pictureBox1
-  // 
+  //
   self.pictureBox1.Image := (resources.GetObject('pictureBox1.Image') as System.Drawing.Image);
   self.pictureBox1.Location := new System.Drawing.Point(8, 7);
   self.pictureBox1.Name := 'pictureBox1';
   self.pictureBox1.Size := new System.Drawing.Size(120, 30);
   self.pictureBox1.TabIndex := 17;
   self.pictureBox1.TabStop := false;
-  // 
+  //
   // MainForm
-  // 
+  //
   self.AutoScaleBaseSize := new System.Drawing.Size(5, 13);
   self.ClientSize := new System.Drawing.Size(534, 442);
   self.Controls.Add(self.GroupBox1);
@@ -317,7 +317,7 @@ begin
 end;
 {$ENDREGION}
 
-method MainForm.btnAction_Click(sender: System.Object; e: System.EventArgs);
+method MainForm.btnAction_Click(sender: Object; e: EventArgs);
 begin
   If btnAction.Text = 'Activate Servers' Then
       ActivateServers()
@@ -356,7 +356,7 @@ end;
  begin
    AddLog(String.Format('Request to {0}', e.Request.Header.RequestPath))
  end;
-   
+
 
 method MainForm.SetEnable(mode: Boolean);
   begin
@@ -369,14 +369,14 @@ method MainForm.SetEnable(mode: Boolean);
     lblUrl.Enabled := Not mode;
     lblLink.Enabled := Not mode;
   end;
-  
+
   method MainForm.DeactivateServers();
   begin
-    AddLog('Trying to deactivate servers...');    
-    If Assigned(fEchoServer) Then
+    AddLog('Trying to deactivate servers...');
+    If assigned(fEchoServer) Then
       fEchoServer.Close();
     AddLog('EchoServer is closed.');
-    If Assigned(fHttpServer) Then
+    If assigned(fHttpServer) Then
       fHttpServer.Close();
     AddLog('HttpServer is closed.');
     SetEnable(True);
@@ -384,16 +384,16 @@ method MainForm.SetEnable(mode: Boolean);
     btnAction.Text := 'Activate Servers';
   end;
 
-method MainForm.lblLink_LinkClicked(sender: System.Object; e: System.Windows.Forms.LinkLabelLinkClickedEventArgs);
+method MainForm.lblLink_LinkClicked(sender: Object; e: System.Windows.Forms.LinkLabelLinkClickedEventArgs);
 begin
   if (File.Exists(fHttpServer.RootPath + '\index.html')) then
     System.Diagnostics.Process.Start(lblLink.Text)
-  else 
-    MessageBox.Show(fHttpServer.RootPath + '\index.html can not be opened, because it does not exists.', 'Warning', 
+  else
+    MessageBox.Show(fHttpServer.RootPath + '\index.html can not be opened, because it does not exists.', 'Warning',
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
 end;
 
-method MainForm.MainForm_Load(sender: System.Object; e: System.EventArgs);
+method MainForm.MainForm_Load(sender: Object; e: EventArgs);
 begin
   txtRoot.Text := Path.Combine(Path.GetDirectoryName(Self.GetType().Assembly.Location), 'HttpRoot');
   txtServerName.Text := 'Internet Pack HTTP Server';
@@ -408,12 +408,12 @@ begin
   end);
 end;
 
-method MainForm.MainForm_Closed(sender: System.Object; e: System.EventArgs);
+method MainForm.MainForm_Closed(sender: Object; e: EventArgs);
 begin
   DeactivateServers();
 end;
 
-method MainForm.nudPort_ValueChanged(sender: System.Object; e: System.EventArgs);
+method MainForm.nudPort_ValueChanged(sender: Object; e: EventArgs);
 begin
   lblLink.Text := String.Format('http://localhost:{0}/index.html', nudPort.Value);
 end;
