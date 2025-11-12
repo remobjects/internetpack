@@ -237,7 +237,7 @@ namespace RemObjects.InternetPack.Http
 
 		public ISequence<string>! Keys
 		{
-			get { return fHeaders.Values.Select(v => v.Name); }
+			get { return fHeaders.Values.Select(v => v.Name)!; }
 		}
 
 		public ISequence<HttpHeader>! Headers
