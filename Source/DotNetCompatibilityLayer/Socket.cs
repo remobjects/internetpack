@@ -583,6 +583,7 @@
 
 		public IAsyncResult BeginReceive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags, out SocketError error, AsyncCallback callback, Object state)
 		{
+			error = default(SocketError);
 			var lResult = new AsyncResult(state);
 			lResult.Error = error;
 
@@ -669,6 +670,7 @@
 
 		public IAsyncResult BeginSend(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, Object state)
 		{
+			errorCode = default(SocketError);
 			var lResult = new AsyncResult(state);
 			lResult.Error = errorCode;
 
