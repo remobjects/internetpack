@@ -297,7 +297,7 @@ namespace RemObjects.InternetPack.Http
 			(this.Mode, lStart) = HttpHeaders.ReadHttpMethodName(connection);
 			if (length(lStart) == 0)
 			{
-				writeLn("disconnect");
+				//writeLn("disconnect");
 				return false;
 			}
 			String lHeaderLine;
