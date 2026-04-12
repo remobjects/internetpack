@@ -14,7 +14,7 @@
     <AllowLegacyOutParams>False</AllowLegacyOutParams>
     <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
     <DefaultUses>System;System.Collections;System.Collections.Generic;System.Collections.Specialized;System.ComponentModel;System.Globalization;System.IO;System.Net;System.Net.Mail;System.Net.Mime;System.Net.Security;System.Net.Sockets;System.Security;System.Security.Cryptography;System.Security.Cryptography.X509Certificates;System.Text;System.Text.RegularExpressions;System.Threading;RemObjects.Elements.RTL;</DefaultUses>
-    <TargetFramework>.NETFramework4.0</TargetFramework>
+    <TargetFramework>.NETFramework4.8</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <OutputPath>..\Bin\</OutputPath>

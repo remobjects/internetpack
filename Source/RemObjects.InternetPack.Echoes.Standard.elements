@@ -38,7 +38,7 @@
   <ItemGroup>
     <Reference Include="Elements">
       <Private>True</Private>
-      <HintPath>..\..\RTL2\Source\bin\Debug\NETStandard\Elements.dll</HintPath>
+      <HintPath>..\..\RTL2\Bin\Echoes\NETStandard2.0\Elements.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
@@ -59,7 +59,7 @@
     <EmbeddedResource Include="Glyphs\Pop3Server.bmp" />
     <EmbeddedResource Include="Glyphs\SmtpServer.bmp" />
     <Reference Include="Echoes">
-      <HintPath>..\..\RTL2\Source\bin\Debug\NETStandard\Echoes.dll</HintPath>
+      <HintPath>..\..\RTL2\Bin\Echoes\NETStandard2.0\Echoes.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
