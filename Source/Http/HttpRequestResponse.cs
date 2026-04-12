@@ -441,6 +441,10 @@ namespace RemObjects.InternetPack.Http
 			if (ContentSource == ContentSource.ContentString && length(ContentString) > 0)
 				ContentBytes = Encoding.GetBytes(ContentString);
 
+			var lTransferEncoding = Header.GetHeaderValue("Transfer-Encoding");
+			if (lTransferEncoding != null && lTransferEncoding.ToLowerInvariant() == "chunked")
+				return;
+
 			switch (ContentSource)
 			{
 				case ContentSource.ContentString:
@@ -600,6 +604,9 @@ namespace RemObjects.InternetPack.Http
 
 	public class HttpServerResponse : HttpOutgoingRequestResponse
 	{
+		private static readonly Byte[] EmptyChunk = Encoding.ASCII.GetBytes("0\r\n\r\n");
+		private static readonly Byte[] ChunkTerminator = Encoding.ASCII.GetBytes("\r\n");
+
 		public HttpServerResponse()
 			: base(new HttpHeaders())
 		{
@@ -658,6 +665,37 @@ namespace RemObjects.InternetPack.Http
 				return this.HttpCode.ToString();
 			}
 		}
+
+		internal Connection StreamingConnection
+		{
+			get
+			{
+				return fStreamingConnection;
+			}
+			set
+			{
+				fStreamingConnection = value;
+			}
+		}
+		private Connection fStreamingConnection;
+
+		public Boolean HandledManually
+		{
+			get
+			{
+				return fHandledManually;
+			}
+		}
+		private Boolean fHandledManually;
+
+		public Boolean ManualResponseCompleted
+		{
+			get
+			{
+				return fManualResponseCompleted;
+			}
+		}
+		private Boolean fManualResponseCompleted;
 		#endregion
 
 		#region Methods
@@ -715,6 +753,89 @@ namespace RemObjects.InternetPack.Http
 		{
 			base.FinalizeHeader();
 			this.Header.SetResponseHeader("1.1", this.HttpCode);
+		}
+
+		public void BeginChunkedResponse()
+		{
+			if (this.fManualResponseCompleted)
+				throw new Exception("Cannot begin a chunked response after it has already been completed.");
+
+			if (this.fHandledManually)
+				return;
+
+			if (this.StreamingConnection == null)
+				throw new Exception("No active connection is available for manual response streaming.");
+
+			if (this.ContentSource != ContentSource.ContentNone)
+				throw new Exception("Cannot begin a manual streamed response after buffered content has already been assigned.");
+
+			if (this.Header.ContainsHeaderValue("Content-Length"))
+				throw new Exception("Cannot begin a chunked response after a Content-Length header has already been assigned.");
+
+			this.Header.SetHeaderValue("Transfer-Encoding", "chunked");
+			this.fHandledManually = true;
+			this.WriteHeaderToConnection(this.StreamingConnection);
+		}
+
+		public void WriteChunk(Byte[] buffer, Int32 offset, Int32 count)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException("buffer");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException("offset");
+
+			if (count < 0 || offset + count > buffer.Length)
+				throw new ArgumentOutOfRangeException("count");
+
+			if (count == 0)
+				return;
+
+			if (!this.fHandledManually)
+				this.BeginChunkedResponse();
+
+			if (this.fManualResponseCompleted)
+				throw new Exception("Cannot write an HTTP chunk after the manual response has been completed.");
+
+			var lHeader = Encoding.ASCII.GetBytes(Convert.ToHexString(count, 0) + "\r\n");
+			this.StreamingConnection.Send(lHeader);
+			this.StreamingConnection.Send(buffer, offset, count);
+			this.StreamingConnection.Send(ChunkTerminator);
+		}
+
+		public void WriteChunk(Byte[] buffer)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException("buffer");
+
+			WriteChunk(buffer, 0, buffer.Length);
+		}
+
+		public void WriteChunk(String value)
+		{
+			if (String.IsNullOrEmpty(value))
+				return;
+
+			WriteChunk(Encoding.UTF8.GetBytes(value));
+		}
+
+		public void FlushChunkedResponse()
+		{
+			if (this.fHandledManually && this.StreamingConnection != null)
+				this.StreamingConnection.Flush();
+		}
+
+		public void EndChunkedResponse()
+		{
+			if (!this.fHandledManually)
+				this.BeginChunkedResponse();
+
+			if (this.fManualResponseCompleted)
+				return;
+
+			this.StreamingConnection.Send(EmptyChunk);
+			this.StreamingConnection.Flush();
+			this.fManualResponseCompleted = true;
 		}
 		#endregion
 	}

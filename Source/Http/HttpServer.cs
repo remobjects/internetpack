@@ -99,6 +99,8 @@ namespace RemObjects.InternetPack.Http
 			{
 				do
 				{
+					HttpServerResponse lResponse = null;
+
 					try
 					{
 						HttpHeaders lHeaders = HttpHeaders.Create(DataConnection);
@@ -112,21 +114,29 @@ namespace RemObjects.InternetPack.Http
 						if (Owner.ValidateRequests)
 							lRequest.Validate();
 
-						HttpServerResponse lResponse = new HttpServerResponse();
+						lResponse = new HttpServerResponse();
 						lResponse.KeepAlive = (lRequest.KeepAlive && Owner.KeepAlive);
 						lResponse.Header.SetHeaderValue("Server", Owner.ServerName);
+						lResponse.StreamingConnection = DataConnection;
 
 						this.Owner.HandleHttpRequest(DataConnection, lRequest, lResponse);
 
 						lRequest.FlushContent();
 
-						lResponse.WriteToConnection(DataConnection);
-						if (!lRequest.KeepAlive || !this.Owner.KeepAlive)
+						if (!lResponse.HandledManually)
+							lResponse.WriteToConnection(DataConnection);
+
+						if (lResponse.HandledManually && !lResponse.ManualResponseCompleted)
+							this.DataConnection.Close();
+						else if (!lRequest.KeepAlive || !this.Owner.KeepAlive)
 							this.DataConnection.Close();
 					}
 					catch (HttpRequestInvalidException e)
 					{
-						this.SendError(e.ErrorCode, e);
+						if (lResponse != null && lResponse.HandledManually)
+							this.DataConnection.Close();
+						else
+							this.SendError(e.ErrorCode, e);
 					}
 					catch (ConnectionClosedException)
 					{
@@ -138,7 +148,10 @@ namespace RemObjects.InternetPack.Http
 					}
 					catch (Exception e)
 					{
-						this.SendError(HttpStatusCode.InternalServerError, e);
+						if (lResponse != null && lResponse.HandledManually)
+							this.DataConnection.Close();
+						else
+							this.SendError(HttpStatusCode.InternalServerError, e);
 					}
 				}
 				while (this.DataConnection.Connected);
