@@ -406,9 +406,15 @@ namespace RemObjects.InternetPack
 					}
 					catch (SocketException)
 					{
-						/* If Accept fails with a SocketException, the socket was ListeningSocket was probably
+						/* If Accept fails with a SocketException, the ListeningSocket was probably
 						* closed, so we'll just exit and terminate the thread. */
 						return;
+					}
+					catch (Exception)
+					{
+						if (!Owner.Active)
+							return;
+						throw;
 					}
 
 					if (lSocket != null)
