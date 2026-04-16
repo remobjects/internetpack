@@ -27,6 +27,7 @@ namespace RemObjects.InternetPack
 		public Connection(Socket socket)
 		{
 			this.fDataSocket = socket;
+			this.ApplyPlatformSocketOptions();
 
 			if (this.fDataSocket != null)
 			{
@@ -46,6 +47,7 @@ namespace RemObjects.InternetPack
 		public void Init(Socket socket)
 		{
 			this.fDataSocket = socket;
+			this.ApplyPlatformSocketOptions();
 
 			if (!this.EnableNagle)
 			{
@@ -59,6 +61,7 @@ namespace RemObjects.InternetPack
 		{
 			this.fBinding = binding;
 			this.fDataSocket = new Socket(binding.AddressFamily, binding.SocketType, binding.Protocol);
+			this.ApplyPlatformSocketOptions();
 
 			if (!this.EnableNagle)
 			{
@@ -72,6 +75,23 @@ namespace RemObjects.InternetPack
 			this.BufferedAsync = true;
 			this.Timeout = DEFAULT_TIMEOUT;
 			this.MaxLineLength = DEFAULT_MAX_LINE_LENGTH;
+		}
+
+		private void ApplyPlatformSocketOptions()
+		{
+			if (this.fDataSocket == null)
+				return;
+
+			#if DARWIN
+			try
+			{
+				// Darwin: suppress SIGPIPE on writes to a peer that already closed.
+				this.fDataSocket.SetSocketOption(SocketOptionLevel.Socket, (SocketOptionName)4130, 1);
+			}
+			catch (Exception)
+			{
+			}
+			#endif
 		}
 
 		[ToString]
@@ -293,7 +313,21 @@ namespace RemObjects.InternetPack
 			this.StartTimeoutTimer();
 			try
 			{
-				Int32 lReadBytes = DataSocket.Receive(buffer, offset, size, SocketFlags.None);
+				if (size <= 0)
+					return 0;
+
+				Int32 lReadBytes;
+				if (offset == 0)
+				{
+					lReadBytes = DataSocket.Receive(buffer, offset, size, SocketFlags.None);
+				}
+				else
+				{
+					var lTempBuffer = new Byte[size];
+					lReadBytes = DataSocket.Receive(lTempBuffer, 0, size, SocketFlags.None);
+					if (lReadBytes > 0)
+						Array.Copy(lTempBuffer, 0, buffer, offset, lReadBytes);
+				}
 
 				if (lReadBytes <= 0)
 					this.DataSocket.Close();
@@ -502,7 +536,6 @@ namespace RemObjects.InternetPack
 
 			// still bytes in buffer? if yes, get them first
 			Int32 lSize = fBufferEnd - fBufferStart;
-
 			if (lSize > size)
 			{
 				// more bytes in buffer than we need?
