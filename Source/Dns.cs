@@ -33,13 +33,13 @@ namespace RemObjects.InternetPack.Dns
 		public static IPAddress ResolveRandom(String hostname)
 		{
 			IPAddress[] lAddresses = ResolveAll(hostname);
-			if (lAddresses.Length == 0)
+			if (length(lAddresses) == 0)
 			{
 				throw new DnsResolveException("Could not resolve hostname {0}", hostname);
 			}
 
 			Random lRandom = new Random();
-			return lAddresses[lRandom.NextInt(lAddresses.Length)];
+			return lAddresses[lRandom.NextInt(length(lAddresses))];
 		}
 		#endif
 
