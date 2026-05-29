@@ -53,7 +53,7 @@ namespace RemObjects.InternetPack
 		public Boolean EnableNagle { get; set; }
 		#endregion
 
-		#if FULLFRAMEWORK
+		#if ECHOES && !NETCORE && !NETSTANDARD
 		[SecuritySafeCritical]
 		#endif
 		public virtual void Bind(IListener listener)
