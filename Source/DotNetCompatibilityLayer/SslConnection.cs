@@ -140,8 +140,6 @@
 
 	public struct X509ChainStatus
 	{
-		private X509ChainStatusFlags m_status;
-		private String m_statusInformation;
 		public X509ChainStatusFlags Status { get; set; }
 		public String StatusInformation { get; set; }
 	}
