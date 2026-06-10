@@ -798,9 +798,11 @@ namespace RemObjects.InternetPack.Http
 				throw new Exception("Cannot write an HTTP chunk after the manual response has been completed.");
 
 			var lHeader = Encoding.ASCII.GetBytes(Convert.ToHexString(count, 0) + "\r\n");
-			this.StreamingConnection.Send(lHeader);
-			this.StreamingConnection.Send(buffer, offset, count);
-			this.StreamingConnection.Send(ChunkTerminator);
+			var lFrame = new Byte[lHeader.Length + count + ChunkTerminator.Length];
+			Array.Copy(lHeader, 0, lFrame, 0, lHeader.Length);
+			Array.Copy(buffer, offset, lFrame, lHeader.Length, count);
+			Array.Copy(ChunkTerminator, 0, lFrame, lHeader.Length + count, ChunkTerminator.Length);
+			this.StreamingConnection.Send(lFrame);
 		}
 
 		public void WriteChunk(Byte[] buffer)
