@@ -283,7 +283,7 @@ namespace RemObjects.InternetPack.Http
 				case "OPTI": ReadToSpace(); return (HttpRequestMode.Options, "OPTIONS");
 				case "PATC": ReadToSpace(); return (HttpRequestMode.Patch, "PATCH");
 				case "TRAC": ReadToSpace(); return (HttpRequestMode.Trace, "TRACE");
-				//case "HTTP": return (HttpRequestMode.Http, "HTTP");
+				case "HTTP": return (null, "HTTP");
 				//case "MERG": return (HttpRequestMode.Merge, "MERGE");
 			}
 			throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, $"Invalid HTTP Request Mode (GET/OUT/HEAD/POST/DELETE/OPTIONS/PATCH/TRACE/MERGE/HTTP header expected, got '{lHttpMethodName}').");
@@ -308,7 +308,7 @@ namespace RemObjects.InternetPack.Http
 				{
 					if (this.FirstHeader.Length == 0)
 					{
-						this.FirstHeader = lStart+" "+lHeaderLine;
+						this.FirstHeader = lStart + (lStart == "HTTP" ? "" : " ") + lHeaderLine;
 					}
 					else
 					{

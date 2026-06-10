@@ -107,7 +107,10 @@
 
 		public Exception(String message, Exception innerException)
 		{
-			initWithName("Exception") reason(message + ' ' + innerException.ToString()) userInfo(null);
+			String lReason = message;
+			if (innerException != null)
+				lReason = message + " " + innerException.ToString();
+			initWithName("Exception") reason(lReason) userInfo(null);
 		}
 	}
 	#endif

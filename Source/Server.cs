@@ -386,6 +386,9 @@ namespace RemObjects.InternetPack
 		private Server fOwner;
 		#endregion
 
+		#if ECHOES && !NETCORE && !NETSTANDARD
+		[SecuritySafeCritical]
+		#endif
 		public virtual void Listen()
 		{
 			WorkerCollection lWorkers = null;

@@ -78,6 +78,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)TcpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TcpServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UrlParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WebSocket\WebSocketClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WebSocket\WebSocketConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Worker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorkerCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces.cs" />
@@ -104,5 +106,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Mime" />
     <Folder Include="$(MSBuildThisFileDirectory)Mime\Decode" />
     <Folder Include="Mime\Header" />
+    <Folder Include="$(MSBuildThisFileDirectory)WebSocket\" />
   </ItemGroup>
 </Project>

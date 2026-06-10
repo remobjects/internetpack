@@ -53,6 +53,9 @@ namespace RemObjects.InternetPack
 		public Boolean EnableNagle { get; set; }
 		#endregion
 
+		#if ECHOES && !NETCORE && !NETSTANDARD
+		[SecuritySafeCritical]
+		#endif
 		public virtual void Bind(IListener listener)
 		{
 			this.fEndPoint = new IPEndPoint(this.Address, this.Port);
