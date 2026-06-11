@@ -429,7 +429,7 @@ namespace RemObjects.InternetPack
 						#elif island
 						Object lObject = WorkerClass.Instantiate();
 						#elif toffee
-						Object lObject = WorkerClass.alloc.init();
+						Object lObject = WorkerClass.Instantiate();
 						#endif
 						IWorker lWorker = lObject as IWorker;
 						lWorker.Owner = Owner;
