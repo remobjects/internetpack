@@ -23,6 +23,5 @@ using System.Resources;
 
 #if !COMPACTFRAMEWORK
 [assembly: AssemblyKeyName("RemObjectsSoftware")]
-[assembly: System.Security.AllowPartiallyTrustedCallers()]
 #endif
 #endif
