@@ -82,12 +82,6 @@
     <SDK>tvOS</SDK>
     <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Target)' == 'Island.Darwin.watchOS' ">
-    <Mode>Island</Mode>
-    <SubMode>Darwin</SubMode>
-    <SDK>watchOS</SDK>
-    <DefineConstants>NEEDS_PORTING</DefineConstants>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Island.Android' ">
     <Mode>Island</Mode>
     <SubMode>Android</SubMode>
@@ -160,9 +154,6 @@
     <Reference Include="Elements" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Target)' == 'Island.Darwin.tvOS' ">
-    <Reference Include="Elements" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Target)' == 'Island.Darwin.watchOS' ">
     <Reference Include="Elements" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Target)' == 'Island.Android' ">
