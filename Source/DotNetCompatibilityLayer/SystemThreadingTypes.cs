@@ -13,9 +13,17 @@
 	//[ComVisibleAttribute(true)]
 	public /*final*/ class Timer : MarshalByRefObject, IDisposable
 	{
+		private readonly Monitor fLock = new Monitor();
 		private RemObjects.Elements.RTL.Timer fTimer;
 		private TimerCallback fCallback;
 		private object fState;
+
+		private void StopTimer()
+		{
+			var lTimer = fTimer;
+			if (lTimer != null && lTimer.Enabled)
+				lTimer.Stop();
+		}
 
 		private void SetupTimer(Int32 dueTime, Int32 period)
 		{
@@ -34,7 +42,6 @@
 			}
 			else
 			{
-				fTimer?.Stop();
 				fTimer = null;
 			}
 		}
@@ -48,17 +55,22 @@
 
 		public Boolean Change(Int32 dueTime, Int32 period)
 		{
-			if (fTimer?.Enabled)
-				fTimer.Stop();
+			lock (fLock)
+			{
+				StopTimer();
+				SetupTimer(dueTime, period);
+			}
 
-			SetupTimer(dueTime, period);
 			return true;
 		}
 
 		public void Dispose()
 		{
-			if (fTimer?.Enabled)
-				fTimer.Stop();
+			lock (fLock)
+			{
+				StopTimer();
+				fTimer = null;
+			}
 		}
 	}
 	#if !ECHOES

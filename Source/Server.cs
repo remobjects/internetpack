@@ -422,57 +422,69 @@ namespace RemObjects.InternetPack
 
 					if (lSocket != null)
 					{
-						#if echoes
-						Object lObject = Activator.CreateInstance(WorkerClass);
-						#elif cooper
-						Object lObject = Class.getDeclaredConstructor(WorkerClass).newInstance();
-						#elif island
-						Object lObject = WorkerClass.Instantiate();
-						#elif toffee
-						Object lObject = WorkerClass.Instantiate();
-						#endif
-						IWorker lWorker = lObject as IWorker;
-						lWorker.Owner = Owner;
-
-						if (Owner.ConnectionFactory != null)
-						{
-							lWorker.DataConnection = Owner.ConnectionFactory.CreateServerConnection(lSocket);
-						}
-						else if (defined("ECHOES") && (Owner.ConnectionClass != null))
-						{
-							lWorker.DataConnection = (Connection)Activator.CreateInstance(Owner.ConnectionClass);
-							lWorker.DataConnection.Init(lSocket);
-						}
-						else if (defined("FULLFRAMEWORK") && (Owner.SslOptions.Enabled))
-						{
-							lWorker.DataConnection = Owner.SslOptions.CreateServerConnection(lSocket);
-						}
-						else
-						{
-							lWorker.DataConnection = new Connection(lSocket);
-						}
-
-						#if FULLFRAMEWORK
-						if (Owner.TimeoutEnabled)
-						{
-							lWorker.DataConnection.TimeoutEnabled = true;
-							lWorker.DataConnection.Timeout = Owner.Timeout;
-						}
-						#endif
-
-						if (Owner.MaxLineLengthEnabled)
-						{
-							lWorker.DataConnection.MaxLineLengthEnabled = true;
-							lWorker.DataConnection.MaxLineLength = Owner.MaxLineLength;
-						}
-
+						IWorker lWorker = null;
 						try
 						{
+							#if echoes
+							Object lObject = Activator.CreateInstance(WorkerClass);
+							#elif cooper
+							Object lObject = Class.getDeclaredConstructor(WorkerClass).newInstance();
+							#elif island
+							Object lObject = WorkerClass.Instantiate();
+							#elif toffee
+							Object lObject = WorkerClass.Instantiate();
+							#endif
+							lWorker = lObject as IWorker;
+							lWorker.Owner = Owner;
+
+							if (Owner.ConnectionFactory != null)
+							{
+								lWorker.DataConnection = Owner.ConnectionFactory.CreateServerConnection(lSocket);
+							}
+							else if (defined("ECHOES") && (Owner.ConnectionClass != null))
+							{
+								lWorker.DataConnection = (Connection)Activator.CreateInstance(Owner.ConnectionClass);
+								lWorker.DataConnection.Init(lSocket);
+							}
+							else if (defined("FULLFRAMEWORK") && (Owner.SslOptions.Enabled))
+							{
+								lWorker.DataConnection = Owner.SslOptions.CreateServerConnection(lSocket);
+							}
+							else
+							{
+								lWorker.DataConnection = new Connection(lSocket);
+							}
+
+							#if FULLFRAMEWORK
+							if (Owner.TimeoutEnabled)
+							{
+								lWorker.DataConnection.TimeoutEnabled = true;
+								lWorker.DataConnection.Timeout = Owner.Timeout;
+							}
+							#endif
+
+							if (Owner.MaxLineLengthEnabled)
+							{
+								lWorker.DataConnection.MaxLineLengthEnabled = true;
+								lWorker.DataConnection.MaxLineLength = Owner.MaxLineLength;
+							}
+
 							lWorker.DataConnection.InitializeServerConnection();
 						}
 						catch (Exception) // nothing should escape this loop.
 						{
-							lWorker.DataConnection.Dispose();
+							try
+							{
+								if ((lWorker != null) && (lWorker.DataConnection != null))
+									lWorker.DataConnection.Dispose();
+								else
+									lSocket.Dispose();
+							}
+							catch (Exception)
+							{
+							}
+							if (!Owner.Active)
+								return;
 							continue;
 						}
 
