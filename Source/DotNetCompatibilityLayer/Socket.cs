@@ -19,6 +19,7 @@
 		#endif
 
 		private List<Thread> fPendingAsyncOps;
+		private volatile Int32 fIsClosing;
 		#if cooper || toffee
 		private readonly Object fMonitor = new Object();
 		#else
@@ -126,30 +127,60 @@
 		public Socket Accept()
 		{
 			#if cooper
-			var lSocket = fServerHandle.accept();
+			try
+			{
+				var lSocket = fServerHandle.accept();
+				var lNewSocket = new Socket(lSocket);
+				lNewSocket.Connected = true;
+				return lNewSocket;
+			}
+			catch (java.io.IOException e)
+			{
+				if (fIsClosing != 0)
+					throw new SocketAcceptInterruptedException();
+
+				throw new SocketException("Socket accept failed.", e);
+			}
 			#elseif darwin || android
 			rtl.__struct_sockaddr* lSockAddr = null;
 			//rtl.__SOCKADDR_ARG lSockAddr;
 			//lSockAddr.__sockaddr__ = null;
 			var lSocket = rtl.accept(fHandle, lSockAddr, null);
 			if (lSocket == -1)
-				throw new Exception("Error calling accept function");
+			{
+				if (fIsClosing != 0)
+					throw new SocketAcceptInterruptedException();
+
+				throw new SocketException(GetLastSocketError());
+			}
 
 			#elseif posix
 			rtl.__SOCKADDR_ARG lSockAddr;
 			lSockAddr.__sockaddr__ = null;
 			var lSocket = rtl.accept(fHandle, lSockAddr, null);
 			if (lSocket == -1)
-				throw new Exception("Error calling accept function");
+			{
+				if (fIsClosing != 0)
+					throw new SocketAcceptInterruptedException();
+
+				throw new SocketException(GetLastSocketError());
+			}
 			#else
 			var lSocket = rtl.accept(fHandle, null, null);
 			if (lSocket < 0)
-				throw new Exception("Error calling accept function");
+			{
+				if (fIsClosing != 0)
+					throw new SocketAcceptInterruptedException();
+
+				throw new SocketException(GetLastSocketError());
+			}
 			#endif
 
+			#if !cooper
 			var lNewSocket = new Socket(lSocket);
 			lNewSocket.Connected = true;
 			return lNewSocket;
+			#endif
 		}
 
 		public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state)
@@ -850,6 +881,8 @@
 
 		private new void Dispose()
 		{
+			fIsClosing = 1;
+
 			#if cooper
 			if (!fIsServer)
 				fHandle.close();
@@ -949,5 +982,14 @@
 		//public SocketError SocketErrorCode { get; set; }
 		//public override String Message { get; set; }
 	}
+
 	#endif
+
+	public class SocketAcceptInterruptedException : Exception
+	{
+		public SocketAcceptInterruptedException()
+			: base("Socket accept was interrupted because the listening socket was closed.")
+		{
+		}
+	}
 }

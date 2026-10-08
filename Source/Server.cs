@@ -407,10 +407,9 @@ namespace RemObjects.InternetPack
 					{
 						return;
 					}
-					catch (SocketException)
+					catch (SocketAcceptInterruptedException)
 					{
-						/* If Accept fails with a SocketException, the ListeningSocket was probably
-						* closed, so we'll just exit and terminate the thread. */
+						// Closing the listening socket deliberately interrupts a pending accept.
 						return;
 					}
 					catch (Exception)

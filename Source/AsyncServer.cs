@@ -85,7 +85,7 @@ namespace RemObjects.InternetPack
 				{
 					return; // sometimes the object is gc'd before we even get here.
 				}
-				catch (SocketException)
+				catch (SocketAcceptInterruptedException)
 				{
 					return;
 				}
