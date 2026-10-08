@@ -1,0 +1,15 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectGuid>{1BE532B2-0091-48A6-B1C4-EF83A003744D}</ProjectGuid>
+    <OutputType>Executable</OutputType>
+    <TargetFramework>.NETCore10.0</TargetFramework>
+    <DefaultUses>RemObjects.Elements.RTL</DefaultUses>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Elements"><Private>True</Private></Reference>
+    <Reference Include="Echoes"><Private>True</Private></Reference>
+    <Reference Include="RemObjects.InternetPack"><HintPath>../Bin/Debug/Echoes/NETStandard2.0/RemObjects.InternetPack.dll</HintPath><Private>True</Private></Reference>
+    <Compile Include="PlatformWebSocketTests.pas" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)/RemObjects Software/Elements/RemObjects.Elements.Echoes.targets" />
+</Project>

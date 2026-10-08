@@ -80,6 +80,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UrlParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WebSocket\WebSocketClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WebSocket\WebSocketConnection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WebSocket\PlatformWebSocketTransport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Worker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorkerCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces.cs" />

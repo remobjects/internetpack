@@ -25,6 +25,13 @@ namespace RemObjects.InternetPack.WebSocket
 			this.Payload = payload ?? new Byte[0];
 		}
 
+		public WebSocketMessage(WebSocketOpcode opcode, Byte[] payload, Boolean isFinal) : this(opcode, payload)
+		{
+			this.IsFinal = isFinal;
+		}
+
+		public Boolean IsFinal { get; private set; } = true;
+
 		public WebSocketOpcode Opcode { get; private set; }
 
 		public Byte[] Payload { get; private set; }
@@ -52,9 +59,24 @@ namespace RemObjects.InternetPack.WebSocket
 			this.fMaskOutgoingFrames = maskOutgoingFrames;
 		}
 
+		internal WebSocketConnection(IWebSocketTransport transport)
+		{
+			this.fTransport = transport;
+		}
+
+		private readonly IWebSocketTransport fTransport;
 		private readonly Connection fConnection;
 		private readonly Boolean fMaskOutgoingFrames;
 		private Boolean fClosed;
+		#if toffee || cooper
+		private readonly Object fSendGate = new Object();
+		#else
+		private readonly Monitor fSendGate = new Monitor();
+		#endif
+		private readonly RemObjects.Elements.RTL.List<Byte[]> fFragments = new RemObjects.Elements.RTL.List<Byte[]>();
+		private WebSocketOpcode fFragmentOpcode;
+		private Int32 fFragmentLength;
+		private Boolean fReadingFragments;
 		private readonly Random fRandom = new Random();
 
 		public Connection Connection
@@ -69,12 +91,16 @@ namespace RemObjects.InternetPack.WebSocket
 		{
 			get
 			{
-				return this.fClosed || !this.fConnection.Connected;
+				return this.fClosed || (this.fTransport != null ? this.fTransport.Closed : !this.fConnection.Connected);
 			}
 		}
 
 		public WebSocketMessage ReadMessage()
 		{
+			if (this.fTransport != null)
+			{
+				return this.fTransport.ReadMessage();
+			}
 			while (!this.Closed)
 			{
 				WebSocketMessage lMessage = this.ReadFrame();
@@ -94,7 +120,44 @@ namespace RemObjects.InternetPack.WebSocket
 						return lMessage;
 
 					default:
-						return lMessage;
+						if (lMessage.Opcode == WebSocketOpcode.Continuation)
+						{
+							if (!this.fReadingFragments)
+								throw new WebSocketException("Unexpected WebSocket continuation frame.");
+						}
+						else if (this.fReadingFragments)
+						{
+							throw new WebSocketException("A fragmented WebSocket message is still incomplete.");
+						}
+						else if (lMessage.IsFinal)
+						{
+							return lMessage;
+						}
+						else
+						{
+							this.fReadingFragments = true;
+							this.fFragmentOpcode = lMessage.Opcode;
+						}
+
+						if (lMessage.Payload.Length > 2147483647 - this.fFragmentLength)
+							throw new WebSocketException("WebSocket message is too large.");
+						this.fFragments.Add(lMessage.Payload);
+						this.fFragmentLength += lMessage.Payload.Length;
+						if (lMessage.IsFinal)
+						{
+							var lPayload = new Byte[this.fFragmentLength];
+							var lOffset = 0;
+							foreach (var lPart in this.fFragments)
+							{
+								Array.Copy(lPart, 0, lPayload, lOffset, lPart.Length);
+								lOffset += lPart.Length;
+							}
+							this.fFragments.RemoveAll();
+							this.fFragmentLength = 0;
+							this.fReadingFragments = false;
+							return new WebSocketMessage(this.fFragmentOpcode, lPayload);
+						}
+						break;
 				}
 			}
 
@@ -146,12 +209,23 @@ namespace RemObjects.InternetPack.WebSocket
 				return;
 
 			this.fClosed = true;
+			if (this.fTransport != null)
+			{
+				this.fTransport.Close();
+				return;
+			}
 			if (this.fConnection.Connected)
 				this.SendFrame(WebSocketOpcode.Close, new Byte[0]);
 		}
 
 		public void Dispose()
 		{
+			this.fClosed = true;
+			if (this.fTransport != null)
+			{
+				this.fTransport.Dispose();
+				return;
+			}
 			if (this.fConnection != null)
 				this.fConnection.Dispose();
 		}
@@ -166,8 +240,13 @@ namespace RemObjects.InternetPack.WebSocket
 			Boolean lMasked = (lSecond & 0x80) != 0;
 			UInt64 lLength = (UInt64)(lSecond & 0x7F);
 
-			if (!lFinal)
-				throw new WebSocketException("Fragmented WebSocket messages are not supported yet.");
+			if ((lFirst & 0x70) != 0)
+				throw new WebSocketException("Unsupported WebSocket extension bits.");
+			if (lOpcode != WebSocketOpcode.Continuation && lOpcode != WebSocketOpcode.Text && lOpcode != WebSocketOpcode.Binary &&
+				lOpcode != WebSocketOpcode.Close && lOpcode != WebSocketOpcode.Ping && lOpcode != WebSocketOpcode.Pong)
+				throw new WebSocketException("Unsupported WebSocket opcode.");
+			if ((Byte)lOpcode >= 8 && (!lFinal || lLength > 125))
+				throw new WebSocketException("Invalid WebSocket control frame.");
 
 			if (lLength == 126)
 				lLength = this.ReadUInt16NetworkOrder();
@@ -185,16 +264,30 @@ namespace RemObjects.InternetPack.WebSocket
 			if (lMasked)
 				this.ApplyMask(lPayload, lMask);
 
-			return new WebSocketMessage(lOpcode, lPayload);
+			return new WebSocketMessage(lOpcode, lPayload, lFinal);
 		}
 
 		private void SendFrame(WebSocketOpcode opcode, Byte[] payload)
+		{
+			// The reader sends control replies while the application may send data.
+			// Keep each header and payload together on the shared connection.
+			lock (this.fSendGate)
+				this.SendFrameCore(opcode, payload);
+		}
+
+		private void SendFrameCore(WebSocketOpcode opcode, Byte[] payload)
 		{
 			if (payload == null)
 				payload = new Byte[0];
 
 			if (this.fClosed && opcode != WebSocketOpcode.Close)
 				throw new WebSocketException("The WebSocket connection is closed.");
+
+			if (this.fTransport != null)
+			{
+				this.fTransport.Send(opcode, payload);
+				return;
+			}
 
 			Int32 lHeaderLength = 2;
 			if (payload.Length > 65535)

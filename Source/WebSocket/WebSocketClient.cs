@@ -23,7 +23,31 @@ namespace RemObjects.InternetPack.WebSocket
 			if (String.IsNullOrEmpty(url))
 				throw new ArgumentNullException("url");
 
+#if TOFFEE || (ECHOES && (NETSTANDARD || NETCORE))
+			if (this.ProxySettings.UseProxy)
+			{
+				throw new WebSocketException("Explicit InternetPack proxy settings are not supported by the platform WebSocket transport. Use the system proxy settings.");
+			}
+			String lNativeUrl = url;
+			if (url.StartsWith("https://", true))
+			{
+				lNativeUrl = "wss://" + url.Substring(8);
+			}
+			else if (url.StartsWith("http://", true))
+			{
+				lNativeUrl = "ws://" + url.Substring(7);
+			}
+			return new WebSocketConnection(new PlatformWebSocketTransport(lNativeUrl, headers, this.TimeoutEnabled ? this.Timeout : 60));
+#else
 			String lHttpUrl = this.HttpUrlForWebSocketUrl(url);
+#if !FULLFRAMEWORK
+			// HttpClient only wires up TLS on FULLFRAMEWORK targets. Never
+			// send an authenticated secure upgrade over a plaintext socket.
+			if (lHttpUrl.StartsWith("https://", true))
+			{
+				throw new WebSocketException("Secure WebSocket transport is unavailable on this target.");
+			}
+#endif
 			String lKey = this.NewWebSocketKey();
 
 			HttpClientRequest lRequest = new HttpClientRequest();
@@ -45,6 +69,7 @@ namespace RemObjects.InternetPack.WebSocket
 			this.ValidateUpgradeResponse(lResponse, lKey);
 
 			return new WebSocketConnection(lResponse.DataConnection, true);
+#endif
 		}
 
 		private String HttpUrlForWebSocketUrl(String url)
