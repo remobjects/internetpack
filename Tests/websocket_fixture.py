@@ -26,6 +26,8 @@ class H(socketserver.StreamRequestHandler):
     if op==9:frame(10,p);continue
     if op==8:frame(8,p);return
     if op==10:continue
+    if p==b'abort':
+     self.connection.shutdown(socket.SHUT_RDWR);return
     if p==b'hold':continue
     if p==b'close':frame(8,b'\x03\xe8');return
     frame(op,p[:1],False);frame(9,b'check');frame(0,p[1:])

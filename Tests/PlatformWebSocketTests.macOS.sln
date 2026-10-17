@@ -1,0 +1,18 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# RemObjects Fire
+Project("{656346d9-4656-40da-a068-22d5425d4639}") = "PlatformWebSocketTests.macOS", "PlatformWebSocketTests.macOS.elements", "{5a3ecc25-8914-4ead-b8e2-3ee9f5c235f1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(RemObjectsSolutionTree) = preSolution
+		ProjectOrder = 5a3ecc25-8914-4ead-b8e2-3ee9f5c235f1
+		RootOrder = 5a3ecc25-8914-4ead-b8e2-3ee9f5c235f1
+	EndGlobalSection
+EndGlobal

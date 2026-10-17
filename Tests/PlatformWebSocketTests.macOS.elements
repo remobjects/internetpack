@@ -1,15 +1,24 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectGuid>{5A3ECC25-8914-4EAD-B8E2-3EE9F5C235F1}</ProjectGuid>
     <OutputType>Executable</OutputType>
-    <Mode>Toffee</Mode><SDK>macOS</SDK><DeploymentTargetVersion>10.15</DeploymentTargetVersion>
+    <Mode>Toffee</Mode>
+    <SDK>macOS</SDK>
+    <DeploymentTargetVersion>10.15</DeploymentTargetVersion>
     <DefaultUses>Foundation;RemObjects.Elements.RTL</DefaultUses>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libElements"><HintPath>../../RTL2/Bin/Toffee/macOS/libElements.fx</HintPath></Reference>
-    <Reference Include="libRemObjects.InternetPack"><HintPath>../Bin/Debug/Toffee/macOS/macOS/libRemObjects.InternetPack.fx</HintPath></Reference>
+    <Reference Include="libElements">
+      <HintPath>..\..\RTL2\Bin\Toffee\macOS\libElements.fx</HintPath>
+    </Reference>
+    <Reference Include="libRemObjects.InternetPack">
+      <HintPath>..\Bin\Debug\Toffee\macOS\macOS\libRemObjects.InternetPack.fx</HintPath>
+    </Reference>
     <Reference Include="Foundation" />
-    <Reference Include="libToffee"><HintPath>../../libToffee/Source/bin/Debug/macOS/libToffee.fx</HintPath></Reference>
+    <Reference Include="libToffee">
+      <HintPath>..\..\libToffee\Source\bin\Debug\macOS\libToffee.fx</HintPath>
+    </Reference>
     <Compile Include="PlatformWebSocketTests.pas" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)/RemObjects Software/Elements/RemObjects.Elements.Toffee.targets" />

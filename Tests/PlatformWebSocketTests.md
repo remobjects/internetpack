@@ -19,3 +19,16 @@ Loopback checks cover upgrade headers, fragmented UTF-8, interleaved Ping, 40 KB
 - Raw `Connection` is null for platform-backed connections. The raw-connection constructor is unchanged.
 - Manual `SendPing`/`SendPong` are rejected on platform transports; their libraries handle control frames automatically.
 - Platform transports use platform proxy configuration. Explicit InternetPack proxy settings are rejected rather than silently ignored.
+
+## Abrupt disconnect regression
+
+With the loopback fixture running, run the Toffee executable with argument
+`disconnect`. A background worker performs 20 abrupt peer disconnects and catches
+each transport exception, followed by a direct WebSocketException throw/catch.
+The socket test runs first so the direct probe cannot pre-initialize its exception
+class. There is no in-process wall-clock deadline: manual exception stops can last arbitrarily long. Automated runners should impose an external timeout.
+
+For a Fire comparison, open `PlatformWebSocketTests.macOS.elements`, select Debug,
+set the launch argument to `disconnect`, and enable breaking on exceptions. Each
+Continue should reach the catch and advance to the next numbered disconnect.
+The fixture sends no API requests and uses no credentials.

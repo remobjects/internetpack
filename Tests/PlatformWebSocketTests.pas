@@ -1,3 +1,4 @@
+// Regression guard: abrupt native WebSocket failures must unwind to a background caller.
 namespace RemObjects.InternetPack.Tests;
 
 uses RemObjects.InternetPack.WebSocket;
@@ -13,6 +14,51 @@ type
   public
     class method Main(aArgs: array of String);
     begin
+      if (length(aArgs) > 0) and (aArgs[0] = 'disconnect') then begin
+        var lFinished := new &Event;
+        var lFailure: Exception;
+        Thread.Async(-> begin
+          try
+            var lHeaders := new Dictionary<String, String>;
+            lHeaders['X-IP-Test'] := 'native';
+            for i: Integer := 1 to 20 do begin
+              var lSocket := new WebSocketClient().ConnectWebSocket('ws://127.0.0.1:18765/', lHeaders);
+              var lCaught := false;
+              try
+                lSocket.SendText('abort');
+                lSocket.ReadMessage;
+              except
+                on E: Exception do begin
+                  lCaught := true;
+                  writeLn('Caught disconnect ' + i.ToString + ': ' + E.Message);
+                end;
+              end;
+              lSocket.Dispose;
+              Check(lCaught, 'Abrupt disconnect must report failure');
+            end;
+            var lCaught := false;
+            try
+              raise new WebSocketException('direct exception probe');
+            except
+              on E: Exception do begin
+                lCaught := true;
+                writeLn('Caught direct exception: ' + E.Message);
+              end;
+            end;
+            Check(lCaught, 'Direct exception must be caught');
+          except
+            on E: Exception do
+              lFailure := E;
+          end;
+          lFinished.Set;
+        end);
+        // Debugger pauses must not expire a wall-clock deadline on the main thread.
+        lFinished.WaitFor;
+        if assigned(lFailure) then
+          raise lFailure;
+        writeLn('PASS: direct throw and 20 abrupt disconnects caught');
+        exit;
+      end;
       if (length(aArgs) > 1) and (aArgs[1] = 'reject') then begin
         var lRejected := false;
         try
