@@ -58,6 +58,12 @@
     <SubMode>Windows</SubMode>
     <DefineConstants>NEEDS_PORTING</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Target)' == 'Island.Fuchsia' ">
+    <Mode>Island</Mode>
+    <SubMode>Fuchsia</SubMode>
+    <DefineConstants>NEEDS_PORTING</DefineConstants>
+    <Architecture>arm64;x86_64</Architecture>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Target)' == 'Island.Linux' ">
     <Mode>Island</Mode>
     <SubMode>Linux</SubMode>
@@ -142,6 +148,9 @@
     <Reference Include="Elements" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Target)' == 'Island.Windows' ">
+    <Reference Include="Elements" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Target)' == 'Island.Fuchsia' ">
     <Reference Include="Elements" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Target)' == 'Island.Linux' ">

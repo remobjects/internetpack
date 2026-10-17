@@ -3,7 +3,12 @@
 	#if !ECHOES
 	public class Socket : Object, IDisposable
 	{
-		#if cooper
+		#if island
+		private RemObjects.Elements.System.Socket fIslandSocket;
+		private EndPoint fLocalEndPointOverride;
+		private EndPoint fRemoteEndPointOverride;
+		public const Int32 FIONREAD = 1074004095;
+		#elif cooper
 		private java.net.Socket fHandle;
 		private java.net.ServerSocket fServerHandle;
 		private java.net.DatagramSocket fDgramHandle;
@@ -39,6 +44,9 @@
 
 		private void ClearAsyncOps()
 		{
+			#if island
+			// Pending native operations complete after shutdown; each removes itself.
+			#else
 			foreach(var lThread in fPendingAsyncOps)
 			{
 				if (lThread.IsAlive)
@@ -51,6 +59,7 @@
 			{
 				fPendingAsyncOps.RemoveAll();
 			}
+			#endif
 		}
 
 		private void RemoveOp(Thread op)
@@ -65,6 +74,16 @@
 
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
 		{
+			#if island
+			AddressFamily = addressFamily;
+			SocketType = socketType;
+			ProtocolType = protocolType;
+			try
+			{
+				fIslandSocket = new RemObjects.Elements.System.Socket((RemObjects.Elements.System.AddressFamily)addressFamily, (RemObjects.Elements.System.SocketType)socketType, (RemObjects.Elements.System.ProtocolType)protocolType);
+			}
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			AddressFamily = addressFamily;
 			SocketType = socketType;
 			ProtocolType = protocolType;
@@ -95,9 +114,45 @@
 			if (fHandle < 0)
 				throw new Exception("Error creating socket");
 			#endif
+			#endif
 		}
 
-		#if cooper
+		#if island
+		private Socket(RemObjects.Elements.System.Socket socket)
+		{
+			fIslandSocket = socket;
+			AddressFamily = (AddressFamily)socket.AddressFamily;
+			SocketType = (SocketType)socket.SocketType;
+			ProtocolType = (ProtocolType)socket.ProtocolType;
+			Connected = socket.Connected;
+		}
+
+		internal static RemObjects.Elements.System.IPAddress ToIslandAddress(IPAddress address)
+		{
+			if (address.AddressFamily == AddressFamily.InterNetworkV6)
+				return new RemObjects.Elements.System.IPAddress(address.GetAddressBytes(), address.ScopeId);
+			return new RemObjects.Elements.System.IPAddress(address.GetAddressBytes());
+		}
+
+		internal static IPAddress FromIslandAddress(RemObjects.Elements.System.IPAddress address)
+		{
+			if (address.AddressFamily == RemObjects.Elements.System.AddressFamily.InterNetworkV6)
+				return new IPAddress(address.GetAddressBytes(), address.ScopeId);
+			return new IPAddress(address.GetAddressBytes());
+		}
+
+		private static RemObjects.Elements.System.IPEndPoint ToIslandEndPoint(EndPoint endpoint)
+		{
+			var ip = (IPEndPoint)endpoint;
+			return new RemObjects.Elements.System.IPEndPoint(ip.Address == null ? new RemObjects.Elements.System.IPAddress(0) : ToIslandAddress(ip.Address), ip.Port);
+		}
+
+		private static EndPoint FromIslandEndPoint(RemObjects.Elements.System.EndPoint endpoint)
+		{
+			var ip = (RemObjects.Elements.System.IPEndPoint)endpoint;
+			return new IPEndPoint(FromIslandAddress(ip.Address), ip.Port);
+		}
+		#elif cooper
 		private Socket(java.net.Socket handle)
 		{
 			fHandle = handle;
@@ -126,6 +181,11 @@
 
 		public Socket Accept()
 		{
+			#if island
+			try { return new Socket(fIslandSocket.Accept()); }
+			catch (RemObjects.Elements.System.SocketAcceptInterruptedException) { throw new SocketAcceptInterruptedException(); }
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			#if cooper
 			try
 			{
@@ -181,6 +241,7 @@
 			lNewSocket.Connected = true;
 			return lNewSocket;
 			#endif
+			#endif
 		}
 
 		public IAsyncResult BeginAccept(Socket acceptSocket, Int32 receiveSize, AsyncCallback callback, Object state)
@@ -191,7 +252,9 @@
 
 			var lThread = new Thread(() =>
 			{
+				#if !island
 				lResult.AsyncWaitHandle.WaitOne();
+				#endif
 				try
 				{
 					if (lResult.AcceptSocket != null)
@@ -205,7 +268,11 @@
 					if (receiveSize > 0)
 					{
 						lResult.Buffer = new byte[receiveSize];
+						#if island
+						lResult.NBytes = lResult.AcceptedSocket.Receive(lResult.Buffer, receiveSize, SocketFlags.None);
+						#else
 						lResult.NBytes = Receive(lResult.Buffer, receiveSize, SocketFlags.None);
+						#endif
 					}
 				}
 				catch(Exception lCurrent)
@@ -216,7 +283,12 @@
 				RemoveOp((Thread)lResult.Data);
 				lResult.IsCompleted = true;
 				(lResult.AsyncWaitHandle as EventWaitHandle).Set();
+				#if island
+				if (callback != null)
+					callback(lResult);
+				#else
 				callback(lResult);
+				#endif
 			});
 			AddAsyncOp(lThread);
 			lResult.Data = lThread;
@@ -264,6 +336,13 @@
 
 		public void Bind(EndPoint local_end)
 		{
+			#if island
+			try
+			{
+				fIslandSocket.Bind(ToIslandEndPoint(local_end));
+			}
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			var lEndPoint = (IPEndPoint)local_end;
 			if (lEndPoint.Address == null)
 				lEndPoint = new IPEndPoint(IPAddress.Parse("0.0.0.0"), lEndPoint.Port);
@@ -303,9 +382,10 @@
 			#endif
 			#endif
 			LocalEndPoint = lEndPoint;
+			#endif
 		}
 
-		#if toffee || darwin
+		#if toffee
 		private int htons(int port)
 		{
 			#if darwin
@@ -316,7 +396,7 @@
 		}
 		#endif
 
-		#if !cooper
+		#if !cooper && !island
 		#if posix || toffee || darwin
 		private void IPEndPointToNative(IPEndPoint endPoint, out rtl.__struct_sockaddr_in lIPv4, out rtl.__struct_sockaddr_in6 lIPv6, out void *ipPointer, out int ipSize)
 		{
@@ -389,6 +469,14 @@
 
 		public void Connect(EndPoint remoteEP)
 		{
+			#if island
+			try
+			{
+				fIslandSocket.Connect(ToIslandEndPoint(remoteEP));
+				Connected = true;
+			}
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			var lEndPoint = (IPEndPoint)remoteEP;
 			#if cooper
 			var lAddress = java.net.InetAddress.getByAddress(lEndPoint.Address.GetAddressBytes());
@@ -427,6 +515,7 @@
 			#endif
 
 			Connected = true;
+			#endif
 		}
 
 		public void Connect(String host, Int32 port)
@@ -474,7 +563,9 @@
 
 			var lThread = new Thread(() =>
 			{
+				#if !island
 				lResult.AsyncWaitHandle.WaitOne();
+				#endif
 				foreach(IPAddress lAddress in addresses)
 				{
 					lEndPoint = new IPEndPoint(lAddress, port);
@@ -493,7 +584,12 @@
 				RemoveOp((Thread)lResult.Data);
 				lResult.IsCompleted = true;
 				(lResult.AsyncWaitHandle as EventWaitHandle).Set();
+				#if island
+				if (callback != null)
+					callback(lResult);
+				#else
 				callback(lResult);
+				#endif
 			});
 			AddAsyncOp(lThread);
 			lResult.Data = lThread;
@@ -556,12 +652,24 @@
 			var lResult = new AsyncResult(state);
 			var lThread = new Thread(() =>
 			{
+				#if !island
 				lResult.AsyncWaitHandle.WaitOne();
+				#endif
+				#if island
+				try { Disconnect(reuseSocket); }
+				catch (Exception e) { lResult.DelayedException = e; }
+				#else
 				Disconnect(reuseSocket);
+				#endif
 				lResult.IsCompleted = true;
 				ClearAsyncOps();
 				(lResult.AsyncWaitHandle as EventWaitHandle).Set();
+				#if island
+				if (callback != null)
+					callback(lResult);
+				#else
 				callback(lResult);
+				#endif
 			});
 			lThread.Start();
 
@@ -576,16 +684,31 @@
 
 		public void Listen(Int32 backlog)
 		{
+			#if island
+			try
+			{
+				fIslandSocket.Listen(backlog);
+			}
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			#if cooper
 			fServerHandle.bind(fSocketAddress, backlog);
 			#else
 			if (rtl.listen(fHandle, backlog) != 0)
 				throw new Exception("Error calling to listen function");
 			#endif
+			#endif
 		}
 
 		public Int32 Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags flags)
 		{
+			#if island
+			try
+			{
+				return fIslandSocket.Receive(buffer, offset, size, (RemObjects.Elements.System.SocketFlags)flags);
+			}
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			#if cooper
 			if (fSocketInput == null)
 				throw new Exception("Socket is not connected");
@@ -594,6 +717,7 @@
 			void *lPointer;
 			lPointer = &buffer[0];
 			return rtl.recv(fHandle, (AnsiChar *)lPointer, size, (int)flags);
+			#endif
 			#endif
 		}
 
@@ -620,15 +744,21 @@
 
 			var lThread = new Thread(() =>
 			{
+				#if !island
 				lResult.AsyncWaitHandle.WaitOne();
+				#endif
 				try
 				{
 					lResult.NBytes = Receive(buffer, offset, size, flags);
 				}
 				catch(Exception lCurrent)
 				{
+					#if island
+					lResult.DelayedException = lCurrent;
+					#else
 					if (lResult.Error == SocketError.NoValue)
 						lResult.DelayedException = lCurrent;
+					#endif
 
 					lResult.Error = SocketError.SocketError;
 				}
@@ -636,7 +766,12 @@
 				RemoveOp((Thread)lResult.Data);
 				lResult.IsCompleted = true;
 				(lResult.AsyncWaitHandle as EventWaitHandle).Set();
+				#if island
+				if (callback != null)
+					callback(lResult);
+				#else
 				callback(lResult);
+				#endif
 			});
 			AddAsyncOp(lThread);
 			lResult.Data = lThread;
@@ -672,6 +807,13 @@
 
 		public Int32 Send(Byte[] buf, Int32 offset, Int32 size, SocketFlags flags)
 		{
+			#if island
+			try
+			{
+				return fIslandSocket.Send(buf, offset, size, (RemObjects.Elements.System.SocketFlags)flags);
+			}
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			#if cooper
 			if (fSocketOutput == null)
 				throw new Exception("Socket is not connected");
@@ -695,6 +837,7 @@
 			}
 			return lResult;
 			#endif
+			#endif
 		}
 
 		public Int32 Send(Byte[] buf, Int32 size, SocketFlags flags)
@@ -712,7 +855,7 @@
 			return Send(buf, 0, length(buf), SocketFlags.None);
 		}
 
-		#if !cooper
+		#if !cooper && !island
 		private static Int32 GetLastSocketError()
 		{
 			#if windows
@@ -731,15 +874,21 @@
 
 			var lThread = new Thread(() =>
 			{
+				#if !island
 				lResult.AsyncWaitHandle.WaitOne();
+				#endif
 				try
 				{
 					lResult.NBytes = Send(buffer, offset, size, socketFlags);
 				}
 				catch(Exception lCurrent)
 				{
+					#if island
+					lResult.DelayedException = lCurrent;
+					#else
 					if (lResult.Error == SocketError.NoValue)
 						lResult.DelayedException = lCurrent;
+					#endif
 
 					lResult.Error = SocketError.SocketError;
 				}
@@ -747,7 +896,12 @@
 				RemoveOp((Thread)lResult.Data);
 				lResult.IsCompleted = true;
 				(lResult.AsyncWaitHandle as EventWaitHandle).Set();
+				#if island
+				if (callback != null)
+					callback(lResult);
+				#else
 				callback(lResult);
+				#endif
 			});
 			AddAsyncOp(lThread);
 			lResult.Data = lThread;
@@ -827,7 +981,7 @@
 					break;
 			}
 		}
-		#else
+		#elif !island
 		private void InternalSetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, void *optionValue, Int32 optionValueLength)
 		{
 			if (rtl.setsockopt(fHandle, (int)optionLevel, (int)optionName, (AnsiChar *)optionValue, optionValueLength) != 0)
@@ -837,26 +991,43 @@
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Int32 optionValue)
 		{
+			#if island
+			try { fIslandSocket.SetSocketOption((RemObjects.Elements.System.SocketOptionLevel)optionLevel, (RemObjects.Elements.System.SocketOptionName)optionName, optionValue); }
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			#if cooper
 			InternalSetSocketOption(optionLevel, optionName, optionValue);
 			#else
 			void *lValue = &optionValue;
 			InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Int32));
 			#endif
+			#endif
 		}
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Boolean optionValue)
 		{
+			#if island
+			try { fIslandSocket.SetSocketOption((RemObjects.Elements.System.SocketOptionLevel)optionLevel, (RemObjects.Elements.System.SocketOptionName)optionName, optionValue); }
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			#if cooper
 			InternalSetSocketOption(optionLevel, optionName, (Int32)optionValue);
 			#else
 			void *lValue = &optionValue;
 			InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Boolean));
 			#endif
+			#endif
 		}
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Object optionValue)
 		{
+			#if island
+			var linger = optionValue as LingerOption;
+			if (linger == null)
+				throw new Exception("Object socket options require a LingerOption");
+			try { fIslandSocket.SetSocketOption((RemObjects.Elements.System.SocketOptionLevel)optionLevel, (RemObjects.Elements.System.SocketOptionName)optionName, new RemObjects.Elements.System.LingerOption(linger.Enabled, linger.LingerTime)); }
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			#if cooper
 			if (optionName == SocketOptionName.Linger  && optionName == SocketOptionName.DontLinger)
 			{
@@ -867,20 +1038,32 @@
 			void *lValue = &optionValue;
 			InternalSetSocketOption(optionLevel, optionName, lValue, sizeof(Object));
 			#endif
+			#endif
 		}
 
 		public void SetSocketOption(SocketOptionLevel optionLevel, SocketOptionName optionName, Byte[] optionValue)
 		{
+			#if island
+			try { fIslandSocket.SetSocketOption((RemObjects.Elements.System.SocketOptionLevel)optionLevel, (RemObjects.Elements.System.SocketOptionName)optionName, optionValue); }
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			#if cooper
 			InternalSetSocketOption(optionLevel, optionName, optionValue[0]);
 			#else
 			void *lValue = &optionValue[0];
 			InternalSetSocketOption(optionLevel, optionName, lValue, length(optionValue));
 			#endif
+			#endif
 		}
 
 		private new void Dispose()
 		{
+			#if island
+			fIsClosing = 1;
+			try { fIslandSocket.Close(); }
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			finally { Connected = false; }
+			#else
 			fIsClosing = 1;
 
 			#if cooper
@@ -899,6 +1082,7 @@
 			#endif
 
 			Connected = false;
+			#endif
 		}
 
 		public void Close()
@@ -908,6 +1092,13 @@
 
 		public void Shutdown(SocketShutdown how)
 		{
+			#if island
+			try
+			{
+				fIslandSocket.Shutdown((RemObjects.Elements.System.SocketShutdown)how);
+			}
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 			#if cooper
 			if (fIsServer)
 				fServerHandle.close();
@@ -917,12 +1108,17 @@
 			if (rtl.shutdown(fHandle, (int)how) != 0)
 				throw new Exception("Error closing socket");
 			#endif
+			#endif
 		}
 
 		public Int32 Available
 		{
 			get
 			{
+			#if island
+				try { return fIslandSocket.DataAvailable(); }
+				catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#else
 				#if cooper
 				if (fSocketInput != null)
 					return fSocketInput.available();
@@ -947,14 +1143,39 @@
 
 				return lData;
 				#endif
+				#endif
 			}
 		}
 
+		#if island
+		public EndPoint LocalEndPoint
+		{
+			get
+			{
+				try { return fLocalEndPointOverride ?? FromIslandEndPoint(fIslandSocket.LocalEndPoint); }
+				catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			}
+			set { fLocalEndPointOverride = value; }
+		}
+		#else
 		public EndPoint LocalEndPoint { get; set; }
+		#endif
 		public SocketType SocketType { get; set; }
 		public AddressFamily AddressFamily { get; set; }
 		public ProtocolType ProtocolType { get; set; }
+		#if island
+		public EndPoint RemoteEndPoint
+		{
+			get
+			{
+				try { return fRemoteEndPointOverride ?? FromIslandEndPoint(fIslandSocket.RemoteEndPoint); }
+				catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			}
+			set { fRemoteEndPointOverride = value; }
+		}
+		#else
 		public EndPoint RemoteEndPoint { get; set; }
+		#endif
 	}
 
 
@@ -965,10 +1186,17 @@
 		{
 		}
 
-		public SocketException(Int32 error)
+		public SocketException(Int32 error) : base("Socket operation failed (native error " + error.ToString() + ")")
 		{
 			this.ErrorCode = error;
 		}
+
+		#if island
+		internal SocketException(RemObjects.Elements.System.SocketException error) : base(error.Message)
+		{
+			ErrorCode = error.ErrorCode;
+		}
+		#endif
 
 		public SocketException(String message) : base(message)
 		{

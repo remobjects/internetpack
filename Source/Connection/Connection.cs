@@ -82,7 +82,7 @@ namespace RemObjects.InternetPack
 			if (this.fDataSocket == null)
 				return;
 
-			#if DARWIN
+			#if DARWIN && !ISLAND
 			try
 			{
 				// Darwin: suppress SIGPIPE on writes to a peer that already closed.

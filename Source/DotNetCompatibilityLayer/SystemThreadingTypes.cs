@@ -85,22 +85,38 @@
 
 	public class EventWaitHandle: WaitHandle
 	{
+		#if island
+		private RemObjects.Elements.System.EventWaitHandle fHandle;
+		#else
 		private Monitor fHandle;
+		#endif
 
 		public EventWaitHandle()
 		{
+			#if island
+			fHandle = new RemObjects.Elements.System.EventWaitHandle(false, false);
+			#else
 			fHandle = new Monitor();
+			#endif
 		}
 
 		public override Boolean WaitOne()
 		{
+			#if island
+			fHandle.Wait();
+			#else
 			fHandle.Lock();
+			#endif
 			return true;
 		}
 
 		public Boolean Set()
 		{
+			#if island
+			fHandle.Set();
+			#else
 			fHandle.Unlock();
+			#endif
 			return true;
 		}
 

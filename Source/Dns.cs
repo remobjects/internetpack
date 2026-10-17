@@ -43,15 +43,10 @@ namespace RemObjects.InternetPack.Dns
 		}
 		#endif
 
-		#if posix || toffee || darwin
+		#if !island && (posix || toffee || darwin)
 		private rtl.__struct_addrinfo *GetNext(rtl.__struct_addrinfo *Addr)
 		{
 			return (rtl.__struct_addrinfo *)Addr->ai_next;
-		}
-		#elif island
-		private rtl.ADDRINFOW *GetNext(rtl.ADDRINFOW *Addr)
-		{
-			return  (rtl.ADDRINFOW*)Addr->ai_next;
 		}
 		#endif
 
@@ -64,7 +59,17 @@ namespace RemObjects.InternetPack.Dns
 				return new IPAddress[] { lAddress };
 			}
 
-			#if echoes
+			#if island
+			try
+			{
+				var native = RemObjects.Elements.System.Dns.GetHostAddresses((RemObjects.Elements.System.String)hostname);
+				var addresses = new IPAddress[length(native)];
+				for (var i = 0; i < length(native); i++)
+					addresses[i] = Socket.FromIslandAddress(native[i]);
+				return addresses;
+			}
+			catch (RemObjects.Elements.System.SocketException e) { throw new SocketException(e); }
+			#elif echoes
 			IPHostEntry lEntry = System.Net.Dns.GetHostEntry(hostname);
 			return lEntry.AddressList;
 			#elif cooper

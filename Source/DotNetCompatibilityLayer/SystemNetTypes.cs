@@ -285,6 +285,16 @@ namespace RemObjects.InternetPack
 
 		private static Boolean TryParseIPV6(String ipString, out IPAddress address)
 		{
+			#if island
+			RemObjects.Elements.System.IPAddress native;
+			if (!RemObjects.Elements.System.IPAddress.TryParse((RemObjects.Elements.System.String)ipString, out native))
+			{
+				address = null;
+				return false;
+			}
+			address = Socket.FromIslandAddress(native);
+			return true;
+			#else
 			var lString = (RemObjects.Elements.System.String)ipString;
 			Byte[] lBytes = new Byte[16];
 
@@ -331,6 +341,7 @@ namespace RemObjects.InternetPack
 
 			address = new IPAddress(lBytes, (*lSockAddr).sin6_scope_id);
 			return true;
+			#endif
 			#endif
 		}
 
@@ -502,7 +513,16 @@ namespace RemObjects.InternetPack
 		public Object AsyncState { get; set; }
 		public WaitHandle AsyncWaitHandle { get; set; }
 		public Boolean CompletedSynchronously { get; set; }
+		#if island
+		private volatile Int32 fIsCompleted;
+		public Boolean IsCompleted
+		{
+			get { return fIsCompleted != 0; }
+			set { fIsCompleted = value ? 1 : 0; }
+		}
+		#else
 		public Boolean IsCompleted { get; set; }
+		#endif
 		public Exception DelayedException { get; set; }
 		public Object Data { get; set; }
 		public Socket AcceptSocket { get; set; }
