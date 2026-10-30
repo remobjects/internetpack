@@ -318,15 +318,19 @@ namespace RemObjects.InternetPack.Http
 					Int32 lSize = 0;
 					foreach (var lChar in lSizeText)
 					{
-						var lDigit = "0123456789abcdef".IndexOf(lChar.ToString().ToLowerInvariant());
+						Int32 lDigit;
+						if (lChar >= '0' && lChar <= '9') lDigit = lChar - '0';
+						else if (lChar >= 'a' && lChar <= 'f') lDigit = lChar - 'a' + 10;
+						else if (lChar >= 'A' && lChar <= 'F') lDigit = lChar - 'A' + 10;
+						else lDigit = -1;
 						if (lDigit < 0)
 							throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Invalid chunk size.");
-						if (lSize > (Int32.MaxValue - lDigit) / 16)
+						if (lSize > (Consts.MaxInt32 - lDigit) / 16)
 							throw new HttpRequestInvalidException(HttpStatusCode.RequestEntityTooLarge, "Chunked request is too large.");
 						lSize = lSize * 16 + lDigit;
 					}
 					if (lSize == 0) break;
-					if (lBody.Length > Int32.MaxValue - lSize)
+					if (lBody.Length > Consts.MaxInt32 - lSize)
 						throw new HttpRequestInvalidException(HttpStatusCode.RequestEntityTooLarge, "Chunked request is too large.");
 					while (lSize > 0)
 					{
