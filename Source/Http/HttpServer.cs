@@ -114,6 +114,8 @@ namespace RemObjects.InternetPack.Http
 						if (Owner.ValidateRequests)
 							lRequest.Validate();
 
+						lRequest.PrepareContent();
+
 						lResponse = new HttpServerResponse();
 						lResponse.KeepAlive = (lRequest.KeepAlive && Owner.KeepAlive);
 						lResponse.Header.SetHeaderValue("Server", Owner.ServerName);

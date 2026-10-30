@@ -143,31 +143,11 @@ namespace RemObjects.InternetPack.Http
 						if (lKeepAlive && !lChunked)
 							throw new Exception("Content-Length or Chunked Transfer-Encoding required for Keep-Alive.");
 
-						MemoryStream lResult = new MemoryStream();
-
 						if (lChunked)
-						{
-							Int32 lNextChunkSize = ReadChunkSize();
-							while (lNextChunkSize > 0)
-							{
-								Byte[] lBuffer = new Byte[lNextChunkSize];
-								Int32 lRead = DataConnection.Receive(lBuffer, 0, lNextChunkSize);
-								if (lRead != lNextChunkSize) throw new Exception("Unexpected end of HTTP chunk.");
-
-								// todo: refactor, duped below
-								lResult.Write(lBuffer, 0, lRead);
-
-								if (DataConnection.ReadLine() != "") throw new Exception("Invalid data at end of HTTP chunk.");
-								lNextChunkSize = ReadChunkSize();
-							}
-
-							// Skip footer
-							while (DataConnection.ReadLine() != "")
-							{
-							}
-						}
+							fContentBytes = DecodeChunkedContent();
 						else
 						{
+							MemoryStream lResult = new MemoryStream();
 							Int32 lRead;
 							do
 							{
@@ -176,9 +156,8 @@ namespace RemObjects.InternetPack.Http
 								lResult.Write(lBuffer, 0, lRead);
 							}
 							while (lRead > 0);
+							fContentBytes = lResult.ToArray();
 						}
-
-						fContentBytes = lResult.ToArray();
 
 						if (!lKeepAlive)
 							DataConnection.Close();
@@ -303,25 +282,102 @@ namespace RemObjects.InternetPack.Http
 			return true;
 		}
 
-		public virtual void Validate()
+		// Decode request framing before dispatch, even when optional header validation is disabled.
+		internal void PrepareContent()
 		{
-			if (Header.RequestVersion == "1.1")
+			var lTransfer = Header["Transfer-Encoding"];
+			if (lTransfer == null) return;
+			if (Header.ContainsHeaderValue("Content-Length"))
+				throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Ambiguous request framing.");
+			if (Header.RequestVersion != "1.1" || lTransfer.Count != 1 ||
+				lTransfer.Value.Trim().ToLowerInvariant() != "chunked")
+				throw new HttpRequestInvalidException(HttpStatusCode.NotImplemented, "Unsupported request transfer coding.");
+			if (Header.GetHeaderValue("Expect")?.Trim().ToLowerInvariant() == "100-continue")
+				DataConnection.Send(Encoding.ASCII.GetBytes("HTTP/1.1 100 Continue\r\n\r\n"));
+
+			fContentBytes = DecodeChunkedContent();
+			fContentStream = new MemoryStream(fContentBytes);
+			fContentLength = fContentBytes.Length;
+			Header.RemoveHeader("Transfer-Encoding");
+			Header.RemoveHeader("Trailer");
+			Header.SetHeaderValue("Content-Length", fContentLength.ToString());
+		}
+
+		private Byte[] DecodeChunkedContent()
+		{
+			using (var lBody = new MemoryStream())
 			{
-				if (Header.GetHeaderValue("Transfer-Encoding") == "chunked")
-					throw new HttpRequestInvalidException(HttpStatusCode.InternalServerError, "Bad Request: Chunked encoding not supported, yet");
+				var lBuffer = new Byte[BUFFER_SIZE];
+				while (true)
+				{
+					var lLine = ReadChunkLine();
+					var lEnd = lLine.IndexOf(';');
+					var lSizeText = lEnd < 0 ? lLine : lLine.Substring(0, lEnd).TrimEnd();
+					if (lSizeText.Length == 0)
+						throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Missing chunk size.");
+					Int32 lSize = 0;
+					foreach (var lChar in lSizeText)
+					{
+						var lDigit = "0123456789abcdef".IndexOf(lChar.ToString().ToLowerInvariant());
+						if (lDigit < 0)
+							throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Invalid chunk size.");
+						if (lSize > (Int32.MaxValue - lDigit) / 16)
+							throw new HttpRequestInvalidException(HttpStatusCode.RequestEntityTooLarge, "Chunked request is too large.");
+						lSize = lSize * 16 + lDigit;
+					}
+					if (lSize == 0) break;
+					if (lBody.Length > Int32.MaxValue - lSize)
+						throw new HttpRequestInvalidException(HttpStatusCode.RequestEntityTooLarge, "Chunked request is too large.");
+					while (lSize > 0)
+					{
+						var lCount = DataConnection.Receive(lBuffer, 0, Math.Min(lSize, BUFFER_SIZE));
+						if (lCount <= 0) throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Incomplete chunk.");
+						lBody.Write(lBuffer, 0, lCount);
+						lSize -= lCount;
+					}
+					if (ReadChunkLine() != "")
+						throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Invalid chunk terminator.");
+				}
+				// Consume trailers without promoting them into request headers or framing metadata.
+				Int32 lTrailerBytes = 0;
+				while (true)
+				{
+					var lLine = ReadChunkLine();
+					lTrailerBytes += lLine.Length + 2;
+					if (lTrailerBytes > BUFFER_SIZE)
+						throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Chunk trailers are too large.");
+					if (lLine.Length == 0) break;
+					if (lLine.IndexOf(':') <= 0)
+						throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Invalid chunk trailer.");
+				}
+				return lBody.ToArray();
 			}
 		}
 
-		private Int32 ReadChunkSize()
+		private String ReadChunkLine()
 		{
-			String lLine = DataConnection.ReadLine();
-			Int32 lPos = lLine.IndexOf(';');
-			if (lPos >= 0)
-				lLine = lLine.Substring(0, lPos);
-			lLine = lLine.Trim();
-
-			return Convert.HexStringToUInt32(lLine);
+			var lLine = new StringBuilder();
+			var lByte = new Byte[1];
+			while (true)
+			{
+				if (DataConnection.Receive(lByte, 0, 1) != 1)
+					throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Incomplete chunk framing.");
+				if (lByte[0] == 13)
+				{
+					if (DataConnection.Receive(lByte, 0, 1) != 1 || lByte[0] != 10)
+						throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Invalid chunk line ending.");
+					return lLine.ToString();
+				}
+				if (lByte[0] == 10 || lLine.Length >= 8192)
+					throw new HttpRequestInvalidException(HttpStatusCode.BadRequest, "Invalid or oversized chunk line.");
+				lLine.Append((Char)lByte[0]);
+			}
 		}
+
+		public virtual void Validate()
+		{
+		}
+
 
 	}
 

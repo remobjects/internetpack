@@ -415,6 +415,11 @@ namespace RemObjects.InternetPack.Http
 			}
 		}
 
+		internal void RemoveHeader(String name)
+		{
+			this.fHeaders.Remove(name.ToLowerInvariant());
+		}
+
 		public String GetHeaderValue(String name)
 		{
 			HttpHeader lHeader = this[name];
