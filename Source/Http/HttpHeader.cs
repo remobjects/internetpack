@@ -379,7 +379,14 @@ namespace RemObjects.InternetPack.Http
 
 		public void SetResponseHeader(String version, HttpStatusCode code)
 		{
-			this.FirstHeader = String.Format("HTTP/{0} {1} {2}", version, ((Int32)code).ToString(), code.ToString());
+			this.SetResponseHeader(version, code, code.ToString());
+		}
+
+		public void SetResponseHeader(String version, HttpStatusCode code, String responseText)
+		{
+			if (responseText != null && (responseText.Contains("\r") || responseText.Contains("\n")))
+				throw new ArgumentException("HTTP response text cannot contain line breaks.");
+			this.FirstHeader = String.Format("HTTP/{0} {1} {2}", version, ((Int32)code).ToString(), coalesce(responseText, code.ToString()));
 			this.HttpCode = code;
 		}
 

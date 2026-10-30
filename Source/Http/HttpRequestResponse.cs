@@ -662,9 +662,14 @@ namespace RemObjects.InternetPack.Http
 		{
 			get
 			{
-				return this.HttpCode.ToString();
+				return coalesce(this.fResponseText, this.HttpCode.ToString());
+			}
+			set
+			{
+				this.fResponseText = value;
 			}
 		}
+		private String fResponseText;
 
 		internal Connection StreamingConnection
 		{
@@ -752,7 +757,7 @@ namespace RemObjects.InternetPack.Http
 		public override void FinalizeHeader()
 		{
 			base.FinalizeHeader();
-			this.Header.SetResponseHeader("1.1", this.HttpCode);
+			this.Header.SetResponseHeader("1.1", this.HttpCode, this.ResponseText);
 		}
 
 		public void BeginChunkedResponse()
