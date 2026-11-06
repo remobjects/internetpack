@@ -381,6 +381,16 @@
 				throw new Exception("Error calling bind function");
 			#endif
 			#endif
+			#if toffee
+			// bind(port: 0) chooses an ephemeral port; report the kernel's actual endpoint.
+			if (lEndPoint.Port == 0)
+			{
+				rtl.socklen_t lBoundSize = (rtl.socklen_t)lSize;
+				if (rtl.getsockname(fHandle, (rtl.__struct_sockaddr *)lPointer, &lBoundSize) != 0)
+					throw new Exception("Error reading bound socket endpoint");
+				lEndPoint.Port = htons(lEndPoint.AddressFamily == AddressFamily.InterNetworkV6 ? lIPv6.sin6_port : lIPv4.sin_port);
+			}
+			#endif
 			LocalEndPoint = lEndPoint;
 			#endif
 		}
