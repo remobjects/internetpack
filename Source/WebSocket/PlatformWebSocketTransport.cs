@@ -98,6 +98,28 @@ namespace RemObjects.InternetPack.WebSocket
 #endif
 
 #if TOFFEE
+	internal class WebSocketOpenDelegate : Foundation.NSObject, Foundation.INSURLSessionWebSocketDelegate
+	{
+		public readonly Event Ready = new Event();
+		public Boolean Opened { get; private set; }
+		public Foundation.NSError Error { get; private set; }
+
+		public void URLSession(Foundation.NSURLSession session) webSocketTask(Foundation.NSURLSessionWebSocketTask task) didOpenWithProtocol(String protocol)
+		{
+			Opened = true;
+			Ready.Set();
+		}
+
+		public void URLSession(Foundation.NSURLSession session) task(Foundation.NSURLSessionTask task) didCompleteWithError(Foundation.NSError error)
+		{
+			if (!Opened)
+			{
+				Error = error;
+				Ready.Set();
+			}
+		}
+	}
+
 	internal class PlatformWebSocketTransport : IWebSocketTransport
 	{
 		private Foundation.NSURLSession fSession;
@@ -122,19 +144,20 @@ namespace RemObjects.InternetPack.WebSocket
 						request.setValue(headers[name]) forHTTPHeaderField(name);
 					}
 				}
-				fSession = Foundation.NSURLSession.sessionWithConfiguration(Foundation.NSURLSessionConfiguration.ephemeralSessionConfiguration);
+				// ComfyUI sends its status immediately after the upgrade. Wait for the
+				// upgrade callback so the caller can read that first message straight away.
+				var opening = new WebSocketOpenDelegate();
+				fSession = Foundation.NSURLSession.sessionWithConfiguration(Foundation.NSURLSessionConfiguration.ephemeralSessionConfiguration) @delegate(opening) delegateQueue(null);
 				fTask = fSession.webSocketTaskWithRequest(request);
 				fTask.resume();
-				// A successful pong confirms TLS and the upgrade completed before
-				// returning the connection or accepting application messages.
-				var ready = new Event();
-				Foundation.NSError error = null;
-				fTask.sendPingWithPongReceiveHandler(e => { error = e; ready.Set(); });
-				if (!ready.WaitFor(timeout * 1000))
-				{
+				if (!opening.Ready.WaitFor((RemObjects.Elements.RTL.Units.Milliseconds)(timeout * 1000)))
 					throw new WebSocketException("WebSocket connection timed out.");
+
+				if (!opening.Opened)
+				{
+					Check(opening.Error);
+					throw new WebSocketException("The WebSocket closed before the upgrade completed.");
 				}
-				Check(error);
 			}
 			catch
 			{
